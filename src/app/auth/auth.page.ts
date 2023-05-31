@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { StorageService } from '../utils/services/storage.service';
+import { AuthService } from './auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -12,7 +13,8 @@ export class AuthPage implements OnInit {
   emailRemember: string;
   isRemember: boolean = false;
   constructor(
-    private storageService: StorageService
+    private storageService: StorageService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
