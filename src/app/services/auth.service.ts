@@ -31,6 +31,13 @@ export class AuthService {
     console.log('FROM STORAGE: ', data)
     if (data) {
       const decoded: any = jwt_decode(data);
+      const userData = {
+        token: data,
+        id: decoded.sub
+      }
+      this.user.next(userData)
+    } else {
+      this.user.next(null);
     }
   }
 
