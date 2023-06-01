@@ -1,5 +1,13 @@
-.btn-forgot {
-  text-transform: initial;
+.header-logo {
+  width: 150px;
+}
+.page-grid {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.page-content {
+  flex: 1 1 100%;
 }
 
 .separator {

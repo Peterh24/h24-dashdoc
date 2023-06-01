@@ -24,3 +24,17 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+
+ion-item {
+  &.ion-invalid {
+    &.ion-touched {
+      color: var(--ion-color-danger);
+      --border-color: var(--ion-color-danger);
+    }
+  }
+}
+
+.validator-error {
+  font-size: .9em;
+  color: var(--ion-color-danger);
+}

@@ -1,45 +1,66 @@
-<ion-content class="ion-padding">
+<ion-header class="ion-no-border">
+  <ion-toolbar no-border>
+    <ion-title class="ion-text-center">
+      <img class="header-logo" src="https://h24-public-app.s3.eu-west-3.amazonaws.com/images/global/LOGO-H24-Transports-BLACK.png" alt="H24 Transports">
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" scrollY="false">
   <form [formGroup]="form">
-    <ion-grid>
-      <ion-row>
-        <ion-col class="ion-center" size="4" offset="4">
-          <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/images/global/LOGO-H24-Transports-BLACK.png'" alt="H24 Transports"></ion-img>
-        </ion-col>
-      </ion-row>
-      <ion-row>
+    <ion-grid class="page-grid">
+      <ion-row class="page-content ion-align-items-center">
         <ion-col>
-          <ion-list>
-            <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
-              <ion-icon name="mail" size="small" class="ion-margin-end" color="primary"></ion-icon>
-              <ion-input type="email" label="Adresse e-mail" labelPlacement="floating" formControlName="email"></ion-input>
-            </ion-item>
-            <ion-item lines="full" class="ion-no-padding ion-margin-bottom">
-              <ion-icon name="lock-closed" size="small" class="ion-margin-end" color="primary"></ion-icon>
-              <ion-input type="password" label="Mot de passe" labelPlacement="floating" formControlName="password"></ion-input>
-            </ion-item>
-            <ion-item lines="none" class="ion-no-padding">
-              <ion-toggle (ionChange)="onRememberChange()" [checked]="isRemember" slot="start" color="primary" labelPlacement="end" mode="ios">Se souvenir de moi</ion-toggle>
-            </ion-item>
-          </ion-list>
-        </ion-col>
-      </ion-row>
-      <ion-row class="ion-justify-content-between">
-        <ion-col>
-          <ion-button [routerLink]="['/forgot-password']" type="button" class="btn-forgot ion-no-padding" color="primary" fill="clear">Mot de passe oublié ?</ion-button>
-        </ion-col>
-        <ion-col class="ion-text-right">
-            <ion-button type="submit" color="primary" shape="round" (click)="onLogin()" [disabled]="!form.valid">
-              Connexion
-            </ion-button>
-        </ion-col>
-      </ion-row>
-      <ion-row class="ion-margin-top">
-        <ion-col class="ion-text-center">
-          <label>
-            <ion-text>Vous n’êtes pas encore inscrit ?</ion-text>
-            <div class="separator"></div>
-            <ion-button [routerLink]="['/sign-up']" type="button" class="btn-forgot" shape="round" color="primary" fill="outline">Demandez votre accès</ion-button>
-          </label>
+          <form [formGroup]="form">
+            <ion-grid class="ion-no-padding">
+              <ion-row>
+                <ion-col>
+                  <ion-list>
+                    <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
+                      <ion-icon name="mail" size="small" class="ion-margin-end" color="primary"></ion-icon>
+                      <ion-input type="email" label="Adresse e-mail" labelPlacement="floating" formControlName="email"></ion-input>
+                    </ion-item>
+                    <div  class="ion-margin-bottom" *ngIf="!form.get('email').valid && form.get('email').touched">
+                      <ion-label color="danger">
+                        {{regexErrors['email']}}
+                      </ion-label>
+                    </div>
+                    <ion-item lines="full" class="ion-no-padding ion-margin-bottom">
+                      <ion-icon name="lock-closed" size="small" class="ion-margin-end" color="primary"></ion-icon>
+                      <ion-input type="password" label="Mot de passe" labelPlacement="floating" formControlName="password"></ion-input>
+                    </ion-item>
+                    <div class="ion-margin-bottom" *ngIf="!form.get('password').valid && form.get('password').touched">
+                      <ion-label color="danger">
+                        Merci de renseigner votre mot de passe
+                      </ion-label>
+                    </div>
+                    <ion-item lines="none" class="ion-no-padding">
+                      <ion-toggle (ionChange)="onRememberChange()" [checked]="isRemember" slot="start" color="primary" labelPlacement="end" mode="ios">Se souvenir de moi</ion-toggle>
+                    </ion-item>
+                  </ion-list>
+                </ion-col>
+              </ion-row>
+              <ion-row class="ion-justify-content-between">
+                <ion-col>
+                  <ion-button [routerLink]="['/forgot-password']" type="button" class="btn-forgot ion-no-padding" color="primary" fill="clear">Mot de passe oublié ?</ion-button>
+                </ion-col>
+                <ion-col class="ion-text-right">
+                    <ion-button (click)="onSubmit()" color="primary" shape="round" [disabled]="!form.valid">
+                      Connexion
+                    </ion-button>
+                </ion-col>
+              </ion-row>
+              <ion-row class="ion-margin-top">
+                <ion-col class="ion-text-center">
+                  <label>
+                    <ion-text>Vous n’êtes pas encore inscrit ?</ion-text>
+                    <div class="separator"></div>
+                    <ion-button [routerLink]="['/sign-up']" type="button" class="btn-forgot" shape="round" color="primary" fill="outline">Demandez votre accès</ion-button>
+                  </label>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </form>
         </ion-col>
       </ion-row>
     </ion-grid>

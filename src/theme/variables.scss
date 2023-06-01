@@ -62,11 +62,19 @@
 
 }
 
+ion-content {
+  --keyboard-offset: 0 !important;
+}
+
 ion-toggle{
   /*Toggle Custom*/
   --handle-height: calc(23px - (2px * 2));
   --handle-width: calc(23px - (2px * 2));
   --handle-spacing: 6px;
+}
+
+ion-button {
+  text-transform: inherit;
 }
 
 @media (prefers-color-scheme: dark) {

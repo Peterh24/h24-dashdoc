@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { StorageService } from '../utils/services/storage.service';
-import { AuthService } from './auth.service';
+import { regex, regexErrors } from '../utils/regex';
+import { Router } from '@angular/router';
+import { AlertController, LoadingController } from '@ionic/angular';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -9,27 +12,27 @@ import { AuthService } from './auth.service';
   styleUrls: ['./auth.page.scss'],
 })
 export class AuthPage implements OnInit {
-  form: FormGroup;
+  private regex: any = regex;
+  regexErrors: any = regexErrors;
+
+  form = this.formBuilder.nonNullable.group({
+    email: ['', [Validators.required, Validators.pattern(this.regex.email)]],
+    password: ['', [Validators.required]]
+  });
   emailRemember: string;
   isRemember: boolean = false;
+  isLoading: boolean = false;
+
   constructor(
+    private formBuilder: FormBuilder,
     private storageService: StorageService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router,
+    private loadingController: LoadingController,
+    private alertController: AlertController
   ) { }
 
   ngOnInit() {
-    this.loadEmail();
-    this.form = new FormGroup({
-      email: new FormControl(this.emailRemember, {
-        updateOn: 'blur',
-        validators: [Validators.required]
-      }),
-      password: new FormControl(null, {
-        updateOn: 'blur',
-        validators: [Validators.required]
-      })
-    });
-
     this.loadEmail();
   }
 
@@ -48,12 +51,67 @@ export class AuthPage implements OnInit {
     this.isRemember = !this.isRemember;
   }
 
-  onLogin(){
-    if(this.isRemember){
-      this.storageService.addData('EMAIL', this.form.get('email').value);
-    } else {
-      this.storageService.removeData('EMAIL');
-    }
+  async onSubmit() {
+    const { email, password } = this.form.getRawValue();
+
+    console.log('Login with Email: ', email);
+    console.log('Login with Passsword: ', password);
+
+    const loading = await this.loadingController.create({
+      keyboardClose: true,
+      message: 'Connection...',
+      spinner: 'bubbles'
+    })
+    await loading.present();
+
+    //WE WAITING FOR REAL API
+    //
+    // this.authService.login(email, password).subscribe({
+    //   next: (res) => {
+    //     console.log('After Login: ', res);
+    //     loading.dismiss();
+    //     this.router.navigateByUrl('/private/tabs/home');
+    //   },
+    //   error: async (error) => {
+    //     console.log('error: ', error);
+    //     loading.dismiss();
+    //     const alert = await this.alertController.create({
+    //       header: 'Error',
+    //       message: 'Login Failed: '+ error.error.message,
+    //       buttons: ['Ok']
+    //     });
+
+    //     await alert.present();
+    //   }
+    // })
+
+
+
+    // FAKE API SIMULATION JUST FOR TESTING NOT USE THIS IN PRODUCTION
+    this.authService.login(email, password).subscribe({
+      next: (res) => {
+        console.log('After Login: ', res);
+        loading.dismiss();
+        this.router.navigateByUrl('/private/tabs/home');
+      },
+      error: async (error) => {
+        console.log('error: ', error);
+        loading.dismiss();
+        const alert = await this.alertController.create({
+          header: 'Error',
+          message: 'Login Failed: ' + error.error.message,
+          buttons: ['Ok']
+        });
+
+        await alert.present();
+      },
+      complete: () => {
+        // Cette partie est ajoutée pour traiter la réussite de la simulation
+        loading.dismiss();
+        this.router.navigateByUrl('/private/tabs/home');
+      }
+    });
+
 
   }
 

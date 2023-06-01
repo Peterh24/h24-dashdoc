@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { StorageService } from '../utils/services/storage.service';
-import { AuthService } from '../auth/auth.service';
+import { regex, regexErrors } from '../utils/regex';
 
 @Component({
   selector: 'app-forgot-password',
@@ -9,18 +9,20 @@ import { AuthService } from '../auth/auth.service';
   styleUrls: ['./forgot-password.page.scss'],
 })
 export class ForgotPasswordPage implements OnInit {
+  private regex: any = regex;
+  regexErrors: any = regexErrors;
+
   form: FormGroup;
   emailRemember: string;
   constructor(
     private storageService: StorageService,
-    private authService: AuthService
   ) { }
 
   ngOnInit() {
     this.form = new FormGroup({
       email: new FormControl(this.emailRemember, {
         updateOn: 'blur',
-        validators: [Validators.required]
+        validators: [Validators.required, Validators.pattern(this.regex.email)]
       })
     });
 
