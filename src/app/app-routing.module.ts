@@ -1,5 +1,7 @@
-import { NgModule } from '@angular/core';
+import { NgModule, inject } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { AuthService } from './services/auth.service';
+import { authGuard } from './auth/auth.guard';
 
 const routes: Routes = [
   {
@@ -13,7 +15,8 @@ const routes: Routes = [
   },
   {
     path: 'private',
-    loadChildren: () => import('./private/private.module').then( m => m.PrivatePageModule)
+    loadChildren: () => import('./private/private.module').then( m => m.PrivatePageModule),
+    canMatch: [authGuard],
   },
   {
     path: 'sign-up',

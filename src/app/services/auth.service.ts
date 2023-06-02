@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Storage } from '@ionic/storage-angular';
 import { API_URL, USER_STORAGE_KEY } from './constants';
-import { BehaviorSubject, delay, map, of, switchMap } from 'rxjs';
+import { BehaviorSubject, delay, of, switchMap } from 'rxjs';
 import jwt_decode from 'jwt-decode';
 
 export interface UserData {
@@ -14,7 +14,7 @@ export interface UserData {
   providedIn: 'root'
 })
 export class AuthService {
-
+  userIsAuthenticated: boolean = false;
   private user: BehaviorSubject<UserData | null | undefined> = new BehaviorSubject<UserData | null | undefined>(undefined);
 
   constructor(
@@ -74,11 +74,13 @@ export class AuthService {
     };
     this.storage.set(USER_STORAGE_KEY, userData.token);
     this.user.next(userData);
+    this.userIsAuthenticated = true;
     return of(userData).pipe(delay(1000));
   }
 
   async signOut(){
     await this.storage.remove(USER_STORAGE_KEY);
+    this.userIsAuthenticated = false;
     this.user.next(null);
   }
 
@@ -89,4 +91,5 @@ export class AuthService {
   getCurrentUserId() {
     return this.user.getValue()!.id;
   }
+
 }
