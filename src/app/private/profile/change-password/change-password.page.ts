@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-change-password',
@@ -9,13 +8,9 @@ import { AuthService } from 'src/app/services/auth.service';
 export class ChangePasswordPage implements OnInit {
 
   constructor(
-    private authService: AuthService
   ) { }
 
   ngOnInit() {
   }
 
-  signOut() {
-    this.authService.signOut();
-  }
 }
