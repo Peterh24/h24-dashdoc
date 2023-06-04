@@ -4,6 +4,7 @@ import { Storage } from '@ionic/storage-angular';
 import { API_URL, USER_STORAGE_KEY } from './constants';
 import { BehaviorSubject, delay, of, switchMap } from 'rxjs';
 import jwt_decode from 'jwt-decode';
+import { Router } from '@angular/router';
 
 export interface UserData {
   token: string;
@@ -14,12 +15,14 @@ export interface UserData {
   providedIn: 'root'
 })
 export class AuthService {
-  userIsAuthenticated: boolean = false;
+  //TODO: Set to true for debug please leave this property to false;
+  userIsAuthenticated: boolean = true;
   private user: BehaviorSubject<UserData | null | undefined> = new BehaviorSubject<UserData | null | undefined>(undefined);
 
   constructor(
     private http: HttpClient,
-    private storage: Storage
+    private storage: Storage,
+    private router: Router
   ) {
     //WAITING FOR REAL API
     //
@@ -81,6 +84,7 @@ export class AuthService {
   async signOut(){
     await this.storage.remove(USER_STORAGE_KEY);
     this.userIsAuthenticated = false;
+    this.router.navigateByUrl('/');
     this.user.next(null);
   }
 

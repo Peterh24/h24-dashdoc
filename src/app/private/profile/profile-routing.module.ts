@@ -18,12 +18,12 @@ const routes: Routes = [
     loadChildren: () => import('./change-password/change-password.module').then( m => m.ChangePasswordPageModule)
   },
   {
-    path: 'invoice',
-    loadChildren: () => import('./invoice/invoice.module').then( m => m.InvoicePageModule)
-  },
-  {
     path: 'address',
     loadChildren: () => import('./address/address.module').then( m => m.AddressPageModule)
+  },
+  {
+    path: 'invoice',
+    loadChildren: () => import('./invoice/invoice.module').then( m => m.InvoicePageModule)
   }
 ];
 

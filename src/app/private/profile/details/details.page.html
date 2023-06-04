@@ -1,13 +1,38 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>details</ion-title>
+    <ion-title>**Donneur D'ordre**</ion-title>
+    <ion-buttons slot="end" (click)="signOut()">
+      <ion-button type="button">
+        <ion-icon name="power" slot="icon-only" ></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">details</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  Ici la page Detail avec le formulaire
 </ion-content>
+
+<ion-footer class="ion-no-border">
+<ion-buttons class="ion-justify-content-around ion-padding">
+  <ion-button type="button" color="primary" fill="solid" strong="true" [routerLink]="['/private/tabs/profile/change-password']">
+    <span class="custom-btn">
+      <ion-icon name="shield-half" class="ion-margin" size="large"></ion-icon>
+      <ion-text class="ion-margin-bottom">Mot de passe</ion-text>
+    </span>
+  </ion-button>
+  <ion-button type="button" color="primary" fill="solid" strong="true" [routerLink]="['/private/tabs/profile/address']">
+    <span class="custom-btn">
+      <ion-icon name="location" size="large" class="ion-margin"></ion-icon>
+      <ion-text class="ion-margin-bottom">Mes adresses</ion-text>
+    </span>
+  </ion-button>
+  <ion-button type="button" color="primary" fill="solid" strong="true" [routerLink]="['/private/tabs/profile/invoice']">
+    <span class="custom-btn">
+      <ion-icon name="receipt" size="large" class="ion-margin"></ion-icon>
+      <ion-text class="ion-margin-bottom">Mes factures</ion-text>
+    </span>
+  </ion-button>
+</ion-buttons>
+
+</ion-footer>
