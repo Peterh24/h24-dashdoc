@@ -66,6 +66,9 @@
 ion-content {
   --keyboard-offset: 0 !important;
 }
+ion-item {
+  --inner-padding-end: 0px;
+}
 
 ion-toggle{
   /*Toggle Custom*/
@@ -76,6 +79,11 @@ ion-toggle{
 
 ion-button {
   text-transform: inherit;
+}
+ion-select {
+  &::part(icon) {
+    display: none;
+  }
 }
 
 @media (prefers-color-scheme: dark) {

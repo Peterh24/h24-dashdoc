@@ -1,0 +1,15 @@
+ion-content {
+  --padding-top: 56px;
+}
+
+.header-logo {
+  width: 150px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 500;
+  span {
+    color: var(--ion-color-medium);
+  }
+}

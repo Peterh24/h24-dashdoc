@@ -72,7 +72,7 @@ export class AuthService {
   // FAKE API SIMULATION JUST FOR TESTING NOT USE THIS IN PRODUCTION
   login(email: string, password: string) {
     const userData = {
-      token: 'ONVAMETTRELETOKENICI',
+      token: 'd279f42372b01e95b7ff5a88fc71cd972dcd09d7',
       id: 'someUserId',
     };
     this.storage.set(USER_STORAGE_KEY, userData.token);

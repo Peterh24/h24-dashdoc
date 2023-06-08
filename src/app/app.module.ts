@@ -21,7 +21,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return tokenObs.pipe(
     switchMap((token) => {
-      console.log('Token in Interceptor: ', token)
       if(token) {
         req = req.clone({
           setHeaders: {
