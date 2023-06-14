@@ -23,6 +23,7 @@ export class HomePage implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.companyService.fetchCompanies();
     this.companiesSub = this.companyService.companies.subscribe(companies => {
       this.loadedCompanies = companies;
       console.log('loading: ', this.loadedCompanies);
