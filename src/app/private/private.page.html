@@ -13,16 +13,16 @@
 </ion-header>
 
 <ion-tabs>
-  <ion-tab-bar slot="bottom">
+  <ion-tab-bar slot="bottom" >
     <ion-tab-button tab="home" >
       <ion-label>Acceuil</ion-label>
       <ion-icon name="home"></ion-icon>
     </ion-tab-button>
-    <ion-tab-button tab="transports">
+    <ion-tab-button tab="transports" [disabled]="!userhasChooseCompany">
       <ion-label>Transports</ion-label>
       <ion-icon name="location"></ion-icon>
     </ion-tab-button>
-    <ion-tab-button tab="profile">
+    <ion-tab-button tab="profile" [disabled]="!userhasChooseCompany">
       <ion-label>Profil</ion-label>
       <ion-icon name="person-circle"></ion-icon>
     </ion-tab-button>

@@ -11,7 +11,7 @@ export class CompanyService {
   private _companies = new BehaviorSubject<Array<Company>>([
     new Company(1, 'Nike'),
     new Company(2, 'TF1'),
-    new Company(2, 'H24 Transports')
+    new Company(3, 'H24 Transports')
   ]);
 
   get companies() {

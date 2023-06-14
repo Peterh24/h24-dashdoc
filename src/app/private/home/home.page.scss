@@ -13,3 +13,11 @@ ion-content {
     color: var(--ion-color-medium);
   }
 }
+
+ion-button {
+  --padding-end: 4px;
+  --padding-start: 4px;
+  ion-text {
+    margin-left: 6px;
+  }
+}

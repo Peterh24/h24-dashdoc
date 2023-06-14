@@ -80,6 +80,13 @@ ion-toggle{
 ion-button {
   text-transform: inherit;
 }
+ion-tab-button {
+  border-top: 1px solid transparent;
+  &.tab-selected {
+    border-top-color: var(--ion-color-primary);
+  }
+}
+
 ion-select {
   &::part(icon) {
     display: none;

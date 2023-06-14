@@ -4,7 +4,7 @@ import { Storage } from '@ionic/storage-angular';
 import { AuthService } from '../services/auth.service';
 import { DashdocService } from '../services/dashdoc.service';
 import { NavigationEnd, Router } from '@angular/router';
-import { Subscription, firstValueFrom, switchMap } from 'rxjs';
+import { Subscription, firstValueFrom, take } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { DASHDOC_API_URL, USER_STORAGE_KEY } from '../services/constants';
 
@@ -15,7 +15,8 @@ import { DASHDOC_API_URL, USER_STORAGE_KEY } from '../services/constants';
 })
 export class PrivatePage implements OnInit {
   private dashdocTokensSub: Subscription;
-
+  private userhasChooseCompanySub: Subscription;
+  userhasChooseCompany: boolean;
   showBackButton: boolean = true;
   constructor(
     private platform: Platform,
@@ -27,11 +28,17 @@ export class PrivatePage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        this.showBackButton = this.isBackButtonVisible();
-      }
+    this.userhasChooseCompanySub = this.authService.userHasChooseCompany.subscribe((res) => {
+      this.router.events.subscribe((event) => {
+        if (event instanceof NavigationEnd) {
+          this.showBackButton = this.isBackButtonVisible();
+        }
+      });
+      this.userhasChooseCompany = res;
     });
+
+
+
 
     this.dashdocTokensSub = this.dashdocService.tokens.subscribe(async tokens => {
       for (const token of tokens) {
@@ -39,7 +46,7 @@ export class PrivatePage implements OnInit {
         console.log('dashdocToken: ', dashdocToken);
         this.storage.set(USER_STORAGE_KEY, dashdocToken);
         try {
-          const response = await firstValueFrom(this.http.get(`${DASHDOC_API_URL}companies`));
+          const response = await firstValueFrom(this.http.get(`${DASHDOC_API_URL}managers/companies/`));
           console.log('API response:', response);
         } catch (error) {
           console.error('Erreur lors de l\'appel API:', error);

@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { IonSelect, ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { ModalAddTokenComponent } from './modal-add-token/modal-add-token.component';
 import { Company } from '../models/company.model';
 import { CompanyService } from 'src/app/services/company.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -13,8 +14,10 @@ import { CompanyService } from 'src/app/services/company.service';
 export class HomePage implements OnInit {
   private companiesSub: Subscription;
   loadedCompanies: Array<Company>;
-
+  isCompanySelected: boolean = false;
+  @ViewChild('companyChoose', { static: false }) companyChoose: IonSelect;
   constructor(
+    private authService: AuthService,
     private companyService: CompanyService,
     private modalCtrl: ModalController
   ) { }
@@ -39,5 +42,16 @@ export class HomePage implements OnInit {
       //Requette API pour ajouter le token
       alert('Le token ' +data+ ' a ete ajouté');
     }
+  }
+
+  onchooseCompany(event: Event){
+    //TODO ADD this in the request
+    this.authService.switchChooseCompanyState(true).subscribe((res) => {
+      this.isCompanySelected = true;
+    })
+  }
+
+  openSelect(){
+    this.companyChoose.open();
   }
 }
