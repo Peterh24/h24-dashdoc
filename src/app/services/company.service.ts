@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, take, tap } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, map, take, tap } from 'rxjs';
 import { Company } from '../private/models/company.model';
 import { HttpClient } from '@angular/common/http';
-import { DASHDOC_API_URL } from './constants';
+import { DASHDOC_API_URL, USER_STORAGE_KEY } from './constants';
 import { Storage } from '@ionic/storage-angular';
 import { DashdocService } from './dashdoc.service';
 
@@ -10,14 +10,14 @@ import { DashdocService } from './dashdoc.service';
   providedIn: 'root'
 })
 export class CompanyService {
-  private _companies = new BehaviorSubject<Array<Company>>([
-    new Company(1, 'Nike'),
-    new Company(2, 'TF1'),
-    new Company(3, 'H24 Transports')
-  ]);
+  private _companies = new BehaviorSubject<Array<Company>>([]);
+  private _companyName = new BehaviorSubject<string>('');
 
   get companies() {
     return this._companies.asObservable();
+  }
+  get companyName() {
+    return this._companyName.asObservable();
   }
   constructor(
     private http: HttpClient,
@@ -26,19 +26,45 @@ export class CompanyService {
   ) { }
 
   fetchCompanies() {
-    this.dashdocService.tokens.pipe(take(1)).subscribe(tokens => {
-      tokens.forEach(token => {
-        this.storage.set(DASHDOC_API_URL, token.token);
+    this.dashdocService.tokens.subscribe(async tokens => {
+      const sendRequest = async (index: number) => {
+        if (index >= tokens.length) {
+          return;
+        }
 
-        this.http.get(`${DASHDOC_API_URL}addresses`).pipe((tap(resData => {
-          console.log('resData: ', resData);
-        })))
-      })
-    })
+        const token = tokens[index].token;
+        this.storage.set(USER_STORAGE_KEY, token);
 
+        try {
+          const response: any = await firstValueFrom(this.http.get(`${DASHDOC_API_URL}addresses`));
+
+          const newCompany = {...response.results[0].created_by, token: token};
+          const companiesArray = this._companies.getValue();
+
+          if (!companiesArray.includes(newCompany)) {
+            this._companies.next([...companiesArray, newCompany]);
+          }
+        } catch (error) {
+          console.error('Erreur lors de l\'appel API:', error);
+        }
+
+        await sendRequest(index + 1);
+      };
+
+      await sendRequest(0);
+    });
   }
 
-  getCompany() {
-
+  getCompany(pk: number) {
+    return this.companies.pipe(
+      take(1),
+      map(companies => {
+        return {...companies.find(company => company.pk === pk)}
+      }))
   }
+
+  setCompanyName(name: string) {
+    this._companyName.next(name);
+  }
+
 }

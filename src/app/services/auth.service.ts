@@ -36,7 +36,6 @@ export class AuthService {
 
   async loadUser() {
     const data = await this.storage.get(USER_STORAGE_KEY);
-    console.log('FROM STORAGE: ', data)
     if (data) {
       const decoded: any = jwt_decode(data);
       const userData = {

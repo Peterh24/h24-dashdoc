@@ -22,7 +22,7 @@
           <ion-list>
             <ion-item class="ion-no-margin ion-no-padding" lines="full">
               <ion-select #companyChoose mode="md" placeholder="Société" okText="Valider" cancelText="Annuler"  class="ion-no-margin ion-no-padding" (ionChange)="onchooseCompany($event)">
-                <ion-select-option *ngFor="let company of loadedCompanies" [value]="company.id">{{company.name}}</ion-select-option>
+                <ion-select-option *ngFor="let company of loadedCompanies" [value]="company.pk">{{company.name}}</ion-select-option>
               </ion-select>
               <ion-icon color="primary" name="chevron-down" slot="end" (click)="openSelect()"></ion-icon>
             </ion-item>
