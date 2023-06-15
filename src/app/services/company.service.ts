@@ -26,32 +26,17 @@ export class CompanyService {
   ) { }
 
   fetchCompanies() {
-    this.dashdocService.tokens.subscribe(async tokens => {
-      const sendRequest = async (index: number) => {
-        if (index >= tokens.length) {
-          return;
+    this.dashdocService.tokens.pipe(take(1)).subscribe(async tokens => {
+      for (const token of tokens) {
+        const tokenCurrent = token.token;
+        await this.storage.set(USER_STORAGE_KEY, tokenCurrent);
+        const resData: any = await firstValueFrom(this.http.get(`${DASHDOC_API_URL}addresses`));
+        const newCompany = {...resData.results[0].created_by, token: token};
+        const companiesArray = this._companies.getValue();
+        if (!companiesArray.includes(newCompany)) {
+          this._companies.next([...companiesArray, newCompany]);
         }
-
-        const token = tokens[index].token;
-        this.storage.set(USER_STORAGE_KEY, token);
-
-        try {
-          const response: any = await firstValueFrom(this.http.get(`${DASHDOC_API_URL}addresses`));
-
-          const newCompany = {...response.results[0].created_by, token: token};
-          const companiesArray = this._companies.getValue();
-
-          if (!companiesArray.includes(newCompany)) {
-            this._companies.next([...companiesArray, newCompany]);
-          }
-        } catch (error) {
-          console.error('Erreur lors de l\'appel API:', error);
-        }
-
-        await sendRequest(index + 1);
-      };
-
-      await sendRequest(0);
+      }
     });
   }
 

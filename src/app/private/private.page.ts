@@ -34,12 +34,14 @@ export class PrivatePage implements OnInit {
           this.showBackButton = this.isBackButtonVisible();
         }
       });
-      this.userhasChooseCompany = res;
+      this.userhasChooseCompany = false;
     });
 
     this.companyService.companyName.subscribe(companyName => {
       this.companyName = companyName;
     });
+
+
   }
 
   ionViewWillEnter(){
