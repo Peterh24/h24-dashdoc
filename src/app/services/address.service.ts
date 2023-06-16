@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Address } from '../private/profile/address/address.model';
-import { BehaviorSubject, map, tap } from 'rxjs';
+import { BehaviorSubject, EMPTY, expand, map, reduce, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { DASHDOC_API_URL } from './constants';
 import { Request } from '../private/models/request.model';
@@ -20,14 +20,20 @@ export class AddressService {
     private http: HttpClient,
   ) { }
 
-  fetchAddress(){
-    return this.http.get(`${DASHDOC_API_URL}addresses/`).pipe(map((resData:Request) => {
-      const address = resData.results;
-      return address;
-    }),
-    tap(address => {
-      this._address.next(address);
-    })
+  fetchAddress() {
+    return this.http.get(`${DASHDOC_API_URL}addresses/`).pipe(
+      expand((resData: Request) => {
+        if (resData.next !== null) {
+          return this.http.get(resData.next);
+        } else {
+          return EMPTY;
+        }
+      }),
+      map((resData: Request) => resData.results),
+      reduce((address: Address[], results: Address[]) => address.concat(results), []),
+      tap((address: Address[]) => {
+        this._address.next(address);
+      })
     );
   }
 }

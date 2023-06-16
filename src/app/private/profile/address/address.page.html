@@ -7,7 +7,7 @@
     </ion-row>
     <ion-row *ngIf="!isLoading && address.length > 0">
       <ion-col>
-        <ion-searchbar placeholder="Rechercher" mode="ios" class="ion-no-padding"></ion-searchbar>
+        <ion-searchbar #searchbarElem placeholder="Rechercher" mode="ios" class="ion-no-padding" [(ngModel)]="searchAddress" (ionInput)="setFilteredItems(searchAddress)"></ion-searchbar>
       </ion-col>
     </ion-row>
 
@@ -28,7 +28,7 @@
     <ion-row *ngIf="!isLoading && address.length > 0">
       <ion-col>
         <ion-accordion-group>
-          <ion-accordion *ngFor="let item of address" [value]="item.pk" >
+          <ion-accordion *ngFor="let item of jsonData" [value]="item.pk" >
             <ion-item slot="header" class="ion-align-items-start">
               <ion-label>
                 <h3>{{item.name}}</h3>
@@ -45,6 +45,9 @@
             </div>
           </ion-accordion>
         </ion-accordion-group>
+        <ion-infinite-scroll threshold="0" (ionInfinite)="loadMoreData($event)">
+          <ion-infinite-scroll-content></ion-infinite-scroll-content>
+        </ion-infinite-scroll>
       </ion-col>
     </ion-row>
   </ion-grid>
