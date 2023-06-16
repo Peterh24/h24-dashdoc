@@ -17,12 +17,8 @@ export interface UserData {
 export class AuthService {
   //TODO: Set to true for debug please leave this property to false;
   userIsAuthenticated: boolean = true;
-  private _userHasChooseCompany = new BehaviorSubject<boolean>(false);
-  private user: BehaviorSubject<UserData | null | undefined> = new BehaviorSubject<UserData | null | undefined>(undefined);
 
-  get userHasChooseCompany() {
-    return this._userHasChooseCompany.asObservable();
-  }
+  private user: BehaviorSubject<UserData | null | undefined> = new BehaviorSubject<UserData | null | undefined>(undefined);
 
   constructor(
     private http: HttpClient,
@@ -98,13 +94,5 @@ export class AuthService {
 
   getCurrentUserId() {
     return this.user.getValue()!.id;
-  }
-
-  switchChooseCompanyState(state: boolean) {
-    return this.userHasChooseCompany.pipe(take(1), tap(res => {
-      const newState = state;
-      console.log('state of res: ', newState);
-      this._userHasChooseCompany.next(newState);
-    }))
   }
 }

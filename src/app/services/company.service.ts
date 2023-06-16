@@ -12,6 +12,11 @@ import { DashdocService } from './dashdoc.service';
 export class CompanyService {
   private _companies = new BehaviorSubject<Array<Company>>([]);
   private _companyName = new BehaviorSubject<string>('');
+  private _userHasChooseCompany = new BehaviorSubject<boolean>(false);
+
+  get userHasChooseCompany() {
+    return this._userHasChooseCompany.asObservable();
+  }
 
   get companies() {
     return this._companies.asObservable();
@@ -31,7 +36,7 @@ export class CompanyService {
         const tokenCurrent = token.token;
         await this.storage.set(USER_STORAGE_KEY, tokenCurrent);
         const resData: any = await firstValueFrom(this.http.get(`${DASHDOC_API_URL}addresses`));
-        const newCompany = {...resData.results[0].created_by, token: token};
+        const newCompany = {...resData.results[0].created_by, token: token.token};
         const companiesArray = this._companies.getValue();
         if (!companiesArray.includes(newCompany)) {
           this._companies.next([...companiesArray, newCompany]);

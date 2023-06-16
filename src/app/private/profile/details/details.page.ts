@@ -32,9 +32,7 @@ export class DetailsPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.http.get(`${DASHDOC_API_URL}/adr-un-codes/`).pipe(take(1)).subscribe((res) => {
-      console.log('res: ', res);
-    })
+
   }
 
 

@@ -17,9 +17,9 @@ import { CompanyService } from '../services/company.service';
 export class PrivatePage implements OnInit {
   private dashdocTokensSub: Subscription;
   private userhasChooseCompanySub: Subscription;
-  userhasChooseCompany: boolean;
   showBackButton: boolean = true;
   companyName: string;
+  userHasChooseCompany: boolean;
   constructor(
     private platform: Platform,
     private authService: AuthService,
@@ -28,17 +28,23 @@ export class PrivatePage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.userhasChooseCompanySub = this.authService.userHasChooseCompany.subscribe((res) => {
+    this.userhasChooseCompanySub = this.companyService.userHasChooseCompany.subscribe((res) => {
       this.router.events.subscribe((event) => {
         if (event instanceof NavigationEnd) {
           this.showBackButton = this.isBackButtonVisible();
         }
       });
-      this.userhasChooseCompany = false;
     });
 
     this.companyService.companyName.subscribe(companyName => {
-      this.companyName = companyName;
+      if(companyName != ''){
+        this.userHasChooseCompany = true;
+        this.companyName = companyName;
+      } else {
+        //TODO: uncomment this
+        //this.router.navigateByUrl('/private/tabs/home');
+      }
+
     });
 
 

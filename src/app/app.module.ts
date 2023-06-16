@@ -17,10 +17,10 @@ import { USER_STORAGE_KEY } from './services/constants';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const storage = inject(Storage);
   const tokenObs = from(storage.get(USER_STORAGE_KEY));
-  console.log('req: ', req.url )
 
   return tokenObs.pipe(
     switchMap((token) => {
+      console.log('token Send: ', token)
       if(token) {
         req = req.clone({
           setHeaders: {

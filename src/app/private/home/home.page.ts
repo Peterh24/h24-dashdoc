@@ -51,6 +51,7 @@ export class HomePage implements OnInit, OnDestroy {
     const currentCompany = event.detail.value;
     this.currentCompany = this.companyService.getCompany(currentCompany).subscribe(company => {
       this.companyService.setCompanyName(company.name);
+      console.log('currentCompany: ', currentCompany);
       this.storage.set(USER_STORAGE_KEY, company.token);
       this.isCompanySelected = true;
     });
