@@ -64,7 +64,16 @@ export class AddressService {
 
         return this.http.post(
           `${DASHDOC_API_URL}addresses`,
-          {...newAddress, pk:null, company: {"pk": companyPk}}
+          {
+            "name": "Société du futur",
+            "address": "3 rue de passé",
+            "city": "present",
+            "postcode": "75000",
+            "country": "FR",
+            "company": {
+              "pk": companyPk
+            }
+          }
         );
       }),
       take(1),
