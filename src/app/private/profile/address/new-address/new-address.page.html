@@ -1,0 +1,78 @@
+<ion-content>
+  <ion-grid class="page-grid">
+    <ion-row>
+      <ion-col>
+        <h2>Ajouter une addresse</h2>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <form [formGroup]="form">
+          <ion-list>
+            <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
+              <ion-input type="text" label="Nom de l'adresse" labelPlacement="floating" formControlName="name"></ion-input>
+            </ion-item>
+            <div class="ion-margin-bottom" *ngIf="!form.get('name').valid && form.get('name').touched">
+              <ion-label class="validator-error">
+                Merci d'indiquer un nom
+              </ion-label>
+            </div>
+
+            <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
+              <ion-input type="text" label="Adresse" labelPlacement="floating" formControlName="address"></ion-input>
+            </ion-item>
+            <div class="ion-margin-bottom" *ngIf="!form.get('address').valid && form.get('address').touched">
+              <ion-label class="validator-error">
+                Merci d'indiquer l'adresse postale
+              </ion-label>
+            </div>
+
+            <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
+              <ion-input type="text" label="Code postal" labelPlacement="floating" formControlName="postal"></ion-input>
+            </ion-item>
+            <div class="ion-margin-bottom" *ngIf="!form.get('postal').valid && form.get('postal').touched">
+              <ion-label class="validator-error">
+                Merci d'indiquer le code postale
+              </ion-label>
+            </div>
+
+            <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
+              <ion-input type="text" label="Ville" labelPlacement="floating" formControlName="city"></ion-input>
+            </ion-item>
+          </ion-list>
+          <div class="ion-margin-bottom" *ngIf="!form.get('city').valid && form.get('city').touched">
+            <ion-label class="validator-error">
+              Merci d'indiquer la ville
+            </ion-label>
+          </div>
+
+          <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
+            <ion-select mode="md" label="Pays" labelPlacement="floating" okText="Valider" cancelText="Annuler"  class="ion-no-margin ion-no-padding" formControlName="country">
+              <ion-select-option *ngFor="let country of countries" [value]="country.key">{{country.value}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <div class="ion-margin-bottom" *ngIf="!form.get('country').valid && form.get('country').touched">
+            <ion-label class="validator-error">
+              Merci d'indiquer le pays
+            </ion-label>
+          </div>
+
+          <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
+            <ion-input type="text" label="Instructions" labelPlacement="floating" formControlName="instructions"></ion-input>
+          </ion-item>
+          <div class="ion-margin-bottom" *ngIf="!form.get('instructions').valid && form.get('instructions').touched">
+            <ion-label class="validator-error">
+              Indication supplementaire (Facultatif)
+            </ion-label>
+          </div>
+
+          <div class="ion-text-right">
+            <ion-button type="submit" [disabled]="!form.valid" class="ion-margin-top ion-margin-bottom" (click)="onCreateOffer()">
+              Ajouter
+            </ion-button>
+          </div>
+        </form>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

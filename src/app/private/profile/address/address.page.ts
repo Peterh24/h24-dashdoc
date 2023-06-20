@@ -2,6 +2,8 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AddressService } from 'src/app/services/address.service';
 import { Address } from './address.model';
+import { IonItemSliding } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-address',
@@ -18,6 +20,7 @@ export class AddressPage implements OnInit {
   @ViewChild("searchbarElem", { read: ElementRef }) private searchbarElem: ElementRef;
   constructor(
     private addressService: AddressService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -60,6 +63,11 @@ export class AddressPage implements OnInit {
       event.target.disabled = true; // Désactiver le chargement supplémentaire s'il n'y a plus d'adresses
     }
     event.target.complete(); // Indiquer que le chargement est terminé
+  }
+
+  onEdit(adressId: number, slidingItem: IonItemSliding){
+    slidingItem.close();
+    this.router.navigate(['/private/tabs/profile/address/edit-address', adressId]);
   }
 
 }

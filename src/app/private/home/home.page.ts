@@ -53,6 +53,7 @@ export class HomePage implements OnInit, OnDestroy {
       this.companyService.setCompanyName(company.name);
       console.log('currentCompany: ', currentCompany);
       this.storage.set(USER_STORAGE_KEY, company.token);
+      this.storage.set('DASHDOC_COMPANY', currentCompany);
       this.isCompanySelected = true;
     });
   }
