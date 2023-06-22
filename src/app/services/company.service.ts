@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, concatMap, firstValueFrom, forkJoin, from, map, switchMap, take, tap, throwError, toArray } from 'rxjs';
 import { Company } from '../private/models/company.model';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DASHDOC_API_URL, USER_STORAGE_KEY } from './constants';
 import { Storage } from '@ionic/storage-angular';
 import { DashdocService } from './dashdoc.service';
@@ -38,9 +38,9 @@ export class CompanyService {
 
       for (const token of tokens) {
         const tokenCurrent = token.token;
-        await this.storage.set(USER_STORAGE_KEY, tokenCurrent);
-        const resData: any = await firstValueFrom(this.http.get(`${DASHDOC_API_URL}addresses/`));
-        const newCompany = {...resData.results[0].created_by, token: token.token};
+        const headers = new HttpHeaders().set('Authorization', `Token ${tokenCurrent}`);
+        const resData: any = await firstValueFrom(this.http.get(`${DASHDOC_API_URL}addresses/`, { headers }));
+        const newCompany = { ...resData.results[0].created_by, token: token.token };
 
         if (!this._companies.getValue().includes(newCompany)) {
           this._companies.next([...this._companies.getValue(), newCompany]);

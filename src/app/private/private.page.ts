@@ -50,10 +50,6 @@ export class PrivatePage implements OnInit {
 
   }
 
-  ionViewWillEnter(){
-    this.companyService.fetchCompanies();
-  }
-
   isBackButtonVisible() {
     const currentUrl = this.platform.url();
     if(currentUrl.includes('/home') || currentUrl.includes('/transports') || currentUrl.includes('/profile/details')) {

@@ -2,8 +2,10 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AddressService } from 'src/app/services/address.service';
 import { Address } from './address.model';
-import { IonItemSliding } from '@ionic/angular';
+import { IonItemSliding, LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { Storage } from '@ionic/storage-angular';
+import { DASHDOC_API_URL, USER_STORAGE_KEY } from 'src/app/services/constants';
 
 @Component({
   selector: 'app-address',
@@ -20,7 +22,9 @@ export class AddressPage implements OnInit {
   @ViewChild("searchbarElem", { read: ElementRef }) private searchbarElem: ElementRef;
   constructor(
     private addressService: AddressService,
-    private router: Router
+    private router: Router,
+    private loadingController: LoadingController,
+    private storage: Storage,
   ) { }
 
   ngOnInit() {
@@ -31,6 +35,10 @@ export class AddressPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.storage.get(USER_STORAGE_KEY).then(token => {
+      console.log('get token from address: ', token);
+    })
+
     this.isLoading = true;
     this.addressService.fetchAddress().subscribe((address) => {
       this.address = address;
@@ -68,6 +76,19 @@ export class AddressPage implements OnInit {
   onEdit(adressId: number, slidingItem: IonItemSliding){
     slidingItem.close();
     this.router.navigate(['/private/tabs/profile/address/edit-address', adressId]);
+  }
+
+  onRemoveAddress(addressPk: number, slidingElement: IonItemSliding): void {
+    slidingElement.close();
+    this.loadingController.create({
+      message: 'Suppression de l\'addresse...',
+      mode:"ios"
+    }).then(loadingElement => {
+      loadingElement.present();
+      this.addressService.removeAddress(addressPk).subscribe(() => {
+        loadingElement.dismiss();
+      });
+    });
   }
 
 }

@@ -16,6 +16,6 @@ import { ModalAddTokenComponent } from './modal-add-token/modal-add-token.compon
     IonicModule,
     HomePageRoutingModule
   ],
-  declarations: [HomePage, ModalAddTokenComponent]
+  declarations: [HomePage, ModalAddTokenComponent],
 })
 export class HomePageModule {}

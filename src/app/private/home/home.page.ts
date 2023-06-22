@@ -5,7 +5,7 @@ import { Subscription, take } from 'rxjs';
 import { ModalAddTokenComponent } from './modal-add-token/modal-add-token.component';
 import { Company } from '../models/company.model';
 import { CompanyService } from 'src/app/services/company.service';
-import { USER_STORAGE_KEY } from 'src/app/services/constants';
+import { DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
 
 
 @Component({
@@ -32,6 +32,10 @@ export class HomePage implements OnInit, OnDestroy {
     })
   }
 
+  ionViewWillEnter(){
+    this.companyService.fetchCompanies();
+  }
+
   async onAddCompany() {
     const modal = await this.modalCtrl.create({
       component: ModalAddTokenComponent,
@@ -51,9 +55,8 @@ export class HomePage implements OnInit, OnDestroy {
     const currentCompany = event.detail.value;
     this.currentCompany = this.companyService.getCompany(currentCompany).subscribe(company => {
       this.companyService.setCompanyName(company.name);
-      console.log('currentCompany: ', currentCompany);
       this.storage.set(USER_STORAGE_KEY, company.token);
-      this.storage.set('DASHDOC_COMPANY', currentCompany);
+      this.storage.set(DASHDOC_COMPANY, currentCompany);
       this.isCompanySelected = true;
     });
   }

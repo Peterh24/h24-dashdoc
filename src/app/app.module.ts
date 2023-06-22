@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { HttpInterceptorFn, provideHttpClient, withInterceptors } from '@angular/common/http';
 
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -16,16 +16,17 @@ import { USER_STORAGE_KEY } from './services/constants';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const storage = inject(Storage);
+  const platform = inject(Platform);
   const tokenObs = from(storage.get(USER_STORAGE_KEY));
 
   return tokenObs.pipe(
     switchMap((token) => {
-      console.log('token Send: ', token)
-      if(token) {
+      const currentUrl = platform.url();
+      console.log(currentUrl );
+      if(!currentUrl.includes('/private/tabs/home') && token ) {
         req = req.clone({
           setHeaders: {
-            Authorization: `Token ${token}`,
-            'Content-Type': 'application/json'
+            Authorization: `Token ${token}`
           }
         });
       }
