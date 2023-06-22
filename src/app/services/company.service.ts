@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, firstValueFrom, map, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, concatMap, firstValueFrom, forkJoin, from, map, switchMap, take, tap, throwError, toArray } from 'rxjs';
 import { Company } from '../private/models/company.model';
 import { HttpClient } from '@angular/common/http';
 import { DASHDOC_API_URL, USER_STORAGE_KEY } from './constants';
@@ -32,14 +32,18 @@ export class CompanyService {
 
   fetchCompanies() {
     this.dashdocService.tokens.pipe(take(1)).subscribe(async tokens => {
+      if (this._companies.getValue().length > 0) {
+        return;
+      }
+
       for (const token of tokens) {
         const tokenCurrent = token.token;
         await this.storage.set(USER_STORAGE_KEY, tokenCurrent);
-        const resData: any = await firstValueFrom(this.http.get(`${DASHDOC_API_URL}addresses`));
+        const resData: any = await firstValueFrom(this.http.get(`${DASHDOC_API_URL}addresses/`));
         const newCompany = {...resData.results[0].created_by, token: token.token};
-        const companiesArray = this._companies.getValue();
-        if (!companiesArray.includes(newCompany)) {
-          this._companies.next([...companiesArray, newCompany]);
+
+        if (!this._companies.getValue().includes(newCompany)) {
+          this._companies.next([...this._companies.getValue(), newCompany]);
         }
       }
     });
