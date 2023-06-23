@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AddressService } from 'src/app/services/address.service';
 import { Address } from './address.model';
-import { IonItemSliding, LoadingController } from '@ionic/angular';
+import { AlertController, IonItemSliding, LoadingController, ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
 import { DASHDOC_API_URL, USER_STORAGE_KEY } from 'src/app/services/constants';
@@ -24,6 +24,7 @@ export class AddressPage implements OnInit {
     private addressService: AddressService,
     private router: Router,
     private loadingController: LoadingController,
+    private alertController: AlertController,
     private storage: Storage,
   ) { }
 
@@ -78,17 +79,28 @@ export class AddressPage implements OnInit {
     this.router.navigate(['/private/tabs/profile/address/edit-address', adressId]);
   }
 
-  onRemoveAddress(addressPk: number, slidingElement: IonItemSliding): void {
+  onRemoveAddress(addressPk: number, slidingElement: IonItemSliding, isOrigin:boolean): void {
     slidingElement.close();
-    this.loadingController.create({
-      message: 'Suppression de l\'addresse...',
-      mode:"ios"
-    }).then(loadingElement => {
-      loadingElement.present();
-      this.addressService.removeAddress(addressPk).subscribe(() => {
-        loadingElement.dismiss();
+    if(!isOrigin) {
+      this.loadingController.create({
+        message: 'Suppression de l\'addresse...',
+        mode:"ios"
+      }).then(loadingElement => {
+        loadingElement.present();
+        this.addressService.removeAddress(addressPk).subscribe(() => {
+          loadingElement.dismiss();
+        });
       });
-    });
+    } else {
+      this.alertController.create({
+        header: 'Suppression de l\'address',
+        message: 'Vous ne pouvez pas supprimer l\'adresse d\'origine de la société',
+        buttons: ['OK']
+      }).then(loadingElement => {
+        loadingElement.present()
+      })
+    }
+
   }
 
 }
