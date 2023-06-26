@@ -23,7 +23,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     switchMap((token) => {
       const currentUrl = platform.url();
       console.log(currentUrl );
-      if(!currentUrl.includes('/private/tabs/home') && token ) {
+      if(!currentUrl.includes('/private/tabs/home') && !currentUrl.includes('/private/tabs/profile/invoice') && token ) {
         req = req.clone({
           setHeaders: {
             Authorization: `Token ${token}`

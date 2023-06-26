@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { InvoiceService } from 'src/app/services/invoice.service';
 
 @Component({
   selector: 'app-invoice',
@@ -8,9 +9,13 @@ import { Component, OnInit } from '@angular/core';
 export class InvoicePage implements OnInit {
 
   constructor(
+    private invoiceService: InvoiceService
   ) { }
 
   ngOnInit() {
+    this.invoiceService.fetchInvoices().subscribe(invoices => {
+      console.log('les invoices: ', invoices)
+    })
   }
 
 }
