@@ -22,7 +22,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return tokenObs.pipe(
     switchMap((token) => {
       const currentUrl = platform.url();
-      console.log('req: ', req);
       if(req.url.includes('app.pennylane.com')){
         req = req.clone({
           setHeaders: {
