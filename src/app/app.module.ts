@@ -22,14 +22,23 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return tokenObs.pipe(
     switchMap((token) => {
       const currentUrl = platform.url();
-      console.log(currentUrl );
-      if(!currentUrl.includes('/private/tabs/home') && !currentUrl.includes('/private/tabs/profile/invoice') && token ) {
+      console.log('req: ', req);
+      if(req.url.includes('app.pennylane.com')){
         req = req.clone({
           setHeaders: {
-            Authorization: `Token ${token}`
+            Authorization: `Bearer 9vPF8rbIvtMoksQyhVBLWtqwjYflTx9z4-LCqZ2PFwY`
           }
         });
+      } else if(req.url.includes('api.dashdoc.eu')) {
+        if(!currentUrl.includes('/private/tabs/home') && token ) {
+          req = req.clone({
+            setHeaders: {
+              Authorization: `Token ${token}`
+            }
+          });
+        }
       }
+
       return next(req);
     })
   )

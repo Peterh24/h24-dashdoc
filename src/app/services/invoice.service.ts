@@ -27,8 +27,7 @@ export class InvoiceService {
             const filter = [{"field": "customer_id", "operator": "eq", "value": invoiceId}]
             const filterString = JSON.stringify(filter);
             const encodedFilter = encodeURIComponent(filterString);
-            const headers = new HttpHeaders().set('authorization', `Bearer 9vPF8rbIvtMoksQyhVBLWtqwjYflTx9z4-LCqZ2PFwY`);
-            this.http.get(`https://app.pennylane.com/api/external/v1/customer_invoices?filter=${encodedFilter}`, { headers }).subscribe(
+            this.http.get('https://app.pennylane.com/api/external/v1/').subscribe(
               resData => {
                 console.log('Penny Data: ', resData);
               }
