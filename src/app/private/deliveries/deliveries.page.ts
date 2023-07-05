@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DeliveriesService } from 'src/app/services/deliveries.service';
 
 @Component({
   selector: 'app-deliveries',
@@ -7,9 +8,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DeliveriesPage implements OnInit {
 
-  constructor() { }
+  constructor(
+    private deliveriesService: DeliveriesService,
+  ) { }
 
   ngOnInit() {
+
+  }
+
+  ionViewWillEnter() {
+    this.deliveriesService.fetchDeliveries().subscribe();
   }
 
 }
