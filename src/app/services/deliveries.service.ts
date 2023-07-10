@@ -5,6 +5,7 @@ import { Storage } from '@ionic/storage-angular';
 import { HttpClient } from '@angular/common/http';
 import { DASHDOC_API_URL } from './constants';
 import { Request } from '../private/models/request.model';
+import { format } from 'date-fns';
 
 @Injectable({
   providedIn: 'root'
@@ -33,8 +34,8 @@ export class DeliveriesService {
           const deliveries: Array<Delivery> = resData.results.map((data:any) => {
           // Parse deliveries array for get needed data
           const deliveriesData = data.deliveries.map((delivery: any) => {
-            const { uid, origin, destination } = delivery;
-            return { uid, origin, destination };
+            const { uid, origin, destination, loads } = delivery;
+            return { uid, origin, destination, loads };
           });
 
           // check if data.segments[0].trailers[0] is defined
@@ -45,8 +46,7 @@ export class DeliveriesService {
             data.global_status,
             data.pricing_total_price,
             deliveriesData,
-            licensePlate,
-            data.created,
+            licensePlate
           )
         });
         return deliveries;
@@ -57,5 +57,21 @@ export class DeliveriesService {
         this._deliveries.next(deliveries);
       })
     )
+  }
+
+  getDatePostcode(delivery: Array<any>, source:string){
+    let data;
+
+    if (source === 'origin') {
+      const startDate = new Date(delivery[0].origin.real_start);
+      const formattedStartDate = format(startDate, 'dd-MM-yyyy');
+      data = `${formattedStartDate} - ${delivery[0].origin.address.postcode}`;
+    } else if (source === 'destination') {
+      const endDate = new Date(delivery[delivery.length - 1].destination.real_end);
+      const formattedEndDate = format(endDate, 'dd-MM-yyyy');
+      data = `${formattedEndDate} - ${delivery[delivery.length - 1].destination.address.postcode}`;
+    }
+
+    return data;
   }
 }

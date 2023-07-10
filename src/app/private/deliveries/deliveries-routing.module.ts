@@ -9,13 +9,14 @@ const routes: Routes = [
     component: DeliveriesPage
   },
   {
-    path: 'edit-delivery',
-    loadChildren: () => import('./edit-delivery/edit-delivery.module').then( m => m.EditDeliveryPageModule)
-  },
-  {
     path: 'new-delivery',
     loadChildren: () => import('./new-delivery/new-delivery.module').then( m => m.NewDeliveryPageModule)
+  },
+  {
+    path: 'detail-delivery/:id',
+    loadChildren: () => import('./detail-delivery/detail-delivery.module').then( m => m.DetailDeliveryPageModule)
   }
+
 ];
 
 @NgModule({

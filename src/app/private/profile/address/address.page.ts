@@ -29,10 +29,10 @@ export class AddressPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.addressSub = this.addressService.address.subscribe(address => {
-      this.address = address;
-      this.jsonData = address;
-    })
+    // this.addressSub = this.addressService.address.subscribe(address => {
+    //   this.address = address;
+    //   this.jsonData = address;
+    // })
   }
 
   ionViewWillEnter() {

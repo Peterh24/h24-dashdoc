@@ -27,8 +27,6 @@ export class EditAddressPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.countriesService.countries.pipe(take(1)).subscribe(countries => {
-      this.countries = countries;
       this.route.paramMap.subscribe(
         paramMap => {
           if(!paramMap.has('adressId')) {
@@ -71,8 +69,6 @@ export class EditAddressPage implements OnInit {
           })
         }
       )
-    })
-
   }
 
 

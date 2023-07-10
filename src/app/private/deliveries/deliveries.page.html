@@ -1,13 +1,84 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>deliveries</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content>
+  <ion-grid class="page-grid">
+    <ion-row>
+      <ion-col>
+        <h2>Transports</h2>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-segment value="all" mode="ios">
+          <ion-segment-button color="primary" value="all">
+            <ion-label>Tous</ion-label>
+          </ion-segment-button>
+          <ion-segment-button color="primary" value="pending">
+            <ion-label>En Attente</ion-label>
+          </ion-segment-button>
+          <ion-segment-button color="primary" value="active">
+            <ion-label>En cours</ion-label>
+          </ion-segment-button>
+          <ion-segment-button color="primary" value="finished">
+            <ion-label>Terminé(s)</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </ion-col>
+    </ion-row>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">deliveries</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <ion-row *ngIf="isLoading">
+      <ion-col class="ion-text-center">
+        <ion-spinner  color="primary"></ion-spinner>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="!isLoading && deliveries.length <= 0">
+      <ion-col>
+        <p class="ion-text-center">
+          Vous n'avez pas de demande de transports
+        </p>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="!isLoading && deliveries.length > 0">
+      <ion-col>
+        <ion-accordion-group>
+          <ion-item-sliding #slidingItem *ngFor="let item of jsonData">
+            <ion-item-options side="start" (click)="onDetail(item.uid, slidingItem)">
+              <ion-item-option color="success">
+                <ion-icon name="create" slot="icon-only"></ion-icon>
+              </ion-item-option>
+            </ion-item-options>
+
+            <ion-accordion  [value]="item.uid" >
+              <ion-item slot="header">
+                <div class="accordion-header">
+                  <div class="accordion-row">
+                    <ion-label>
+                      <h3>{{item.shipper_reference || 'Pas de référence'}}</h3>
+                    </ion-label>
+                    <ion-badge [class]="'status-'+item.global_status" slot="end">{{getStatus(item.global_status)}}</ion-badge>
+                  </div>
+                  <div class="accordion-row accordion-row-destination">
+                    <ion-label class="centered-label" color="secondary">
+                      {{getDate(item.deliveries, 'origin')}} <ion-icon name="arrow-forward-outline"></ion-icon> {{getDate(item.deliveries, 'destination')}}
+                    </ion-label>
+                  </div>
+                  <div class="accordion-row accordion-row-price">
+                    <ion-label color="secondary">
+                      {{item.pricing_total_price | priceFormat }} € TTC
+                    </ion-label>
+                  </div>
+                </div>
+              </ion-item>
+              <div class="content ion-no-padding" slot="content">
+                Blablabla
+              </div>
+            </ion-accordion>
+
+
+          </ion-item-sliding>
+        </ion-accordion-group>
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
 </ion-content>

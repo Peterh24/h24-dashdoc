@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { DeliveriesPageRoutingModule } from './deliveries-routing.module';
 
 import { DeliveriesPage } from './deliveries.page';
+import { priceFormatPipe } from 'src/app/utils/pipes/price-format.pipe';
 
 @NgModule({
   imports: [
@@ -15,6 +16,6 @@ import { DeliveriesPage } from './deliveries.page';
     IonicModule,
     DeliveriesPageRoutingModule
   ],
-  declarations: [DeliveriesPage]
+  declarations: [DeliveriesPage, priceFormatPipe]
 })
 export class DeliveriesPageModule {}

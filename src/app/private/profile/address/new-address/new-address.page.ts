@@ -28,8 +28,6 @@ export class NewAddressPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.countriesService.countries.pipe(take(1)).subscribe(countries => {
-      this.countries = countries;
       this.form = new FormGroup({
         name: new FormControl(null, {
           updateOn: 'blur',
@@ -56,7 +54,6 @@ export class NewAddressPage implements OnInit {
           validators: []
         })
       });
-    })
   }
 
   onCreateOffer(){

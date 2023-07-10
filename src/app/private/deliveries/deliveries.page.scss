@@ -1,0 +1,36 @@
+ion-content {
+  --padding-top: 56px;
+}
+
+ion-segment-button {
+  --background-checked: var(--ion-color-primary);
+  --color-checked: var(--ion-color-primary-contrast);
+  --indicator-color : var(--ion-color-primary)!important;
+}
+
+.accordion-header {
+  width: 100%;
+  padding: 10px 0;
+  .accordion-row {
+    display: flex;
+    justify-content: space-between;
+    &-destination {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    &-price {
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    h3 {
+      font-weight: bold;
+    }
+  }
+}
+
+.centered-label {
+  gap: 5px;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+}
