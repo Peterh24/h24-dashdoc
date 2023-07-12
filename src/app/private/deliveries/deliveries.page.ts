@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { Delivery } from './delivery.model';
-import { IonItemSliding } from '@ionic/angular';
+import { IonInfiniteScroll, IonItemSliding } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { StatusService } from 'src/app/utils/services/status.service';
 
@@ -15,6 +15,8 @@ export class DeliveriesPage implements OnInit {
   jsonData: any;
   isLoading: boolean = false;
   startIndex: number = 0;
+  noFilter: boolean;
+  @ViewChild('infiniteScroll') infiniteScroll: IonInfiniteScroll;
   constructor(
     private deliveriesService: DeliveriesService,
     private router: Router,
@@ -52,15 +54,40 @@ export class DeliveriesPage implements OnInit {
   }
 
   loadMoreData(event: any) {
+    if (this.startIndex === 0) {
+      this.startIndex += 10;
+    }
+
     const nextDeliveries = this.deliveries.slice(this.startIndex, this.startIndex + 10);
-    console.log('nextDeliveries: ', nextDeliveries)
+
     if (nextDeliveries.length > 0) {
-      this.jsonData = this.jsonData.concat(nextDeliveries);
+      this.jsonData.push(...nextDeliveries);
       this.startIndex += 10;
     } else {
       event.target.disabled = true; // Désactiver le chargement supplémentaire s'il n'y a plus d'adresses
     }
+
     event.target.complete(); // Indiquer que le chargement est terminé
+  }
+
+  filterChanged(status: any) {
+    this.startIndex = 0;
+    const statusValue = status.detail.value;
+    let filteredDeliveries: Array<Delivery>;
+
+    if (this.infiniteScroll) {
+      this.infiniteScroll.disabled = false;
+    }
+    if (statusValue === 'all') {
+      filteredDeliveries = this.deliveries.slice(0, this.startIndex + 10);
+    } else {
+      filteredDeliveries = this.deliveries.filter((item) => {
+        return item.global_status.toLowerCase().includes(statusValue.toLowerCase());
+      });
+      filteredDeliveries = filteredDeliveries.slice(0, 10);
+    }
+    this.jsonData = filteredDeliveries;
+    this.noFilter = filteredDeliveries.length === 0;
   }
 
 }

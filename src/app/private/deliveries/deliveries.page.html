@@ -7,17 +7,17 @@
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-segment value="all" mode="ios">
+        <ion-segment value="all" mode="ios" (ionChange)="filterChanged($event)" value="all">
           <ion-segment-button color="primary" value="all">
             <ion-label>Tous</ion-label>
           </ion-segment-button>
-          <ion-segment-button color="primary" value="pending">
-            <ion-label>En Attente</ion-label>
+          <ion-segment-button color="primary" value="accepted">
+            <ion-label>Validé(s)</ion-label>
           </ion-segment-button>
-          <ion-segment-button color="primary" value="active">
+          <ion-segment-button color="primary" value="ongoing">
             <ion-label>En cours</ion-label>
           </ion-segment-button>
-          <ion-segment-button color="primary" value="finished">
+          <ion-segment-button color="primary" value="done">
             <ion-label>Terminé(s)</ion-label>
           </ion-segment-button>
         </ion-segment>
@@ -38,10 +38,19 @@
       </ion-col>
     </ion-row>
 
+    <ion-row *ngIf="noFilter">
+      <ion-col>
+        <p class="ion-text-center">
+          Vous n'avez pas de transport(s) avec ce status
+        </p>
+      </ion-col>
+    </ion-row>
+
     <ion-row *ngIf="!isLoading && deliveries.length > 0">
       <ion-col>
         <ion-accordion-group>
           <ion-item-sliding #slidingItem *ngFor="let item of jsonData">
+            <ion-text *ngIf="noFilter">Vous n'avez pas de transport avec ce status</ion-text>
             <ion-item-options side="start" (click)="onDetail(item.uid, slidingItem)">
               <ion-item-option color="success">
                 <ion-icon name="create" slot="icon-only"></ion-icon>
@@ -85,7 +94,7 @@
           </ion-item-sliding>
         </ion-accordion-group>
 
-        <ion-infinite-scroll threshold="0" (ionInfinite)="loadMoreData($event)">
+        <ion-infinite-scroll #infiniteScroll threshold="0" (ionInfinite)="loadMoreData($event)">
           <ion-infinite-scroll-content></ion-infinite-scroll-content>
         </ion-infinite-scroll>
       </ion-col>
