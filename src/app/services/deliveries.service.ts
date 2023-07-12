@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { DASHDOC_API_URL } from './constants';
 import { Request } from '../private/models/request.model';
 import { format } from 'date-fns';
+import { CountriesService } from '../utils/services/countries.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class DeliveriesService {
   constructor(
     private http: HttpClient,
     private storage: Storage,
+    private countriesService: CountriesService
   ) { }
 
   fetchDeliveries() {
@@ -63,15 +65,22 @@ export class DeliveriesService {
     let data;
 
     if (source === 'origin') {
-      const startDate = new Date(delivery[0].origin.real_start);
+      const startDate = new Date(delivery[0].origin.slots[0].start);
       const formattedStartDate = format(startDate, 'dd-MM-yyyy');
       data = `${formattedStartDate} - ${delivery[0].origin.address.postcode}`;
     } else if (source === 'destination') {
-      const endDate = new Date(delivery[delivery.length - 1].destination.real_end);
+      const endDate = new Date(delivery[delivery.length - 1].destination.slots[0].end);
       const formattedEndDate = format(endDate, 'dd-MM-yyyy');
       data = `${formattedEndDate} - ${delivery[delivery.length - 1].destination.address.postcode}`;
     }
 
+    return data;
+  }
+
+  getAddress(delivery: Array<any>, source:string){
+    let data;
+    let objectSource = delivery[0][source].address;
+    data = objectSource.address +', '+ objectSource.postcode +' '+ objectSource.city +' '+ this.countriesService.getCountry(objectSource.country) ;
     return data;
   }
 }

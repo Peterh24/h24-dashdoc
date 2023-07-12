@@ -64,9 +64,21 @@
 }
 
 ion-badge {
-  &.status-done {
+  min-width: 62px;
+  --background: var(--ion-color-medium);
+  --color: var(--ion-color-medium-contrast);
+  &.status-done,
+  &.status-declined {
     --background: var(--ion-color-primary);
     --color: var(--ion-color-primary-contrast);
+  }
+  &.status-accepted {
+    --background: var(--ion-color-warning);
+    --color: var(--ion-color-primary-contrast);
+  }
+  &.status-ongoing {
+    --background: var(--ion-color-success);
+    --color: var(--ion-color-success-contrast);
   }
   --padding-top: 5px;
   --padding-end: 10px;

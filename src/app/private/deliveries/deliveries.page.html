@@ -62,21 +62,32 @@
                       {{getDate(item.deliveries, 'origin')}} <ion-icon name="arrow-forward-outline"></ion-icon> {{getDate(item.deliveries, 'destination')}}
                     </ion-label>
                   </div>
-                  <div class="accordion-row accordion-row-price">
+                  <div class="accordion-row accordion-row-price" *ngIf="item.pricing_total_price">
                     <ion-label color="secondary">
                       {{item.pricing_total_price | priceFormat }} € TTC
                     </ion-label>
                   </div>
                 </div>
               </ion-item>
-              <div class="content ion-no-padding" slot="content">
-                Blablabla
-              </div>
+              <ion-item class="content ion-no-padding" slot="content">
+                <ion-label class="ion-padding-start ion-padding-end origin-address">
+                  <p class="ion-no-margin ion-text-truncate"  color="primary">
+                    <ion-text color="primary"><span>Enlèvement:</span> {{getAddress(item.deliveries, 'origin')}}</ion-text>
+                  </p>
+                  <p class="ion-no-margin ion-text-truncate"  color="primary">
+                    <ion-text color="primary"><span>Livraison:</span> {{getAddress(item.deliveries, 'destination')}}</ion-text>
+                  </p>
+                </ion-label>
+              </ion-item>
             </ion-accordion>
 
 
           </ion-item-sliding>
         </ion-accordion-group>
+
+        <ion-infinite-scroll threshold="0" (ionInfinite)="loadMoreData($event)">
+          <ion-infinite-scroll-content></ion-infinite-scroll-content>
+        </ion-infinite-scroll>
       </ion-col>
     </ion-row>
 

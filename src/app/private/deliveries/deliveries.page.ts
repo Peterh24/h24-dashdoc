@@ -14,6 +14,7 @@ export class DeliveriesPage implements OnInit {
   deliveries: Array<Delivery> = [];
   jsonData: any;
   isLoading: boolean = false;
+  startIndex: number = 0;
   constructor(
     private deliveriesService: DeliveriesService,
     private router: Router,
@@ -43,7 +44,23 @@ export class DeliveriesPage implements OnInit {
   }
 
   getDate(delivery: Array<any>, source:string) {
-    return this.deliveriesService.getDatePostcode(delivery, source)
+    return this.deliveriesService.getDatePostcode(delivery, source);
+  }
+
+  getAddress(delivery: Array<any>, source:string) {
+    return this.deliveriesService.getAddress(delivery, source);
+  }
+
+  loadMoreData(event: any) {
+    const nextDeliveries = this.deliveries.slice(this.startIndex, this.startIndex + 10);
+    console.log('nextDeliveries: ', nextDeliveries)
+    if (nextDeliveries.length > 0) {
+      this.jsonData = this.jsonData.concat(nextDeliveries);
+      this.startIndex += 10;
+    } else {
+      event.target.disabled = true; // Désactiver le chargement supplémentaire s'il n'y a plus d'adresses
+    }
+    event.target.complete(); // Indiquer que le chargement est terminé
   }
 
 }

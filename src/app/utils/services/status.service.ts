@@ -9,16 +9,28 @@ export class StatusService {
   private statusArray =
     [
       {key: 'done', value:'Terminé'},
-      {key: 'declined', value: 'Annulé'}
+      {key: 'declined', value: 'Annulé'},
+      {key: 'accepted', value: 'Validé'},
+      {key: 'ongoing', value: 'En cours'},
+      {key: 'other', value: 'Autre'},
     ]
 
 
   get status() {
     return this.statusArray;
   }
-
   getStatus(key: string) {
-    return this.status.find(s => s.key === key).value;
+    const statusItem = this.status.find(s => s.key === key);
+    if (statusItem) {
+      return statusItem.value;
+    } else {
+      const otherItem = this.status.find(s => s.key === 'other');
+      if (otherItem) {
+        return otherItem.value;
+      } else {
+        return null;
+      }
+    }
   }
 
   constructor() { }
