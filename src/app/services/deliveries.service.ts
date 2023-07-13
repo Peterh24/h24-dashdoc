@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, EMPTY, expand, map, reduce, tap } from 'rxjs';
+import { BehaviorSubject, EMPTY, expand, map, reduce, take, tap } from 'rxjs';
 import { Delivery } from '../private/deliveries/delivery.model';
 import { Storage } from '@ionic/storage-angular';
 import { HttpClient } from '@angular/common/http';
@@ -59,6 +59,15 @@ export class DeliveriesService {
         this._deliveries.next(deliveries);
       })
     )
+  }
+
+  getDelivery(id: any){
+    return this.deliveries.pipe(
+      take(1),
+      map(delivery => {
+        return delivery.find(d => d.uid === id);
+      })
+    );
   }
 
   getDatePostcode(delivery: Array<any>, source:string){
