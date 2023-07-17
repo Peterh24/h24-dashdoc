@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, EMPTY, expand, map, reduce, take, tap } from 'rxjs';
-import { Delivery } from '../private/deliveries/delivery.model';
+import { Deliveries, Delivery } from '../private/deliveries/delivery.model';
 import { Storage } from '@ionic/storage-angular';
 import { HttpClient } from '@angular/common/http';
 import { DASHDOC_API_URL } from './constants';
 import { Request } from '../private/models/request.model';
-import { format } from 'date-fns';
+import { compareAsc, format, parseISO } from 'date-fns';
 import { CountriesService } from '../utils/services/countries.service';
 
 @Injectable({
@@ -33,12 +33,38 @@ export class DeliveriesService {
         }
       }),
       map((resData: Request) => {
-          const deliveries: Array<Delivery> = resData.results.map((data:any) => {
+        const deliveries: Array<Delivery> = resData.results.map((data:any) => {
           // Parse deliveries array for get needed data
           const deliveriesData = data.deliveries.map((delivery: any) => {
             const { uid, origin, destination, loads } = delivery;
             return { uid, origin, destination, loads };
+          }).sort((delivery1: Deliveries, delivery2: Deliveries) => {
+            // console.log('delivery1: ', parseISO(delivery1.origin.real_start));
+            // console.log('delivery2: ', parseISO(delivery2.origin.real_start));
+            // console.log('Boolean: ', compareAsc(new Date(delivery1.origin.real_start), new Date(delivery2.origin.real_start)));
+
+
+            // CASE Multiple "origin" but one "destination"
+            //
+            // the date is different because the transporter need to go to multiple place
+            // he can't go to this places at the same time
+            // Sort the devliveries by date (orign.real_start)
+
+
+            // Case One "origin"  but multiple "destination"
+            //
+            // the date is the same because the transporter take all deliveries at the same place
+            // Sort the devliveries by destination date (destination.real_end).
+            const dateDiff = compareAsc(new Date(delivery1.origin.real_start), new Date(delivery2.origin.real_start));
+            if(dateDiff != 0) {
+              return dateDiff;
+            }
+            return compareAsc(new Date(delivery1.destination.real_end), new Date(delivery2.destination.real_end));
+            //return format(new Date(delivery1.origin.real_start), 't') > format(new Date(delivery2.origin.real_start), 't') ? -1 : 1;
           });
+
+          //console.log('deliveriesData: ', deliveriesData)
+
 
           // check if data.segments[0].trailers[0] is defined
           const licensePlate = data.segments[0].trailers[0] ? data.segments[0].trailers[0].license_plate : '';
@@ -51,11 +77,12 @@ export class DeliveriesService {
             licensePlate
           )
         });
+
+
         return deliveries;
       }),
       reduce((deliveries: Delivery[], results: Delivery[]) => deliveries.concat(results), []),
       tap((deliveries: Delivery[]) => {
-        console.log('deliveries: ', deliveries);
         this._deliveries.next(deliveries);
       })
     )
@@ -87,9 +114,14 @@ export class DeliveriesService {
   }
 
   getAddress(delivery: Array<any>, source:string){
-    let data;
-    let objectSource = delivery[0][source].address;
-    data = objectSource.address +', '+ objectSource.postcode +' '+ objectSource.city +' '+ this.countriesService.getCountry(objectSource.country) ;
-    return data;
+    let objectSource;
+
+    if (source === 'origin') {
+      objectSource = delivery[0][source].address;
+    } else if (source === 'destination') {
+      objectSource = delivery[delivery.length -1][source].address;
+    }
+
+    return objectSource.address +', '+ objectSource.postcode +' '+ objectSource.city +' '+ this.countriesService.getCountry(objectSource.country);
   }
 }
