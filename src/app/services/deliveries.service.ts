@@ -74,6 +74,7 @@ export class DeliveriesService {
             data.global_status,
             data.pricing_total_price,
             deliveriesData,
+            data.messages,
             licensePlate
           )
         });

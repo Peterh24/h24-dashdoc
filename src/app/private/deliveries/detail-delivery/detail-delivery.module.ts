@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { DetailDeliveryPageRoutingModule } from './detail-delivery-routing.module';
 
 import { DetailDeliveryPage } from './detail-delivery.page';
+import { ModalImgComponent } from './modal-img/modal-img.component';
 
 @NgModule({
   imports: [
@@ -15,6 +16,9 @@ import { DetailDeliveryPage } from './detail-delivery.page';
     IonicModule,
     DetailDeliveryPageRoutingModule
   ],
-  declarations: [DetailDeliveryPage]
+  declarations: [
+    DetailDeliveryPage,
+    ModalImgComponent
+  ]
 })
 export class DetailDeliveryPageModule {}

@@ -5,6 +5,7 @@ export class Delivery {
     public global_status: string,
     public pricing_total_price: number,
     public deliveries: Array<Deliveries>,
+    public messages: Array<Message>,
     public license_plate: string,
   ){}
 }
@@ -14,6 +15,11 @@ export interface Deliveries {
   origin: Information;
   destination: Information;
   loads: Array<Load>
+}
+
+export interface Message {
+  created: string;
+  document: string;
 }
 
 export interface Information {

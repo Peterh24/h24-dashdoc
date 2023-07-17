@@ -9,9 +9,87 @@
       <ion-col>
         <ion-card>
           <ion-card-content>
-            L'image du camion
+            <ion-img [src]="'https://h24-public-website.s3.eu-west-3.amazonaws.com/assets/global/img/cars/'+delivery.license_plate+'.jpeg'"></ion-img>
           </ion-card-content>
         </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <div *ngIf="delivery.deliveries.length <= 1">
+          <ion-card>
+            <ion-card-content>
+              <h3 class="card-title">Enlèvements</h3>
+              <p class="card-date">
+                {{getDate(delivery.deliveries[0].origin.real_start)}} à {{getHour(delivery.deliveries[0].origin.real_start)}}
+              </p>
+              <div class="card-address">
+                <span>{{delivery.deliveries[0].origin.address.address}}</span>
+                <span>{{delivery.deliveries[0].origin.address.postcode + delivery.deliveries[0].origin.address.city}}</span>
+              </div>
+              <div class="card-contact">
+                <span>Contact : </span>**TODO**
+              </div>
+              <div class="card-loads" *ngIf="delivery.deliveries[0].loads.length > 0">
+                <span>Chargement : </span>
+                <span *ngFor="let load of delivery.deliveries[0].loads; let last = last">
+                  {{load.description}}{{ !last ? ', ' : '' }}
+                </span>
+
+              </div>
+              <div class="card-contact" *ngIf="delivery.deliveries[0].origin.instructions">
+                <span>Instructions : </span>
+                {{delivery.deliveries[0].origin.instructions}}
+              </div>
+            </ion-card-content>
+          </ion-card>
+          <ion-card>
+            <ion-card-content>
+              <h3 class="card-title">Livraison</h3>
+              <p class="card-date">
+                {{getDate(delivery.deliveries[0].destination.real_end)}} à {{getHour(delivery.deliveries[0].destination.real_end)}}
+              </p>
+              <div class="card-address">
+                <span>{{delivery.deliveries[0].destination.address.address}}</span>
+                <span>{{delivery.deliveries[0].destination.address.postcode + delivery.deliveries[0].destination.address.city}}</span>
+              </div>
+              <div class="card-contact" *ngIf="delivery.deliveries[0].destination.instructions">
+                <span>Instructions : </span>
+                {{delivery.deliveries[0].destination.instructions}}
+              </div>
+            </ion-card-content>
+          </ion-card>
+
+          <div *ngIf="delivery.global_status === 'done'">
+            <div class="images" *ngIf="delivery.messages.length > 0">
+              <ion-row>
+                <ion-col *ngFor="let image of delivery.messages">
+                  <h2>Images Associées</h2>
+                  <ion-item lines="none">
+                    <div class="image-container">
+                      <ion-thumbnail (click)="openImg(image.document, image.created)">
+                        <img alt="" [src]="image.document" />
+                        <div class="image-label">
+                          {{ getDate(image.created) }} - {{ getHour(image.created) }}
+                        </div>
+                      </ion-thumbnail>
+                    </div>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+
+            </div>
+          </div>
+
+        </div>
+        <ion-accordion-group *ngIf="delivery.deliveries.length > 1">
+          <ion-accordion value="first">
+            <ion-item slot="header" color="light">
+              <ion-label>First Accordion</ion-label>
+            </ion-item>
+            <div class="ion-padding" slot="content">First Content</div>
+          </ion-accordion>
+        </ion-accordion-group>
       </ion-col>
     </ion-row>
   </ion-grid>
