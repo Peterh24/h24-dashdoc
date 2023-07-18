@@ -42,6 +42,8 @@ export interface Address {
   postcode: string,
   city: string,
   country: string
+  latitude: number;
+  longitude: number;
 }
 
 export interface Load {
