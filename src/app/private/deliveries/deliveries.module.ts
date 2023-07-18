@@ -16,6 +16,6 @@ import { priceFormatPipe } from 'src/app/utils/pipes/price-format.pipe';
     IonicModule,
     DeliveriesPageRoutingModule
   ],
-  declarations: [DeliveriesPage, priceFormatPipe]
+  declarations: [DeliveriesPage, priceFormatPipe],
 })
 export class DeliveriesPageModule {}

@@ -7,6 +7,29 @@ ion-thumbnail {
   position: relative;
 }
 
+ion-card-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 400;
+  span {
+    &:first-child {
+      font-weight: 700;
+    }
+  }
+  .card-title {
+    font-size: 18px;
+    font-weight: 500;
+  }
+  .card-date {
+    span {
+      font-weight: 700;
+    }
+  }
+}
+
 .image-label {
   position: absolute;
   bottom: 3px;
@@ -17,4 +40,15 @@ ion-thumbnail {
   color: white;
   font-size: 12px;
   background: rgba(0, 0, 0, 0.5);
+}
+
+.map {
+  display: block;
+  width: 100%;
+  height: 300px;
+  capacitor-google-map {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+  }
 }

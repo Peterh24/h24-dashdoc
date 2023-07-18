@@ -21,10 +21,10 @@
             <ion-card-content>
               <h3 class="card-title">Enlèvements</h3>
               <p class="card-date">
-                {{getDate(delivery.deliveries[0].origin.real_start)}} à {{getHour(delivery.deliveries[0].origin.real_start)}}
+                <span>{{getDate(delivery.deliveries[0].origin.real_start)}}</span> à <span>{{getHour(delivery.deliveries[0].origin.real_start)}}</span>
               </p>
               <div class="card-address">
-                <span>{{delivery.deliveries[0].origin.address.address}}</span>
+                {{delivery.deliveries[0].origin.address.address}}<br>
                 <span>{{delivery.deliveries[0].origin.address.postcode + delivery.deliveries[0].origin.address.city}}</span>
               </div>
               <div class="card-contact">
@@ -47,10 +47,10 @@
             <ion-card-content>
               <h3 class="card-title">Livraison</h3>
               <p class="card-date">
-                {{getDate(delivery.deliveries[0].destination.real_end)}} à {{getHour(delivery.deliveries[0].destination.real_end)}}
+                <span>{{getDate(delivery.deliveries[0].destination.real_end)}}</span> à <span>{{getHour(delivery.deliveries[0].destination.real_end)}}</span>
               </p>
               <div class="card-address">
-                <span>{{delivery.deliveries[0].destination.address.address}}</span>
+                {{delivery.deliveries[0].destination.address.address}}<br>
                 <span>{{delivery.deliveries[0].destination.address.postcode + delivery.deliveries[0].destination.address.city}}</span>
               </div>
               <div class="card-contact" *ngIf="delivery.deliveries[0].destination.instructions">
@@ -59,26 +59,70 @@
               </div>
             </ion-card-content>
           </ion-card>
-
-
         </div>
+
+
         <ion-accordion-group *ngIf="delivery.deliveries.length > 1">
-          <ion-accordion value="first">
-            <ion-item slot="header" color="light">
-              <ion-label>First Accordion</ion-label>
+          <ion-accordion *ngFor="let delivery of delivery.deliveries; let index = index;" [value]="'step-'+index">
+            <ion-item slot="header">
+              <ion-label>Etape  {{index + 1}}</ion-label>
             </ion-item>
-            <div class="ion-padding" slot="content">First Content</div>
+            <div class="ion-padding" slot="content">
+              <ion-card>
+                <ion-card-content>
+                  <h3 class="card-title">Enlèvements</h3>
+                  <p class="card-date">
+                    <span>{{getDate(delivery.origin.real_start)}}</span> à <span>{{getHour(delivery.origin.real_start)}}</span>
+                  </p>
+                  <div class="card-address">
+                    {{delivery.origin.address.address}}<br>
+                    <span>{{delivery.origin.address.postcode +' '+ delivery.origin.address.city}}</span>
+                  </div>
+                  <div class="card-contact">
+                    <span>Contact : </span>**TODO**
+                  </div>
+                  <div class="card-loads" *ngIf="delivery.loads.length > 0">
+                    <span>Chargement : </span>
+                    <span *ngFor="let load of delivery.loads; let last = last">
+                      {{load.description}}{{ !last ? ', ' : '' }}
+                    </span>
+
+                  </div>
+                  <div class="card-contact" *ngIf="delivery.origin.instructions">
+                    <span>Instructions : </span>
+                    {{delivery.origin.instructions}}
+                  </div>
+                </ion-card-content>
+              </ion-card>
+              <ion-card>
+                <ion-card-content>
+                  <h3 class="card-title">Livraison</h3>
+                  <p class="card-date">
+                    <span>{{getDate(delivery.destination.real_end)}}</span> à <span>{{getHour(delivery.destination.real_end)}}</span>
+                  </p>
+                  <div class="card-address">
+                    {{delivery.destination.address.address}}<br>
+                    <span>{{delivery.destination.address.postcode +' '+ delivery.destination.address.city}}</span>
+                  </div>
+                  <div class="card-contact" *ngIf="delivery.destination.instructions">
+                    <span>Instructions : </span>
+                    {{delivery.destination.instructions}}
+                  </div>
+                </ion-card-content>
+              </ion-card>
+            </div>
           </ion-accordion>
         </ion-accordion-group>
       </ion-col>
     </ion-row>
+
     <ion-row>
       <ion-col>
         <div *ngIf="delivery.global_status === 'done'">
           <div class="images" *ngIf="delivery.messages.length > 0">
+            <h2>Images Associées</h2>
             <ion-row>
               <ion-col *ngFor="let image of delivery.messages">
-                <h2>Images Associées</h2>
                 <ion-item lines="none">
                   <div class="image-container">
                     <ion-thumbnail (click)="openImg(image.document, image.created)">
@@ -94,13 +138,19 @@
           </div>
 
           <div class="documents" *ngIf="delivery.documents.length > 0">
-            <ion-list>
-              <ion-item *ngFor="let document of delivery.documents">
-                <ion-label> {{ getDate(document.file_updated_date) }} - {{document.name}} </ion-label>
-                <ion-icon [name]="'download'" slot="end"></ion-icon>
-              </ion-item>
-            </ion-list>
+            <ion-row>
+              <ion-col>
+                <h2>Documents Associés</h2>
+                <ion-item *ngFor="let document of delivery.documents" (click)="openPdf(document.file)">
+                  <ion-label> {{ getDate(document.file_updated_date) }} - {{document.name}} </ion-label>
+                  <ion-icon [name]="'download'" slot="end"></ion-icon>
+                </ion-item>
+              </ion-col>
+            </ion-row>
           </div>
+        </div>
+        <div class="map">
+          <capacitor-google-map #map></capacitor-google-map>
         </div>
       </ion-col>
     </ion-row>
