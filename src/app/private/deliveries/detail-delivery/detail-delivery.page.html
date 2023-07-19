@@ -20,8 +20,8 @@
           <ion-card>
             <ion-card-content>
               <h3 class="card-title">Enlèvements</h3>
-              <p class="card-date">
-                <span>{{getDate(delivery.deliveries[0].origin.real_start)}}</span> à <span>{{getHour(delivery.deliveries[0].origin.real_start)}}</span>
+              <p class="card-date" *ngIf="delivery.deliveries[0].origin.slots !== null">
+                <span>{{getDate(delivery.deliveries[0].origin.slots[0].start)}}</span> à <span>{{getHour(delivery.deliveries[0].origin.slots[0].start)}}</span>
               </p>
               <div class="card-address">
                 {{delivery.deliveries[0].origin.address.address}}<br>
@@ -46,8 +46,8 @@
           <ion-card>
             <ion-card-content>
               <h3 class="card-title">Livraison</h3>
-              <p class="card-date">
-                <span>{{getDate(delivery.deliveries[0].destination.real_end)}}</span> à <span>{{getHour(delivery.deliveries[0].destination.real_end)}}</span>
+              <p class="card-date" *ngIf="delivery.deliveries[0].destination.slots !== null">
+                <span>{{getDate(delivery.deliveries[0].destination.slots[0].end)}}</span> à <span>{{getHour(delivery.deliveries[0].destination.slots[0].end)}}</span>
               </p>
               <div class="card-address">
                 {{delivery.deliveries[0].destination.address.address}}<br>
@@ -65,15 +65,15 @@
         <ion-accordion-group *ngIf="delivery.deliveries.length > 1">
           <ion-accordion *ngFor="let data of delivery.deliveries; let index = index;" [value]="'step-'+index">
             <ion-item slot="header">
-              <ion-label>Etape {{index + 1}} </ion-label>
+              <ion-label>Etape {{index + 1}} - {{data.origin.real_end || data.destination.real_end ? 'Terminé' : 'En cours'}} </ion-label>
             </ion-item>
             <div class="ion-padding" slot="content">
-              <ng-container *ngIf="index === 0 || data.origin.real_start !== delivery.deliveries[index-1].origin.real_start">
+              <ng-container *ngIf="index === 0 || data.origin.slots[0].start !== delivery.deliveries[index-1].origin.slots[0].start">
                 <ion-card>
                   <ion-card-content>
                     <h3 class="card-title">Enlèvements</h3>
                     <p class="card-date">
-                      <span>{{getDate(data.origin.real_start)}}</span> à <span>{{getHour(data.origin.real_start)}}</span>
+                      <span>{{getDate(data.origin.slots[0].start)}}</span> à <span>{{getHour(data.origin.slots[0].start)}}</span>
                     </p>
                     <div class="card-address">
                       {{data.origin.address.address}}<br>
@@ -96,12 +96,12 @@
                   </ion-card-content>
                 </ion-card>
               </ng-container>
-              <ng-container *ngIf="data.destination.real_end !== delivery.deliveries[index+1]?.destination.real_end || index === delivery.deliveries.length - 1">
+              <ng-container *ngIf="data.destination.slots[0].end !== delivery.deliveries[index+1]?.destination.slots[0].end || index === delivery.deliveries.length - 1">
                 <ion-card>
                   <ion-card-content>
                     <h3 class="card-title">Livraison</h3>
                     <p class="card-date">
-                      <span>{{getDate(data.destination.real_end)}}</span> à <span>{{getHour(data.destination.real_end)}}</span>
+                      <span>{{getDate(data.destination.slots[0].end)}}</span> à <span>{{getHour(data.destination.slots[0].end)}}</span>
                     </p>
                     <div class="card-address">
                       {{data.destination.address.address}}<br>

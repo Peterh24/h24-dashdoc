@@ -40,11 +40,9 @@ export class DeliveriesPage implements OnInit {
     this.filter.value = 'all';
   }
 
-  onDetail(deliveryId: number, slidingItem: IonItemSliding, status: string) {
+  onDetail(deliveryId: number, slidingItem: IonItemSliding) {
     slidingItem.close();
-    if(status === 'done'){
-      this.router.navigate([`/private/tabs/transports/detail-delivery/${deliveryId}`]);
-    }
+    this.router.navigate([`/private/tabs/transports/detail-delivery/${deliveryId}`]);
   }
 
   getStatus(statusKey: string){

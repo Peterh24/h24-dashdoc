@@ -51,9 +51,9 @@
         <ion-accordion-group>
           <ion-item-sliding #slidingItem *ngFor="let item of jsonData">
             <ion-text *ngIf="noFilter">Vous n'avez pas de transport avec ce status</ion-text>
-            <ion-item-options side="start" (click)="onDetail(item.uid, slidingItem, item.global_status)">
-              <ion-item-option [color]="item.global_status !== 'done' ? 'warning' : 'success'">
-                <ion-icon [name]="item.global_status !== 'done'? 'time': 'create'" slot="icon-only"></ion-icon>
+            <ion-item-options side="start" (click)="onDetail(item.uid, slidingItem)">
+              <ion-item-option color="success">
+                <ion-icon name="create" slot="icon-only"></ion-icon>
               </ion-item-option>
             </ion-item-options>
             <ion-accordion  [value]="item.uid" >

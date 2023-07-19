@@ -32,6 +32,7 @@ export interface Document {
 export interface Information {
   real_start: string,
   real_end: string,
+  slots: Array<any>,
   address: Address,
   instructions: string
 }
