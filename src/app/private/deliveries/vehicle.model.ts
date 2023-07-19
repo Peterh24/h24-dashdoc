@@ -8,7 +8,6 @@ export class Vehicle {
     public height_car: number,
     public height_chest: number,
     public payload: number,
-    public price: number,
-    public img: string
+    public price: number
   ){}
 }

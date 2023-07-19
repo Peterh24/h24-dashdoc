@@ -40,18 +40,15 @@ export class DeliveriesService {
             return { uid, origin, destination, loads };
           }).sort((delivery1: Deliveries, delivery2: Deliveries) => {
 
-            const dateDiff = compareAsc(new Date(delivery1.origin.slots[0].start), new Date(delivery2.origin.slots[0].start));
+            const dateDiff = compareAsc(new Date(delivery1.origin.real_start), new Date(delivery2.origin.real_start));
             if(dateDiff != 0) {
               return dateDiff;
-            }
-
-            //console.log('delivery 2: ', delivery2.destination.slots[0].start);
-            if(delivery2.destination.slots !=null){
-              return compareAsc(new Date(delivery1.destination.slots[0].end), new Date(delivery2.destination.slots[0].end));
             }
             return compareAsc(new Date(delivery1.destination.real_end), new Date(delivery2.destination.real_end));
             //return format(new Date(delivery1.origin.real_start), 't') > format(new Date(delivery2.origin.real_start), 't') ? -1 : 1;
           });
+
+          //console.log('deliveriesData: ', deliveriesData)
 
 
           // check if data.segments[0].trailers[0] is defined
