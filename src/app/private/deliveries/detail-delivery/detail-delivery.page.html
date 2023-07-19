@@ -63,53 +63,58 @@
 
 
         <ion-accordion-group *ngIf="delivery.deliveries.length > 1">
-          <ion-accordion *ngFor="let delivery of delivery.deliveries; let index = index;" [value]="'step-'+index">
+          <ion-accordion *ngFor="let data of delivery.deliveries; let index = index;" [value]="'step-'+index">
             <ion-item slot="header">
-              <ion-label>Etape  {{index + 1}}</ion-label>
+              <ion-label>Etape {{index + 1}} </ion-label>
             </ion-item>
             <div class="ion-padding" slot="content">
-              <ion-card>
-                <ion-card-content>
-                  <h3 class="card-title">Enlèvements</h3>
-                  <p class="card-date">
-                    <span>{{getDate(delivery.origin.real_start)}}</span> à <span>{{getHour(delivery.origin.real_start)}}</span>
-                  </p>
-                  <div class="card-address">
-                    {{delivery.origin.address.address}}<br>
-                    <span>{{delivery.origin.address.postcode +' '+ delivery.origin.address.city}}</span>
-                  </div>
-                  <div class="card-contact">
-                    <span>Contact : </span>**TODO**
-                  </div>
-                  <div class="card-loads" *ngIf="delivery.loads.length > 0">
-                    <span>Chargement : </span>
-                    <span *ngFor="let load of delivery.loads; let last = last">
-                      {{load.description}}{{ !last ? ', ' : '' }}
-                    </span>
+              <ng-container *ngIf="index === 0 || data.origin.real_start !== delivery.deliveries[index-1].origin.real_start">
+                <ion-card>
+                  <ion-card-content>
+                    <h3 class="card-title">Enlèvements</h3>
+                    <p class="card-date">
+                      <span>{{getDate(data.origin.real_start)}}</span> à <span>{{getHour(data.origin.real_start)}}</span>
+                    </p>
+                    <div class="card-address">
+                      {{data.origin.address.address}}<br>
+                      <span>{{data.origin.address.postcode +' '+ data.origin.address.city}}</span>
+                    </div>
+                    <div class="card-contact">
+                      <span>Contact : </span>**TODO**
+                    </div>
+                    <div class="card-loads" *ngIf="data.loads.length > 0">
+                      <span>Chargement : </span>
+                      <span *ngFor="let load of data.loads; let last = last">
+                        {{load.description}}{{ !last ? ', ' : '' }}
+                      </span>
 
-                  </div>
-                  <div class="card-contact" *ngIf="delivery.origin.instructions">
-                    <span>Instructions : </span>
-                    {{delivery.origin.instructions}}
-                  </div>
-                </ion-card-content>
-              </ion-card>
-              <ion-card>
-                <ion-card-content>
-                  <h3 class="card-title">Livraison</h3>
-                  <p class="card-date">
-                    <span>{{getDate(delivery.destination.real_end)}}</span> à <span>{{getHour(delivery.destination.real_end)}}</span>
-                  </p>
-                  <div class="card-address">
-                    {{delivery.destination.address.address}}<br>
-                    <span>{{delivery.destination.address.postcode +' '+ delivery.destination.address.city}}</span>
-                  </div>
-                  <div class="card-contact" *ngIf="delivery.destination.instructions">
-                    <span>Instructions : </span>
-                    {{delivery.destination.instructions}}
-                  </div>
-                </ion-card-content>
-              </ion-card>
+                    </div>
+                    <div class="card-contact" *ngIf="data.origin.instructions">
+                      <span>Instructions : </span>
+                      {{data.origin.instructions}}
+                    </div>
+                  </ion-card-content>
+                </ion-card>
+              </ng-container>
+              <ng-container *ngIf="data.destination.real_end !== delivery.deliveries[index+1]?.destination.real_end || index === delivery.deliveries.length - 1">
+                <ion-card>
+                  <ion-card-content>
+                    <h3 class="card-title">Livraison</h3>
+                    <p class="card-date">
+                      <span>{{getDate(data.destination.real_end)}}</span> à <span>{{getHour(data.destination.real_end)}}</span>
+                    </p>
+                    <div class="card-address">
+                      {{data.destination.address.address}}<br>
+                      <span>{{data.destination.address.postcode +' '+ data.destination.address.city}}</span>
+                    </div>
+                    <div class="card-contact" *ngIf="data.destination.instructions">
+                      <span>Instructions : </span>
+                      {{data.destination.instructions}}
+                    </div>
+                  </ion-card-content>
+                </ion-card>
+              </ng-container>
+
             </div>
           </ion-accordion>
         </ion-accordion-group>

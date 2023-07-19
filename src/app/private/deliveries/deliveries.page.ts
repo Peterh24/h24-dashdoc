@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { Delivery } from './delivery.model';
-import { IonInfiniteScroll, IonItemSliding } from '@ionic/angular';
+import { IonInfiniteScroll, IonItemSliding, IonSegment } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { StatusService } from 'src/app/utils/services/status.service';
 
@@ -17,6 +17,7 @@ export class DeliveriesPage implements OnInit {
   startIndex: number = 0;
   noFilter: boolean;
   @ViewChild('infiniteScroll') infiniteScroll: IonInfiniteScroll;
+  @ViewChild('filter') filter: IonSegment;
   constructor(
     private deliveriesService: DeliveriesService,
     private router: Router,
@@ -36,11 +37,14 @@ export class DeliveriesPage implements OnInit {
 
       console.log('deliveries:',  deliveries);
     });
+    this.filter.value = 'all';
   }
 
-  onDetail(deliveryId: number, slidingItem: IonItemSliding) {
+  onDetail(deliveryId: number, slidingItem: IonItemSliding, status: string) {
     slidingItem.close();
-    this.router.navigate([`/private/tabs/transports/detail-delivery/${deliveryId}`]);
+    if(status === 'done'){
+      this.router.navigate([`/private/tabs/transports/detail-delivery/${deliveryId}`]);
+    }
   }
 
   getStatus(statusKey: string){

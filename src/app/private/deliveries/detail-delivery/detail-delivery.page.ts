@@ -55,7 +55,7 @@ export class DetailDeliveryPage implements OnInit {
             // Check if the destination city is not equal to the destination origin
             if (destination.city !== origin.city) {
               // Check if the city is already in array
-              if (!this.mapMarkers.find(marker => marker.name === destination.city)) {
+              if (!this.mapMarkers.find(marker => marker.latitude === destination.latitude)) {
                 this.mapMarkers.push({ name: destination.city, latitude: destination.latitude, longitude: destination.longitude });
               }
             }
@@ -63,7 +63,7 @@ export class DetailDeliveryPage implements OnInit {
             // Check if the origin city is not equal to the destination city
             if (origin.city !== destination.city) {
               // Check if the city is already in array
-              if (!this.mapMarkers.find(marker => marker.name === origin.city)) {
+              if (!this.mapMarkers.find(marker => marker.latitude === origin.latitude)) {
                 this.mapMarkers.push({ name: origin.city, latitude: origin.latitude, longitude: origin.longitude });
               }
             }
