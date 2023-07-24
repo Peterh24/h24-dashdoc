@@ -1,38 +1,59 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Storage } from '@ionic/storage-angular';
-import { Observable, from, map, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, Observable, from, map, switchMap, tap } from 'rxjs';
+import { Customer, Invoice, Item } from '../private/profile/invoice/invoice.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InvoiceService {
-
+  private _invoices = new BehaviorSubject<Array<Invoice>>([]);
+  get deliveries() {
+    return this._invoices.asObservable();
+  }
   constructor(
     private http: HttpClient,
     private storage: Storage,
   ) { }
 
 
-  fetchInvoices(): Observable<any> {
+  fetchInvoices(): Observable<Invoice[]> {
     return from(this.storage.get('DASHDOC_COMPANY')).pipe(
       switchMap(companyPk => {
-        const headers = new HttpHeaders().set('Authorization', `Token 31655b74ee8a65cc933b5b00bc1d085fa11f2fb5`);
-        return this.http.get(`https://api.dashdoc.eu/api/v4/companies/${companyPk}/`, { headers }).pipe(
-          map(resData => {
-            return resData;
-          }),
-          tap((remoteId:any) => {
-            const invoiceId = remoteId.invoicing_remote_id;
-            const filter = [{"field": "customer_id", "operator": "eq", "value": invoiceId}]
-            const filterString = JSON.stringify(filter);
-            const encodedFilter = encodeURIComponent(filterString);
-            this.http.get('https://app.pennylane.com/api/external/v1/').subscribe(
-              resData => {
-                console.log('Penny Data: ', resData);
-              }
-            )
-            console.log('remoteId: ', invoiceId)
+        return this.http.get(`https://h24api.herokuapp.com/api/invoices/${companyPk}/`).pipe(
+          map((resData: any) => {
+            const invoices: Invoice[] = [];
+            resData.invoices.forEach((jsonData: any) => {
+              const items: Item[] = jsonData.line_items.map((lineItem: any) => ({
+                label: lineItem.label,
+                amount: lineItem.amount
+              }));
+
+              const customer: Customer = {
+                address: jsonData.customer.billing_address.address,
+                postal_code: jsonData.customer.billing_address.postal_code,
+                city: jsonData.customer.billing_address.city,
+                country_alpha2: jsonData.customer.billing_address.country_alpha2
+              };
+
+              const invoice: Invoice = new Invoice(
+                jsonData.id,
+                jsonData.invoice_number,
+                jsonData.amount,
+                jsonData.currency,
+                jsonData.status,
+                jsonData.file_url,
+                jsonData.filename,
+                jsonData.date,
+                customer,
+                items
+              );
+
+              invoices.push(invoice);
+            });
+
+            return invoices;
           })
         );
       })
