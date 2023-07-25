@@ -7,15 +7,17 @@ import { IonicModule } from '@ionic/angular';
 import { DeliveriesPageRoutingModule } from './deliveries-routing.module';
 
 import { DeliveriesPage } from './deliveries.page';
-import { priceFormatPipe } from 'src/app/utils/pipes/price-format.pipe';
+import { SharedModule } from 'src/app/shared/shared.module';
+
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    DeliveriesPageRoutingModule
+    DeliveriesPageRoutingModule,
+    SharedModule
   ],
-  declarations: [DeliveriesPage, priceFormatPipe],
+  declarations: [DeliveriesPage],
 })
 export class DeliveriesPageModule {}

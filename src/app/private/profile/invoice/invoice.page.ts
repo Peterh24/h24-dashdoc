@@ -3,6 +3,8 @@ import { InvoiceService } from 'src/app/services/invoice.service';
 import { Invoice } from './invoice.model';
 import { IonInfiniteScroll, IonSegment } from '@ionic/angular';
 import { StatusService } from 'src/app/utils/services/status.service';
+import { CountriesService } from 'src/app/utils/services/countries.service';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 
 @Component({
   selector: 'app-invoice',
@@ -19,7 +21,9 @@ export class InvoicePage implements OnInit {
   @ViewChild('filter') filter: IonSegment;
   constructor(
     private invoiceService: InvoiceService,
-    private statusService: StatusService
+    private statusService: StatusService,
+    private countryService: CountriesService,
+    private fileOpener: FileOpener
   ) { }
 
   ngOnInit() {
@@ -77,12 +81,23 @@ export class InvoicePage implements OnInit {
   }
 
 
-  onDownload(fileUrl: string) {
-    console.log('fileUrl: ', fileUrl);
+  onDownload(pdf: string) {
+    console.log('fileUrl: ', pdf);
+    this.fileOpener.open(pdf, 'application/pdf')
+    .then(() => {
+      console.log('File is opened')
+    })
+    .catch(e => {
+      console.log('Error opening file', e)
+    });
   }
 
   getStatus(statusKey: string){
     return this.statusService.getStatus(statusKey);
+  }
+
+  getCountry(key: string) {
+    return this.countryService.getCountry(key);
   }
 
 }

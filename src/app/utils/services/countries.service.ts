@@ -20,7 +20,7 @@ export class CountriesService {
     return this.countriesArray;
   }
 
-  getCountry(key: any) {
+  getCountry(key: string) {
     return this.countries.find(c => c.key === key).value;
   }
   constructor() { }
