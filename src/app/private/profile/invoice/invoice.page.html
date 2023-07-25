@@ -81,10 +81,6 @@
                   <p class="ion-no-margin ion-text-truncate"  color="primary">
                     <ion-text color="primary"><span>addresse :</span> {{item.customer.address + ' ' + item.customer.postal_code + ' ' + item.customer.city + ' ' + getCountry(item.customer.country_alpha2)}}</ion-text>
                   </p>
-                  <p class="ion-no-margin ion-text-truncate"  color="primary">
-                    <ion-text color="primary"><span>Préstation(s):</span></ion-text>
-                  </p>
-                  <p *ngFor="let prestation of item.line_items"><ion-text color="primary">{{prestation.label}} <span>({{(prestation.amount | priceFormat) +' '+ item.currency}})</span></ion-text></p>
                 </ion-label>
               </ion-item>
 
