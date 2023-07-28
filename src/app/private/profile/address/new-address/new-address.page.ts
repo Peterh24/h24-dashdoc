@@ -28,6 +28,7 @@ export class NewAddressPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.countries = this.countriesService.countries;
       this.form = new FormGroup({
         name: new FormControl(null, {
           updateOn: 'blur',
