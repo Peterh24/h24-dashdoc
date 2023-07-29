@@ -12,11 +12,21 @@ import Swiper from 'swiper';
 export class VehicleChoicePage implements OnInit {
   vehicles: Array<Vehicle>;
   currentVehicle: Vehicle;
+  public progress = 0;
   @ViewChild('swiper') swiperRef: ElementRef | undefined;
   swiper?: Swiper;
+  intervalRef: any;
   constructor(
     private vehicleService: VehiclesService
-  ) { }
+  ) { 
+
+    this.intervalRef = setInterval(() => { // Stockez la référence de l'intervalle
+      this.progress += 0.01;
+      if (this.progress > 0.25) {
+        clearInterval(this.intervalRef); // Arrêtez l'intervalle lorsque la condition est remplie
+      }
+    }, 30);
+  }
 
   ngOnInit() {
     this.vehicleService.vehicles.pipe(take(1)).subscribe(vehicles => {
