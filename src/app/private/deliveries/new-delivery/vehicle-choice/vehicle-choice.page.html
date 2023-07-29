@@ -1,13 +1,64 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>vehicle-choice</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content>
+  <ion-grid class="page-grid">
+    <ion-row>
+      <ion-col>
+        <h2>Sélection du vehicule</h2>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="swiper-wrap">
+        <ion-buttons class="ion-justify-content-between">
+          <ion-button (click)="goPrev()">
+            <ion-icon slot="icon-only" name="arrow-back-circle"></ion-icon>
+          </ion-button>
+          <ion-button (click)="goNext()">
+            <ion-icon slot="icon-only" name="arrow-forward-circle"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+        <swiper-container *ngIf="vehicles" #swiper (afterinit)="swiperReady()" [loop]="true" (slidechange)="onSlideChange($event)">
+          <swiper-slide *ngFor="let vehicle of vehicles">
+            <ion-img [src]="'https://h24-public-website.s3.eu-west-3.amazonaws.com/assets/global/img/cars/' + vehicle.license_plate + '.jpg'"></ion-img>
+          </swiper-slide>
+        </swiper-container>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <h3>{{currentVehicle.model +' '+ currentVehicle.type}} {{currentVehicle.hayon ? 'Hayon' : ''}}</h3>
+      </ion-col>
+    </ion-row>
+    <ion-row class="description">
+      <ion-col>
+        <span>longueur du véhicule</span>
+        {{currentVehicle.length}} mètres
+      </ion-col>
+      <ion-col>
+        <span>profondeur du coffre</span>
+        {{currentVehicle.depth}} mètres
+      </ion-col>
+    </ion-row>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">vehicle-choice</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <ion-row class="description">
+      <ion-col>
+        <span>hauteur du véhicule</span>
+        {{currentVehicle.height_car}} mètres
+      </ion-col>
+      <ion-col>
+        <span>hauteur du coffre</span>
+        {{currentVehicle.height_chest}} mètres
+      </ion-col>
+    </ion-row>
+    <ion-row class="description">
+      <ion-col>
+        <span>charge utile</span>
+        {{currentVehicle.payload}} Kg
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom" [routerLink]="['/private/tabs/transports/new-delivery/pick-up']">
+    <ion-button>
+      A partir de {{currentVehicle.price}} €
+      <ion-icon name="arrow-forward" class="ion-margin-start"></ion-icon>
+    </ion-button>
+  </ion-fab>
 </ion-content>
