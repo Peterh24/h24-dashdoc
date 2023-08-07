@@ -9,6 +9,7 @@ import { DetailDeliveryPageRoutingModule } from './detail-delivery-routing.modul
 import { DetailDeliveryPage } from './detail-delivery.page';
 import { ModalImgComponent } from './modal-img/modal-img.component';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { HeaderModule } from 'src/app/components';
 
 @NgModule({
   imports: [
@@ -16,6 +17,7 @@ import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
     FormsModule,
     IonicModule,
     DetailDeliveryPageRoutingModule,
+    HeaderModule
   ],
   declarations: [
     DetailDeliveryPage,

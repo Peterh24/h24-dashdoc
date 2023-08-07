@@ -21,14 +21,13 @@ export class HomePage implements OnInit, OnDestroy {
   @ViewChild('companyChoose', { static: false }) companyChoose: IonSelect;
   constructor(
     private storage: Storage,
-    private companyService: CompanyService,
+    public companyService: CompanyService,
     private modalCtrl: ModalController
   ) { }
 
   ngOnInit() {
     this.companiesSub = this.companyService.companies.subscribe(companies => {
       this.loadedCompanies = companies;
-      console.log('loading: ', this.loadedCompanies);
     })
   }
 

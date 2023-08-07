@@ -8,6 +8,7 @@ import { DeliveriesPageRoutingModule } from './deliveries-routing.module';
 
 import { DeliveriesPage } from './deliveries.page';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { HeaderModule } from 'src/app/components';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
     FormsModule,
     IonicModule,
     DeliveriesPageRoutingModule,
-    SharedModule
+    SharedModule,
+    HeaderModule
   ],
   declarations: [DeliveriesPage],
 })

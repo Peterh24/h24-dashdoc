@@ -9,6 +9,7 @@ import { InvoicePageRoutingModule } from './invoice-routing.module';
 import { InvoicePage } from './invoice.page';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { HeaderModule } from 'src/app/components';
 
 @NgModule({
   imports: [
@@ -16,7 +17,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
     FormsModule,
     IonicModule,
     InvoicePageRoutingModule,
-    SharedModule
+    SharedModule,
+    HeaderModule
   ],
   declarations: [InvoicePage],
   providers: [

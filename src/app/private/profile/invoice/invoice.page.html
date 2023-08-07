@@ -1,3 +1,5 @@
+<app-header [defaultHref]="'/private/tabs/profile/details'"></app-header>
+
 <ion-content>
   <ion-grid class="page-grid">
     <ion-row>
@@ -47,7 +49,7 @@
       </ion-col>
     </ion-row>
 
-    <ion-row *ngIf="!isLoading && invoices.length > 0">
+    <ion-row *ngIf="!isLoading && invoices?.length">
       <ion-col>
         <ion-accordion-group>
           <ion-item-sliding #slidingItem *ngFor="let item of jsonData">

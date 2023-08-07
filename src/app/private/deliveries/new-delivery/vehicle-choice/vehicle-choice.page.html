@@ -56,7 +56,7 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-fab slot="fixed" horizontal="end" vertical="bottom" [routerLink]="['/private/tabs/transports/new-delivery/pick-up']">
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom" (click)="onVehicleSelected(currentVehicle.license_plate)">
     <ion-button>
       A partir de {{currentVehicle.price}} €
       <ion-icon name="arrow-forward" class="ion-margin-start"></ion-icon>

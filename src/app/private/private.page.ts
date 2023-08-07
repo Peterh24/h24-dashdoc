@@ -46,13 +46,11 @@ export class PrivatePage implements OnInit {
       }
 
     });
-
-
   }
 
   isBackButtonVisible() {
     const currentUrl = this.platform.url();
-    if(currentUrl.includes('/home') || currentUrl.includes('/transports') || currentUrl.includes('/profile/details')) {
+    if(currentUrl.includes('/home') || currentUrl.includes('/profile/details')) {
       return false
     }
     return true

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TransportService } from 'src/app/services/transport.service';
 
 @Component({
   selector: 'app-pick-up',
@@ -7,9 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PickUpPage implements OnInit {
 
-  constructor() { }
+  constructor(
+    private transportService: TransportService,
+  ) { }
 
   ngOnInit() {
+    console.log('transport: ', this.transportService.transport);
   }
 
 }

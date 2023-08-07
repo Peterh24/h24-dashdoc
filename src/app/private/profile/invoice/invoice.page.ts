@@ -17,6 +17,7 @@ export class InvoicePage implements OnInit {
   jsonData: any;
   noFilter: boolean;
   isLoading: boolean = false;
+  hasError: boolean = false;
   @ViewChild('infiniteScroll') infiniteScroll: IonInfiniteScroll;
   @ViewChild('filter') filter: IonSegment;
   constructor(
@@ -38,6 +39,9 @@ export class InvoicePage implements OnInit {
       this.isLoading = false;
 
       console.log('invoices:',  invoices);
+    }, (error) => {
+      this.isLoading = false;
+      this.hasError = true;
     });
     this.filter.value = 'all';
   }

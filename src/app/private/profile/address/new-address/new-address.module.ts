@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { NewAddressPageRoutingModule } from './new-address-routing.module';
 
 import { NewAddressPage } from './new-address.page';
+import { HeaderModule } from 'src/app/components';
 
 @NgModule({
   imports: [
     CommonModule,
     ReactiveFormsModule,
     IonicModule,
-    NewAddressPageRoutingModule
+    NewAddressPageRoutingModule,
+    HeaderModule
   ],
   declarations: [NewAddressPage]
 })
