@@ -7,13 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { VehicleChoicePageRoutingModule } from './vehicle-choice-routing.module';
 
 import { VehicleChoicePage } from './vehicle-choice.page';
+import { HeaderModule, ProgressBarModule } from 'src/app/components';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    VehicleChoicePageRoutingModule
+    VehicleChoicePageRoutingModule,
+    HeaderModule,
+    ProgressBarModule
   ],
   declarations: [VehicleChoicePage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

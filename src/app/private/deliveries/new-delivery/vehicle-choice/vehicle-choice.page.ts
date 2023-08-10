@@ -14,24 +14,14 @@ import { Router } from '@angular/router';
 export class VehicleChoicePage implements OnInit {
   vehicles: Array<Vehicle>;
   currentVehicle: Vehicle;
-  public progress = 0;
   @ViewChild('swiper') swiperRef: ElementRef | undefined;
   swiper?: Swiper;
-  intervalRef: any;
   isEditMode = false;
   constructor(
     private vehicleService: VehiclesService,
     private transportService: TransportService,
     private router: Router
-  ) {
-
-    this.intervalRef = setInterval(() => { // Stockez la référence de l'intervalle
-      this.progress += 0.01;
-      if (this.progress > 0.25) {
-        clearInterval(this.intervalRef); // Arrêtez l'intervalle lorsque la condition est remplie
-      }
-    }, 30);
-  }
+  ) {}
 
   ngOnInit() {
     this.vehicleService.vehicles.pipe(

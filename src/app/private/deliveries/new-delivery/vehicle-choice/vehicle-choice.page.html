@@ -1,5 +1,7 @@
+<app-header [defaultHref]="'/private/home'"></app-header>
+
 <ion-content>
-  <ion-progress-bar [value]="progress"></ion-progress-bar>
+  <app-progress-bar [current]="0" [next]="0.20" ></app-progress-bar>
   <ion-grid class="page-grid">
     <ion-row>
       <ion-col>
