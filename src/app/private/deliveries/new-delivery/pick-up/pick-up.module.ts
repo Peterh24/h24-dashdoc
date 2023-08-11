@@ -8,6 +8,7 @@ import { PickUpPageRoutingModule } from './pick-up-routing.module';
 
 import { PickUpPage } from './pick-up.page';
 import { HeaderModule, ProgressBarModule } from 'src/app/components';
+import { HourComponent } from './hour/hour.component';
 
 @NgModule({
   imports: [
@@ -18,6 +19,6 @@ import { HeaderModule, ProgressBarModule } from 'src/app/components';
     HeaderModule,
     ProgressBarModule
   ],
-  declarations: [PickUpPage]
+  declarations: [PickUpPage, HourComponent]
 })
 export class PickUpPageModule {}

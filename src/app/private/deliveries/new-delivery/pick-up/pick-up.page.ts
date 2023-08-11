@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { LoadingController } from '@ionic/angular';
+import { LoadingController, ModalController } from '@ionic/angular';
 import { EMPTY, catchError, of, switchMap, take } from 'rxjs';
 import { AddressService } from 'src/app/services/address.service';
 import { TransportService } from 'src/app/services/transport.service';
+import { HourComponent } from './hour/hour.component';
 
 @Component({
   selector: 'app-pick-up',
@@ -14,7 +15,8 @@ export class PickUpPage implements OnInit {
   address: Array<any> = [];
   isLoading: boolean = false;
   selectedAccordionPk: any = null;
-
+  date: string;
+  hour: string;
   form = this.formBuilder.nonNullable.group({
     date: ['', [Validators.required]],
     hour: ['', [Validators.required]],
@@ -25,6 +27,7 @@ export class PickUpPage implements OnInit {
     private transportService: TransportService,
     private addressService: AddressService,
     private loadingController: LoadingController,
+    private modalController: ModalController,
   ) { }
 
   ngOnInit() {
@@ -59,5 +62,26 @@ export class PickUpPage implements OnInit {
 
   onSelectedAddress(addressPk: any){
     this.selectedAccordionPk = addressPk;
+  }
+
+  async openDatePicker(type: string) {
+    const modal = await this.modalController.create({
+      component: HourComponent,
+      componentProps: {
+        type: type,
+        initialBreakpoint: 1,
+        breakpoints: [0, 1]
+      },
+    })
+    modal.present();
+    const { data } = await modal.onWillDismiss();
+    if(type === 'date') {
+      this.date = data;
+    } else {
+      this.hour = data;
+    }
+
+    console.log('date: ', this.date);
+    console.log('hour: ', this.hour);
   }
 }

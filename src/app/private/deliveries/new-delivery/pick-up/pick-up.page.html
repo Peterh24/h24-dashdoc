@@ -36,7 +36,7 @@
                   <ion-col>
                     <ion-item class="ion-no-padding">
                       <ion-label position="floating" class="custom-size">Date d'enlèvement</ion-label>
-                      <ion-input type="text" formControlName="date" [disabled]="selectedAccordionPk !== address.pk"></ion-input>
+                      <ion-input type="text" formControlName="date" (click)="openDatePicker('date')" [disabled]="selectedAccordionPk !== address.pk"></ion-input>
                     </ion-item>
                   </ion-col>
                   <ion-col>
