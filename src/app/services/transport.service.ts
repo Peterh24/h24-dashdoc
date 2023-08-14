@@ -17,8 +17,10 @@ interface Transport {
 })
 export class TransportService {
   originNb:number = 0;
-  transport: Transport = {
-    segments: []
-  };
+  vehicle: {};
+  trailers: Array<any> = [];
+  deliveries: Array<any> = [];
+  segments: Array<any> = [];
+  transport: any = {};
   constructor() { }
 }

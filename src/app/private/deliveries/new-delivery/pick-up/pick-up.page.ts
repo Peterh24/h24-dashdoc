@@ -5,6 +5,9 @@ import { EMPTY, catchError, of, switchMap, take } from 'rxjs';
 import { AddressService } from 'src/app/services/address.service';
 import { TransportService } from 'src/app/services/transport.service';
 import { HourComponent } from './hour/hour.component';
+import { format, parseISO } from 'date-fns';
+import { fr } from 'date-fns/locale';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-pick-up',
@@ -22,16 +25,21 @@ export class PickUpPage implements OnInit {
     hour: ['', [Validators.required]],
     instruction: [''],
   });
+  vehicle: any;
   constructor(
     private formBuilder: FormBuilder,
     private transportService: TransportService,
     private addressService: AddressService,
     private loadingController: LoadingController,
     private modalController: ModalController,
+    private router: Router,
   ) { }
 
   ngOnInit() {
-
+    this.vehicle = this.transportService.vehicle;
+    if(!this.vehicle) {
+      this.router.navigateByUrl('/private/tabs/transports/new-delivery/vehicle-choice')
+    }
   }
 
   ionViewWillEnter(){
@@ -60,8 +68,69 @@ export class PickUpPage implements OnInit {
     return countryCode;
   }
 
-  onSelectedAddress(addressPk: any){
+  onSelectedAddress(addressPk: any) {
     this.selectedAccordionPk = addressPk;
+    if(this.transportService.vehicle){
+
+    }
+    this.addressService.getAddress(addressPk).pipe(take(1)).subscribe((address) => {
+      const slotDate = this.date + 'T' + this.hour + 'Z';
+
+      // Constructing the origin object
+      const origin = {
+        "address": {
+          "address": address.address,
+          "city": address.city,
+          "postcode": address.postcode,
+          "country": address.country,
+          "latitude": address.latitude,
+          "longitude": address.longitude,
+        },
+        instructions: this.form.get('instruction').value,
+        "slots": [
+          {
+            "start": slotDate,
+            "end": slotDate
+          }
+        ]
+      };
+
+      // Constructing the vehicle object
+      const vehicle = {
+        "license_plate": this.vehicle
+      };
+
+      // Constructing the trailer object
+      const trailer = {
+        "license_plate": this.vehicle
+      };
+
+      // Constructing the delivery object
+      const delivery = {
+        "origin": origin
+      };
+
+      // Constructing the segment object
+      const segment = {
+        "origin": origin,
+        "vehicle": vehicle,
+        "trailers": [trailer]
+      };
+
+      // Adding to the respective arrays
+      if (!this.transportService.deliveries) {
+        this.transportService.deliveries = [];
+      }
+      this.transportService.deliveries.push(delivery);
+
+      if (!this.transportService.segments) {
+        this.transportService.segments = [];
+      }
+      this.transportService.segments.push(segment);
+
+      console.log('this.transportService.deliveries: ', this.transportService.deliveries);
+      console.log('this.transportService.segments: ', this.transportService.segments);
+    });
   }
 
   async openDatePicker(type: string) {
@@ -75,13 +144,17 @@ export class PickUpPage implements OnInit {
     })
     modal.present();
     const { data } = await modal.onWillDismiss();
-    if(type === 'date') {
-      this.date = data;
-    } else {
-      this.hour = data;
+    if(data) {
+      if(type === 'date') {
+        const date = format(new Date(data), "yyyy-MM-dd");
+        const formatedDate = format(parseISO(date), 'dd MMMM yyyy', { locale: fr });
+        this.date = date;
+        this.form.controls['date'].setValue(formatedDate);
+      } else {
+        const hour = format(new Date(data), "HH:mm:ss");
+        this.hour = hour;
+        this.form.controls['hour'].setValue(hour);
+      }
     }
-
-    console.log('date: ', this.date);
-    console.log('hour: ', this.hour);
   }
 }

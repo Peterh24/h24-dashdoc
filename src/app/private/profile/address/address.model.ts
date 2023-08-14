@@ -1,4 +1,5 @@
 export class Address {
+
   constructor(
     public pk: number,
     public name: string,
@@ -6,6 +7,8 @@ export class Address {
     public city: string,
     public postcode: string,
     public country: string,
-    public instructions: string
+    public instructions: string,
+    public latitude?: any,
+    public longitude?: any,
   ){}
 }

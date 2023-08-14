@@ -4,3 +4,9 @@
 .custom-size {
   font-size: 14px;
 }
+.custom-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: -15px;
+}

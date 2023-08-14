@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Choose your date</ion-title>
+    <ion-title>Choisissez votre {{type === 'date' ? "date": "heure"}}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="closeModal()">
         <ion-icon slot="icon-only" name="close"></ion-icon>
@@ -9,6 +9,12 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-datetime #dateTime (ionChange)="onChange(dateTime.value)"></ion-datetime>
+  <ion-datetime *ngIf="type === 'date'" #dateTime (ionChange)="onChange()" [min]="minDate" [presentation]="type === 'date'"></ion-datetime>
+
+  <ion-datetime *ngIf="type === 'time'" #dateTime [presentation]="'time'"></ion-datetime>
+  <ion-buttons class="ion-justify-content-end ion-padding">
+    <ion-button *ngIf="type === 'time'" color="primary" fill="outline" shape="round" (click)="onChange()" slot="end">Validate Time</ion-button>
+  </ion-buttons>
+
 </ion-content>
 

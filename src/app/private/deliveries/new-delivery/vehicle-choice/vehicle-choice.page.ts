@@ -50,32 +50,9 @@ export class VehicleChoicePage implements OnInit {
   }
 
   onVehicleSelected(licensePlate: string){
-    const trailers = [{ license_plate: licensePlate }];
-
-    this.transportService.transport.segments.length > 0 ? this.handleEditMode(licensePlate) : this.handleCreateMode(trailers);
+    this.transportService.vehicle = licensePlate
 
     this.router.navigateByUrl('/private/tabs/transports/new-delivery/pick-up');
   }
-
-  private handleEditMode(licensePlate: string) {
-    this.isEditMode = true;
-
-    // Exclude segment without trailers
-    const segmentsWithTrailers = this.transportService.transport.segments.filter(
-      segment => segment.trailers.length > 0
-    );
-
-    segmentsWithTrailers.forEach(segment => {
-      segment.trailers.forEach(trailer => {
-        trailer.license_plate = licensePlate;
-      });
-    });
-  }
-
-  private handleCreateMode(trailers: any[]) {
-    this.transportService.transport.segments.push({ trailers });
-  }
-
-
 
 }

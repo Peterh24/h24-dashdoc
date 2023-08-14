@@ -35,14 +35,16 @@
                 <ion-row>
                   <ion-col>
                     <ion-item class="ion-no-padding">
+                      <ion-icon name="calendar" size="small" class="ion-margin-end custom-icon" color="primary"></ion-icon>
                       <ion-label position="floating" class="custom-size">Date d'enlèvement</ion-label>
                       <ion-input type="text" formControlName="date" (click)="openDatePicker('date')" [disabled]="selectedAccordionPk !== address.pk"></ion-input>
                     </ion-item>
                   </ion-col>
                   <ion-col>
                     <ion-item class="ion-no-padding">
+                      <ion-icon name="time" size="small" class="ion-margin-end custom-icon" color="primary"></ion-icon>
                       <ion-label position="floating" class="custom-size">Heure d'enlèvement</ion-label>
-                      <ion-input type="text" formControlName="hour" [disabled]="selectedAccordionPk !== address.pk"></ion-input>
+                      <ion-input type="text" formControlName="hour" (click)="openDatePicker('time')" [disabled]="selectedAccordionPk !== address.pk"></ion-input>
                     </ion-item>
                   </ion-col>
                 </ion-row>
@@ -57,7 +59,7 @@
                 <ion-row>
                   <ion-col class="ion-padding">
                     <ion-buttons class="ion-justify-content-end">
-                      <ion-button type="button" [disabled]="!form.valid" color="primary"  fill="outline" shape="round" (click)="onSelectedAddress(address.pk)">
+                      <ion-button type="button" [disabled]="!form.valid" color="primary" fill="outline" shape="round" (click)="onSelectedAddress(address.pk)">
                         <span class="custom-btn">
                           <ion-text class="ion-margin-bottom">Choisir cette adresse</ion-text>
                         </span>
