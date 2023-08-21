@@ -1,0 +1,19 @@
+p {
+  span {
+    color: var(--ion-color-warning);
+  }
+}
+ion-toolbar {
+  --background: #ffffff;
+}
+ion-button {
+  font-size: 14px;
+  --padding-start: 10px;
+  --padding-end: 10px;
+}
+
+.button-wrap {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}

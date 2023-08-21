@@ -1,0 +1,30 @@
+<div>
+  <ion-header class="ion-no-border ion-padding-start">
+    <ion-toolbar>
+      <h2>Ajouter une étape<br> d'enlevement</h2>
+      <ion-buttons slot="end">
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+  <ion-row>
+    <ion-col class="ion-padding-start ion-padding-end">
+      <p>
+        Souhaitez-vous ajouter une adresse d'enlèvement à votre demande de transport ?
+      </p>
+      <p>
+        <span>Attention :</span> En sélectionnant plusieurs adresses d'enlèvement, vous ne pourrez pas sélectionner plusieurs adresses de livraison.
+      </p>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <div class="button-wrap ion-padding-start ion-padding-end ion-padding-bottom">
+      <ion-button color="primary" shape="round" fill="outline" (click)="onChoice('yes')">
+        Oui, ajouter
+      </ion-button>
+
+      <ion-button color="primary" shape="round" (click)="onChoice('no')">
+        Non, continuer
+      </ion-button>
+    </div>
+  </ion-row>
+</div>

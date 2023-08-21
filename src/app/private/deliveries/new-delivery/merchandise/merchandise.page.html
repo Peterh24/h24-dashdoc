@@ -28,4 +28,11 @@
       </ion-col>
     </ion-row>
     </ion-grid>
+
+    <ion-fab slot="fixed" horizontal="end" vertical="bottom" >
+      <ion-button (click)="onMerchandiseSelected()" [disabled]="!isPageValid">
+        Suivant
+        <ion-icon name="arrow-forward" class="ion-margin-start"></ion-icon>
+      </ion-button>
+    </ion-fab>
 </ion-content>

@@ -8,6 +8,7 @@ import { HourComponent } from './hour/hour.component';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Router } from '@angular/router';
+import { UtilsService } from 'src/app/utils/services/utils.service';
 
 @Component({
   selector: 'app-pick-up',
@@ -33,6 +34,7 @@ export class PickUpPage implements OnInit {
     private loadingController: LoadingController,
     private modalController: ModalController,
     private router: Router,
+    private utilsService: UtilsService
   ) { }
 
   ngOnInit() {
@@ -70,11 +72,16 @@ export class PickUpPage implements OnInit {
 
   onSelectedAddress(addressPk: any) {
     this.selectedAccordionPk = addressPk;
+
     this.addressService.getAddress(addressPk).pipe(take(1)).subscribe((address) => {
+
+
+
+
       const slotDate = this.date + 'T' + this.hour + 'Z';
 
       // Constructing the origin object
-      const origin = {
+      const course = {
         "address": {
           "address": address.address,
           "city": address.city,
@@ -102,14 +109,19 @@ export class PickUpPage implements OnInit {
         "license_plate": this.vehicle
       };
 
+
+
       // Constructing the delivery object
-      const delivery = {
-        "origin": origin
+      const delivery:any = {
+        "origin": course,
+        "destination": course,
+        "planned_loads": []
       };
 
       // Constructing the segment object
       const segment = {
-        "origin": origin,
+        "origin": course,
+        "destination": course,
         "vehicle": vehicle,
         "trailers": [trailer]
       };
@@ -125,10 +137,20 @@ export class PickUpPage implements OnInit {
       }
       this.transportService.segments.push(segment);
 
+
+      //When we try to add an origin (so another delivery)
+      if(!this.utilsService.areAllValuesIdentical(this.transportService.deliveries, 'origin', 'address')){
+        console.log('address non egale');
+        const firstDestination = this.transportService.deliveries[0].destination;
+        this.transportService.deliveries.forEach(delivery => {
+          delivery.destination = firstDestination;
+        })
+      }
+      //console.log(this.transportService.deliveries);
       this.router.navigateByUrl('/private/tabs/transports/new-delivery/merchandise');
 
 
-    });
+   });
   }
 
   async openDatePicker(type: string) {

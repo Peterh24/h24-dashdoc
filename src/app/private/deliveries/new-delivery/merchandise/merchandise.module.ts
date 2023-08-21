@@ -9,6 +9,7 @@ import { MerchandisePageRoutingModule } from './merchandise-routing.module';
 import { MerchandisePage } from './merchandise.page';
 import { HeaderModule, ProgressBarModule } from 'src/app/components';
 import { ModalQuantityComponent } from './modal-quantity/modal-quantity.component';
+import { ModalCourseComponent } from './modal-course/modal-course.component';
 
 @NgModule({
   imports: [
@@ -19,6 +20,6 @@ import { ModalQuantityComponent } from './modal-quantity/modal-quantity.componen
     HeaderModule,
     ProgressBarModule
   ],
-  declarations: [MerchandisePage, ModalQuantityComponent]
+  declarations: [MerchandisePage, ModalQuantityComponent, ModalCourseComponent]
 })
 export class MerchandisePageModule {}
