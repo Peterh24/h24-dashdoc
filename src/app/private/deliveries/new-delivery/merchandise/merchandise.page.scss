@@ -1,0 +1,25 @@
+ion-card {
+  background: #E9E9E8;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  padding: 10px;
+  height: 150px;
+  position: relative;
+  flex: 1;
+}
+
+ion-img {
+  margin: 0 auto;
+  text-align: center;
+}
+
+ion-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 100;
+  min-width: 0;
+  margin: 0;
+}
+

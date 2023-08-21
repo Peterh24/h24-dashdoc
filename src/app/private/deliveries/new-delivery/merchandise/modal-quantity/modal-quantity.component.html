@@ -1,0 +1,38 @@
+<div>
+  <ion-header class="ion-no-border ion-padding-start">
+    <ion-toolbar>
+      <h2>{{name}}</h2>
+      <ion-buttons slot="end">
+        <ion-button type="button" (click)="closeModal()">
+          <ion-icon name="close" slot="icon-only" ></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+  <ion-row>
+    <ion-col class="quantityChoose ion-justify-content-between ion-align-items-center">
+      <ion-button type="button" fill="clear" (click)="changeQuantity('remove')">
+        <ion-icon name="remove-circle-outline" slot="icon-only" ></ion-icon>
+      </ion-button>
+      <ion-text [innerText]="quantity"></ion-text>
+      <ion-button type="button" fill="clear" (click)="changeQuantity('add')">
+        <ion-icon name="add-circle-outline" slot="icon-only" ></ion-icon>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+  <ng-container>
+    <ion-row>
+      <form [formGroup]="form">
+        <ion-item *ngIf="state">
+          <ion-input type="text" label="Nature de la marchandise" labelPlacement="floating" formControlName="merchandiseLabel"></ion-input>
+        </ion-item>
+      </form>
+    </ion-row>
+  </ng-container>
+  <ion-row>
+    <ion-col class="ion-padding-start ion-padding-end">
+      <ion-button color="primary" shape="round" [disabled]="state && !form.valid" expand="block" (click)="addMerchandise()">Valider</ion-button>
+    </ion-col>
+  </ion-row>
+</div>
+

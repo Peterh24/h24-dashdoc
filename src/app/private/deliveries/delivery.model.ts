@@ -53,3 +53,9 @@ export interface Load {
   volume_display_unit: string,
   weight: number
 }
+
+export interface Merchandise {
+  id: string,
+  name: string,
+  quantity: number;
+}

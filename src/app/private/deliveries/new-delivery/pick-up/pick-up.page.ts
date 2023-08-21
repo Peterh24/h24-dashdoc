@@ -70,9 +70,6 @@ export class PickUpPage implements OnInit {
 
   onSelectedAddress(addressPk: any) {
     this.selectedAccordionPk = addressPk;
-    if(this.transportService.vehicle){
-
-    }
     this.addressService.getAddress(addressPk).pipe(take(1)).subscribe((address) => {
       const slotDate = this.date + 'T' + this.hour + 'Z';
 
@@ -128,8 +125,9 @@ export class PickUpPage implements OnInit {
       }
       this.transportService.segments.push(segment);
 
-      console.log('this.transportService.deliveries: ', this.transportService.deliveries);
-      console.log('this.transportService.segments: ', this.transportService.segments);
+      this.router.navigateByUrl('/private/tabs/transports/new-delivery/merchandise');
+
+
     });
   }
 
