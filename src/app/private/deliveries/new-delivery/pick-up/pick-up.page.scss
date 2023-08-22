@@ -10,3 +10,30 @@
   transform: translateY(-50%);
   right: -15px;
 }
+.card {
+  text-align: center;
+}
+p {
+  padding: 0;
+}
+
+ion-card {
+  flex: 1;
+}
+
+.center-right{
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 100;
+  min-width: 0;
+  margin: 0;
+  font-size: 18px;
+  padding: 8px;
+  border-radius: 50%;
+  background: var(--ion-color-danger);
+}
+
+ion-item {
+  flex-direction: column;
+}

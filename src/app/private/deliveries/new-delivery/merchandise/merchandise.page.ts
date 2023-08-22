@@ -5,6 +5,7 @@ import { ModalController } from '@ionic/angular';
 import { ModalQuantityComponent } from './modal-quantity/modal-quantity.component';
 import { ModalCourseComponent } from './modal-course/modal-course.component';
 import { Router } from '@angular/router';
+import { UtilsService } from 'src/app/utils/services/utils.service';
 
 @Component({
   selector: 'app-merchandise',
@@ -53,11 +54,16 @@ export class MerchandisePage implements OnInit {
   constructor(
     private modalController: ModalController,
     private transportService: TransportService,
-    private router: Router
+    private router: Router,
+    private utilsService: UtilsService
   ) { }
 
   ngOnInit() {
     this.detectPageValidation();
+
+  }
+
+  ionViewWillEnter() {
     console.log('delivery: ', this.transportService.deliveries);
   }
 
@@ -132,45 +138,40 @@ export class MerchandisePage implements OnInit {
   }
 
   async onMerchandiseSelected(){
-    // verifier si il existe plus d'une destination
-      // Si il existe plusieur destination verifier si elles sont identique
-        // Si elle sont identique on propose d'ajouter un deuxieme point d'enlvement
-        // Si elle sont diferente on passe a l'etape suivante
-
-
       if(this.transportService.deliveries.length <= 1){
         //Just 1 delvivery so we call the popup for add new delivery
-        const modalCourse = await this.modalController.create({
-          component: ModalCourseComponent,
-          cssClass: 'course-modal',
-          mode: 'ios'
-        });
-
-        modalCourse.present();
-        const { data } = await modalCourse.onWillDismiss();
-
-
-        if (data.choice === 'yes') {
-          //If user choose to add one origin
-          this.router.navigateByUrl('/private/tabs/transports/new-delivery/pick-up');
-        } else {
-          //If choose to keep just on origin
-          this.router.navigateByUrl('/private/tabs/transports/new-delivery/delivery');
-        }
-
+        this.openPopupAdd();
       } else {
-        // multiple delivery so we can check if the destination are different
-        alert('multiple deliveries');
-
-        if(false){
-          //if destination are the same so we can open the popup
+        // multiple delivery so we can check if the origin are different
+        if(!this.utilsService.areAllValuesIdentical(this.transportService.deliveries, 'origin', 'address')){
+          //if origin are the same so we can open the popup
+          this.openPopupAdd();
         } else {
           //if not we go to the next page
+          this.router.navigateByUrl('/private/tabs/transports/new-delivery/delivery');
         }
 
       }
       console.log('deliveries: ', this.transportService.deliveries);
-    //alert('ok')
+  }
+
+
+  async openPopupAdd(){
+    const modalCourse = await this.modalController.create({
+      component: ModalCourseComponent,
+      cssClass: 'course-modal',
+      mode: 'ios'
+    });
+    modalCourse.present();
+    const { data } = await modalCourse.onWillDismiss();
+
+    if (data.choice === 'yes') {
+      //If user choose to add one origin
+      this.router.navigateByUrl('/private/tabs/transports/new-delivery/pick-up');
+    } else {
+      //If choose to keep just on origin
+      this.router.navigateByUrl('/private/tabs/transports/new-delivery/delivery');
+    }
   }
 
 }

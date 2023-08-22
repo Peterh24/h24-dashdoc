@@ -8,6 +8,7 @@ export class UtilsService {
   constructor() { }
 
   areAllValuesIdentical(array:any, propertyFirst:any, propertySecond:string) {
+
     if (array.length <= 1) {
       console.log('Non egale');
       return false;
