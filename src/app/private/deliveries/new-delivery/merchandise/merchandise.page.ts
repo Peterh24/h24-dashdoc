@@ -159,6 +159,9 @@ export class MerchandisePage implements OnInit {
   async openPopupAdd(){
     const modalCourse = await this.modalController.create({
       component: ModalCourseComponent,
+      componentProps: {
+        type: 'origin',
+      },
       cssClass: 'course-modal',
       mode: 'ios'
     });

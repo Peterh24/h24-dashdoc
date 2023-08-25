@@ -126,26 +126,11 @@ export class PickUpPage implements OnInit {
         "license_plate": this.vehicle
       };
 
-      // Constructing the trailer object
-      const trailer = {
-        "license_plate": this.vehicle
-      };
-
-
-
       // Constructing the delivery object
       const delivery:any = {
         "origin": course,
-        "destination": course,
+        //"destination": course,
         "planned_loads": []
-      };
-
-      // Constructing the segment object
-      const segment = {
-        "origin": course,
-        "destination": course,
-        "vehicle": vehicle,
-        "trailers": [trailer]
       };
 
       // Adding to the respective arrays
@@ -154,20 +139,14 @@ export class PickUpPage implements OnInit {
       }
       this.transportService.deliveries.push(delivery);
 
-      if (!this.transportService.segments) {
-        this.transportService.segments = [];
-      }
-      this.transportService.segments.push(segment);
-
-
       //When we try to add an origin (so another delivery)
-      if(!this.utilsService.areAllValuesIdentical(this.transportService.deliveries, 'origin', 'address')){
-        console.log('address non egale');
-        const firstDestination = this.transportService.deliveries[0].destination;
-        this.transportService.deliveries.forEach(delivery => {
-          delivery.destination = firstDestination;
-        })
-      }
+      // if(!this.utilsService.areAllValuesIdentical(this.transportService.deliveries, 'origin', 'address')){
+      //   console.log('address non egale');
+      //   const firstDestination = this.transportService.deliveries[0].destination;
+      //   this.transportService.deliveries.forEach(delivery => {
+      //     delivery.destination = firstDestination;
+      //   })
+      // }
       //console.log(this.transportService.deliveries);
       this.router.navigateByUrl('/private/tabs/transports/new-delivery/merchandise');
 

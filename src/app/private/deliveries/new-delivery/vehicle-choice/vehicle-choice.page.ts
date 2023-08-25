@@ -51,7 +51,6 @@ export class VehicleChoicePage implements OnInit {
 
   onVehicleSelected(licensePlate: string){
     this.transportService.vehicle = licensePlate
-
     this.router.navigateByUrl('/private/tabs/transports/new-delivery/pick-up');
   }
 

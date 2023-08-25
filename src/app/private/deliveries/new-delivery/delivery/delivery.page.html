@@ -1,13 +1,109 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>delivery</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header [defaultHref]="'/private/tabs/transports/new-delivery/merchandise'"></app-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">delivery</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <app-progress-bar [current]="0.60" [next]="0.80" ></app-progress-bar>
+
+  <ion-grid class="page-grid">
+    <ion-row>
+      <ion-col>
+        <h2>Livraison</h2>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="!isLoading && address.length <= 0">
+      <ion-col>
+        <p class="ion-text-center">
+          Pas encore d'adresses dans votre carnet!<br />
+          Merci d'en ajouter une!
+        </p>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="addressSelected.length > 0">
+      <ion-col size="12" class="ion-padding-start ion-padding-end">
+        <h2>Livraison(s) planifié(s)</h2>
+      </ion-col>
+      <ion-col>
+        <ion-list>
+          <ion-reorder-group [disabled]="isReorderDisabled" (ionItemReorder)="handleReorder($any($event))">
+            <ion-reorder *ngFor="let address of addressSelected">
+              <ion-card class="card ion-padding-start ion-padding-end ion-padding-bottom ion-margin-bottom" [color]="'success'">
+                <button *ngIf="addressSelected.length > 1 && isReorderDisabled" class="center-right" (click)="removeSelectedAddress(address.pk)">
+                  <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+                </button>
+                <ion-card-header>
+                  <ion-card-title>{{address.name}}</ion-card-title>
+                </ion-card-header>
+                <div>{{address.address}}<br /> {{address.postcode}} {{address.city}} {{getCountry(address.country)}}</div>
+              </ion-card>
+            </ion-reorder>
+          </ion-reorder-group>
+        </ion-list>
+        <ion-buttons *ngIf="addressSelected.length > 1" class="ion-justify-content-end">
+          <ion-button type="button" color="primary" fill="outline" shape="round" (click)="toggleReorder()">
+            <span class="custom-btn">
+              <ion-text class="ion-margin-bottom" [innerText]="isReorderDisabled ? 'Changer l\'ordre' : 'Supprimer des addresse'"></ion-text>
+            </span>
+          </ion-button>
+        </ion-buttons>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="!isLoading && address.length > 0">
+      <ion-col>
+        <form [formGroup]="form">
+          <ion-accordion-group>
+            <ng-container *ngFor="let address of address">
+              <ion-accordion  *ngIf="!addressIsSelected(address.pk)" [value]="address.pk">
+                <ion-item slot="header" class="ion-align-items-start">
+                  <ion-label>
+                    <h3>{{address.name}}</h3>
+                    <p>{{address.address}} {{address.postcode}} {{address.city}} {{getCountry(address.country)}}</p>
+                  </ion-label>
+                </ion-item>
+                <div class="content ion-no-padding" slot="content">
+                  <ion-row>
+                    <ion-col>
+                      <ion-item class="ion-no-padding">
+                        <ion-icon name="calendar" size="small" class="ion-margin-end custom-icon" color="primary"></ion-icon>
+                        <ion-label position="floating" class="custom-size">Date d'enlèvement</ion-label>
+                        <ion-input type="text" formControlName="date" (click)="openDatePicker('date')" [disabled]="selectedAccordionPk !== address.pk"></ion-input>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col>
+                      <ion-item class="ion-no-padding">
+                        <ion-icon name="time" size="small" class="ion-margin-end custom-icon" color="primary"></ion-icon>
+                        <ion-label position="floating" class="custom-size">Heure d'enlèvement</ion-label>
+                        <ion-input type="text" formControlName="hour" (click)="openDatePicker('time')" [disabled]="selectedAccordionPk !== address.pk"></ion-input>
+                      </ion-item>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col>
+                      <ion-item class="ion-no-padding">
+                        <ion-label position="floating" class="custom-size">Instructions pour la livraison</ion-label>
+                        <ion-textarea formControlName="instruction" [disabled]="selectedAccordionPk !== address.pk"></ion-textarea>
+                      </ion-item>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col class="ion-padding">
+                      <ion-buttons class="ion-justify-content-end">
+                        <ion-button type="button" [disabled]="!form.valid" color="primary" fill="outline" shape="round" (click)="onSelectedAddress(address.pk)">
+                          <span class="custom-btn">
+                            <ion-text class="ion-margin-bottom">Choisir cette adresse</ion-text>
+                          </span>
+                        </ion-button>
+                      </ion-buttons>
+                    </ion-col>
+                  </ion-row>
+                </div>
+              </ion-accordion>
+            </ng-container>
+          </ion-accordion-group>
+        </form>
+      </ion-col>
+    </ion-row>
+
+
+  </ion-grid>
 </ion-content>

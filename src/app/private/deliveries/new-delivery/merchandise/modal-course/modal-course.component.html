@@ -9,10 +9,10 @@
   <ion-row>
     <ion-col class="ion-padding-start ion-padding-end">
       <p>
-        Souhaitez-vous ajouter une adresse d'enlèvement à votre demande de transport ?
+        Souhaitez-vous ajouter une adresse {{type === 'origin' ? "d'enlèvement" : " de livraison"}} à votre demande de transport ?
       </p>
       <p>
-        <span>Attention :</span> En sélectionnant plusieurs adresses d'enlèvement, vous ne pourrez pas sélectionner plusieurs adresses de livraison.
+        <span>Attention :</span> En sélectionnant plusieurs adresses {{type === 'origin' ? "d'enlèvement" : " de livraison"}}, vous ne pourrez pas sélectionner plusieurs adresses {{type === 'origin' ? "de livraison" : "d'enlèvement"}} .
       </p>
     </ion-col>
   </ion-row>
