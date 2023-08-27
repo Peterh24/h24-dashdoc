@@ -98,7 +98,7 @@ export class PickUpPage implements OnInit {
 
 
 
-      const slotDate = this.date + 'T' + this.hour + 'Z';
+      const slotDate = this.date + 'T' + this.hour;
 
       // Constructing the origin object
       const course = {
@@ -175,6 +175,7 @@ export class PickUpPage implements OnInit {
       component: HourComponent,
       componentProps: {
         type: type,
+        page: 'pickup',
         initialBreakpoint: 1,
         breakpoints: [0, 1]
       },
@@ -182,13 +183,14 @@ export class PickUpPage implements OnInit {
     modal.present();
     const { data } = await modal.onWillDismiss();
     if(data) {
+
       if(type === 'date') {
         const date = format(new Date(data), "yyyy-MM-dd");
-        const formatedDate = format(parseISO(date), 'dd MMMM yyyy', { locale: fr });
+        const formatedDate = format(new Date(date), 'dd MMMM yyyy', { locale: fr });
         this.date = date;
         this.form.controls['date'].setValue(formatedDate);
       } else {
-        const hour = format(new Date(data), "HH:mm:ss");
+        const hour = format(new Date(data), "HH:mm");
         this.hour = hour;
         this.form.controls['hour'].setValue(hour);
       }

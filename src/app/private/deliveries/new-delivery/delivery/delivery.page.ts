@@ -119,7 +119,7 @@ export class DeliveryPage implements OnInit {
     this.selectedAccordionPk = addressPk;
 
     this.addressService.getAddress(addressPk).pipe(take(1)).subscribe((address) => {
-      const slotDate = this.date + 'T' + this.hour + 'Z';
+      const slotDate = this.date + 'T' + this.hour;
 
       // Constructing the origin object
       const course = {
@@ -176,6 +176,7 @@ export class DeliveryPage implements OnInit {
       component: HourComponent,
       componentProps: {
         type: type,
+        page: 'destination',
         initialBreakpoint: 1,
         breakpoints: [0, 1]
       },
@@ -189,7 +190,7 @@ export class DeliveryPage implements OnInit {
         this.date = date;
         this.form.controls['date'].setValue(formatedDate);
       } else {
-        const hour = format(new Date(data), "HH:mm:ss");
+        const hour = format(new Date(data), "HH:mm");
         this.hour = hour;
         this.form.controls['hour'].setValue(hour);
       }
