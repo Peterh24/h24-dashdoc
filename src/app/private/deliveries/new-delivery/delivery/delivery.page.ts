@@ -53,22 +53,18 @@ export class DeliveryPage implements OnInit {
       .pipe(
         take(1),
         switchMap(address => {
-          if (address.length > 0) {
-            return of(address);
-          } else {
-            return this.addressService.fetchAddress().pipe(
-              catchError(error => {
-                console.error('Error fetching address:', error);
-                return EMPTY;
-              })
-            );
-          }
+          return this.addressService.fetchAddress().pipe(
+            catchError(error => {
+              console.error('Error fetching address:', error);
+              return EMPTY;
+            })
+          );
         })
       )
       .subscribe(addresses => {
         this.address = addresses;
         this.isLoading = false;
-
+        console.log('addresses: ', addresses);
         this.addAddressCard();
       });
   }
@@ -102,7 +98,7 @@ export class DeliveryPage implements OnInit {
         delivery.destination.address.pk === addressPk);
 
       if (deliveryIndex !== -1) {
-        this.transportService.deliveries.splice(deliveryIndex, 1);
+        //this.transportService.deliveries.splice(deliveryIndex, 1);
       }
     }
   }
@@ -142,6 +138,7 @@ export class DeliveryPage implements OnInit {
         ]
       };
 
+
       if(!this.isSingleOrigin) {
         this.transportService.deliveries.forEach(delivery => {
           delivery.destination = course;
@@ -160,6 +157,7 @@ export class DeliveryPage implements OnInit {
           }
           // If destination is already present we can push new delivery
           this.transportService.deliveries.push(newDelivery);
+
         } else {
           // If destination never set we add the destination on the first delivery
           this.transportService.deliveries[0].destination = course;
@@ -227,8 +225,9 @@ export class DeliveryPage implements OnInit {
       this.transportService.deliveries.forEach(delivery => {
         if(delivery.destination){
           const destinationAddress = delivery.destination.address;
+          const destinationDate = format(new Date(delivery.destination.slots[0].start), 'HH:mm');
           if (!this.addressSelected.some(selected => selected.pk === destinationAddress.pk)) {
-            this.addressSelected.push(destinationAddress);
+            this.addressSelected.push({address:destinationAddress, date:destinationDate });
           }
         }
 

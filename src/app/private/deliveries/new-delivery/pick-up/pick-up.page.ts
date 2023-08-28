@@ -67,21 +67,6 @@ export class PickUpPage implements OnInit {
       .subscribe(addresses => {
         this.address = addresses;
         this.isLoading = false;
-
-        if (this.transportService.deliveries.length > 0) {
-          this.transportService.deliveries.forEach(delivery => {
-            const originAddress = delivery.origin.address;
-            const originDate = format(new Date(delivery.origin.slots[0].start), 'HH:mm');
-
-            const existingAddress = this.addressSelected.find(selected => selected.pk === originAddress.pk);
-            if (!existingAddress) {
-              this.addressSelected.push({ address: originAddress, date: originDate });
-            }
-          });
-        }
-
-        console.log(this.transportService.deliveries);
-        console.log('addressSelected: ', this.addressSelected);
       });
   }
 
@@ -142,30 +127,24 @@ export class PickUpPage implements OnInit {
       }
       this.transportService.deliveries.push(delivery);
 
-      //When we try to add an origin (so another delivery)
-      // if(!this.utilsService.areAllValuesIdentical(this.transportService.deliveries, 'origin', 'address')){
-      //   console.log('address non egale');
-      //   const firstDestination = this.transportService.deliveries[0].destination;
-      //   this.transportService.deliveries.forEach(delivery => {
-      //     delivery.destination = firstDestination;
-      //   })
-      // }
-      //console.log(this.transportService.deliveries);
+      this.addressSelected.push({ address: delivery.origin.address, date: format(new Date(delivery.origin.slots[0].start), 'HH:mm') });
+      const selectedAddressIndex = this.address.findIndex(address => address.pk === addressPk);
+
+      if (selectedAddressIndex !== -1) {
+        this.address.splice(selectedAddressIndex, 1);
+      }
       this.router.navigateByUrl('/private/tabs/transports/new-delivery/merchandise');
-
-
    });
   }
 
   removeSelectedAddress(addressPk: any) {
-    // Vérifiez si le dropdown actuellement ouvert est lié à l'adresse supprimée
-    if (this.selectedAccordionPk === addressPk) {
-      this.selectedAccordionPk = null; // Fermer le dropdown si nécessaire
-    }
-
+    this.selectedAccordionPk = null;
     const index = this.addressSelected.findIndex(address => address.pk === addressPk);
     if (index !== -1) {
       const removedAddress = this.addressSelected.splice(index, 1)[0]; // Remove from selected addresses
+
+      // Restore the removed address to the dropdown
+      this.address.push(removedAddress.address);
 
       // Remove the address from deliveries
       const deliveryIndex = this.transportService.deliveries.findIndex(delivery =>

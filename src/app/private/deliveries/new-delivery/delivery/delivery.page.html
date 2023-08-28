@@ -27,13 +27,13 @@
           <ion-reorder-group [disabled]="isReorderDisabled" (ionItemReorder)="handleReorder($any($event))">
             <ion-reorder *ngFor="let address of addressSelected">
               <ion-card class="card ion-padding-start ion-padding-end ion-padding-bottom ion-margin-bottom" [color]="'success'">
-                <button *ngIf="addressSelected.length > 1 && isReorderDisabled" class="center-right" (click)="removeSelectedAddress(address.pk)">
+                <button *ngIf="isReorderDisabled" class="center-right" (click)="removeSelectedAddress(address.pk)">
                   <ion-icon name="close-outline" slot="icon-only"></ion-icon>
                 </button>
                 <ion-card-header>
-                  <ion-card-title>{{address.name}}</ion-card-title>
+                  <ion-card-title>{{address.address.name}}  - {{address.date}}</ion-card-title>
                 </ion-card-header>
-                <div>{{address.address}}<br /> {{address.postcode}} {{address.city}} {{getCountry(address.country)}}</div>
+                <div>{{address.address.address}}<br /> {{address.address.postcode}} {{address.address.city}} {{getCountry(address.address.country)}}</div>
               </ion-card>
             </ion-reorder>
           </ion-reorder-group>
