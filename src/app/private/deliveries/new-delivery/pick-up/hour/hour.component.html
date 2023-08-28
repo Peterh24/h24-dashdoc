@@ -9,11 +9,14 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-datetime *ngIf="type === 'date'" #dateTime (ionChange)="onChange()" [min]="minDate" [presentation]="type === 'date'"></ion-datetime>
 
-  <ion-datetime *ngIf="type === 'time'" #dateTime [presentation]="'time'" [min]="minTime"></ion-datetime>
+  <ion-item>
+    <ion-datetime #dateTime [presentation]="type === 'date' ? 'date' : 'time'" [value]="defaultValue" (ionChange)="onChange(dateTime.value)" [min]="minVal" ></ion-datetime>
+  </ion-item>
+
+
   <ion-buttons class="ion-justify-content-end ion-padding">
-    <ion-button *ngIf="type === 'time'" color="primary" fill="outline" shape="round" (click)="onChange()" slot="end">Validate Time</ion-button>
+    <ion-button *ngIf="type === 'time'" color="primary" fill="outline" shape="round" (click)="onTimeChoose(dateTime.value)" slot="end">Validate Time</ion-button>
   </ion-buttons>
 
 </ion-content>

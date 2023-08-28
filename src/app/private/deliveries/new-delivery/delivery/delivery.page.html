@@ -51,7 +51,7 @@
     <ion-row *ngIf="!isLoading && address.length > 0">
       <ion-col>
         <form [formGroup]="form">
-          <ion-accordion-group>
+          <ion-accordion-group (ionChange)="resetField()">
             <ng-container *ngFor="let address of address">
               <ion-accordion  *ngIf="!addressIsSelected(address.pk)" [value]="address.pk">
                 <ion-item slot="header" class="ion-align-items-start">
@@ -70,10 +70,10 @@
                       </ion-item>
                     </ion-col>
                     <ion-col>
-                      <ion-item class="ion-no-padding">
+                      <ion-item class="ion-no-padding" [class.disabled]="!form.get('date').value">
                         <ion-icon name="time" size="small" class="ion-margin-end custom-icon" color="primary"></ion-icon>
                         <ion-label position="floating" class="custom-size">Heure d'enlèvement</ion-label>
-                        <ion-input type="text" formControlName="hour" (click)="openDatePicker('time')" [disabled]="selectedAccordionPk !== address.pk"></ion-input>
+                        <ion-input type="text" formControlName="hour" (click)="openDatePicker('time')" [disabled]="selectedAccordionPk !== address.pk" [readonly]="!form.get('date').value"></ion-input>
                       </ion-item>
                     </ion-col>
                   </ion-row>

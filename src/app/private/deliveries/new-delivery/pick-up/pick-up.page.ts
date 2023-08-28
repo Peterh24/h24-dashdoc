@@ -71,8 +71,11 @@ export class PickUpPage implements OnInit {
         if (this.transportService.deliveries.length > 0) {
           this.transportService.deliveries.forEach(delivery => {
             const originAddress = delivery.origin.address;
-            if (!this.addressSelected.some(selected => selected.pk === originAddress.pk)) {
-              this.addressSelected.push(originAddress);
+            const originDate = format(new Date(delivery.origin.slots[0].start), 'HH:mm');
+
+            const existingAddress = this.addressSelected.find(selected => selected.pk === originAddress.pk);
+            if (!existingAddress) {
+              this.addressSelected.push({ address: originAddress, date: originDate });
             }
           });
         }
@@ -155,7 +158,11 @@ export class PickUpPage implements OnInit {
   }
 
   removeSelectedAddress(addressPk: any) {
-    this.selectedAccordionPk = null;
+    // Vérifiez si le dropdown actuellement ouvert est lié à l'adresse supprimée
+    if (this.selectedAccordionPk === addressPk) {
+      this.selectedAccordionPk = null; // Fermer le dropdown si nécessaire
+    }
+
     const index = this.addressSelected.findIndex(address => address.pk === addressPk);
     if (index !== -1) {
       const removedAddress = this.addressSelected.splice(index, 1)[0]; // Remove from selected addresses
@@ -171,11 +178,16 @@ export class PickUpPage implements OnInit {
   }
 
   async openDatePicker(type: string) {
+    if (type === 'time' && !this.form.get('date').value) {
+      return;
+    }
+
     const modal = await this.modalController.create({
       component: HourComponent,
       componentProps: {
         type: type,
         page: 'pickup',
+        form: this.form,
         initialBreakpoint: 1,
         breakpoints: [0, 1]
       },
@@ -188,7 +200,7 @@ export class PickUpPage implements OnInit {
         const date = format(new Date(data), "yyyy-MM-dd");
         const formatedDate = format(new Date(date), 'dd MMMM yyyy', { locale: fr });
         this.date = date;
-        this.form.controls['date'].setValue(formatedDate);
+        this.form.controls['date'].setValue(date);
       } else {
         const hour = format(new Date(data), "HH:mm");
         this.hour = hour;
@@ -214,5 +226,9 @@ export class PickUpPage implements OnInit {
 
   toggleReorder() {
     this.isReorderDisabled = !this.isReorderDisabled;
+  }
+
+  resetField(){
+    this.form.reset();
   }
 }

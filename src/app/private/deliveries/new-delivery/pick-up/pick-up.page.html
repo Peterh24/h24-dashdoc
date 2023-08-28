@@ -28,13 +28,13 @@
           <ion-reorder-group [disabled]="isReorderDisabled" (ionItemReorder)="handleReorder($any($event))">
             <ion-reorder *ngFor="let address of addressSelected">
               <ion-card class="card ion-padding-start ion-padding-end ion-padding-bottom ion-margin-bottom" [color]="'success'">
-                <button *ngIf="addressSelected.length > 1 && isReorderDisabled" class="center-right" (click)="removeSelectedAddress(address.pk)">
+                <button *ngIf="isReorderDisabled" class="center-right" (click)="removeSelectedAddress(address.pk)">
                   <ion-icon name="close-outline" slot="icon-only"></ion-icon>
                 </button>
                 <ion-card-header>
-                  <ion-card-title>{{address.name}}</ion-card-title>
+                  <ion-card-title>{{address.address.name}} - {{address.date}}</ion-card-title>
                 </ion-card-header>
-                <div>{{address.address}}<br /> {{address.postcode}} {{address.city}} {{getCountry(address.country)}}</div>
+                <div>{{address.address.address}}<br /> {{address.address.postcode}} {{address.address.city}} {{getCountry(address.address.country)}}</div>
               </ion-card>
             </ion-reorder>
           </ion-reorder-group>
@@ -52,7 +52,7 @@
     <ion-row *ngIf="!isLoading && address.length > 0">
       <ion-col>
         <form [formGroup]="form">
-          <ion-accordion-group>
+          <ion-accordion-group (ionChange)="resetField()">
             <ng-container *ngFor="let address of address">
               <ion-accordion  *ngIf="!addressIsSelected(address.pk)" [value]="address.pk">
                 <ion-item slot="header" class="ion-align-items-start">
@@ -71,10 +71,10 @@
                       </ion-item>
                     </ion-col>
                     <ion-col>
-                      <ion-item class="ion-no-padding">
+                      <ion-item class="ion-no-padding" [class.disabled]="!form.get('date').value">
                         <ion-icon name="time" size="small" class="ion-margin-end custom-icon" color="primary"></ion-icon>
                         <ion-label position="floating" class="custom-size">Heure d'enlèvement</ion-label>
-                        <ion-input type="text" formControlName="hour" (click)="openDatePicker('time')" [disabled]="selectedAccordionPk !== address.pk"></ion-input>
+                        <ion-input type="text" formControlName="hour" (click)="openDatePicker('time')" [disabled]="selectedAccordionPk !== address.pk" [readonly]="!form.get('date').value"></ion-input>
                       </ion-item>
                     </ion-col>
                   </ion-row>

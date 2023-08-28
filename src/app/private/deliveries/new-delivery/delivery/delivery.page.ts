@@ -172,11 +172,16 @@ export class DeliveryPage implements OnInit {
   }
 
   async openDatePicker(type: string) {
+    if (type === 'time' && !this.form.get('date').value) {
+      return;
+    }
+
     const modal = await this.modalController.create({
       component: HourComponent,
       componentProps: {
         type: type,
         page: 'destination',
+        form: this.form,
         initialBreakpoint: 1,
         breakpoints: [0, 1]
       },
@@ -188,7 +193,7 @@ export class DeliveryPage implements OnInit {
         const date = format(new Date(data), "yyyy-MM-dd");
         const formatedDate = format(parseISO(date), 'dd MMMM yyyy', { locale: fr });
         this.date = date;
-        this.form.controls['date'].setValue(formatedDate);
+        this.form.controls['date'].setValue(date);
       } else {
         const hour = format(new Date(data), "HH:mm");
         this.hour = hour;
@@ -231,4 +236,8 @@ export class DeliveryPage implements OnInit {
     }
   }
 
+
+  resetField(){
+    this.form.reset();
+  }
 }
