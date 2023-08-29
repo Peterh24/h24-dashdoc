@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ItemReorderEventDetail, ModalController } from '@ionic/angular';
-import { EMPTY, catchError, of, switchMap, take } from 'rxjs';
+import { EMPTY, Subscription, catchError, of, switchMap, take } from 'rxjs';
 import { AddressService } from 'src/app/services/address.service';
 import { TransportService } from 'src/app/services/transport.service';
 import { UtilsService } from 'src/app/utils/services/utils.service';
@@ -10,6 +10,7 @@ import { HourComponent } from '../pick-up/hour/hour.component';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { ModalCourseComponent } from '../merchandise/modal-course/modal-course.component';
+import { NewAddressPage } from 'src/app/private/profile/address/new-address/new-address.page';
 
 @Component({
   selector: 'app-delivery',
@@ -17,6 +18,7 @@ import { ModalCourseComponent } from '../merchandise/modal-course/modal-course.c
   styleUrls: ['./delivery.page.scss'],
 })
 export class DeliveryPage implements OnInit {
+  private addressSub: Subscription;
   address: Array<any> = [];
   isNewAddress:boolean = false;
   isLoading: boolean = false;
@@ -49,19 +51,14 @@ export class DeliveryPage implements OnInit {
   ionViewWillEnter() {
     this.isSingleOrigin = this.utilsService.areAllValuesIdentical(this.transportService.deliveries, 'origin', 'address');
     this.isLoading = true;
-    this.addressService.address
+    this.addressSub = this.addressService.address
       .pipe(
-        take(1),
         switchMap(address => {
           if (address.length > 0) {
             return of(address);
           } else {
-            return this.addressService.fetchAddress().pipe(
-              catchError(error => {
-                console.error('Error fetching address:', error);
-                return EMPTY;
-              })
-            );
+            this.router.navigateByUrl('/private/tabs/transports/new-delivery/vehicle-choice')
+            return EMPTY
           }
         })
       )
@@ -236,8 +233,25 @@ export class DeliveryPage implements OnInit {
     }
   }
 
-
   resetField(){
     this.form.reset();
+  }
+
+  async addAddress() {
+    const modal = await this.modalController.create({
+      component: NewAddressPage,
+      componentProps: {
+        isModal: true,
+      }
+    })
+    modal.present();
+    await modal.onWillDismiss();
+
+  }
+
+  ionViewDidLeave() {
+    if(this.addressSub) {
+      this.addressSub.unsubscribe();
+    }
   }
 }

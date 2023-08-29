@@ -7,13 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { SummaryPageRoutingModule } from './summary-routing.module';
 
 import { SummaryPage } from './summary.page';
+import { HeaderModule, ProgressBarModule } from 'src/app/components';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    SummaryPageRoutingModule
+    SummaryPageRoutingModule,
+    HeaderModule,
+    ProgressBarModule
   ],
   declarations: [SummaryPage]
 })

@@ -1,13 +1,66 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>summary</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header [defaultHref]="'/private/tabs/transports/new-delivery/merchandise'"></app-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">summary</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <app-progress-bar [current]="0.80" [next]="1" ></app-progress-bar>
+  <ion-grid class="page-grid">
+    <ion-row>
+      <ion-col>
+        <h2>Récapitulatif</h2>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col>
+        <ion-card>
+          <ion-card-content>
+            <ion-img [src]="'https://h24-public-website.s3.eu-west-3.amazonaws.com/assets/global/img/cars/'+vehicle+'.jpg'"></ion-img>
+              <div class="edit-wrap">
+                <ion-button (click)="editParts()"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
+              </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-accordion-group>
+          <ion-accordion *ngFor="let delivery of deliveries; let index = index">
+            <ion-item slot="header">
+              <div class="accordion-header">
+                <ion-label>
+                  <h3>Etape {{index+1}}</h3>
+                </ion-label>
+              </div>
+              <ion-card>
+                <ion-card-content>
+                  <h3 class="card-title">Enlèvements</h3>
+                  <div class="edit-wrap">
+                    <ion-button (click)="editParts()"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
+                  </div>
+                </ion-card-content>
+              </ion-card>
+              <ion-card>
+                <ion-card-content>
+                  <h3 class="card-title">Livraison</h3>
+                  <div class="edit-wrap">
+                    <ion-button (click)="editParts()"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
+                  </div>
+                </ion-card-content>
+              </ion-card>
+              <ion-card>
+                <ion-card-content>
+                  <h3 class="card-title">Chargement</h3>
+                  <div class="edit-wrap">
+                    <ion-button (click)="editParts()"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
+                  </div>
+                </ion-card-content>
+              </ion-card>
+            </ion-item>
+          </ion-accordion>
+        </ion-accordion-group>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+
 </ion-content>

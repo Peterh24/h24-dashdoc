@@ -43,7 +43,7 @@ export class AddressPage implements OnInit {
     this.isLoading = true;
     this.addressService.fetchAddress().subscribe((address) => {
       this.address = address;
-      this.jsonData = this.address.slice(0, 10);
+      this.jsonData = address;
       this.isLoading = false;
     });
   }
@@ -54,24 +54,12 @@ export class AddressPage implements OnInit {
 
   setFilteredItems(searchTerm: string) {
     if (searchTerm.trim() === '') {
-      this.jsonData = this.address.slice(0, 10);
+      this.jsonData = this.address
     } else {
       this.jsonData = this.address.filter((item) => {
         return item.name.toLowerCase().includes(searchTerm.toLowerCase());
       });
     }
-  }
-
-  loadMoreData(event: any) {
-    const nextAddresses = this.address.slice(this.startIndex, this.startIndex + 10);
-    console.log('nextAddresses: ', nextAddresses)
-    if (nextAddresses.length > 0) {
-      this.jsonData = this.jsonData.concat(nextAddresses);
-      this.startIndex += 10;
-    } else {
-      event.target.disabled = true; // Désactiver le chargement supplémentaire s'il n'y a plus d'adresses
-    }
-    event.target.complete(); // Indiquer que le chargement est terminé
   }
 
   onEdit(adressId: number, slidingItem: IonItemSliding){

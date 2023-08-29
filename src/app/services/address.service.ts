@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Address } from '../private/profile/address/address.model';
-import { BehaviorSubject, EMPTY, delay, expand, from, map, reduce, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, EMPTY, delay, expand, from, map, of, reduce, switchMap, take, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Storage } from '@ionic/storage-angular';
 import { DASHDOC_API_URL } from './constants';
@@ -63,6 +63,13 @@ export class AddressService {
         return this.http.post(
           `${DASHDOC_API_URL}addresses/`,
           newAddress
+        ).pipe(
+          take(1),
+          switchMap((resData: any) => {
+            const updatedAddresses = [...this._address.value, resData];
+            this._address.next(updatedAddresses);
+            return of(resData);
+          })
         );
       }),
       take(1),
@@ -89,7 +96,6 @@ export class AddressService {
           country,
           instructions
         );
-        console.log('address toto:  ',address);
         return this.http.patch(
           `${DASHDOC_API_URL}addresses/${addressId}`,
           {...updatedAddress[updatedAddressIndex]}
@@ -110,7 +116,6 @@ export class AddressService {
         );
       }),
       tap(filteredAddresses => {
-        console.log('Filtered addresses: ', filteredAddresses);
         this._address.next(filteredAddresses);
       })
     );

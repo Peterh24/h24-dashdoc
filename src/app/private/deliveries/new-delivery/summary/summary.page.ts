@@ -7,8 +7,11 @@ import { TransportService } from 'src/app/services/transport.service';
   styleUrls: ['./summary.page.scss'],
 })
 export class SummaryPage implements OnInit {
-
-  constructor(private transportService: TransportService,) { }
+  vehicle: any;
+  deliveries: any;
+  constructor(
+    private transportService: TransportService
+    ) { }
 
   ngOnInit() {
     this.transportService.trailers.push({
@@ -25,6 +28,16 @@ export class SummaryPage implements OnInit {
     console.log('DELIVERIES: ', this.transportService.deliveries);
     console.log('TRAILERS: ', this.transportService.trailers);
     console.log('SEGMENTS: ', this.transportService.segments);
+  }
+
+  ionViewDidEnter() {
+    this.vehicle = this.transportService.vehicle;
+    this.deliveries = this.transportService.deliveries;
+    console.log('this.deliveries: ', this.deliveries);
+  }
+
+  editParts(){
+
   }
 
 }

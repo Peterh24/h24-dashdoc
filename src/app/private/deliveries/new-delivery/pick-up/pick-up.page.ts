@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ItemReorderEventDetail, LoadingController, ModalController } from '@ionic/angular';
-import { EMPTY, catchError, of, switchMap, take } from 'rxjs';
+import { EMPTY, Subscription, catchError, of, switchMap, take } from 'rxjs';
 import { AddressService } from 'src/app/services/address.service';
 import { TransportService } from 'src/app/services/transport.service';
 import { HourComponent } from './hour/hour.component';
@@ -9,6 +9,7 @@ import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Router } from '@angular/router';
 import { UtilsService } from 'src/app/utils/services/utils.service';
+import { NewAddressPage } from 'src/app/private/profile/address/new-address/new-address.page';
 
 @Component({
   selector: 'app-pick-up',
@@ -16,6 +17,7 @@ import { UtilsService } from 'src/app/utils/services/utils.service';
   styleUrls: ['./pick-up.page.scss'],
 })
 export class PickUpPage implements OnInit {
+  private addressSub: Subscription;
   address: Array<any> = [];
   isLoading: boolean = false;
   selectedAccordionPk: any = null;
@@ -48,9 +50,8 @@ export class PickUpPage implements OnInit {
 
   ionViewWillEnter() {
     this.isLoading = true;
-    this.addressService.address
+    this.addressSub = this.addressService.address
       .pipe(
-        take(1),
         switchMap(address => {
           if (address.length > 0) {
             return of(address);
@@ -198,5 +199,23 @@ export class PickUpPage implements OnInit {
 
   resetField(){
     this.form.reset();
+  }
+
+  async addAddress() {
+    const modal = await this.modalController.create({
+      component: NewAddressPage,
+      componentProps: {
+        isModal: true,
+      }
+    })
+    modal.present();
+    await modal.onWillDismiss();
+
+  }
+
+  ionViewDidLeave() {
+    if(this.addressSub) {
+      this.addressSub.unsubscribe();
+    }
   }
 }

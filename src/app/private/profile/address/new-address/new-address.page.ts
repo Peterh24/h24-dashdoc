@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Address } from '../address.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Country } from '../../../../private/models/country.model';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoadingController, NavController } from '@ionic/angular';
+import { LoadingController, ModalController, NavController } from '@ionic/angular';
 
 import { CountriesService } from '../../../../utils/services/countries.service';
 import { AddressService } from '../../../../services/address.service';
@@ -18,12 +18,14 @@ export class NewAddressPage implements OnInit {
   address: Address;
   form: FormGroup;
   countries: Array<Country>;
+  @Input()isModal: boolean
   constructor(
     private route: ActivatedRoute,
     private navController: NavController,
     private countriesService: CountriesService,
     private addressService: AddressService,
     private loadingController: LoadingController,
+    private modalController: ModalController,
     private router: Router,
   ) { }
 
@@ -68,7 +70,12 @@ export class NewAddressPage implements OnInit {
       this.addressService.addAdress(this.form.value.name, this.form.value.address, this.form.value.city, this.form.value.postal, this.form.value.country, this.form.value.instructions).subscribe(() => {
         loadingElement.dismiss();
         this.form.reset;
-        this.router.navigate(['/private/tabs/profile/address']);
+        if(!this.isModal) {
+          this.router.navigate(['/private/tabs/profile/address']);
+          return;
+        } else {
+          this.modalController.dismiss();
+        }
       });
     });
   }
