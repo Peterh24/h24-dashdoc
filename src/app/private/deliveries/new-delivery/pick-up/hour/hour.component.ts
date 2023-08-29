@@ -50,8 +50,6 @@ ionViewWillEnter() {
       } else {
         const storedDate = this.form.get('date').value;
         const currentDate = format(maxDeliveryDate, 'yyyy-MM-dd');
-        console.log('storedDate: ', storedDate);
-        console.log('currentDate: ', currentDate);
         if(storedDate != currentDate){
           const pastDate = new Date(2000, 0, 1);
           this.minVal = format(pastDate, "yyyy-MM-dd'T'HH:mm:ss");
@@ -59,6 +57,7 @@ ionViewWillEnter() {
           const minTime = addHours(new Date(), 1);
           this.minVal = format(minTime, "yyyy-MM-dd'T'HH:mm:ss");
         }
+        this.defaultValue = this.minVal;
       }
 
 

@@ -53,18 +53,22 @@ export class DeliveryPage implements OnInit {
       .pipe(
         take(1),
         switchMap(address => {
-          return this.addressService.fetchAddress().pipe(
-            catchError(error => {
-              console.error('Error fetching address:', error);
-              return EMPTY;
-            })
-          );
+          if (address.length > 0) {
+            return of(address);
+          } else {
+            return this.addressService.fetchAddress().pipe(
+              catchError(error => {
+                console.error('Error fetching address:', error);
+                return EMPTY;
+              })
+            );
+          }
         })
       )
       .subscribe(addresses => {
         this.address = addresses;
         this.isLoading = false;
-        console.log('addresses: ', addresses);
+
         this.addAddressCard();
       });
   }
@@ -88,17 +92,13 @@ export class DeliveryPage implements OnInit {
   }
 
   removeSelectedAddress(addressPk: any) {
-    this.selectedAccordionPk = null;
-    const index = this.addressSelected.findIndex(address => address.pk === addressPk);
-    if (index !== -1) {
-      const removedAddress = this.addressSelected.splice(index, 1)[0]; // Remove from selected addresses
+    const indexAddressSelected = this.addressSelected.findIndex(selected => selected.address.pk === addressPk);
+    if (indexAddressSelected !== -1) {
+      this.addressSelected.splice(indexAddressSelected, 1);
 
-      // Remove the address from deliveries
-      const deliveryIndex = this.transportService.deliveries.findIndex(delivery =>
-        delivery.destination.address.pk === addressPk);
-
-      if (deliveryIndex !== -1) {
-        //this.transportService.deliveries.splice(deliveryIndex, 1);
+      const indexDelivery = this.transportService.deliveries.findIndex(delivery => delivery.destination.address.pk === addressPk);
+      if (indexDelivery !== -1) {
+        this.transportService.deliveries.splice(indexDelivery, 1);
       }
     }
   }
@@ -162,10 +162,9 @@ export class DeliveryPage implements OnInit {
           // If destination never set we add the destination on the first delivery
           this.transportService.deliveries[0].destination = course;
         }
-
-        console.log('deliveries: ', this.transportService.deliveries);
         this.openPopupAdd();
       }
+      console.log('deliveries: ', this.transportService.deliveries);
     })
   }
 
@@ -223,14 +222,16 @@ export class DeliveryPage implements OnInit {
   addAddressCard() {
     if (this.transportService.deliveries.length > 0) {
       this.transportService.deliveries.forEach(delivery => {
-        if(delivery.destination){
+        if (delivery.destination) {
           const destinationAddress = delivery.destination.address;
-          const destinationDate = format(new Date(delivery.destination.slots[0].start), 'HH:mm');
-          if (!this.addressSelected.some(selected => selected.pk === destinationAddress.pk)) {
-            this.addressSelected.push({address:destinationAddress, date:destinationDate });
+          const destinationDate = delivery.destination.slots[0].start;
+
+          const existingSelected = this.addressSelected.find(selected => selected.address.pk === destinationAddress.pk);
+
+          if (!existingSelected) {
+            this.addressSelected.push({ address: destinationAddress, date: format(new Date(destinationDate), 'dd-MM-yyyy HH:mm') });
           }
         }
-
       });
     }
   }

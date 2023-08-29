@@ -127,31 +127,20 @@ export class PickUpPage implements OnInit {
       }
       this.transportService.deliveries.push(delivery);
 
-      this.addressSelected.push({ address: delivery.origin.address, date: format(new Date(delivery.origin.slots[0].start), 'HH:mm') });
-      const selectedAddressIndex = this.address.findIndex(address => address.pk === addressPk);
+      this.addressSelected.push({ address: delivery.origin.address, date: format(new Date(delivery.origin.slots[0].start), 'dd-MM-yyyy HH:mm') });
 
-      if (selectedAddressIndex !== -1) {
-        this.address.splice(selectedAddressIndex, 1);
-      }
       this.router.navigateByUrl('/private/tabs/transports/new-delivery/merchandise');
    });
   }
 
   removeSelectedAddress(addressPk: any) {
-    this.selectedAccordionPk = null;
-    const index = this.addressSelected.findIndex(address => address.pk === addressPk);
-    if (index !== -1) {
-      const removedAddress = this.addressSelected.splice(index, 1)[0]; // Remove from selected addresses
+    const indexAddressSelected = this.addressSelected.findIndex(selected => selected.address.pk === addressPk);
+    if (indexAddressSelected !== -1) {
+      this.addressSelected.splice(indexAddressSelected, 1);
 
-      // Restore the removed address to the dropdown
-      this.address.push(removedAddress.address);
-
-      // Remove the address from deliveries
-      const deliveryIndex = this.transportService.deliveries.findIndex(delivery =>
-        delivery.origin.address.pk === addressPk);
-
-      if (deliveryIndex !== -1) {
-        this.transportService.deliveries.splice(deliveryIndex, 1);
+      const indexDelivery = this.transportService.deliveries.findIndex(delivery => delivery.origin.address.pk === addressPk);
+      if (indexDelivery !== -1) {
+        this.transportService.deliveries.splice(indexDelivery, 1);
       }
     }
   }
