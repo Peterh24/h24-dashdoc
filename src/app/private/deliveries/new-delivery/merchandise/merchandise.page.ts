@@ -64,7 +64,6 @@ export class MerchandisePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    console.log('delivery: ', this.transportService.deliveries);
   }
 
   async onMerchandiseClick(itemId: string, itemName: string, quantity: number) {
@@ -118,7 +117,6 @@ export class MerchandisePage implements OnInit {
       }
 
       this.detectPageValidation();
-      console.log(this.transportService.deliveries);
     }
   }
 
@@ -132,7 +130,6 @@ export class MerchandisePage implements OnInit {
   detectPageValidation(){
     this.isPageValid = false;
     if(this.merchandises.some(merchandise => merchandise.quantity > 0)){
-      console.log('merchandises: ', this.merchandises);
       this.isPageValid = true;
     }
   }
@@ -152,7 +149,6 @@ export class MerchandisePage implements OnInit {
         }
 
       }
-      console.log('deliveries: ', this.transportService.deliveries);
   }
 
 

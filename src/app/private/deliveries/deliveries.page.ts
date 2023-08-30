@@ -35,7 +35,6 @@ export class DeliveriesPage implements OnInit {
       this.jsonData = this.deliveries.slice(0, 10);
       this.isLoading = false;
 
-      console.log('deliveries:',  deliveries);
     });
     this.filter.value = 'all';
   }

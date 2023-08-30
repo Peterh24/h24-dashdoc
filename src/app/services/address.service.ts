@@ -33,7 +33,6 @@ export class AddressService {
       map((resData: Request) => resData.results),
       reduce((address: Address[], results: Address[]) => address.concat(results), []),
       tap((address: Address[]) => {
-        console.log('Fetched address: ', address)
         this._address.next(address);
       })
     );

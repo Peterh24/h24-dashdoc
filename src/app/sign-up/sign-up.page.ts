@@ -42,7 +42,6 @@ export class SignUpPage implements OnInit {
 
     this.authService.register(firstname, lastname, phone, email).subscribe({
       next: (res) => {
-        console.log('After Register: ', res);
         loading.dismiss();
       },
       error: async (error) => {

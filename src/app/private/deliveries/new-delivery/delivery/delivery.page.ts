@@ -142,7 +142,6 @@ export class DeliveryPage implements OnInit {
           this.router.navigateByUrl('/private/tabs/transports/new-delivery/summary');
         })
       } else {
-        console.log('this.transportService.deliveries[0]: ', this.transportService.deliveries[0].destination);
         if (this.transportService.deliveries[0].destination) {
           const firstOrigin = this.transportService.deliveries[0].origin;
           const loads = this.transportService.deliveries[0].planned_loads;
@@ -161,7 +160,6 @@ export class DeliveryPage implements OnInit {
         }
         this.openPopupAdd();
       }
-      console.log('deliveries: ', this.transportService.deliveries);
     })
   }
 

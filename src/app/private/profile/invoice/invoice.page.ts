@@ -37,8 +37,6 @@ export class InvoicePage implements OnInit {
       this.invoices = invoices;
       this.jsonData = this.invoices.slice(0, 10);
       this.isLoading = false;
-
-      console.log('invoices:',  invoices);
     }, (error) => {
       this.isLoading = false;
       this.hasError = true;
@@ -86,7 +84,6 @@ export class InvoicePage implements OnInit {
 
 
   onDownload(pdf: string) {
-    console.log('fileUrl: ', pdf);
     this.fileOpener.open(pdf, 'application/pdf')
     .then(() => {
       console.log('File is opened')

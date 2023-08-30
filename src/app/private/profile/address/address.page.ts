@@ -68,27 +68,28 @@ export class AddressPage implements OnInit {
   }
 
   onRemoveAddress(addressPk: number, slidingElement: IonItemSliding, isOrigin:boolean): void {
-    slidingElement.close();
-    if(!isOrigin) {
+    if (!isOrigin) {
       this.loadingController.create({
-        message: 'Suppression de l\'addresse...',
-        mode:"ios"
+        message: 'Suppression de l\'adresse...',
+        mode: "ios"
       }).then(loadingElement => {
         loadingElement.present();
-        this.addressService.removeAddress(addressPk).subscribe(() => {
+        this.addressService.removeAddress(addressPk).subscribe((addresses) => {
+          this.isLoading = true;
           loadingElement.dismiss();
+          this.isLoading = false;
+          this.jsonData = addresses;
+          slidingElement.close();
         });
       });
     } else {
       this.alertController.create({
-        header: 'Suppression de l\'address',
+        header: 'Suppression de l\'adresse',
         message: 'Vous ne pouvez pas supprimer l\'adresse d\'origine de la société',
         buttons: ['OK']
-      }).then(loadingElement => {
-        loadingElement.present()
+      }).then(alertElement => {
+        alertElement.present()
       })
     }
-
   }
-
 }

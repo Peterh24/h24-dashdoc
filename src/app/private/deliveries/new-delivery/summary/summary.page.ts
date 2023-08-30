@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TransportService } from 'src/app/services/transport.service';
+import { UtilsService } from 'src/app/utils/services/utils.service';
+import { Delivery } from '../../delivery.model';
 
 @Component({
   selector: 'app-summary',
@@ -8,12 +10,15 @@ import { TransportService } from 'src/app/services/transport.service';
 })
 export class SummaryPage implements OnInit {
   vehicle: any;
-  deliveries: any;
+  deliveries: Array<any> = [];
+  isSingleOrigin: Boolean = false;
   constructor(
-    private transportService: TransportService
+    private transportService: TransportService,
+    private utilsService: UtilsService
     ) { }
 
   ngOnInit() {
+    this.isSingleOrigin = this.utilsService.areAllValuesIdentical(this.transportService.deliveries, 'origin', 'address');
     this.transportService.trailers.push({
       "license_plate": this.transportService.vehicle
     });
@@ -33,11 +38,22 @@ export class SummaryPage implements OnInit {
   ionViewDidEnter() {
     this.vehicle = this.transportService.vehicle;
     this.deliveries = this.transportService.deliveries;
-    console.log('this.deliveries: ', this.deliveries);
+  }
+
+  getCountry(countryCode: string): string {
+    return countryCode
+  }
+
+  getImage(image: string){
+    if(image.includes('other')){
+      return 'other';
+    }
+    return image;
   }
 
   editParts(){
 
   }
+
 
 }

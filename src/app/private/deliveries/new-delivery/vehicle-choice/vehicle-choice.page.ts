@@ -38,7 +38,6 @@ export class VehicleChoicePage implements OnInit {
   onSlideChange(elem: any){
     const currentIndex = elem.srcElement.swiper.realIndex;
     this.currentVehicle = this.vehicles[currentIndex];
-    console.log(this.currentVehicle);
   }
 
   goPrev(){

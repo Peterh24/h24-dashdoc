@@ -54,9 +54,6 @@ export class AuthPage implements OnInit {
   async onSubmit() {
     const { email, password } = this.form.getRawValue();
 
-    console.log('Login with Email: ', email);
-    console.log('Login with Passsword: ', password);
-
     const loading = await this.loadingController.create({
       keyboardClose: true,
       message: 'Connection...',
@@ -90,7 +87,6 @@ export class AuthPage implements OnInit {
     // FAKE API SIMULATION JUST FOR TESTING NOT USE THIS IN PRODUCTION
     this.authService.login(email, password).subscribe({
       next: (res) => {
-        console.log('After Login: ', res);
         loading.dismiss();
         this.router.navigateByUrl('/private/tabs/home');
       },
