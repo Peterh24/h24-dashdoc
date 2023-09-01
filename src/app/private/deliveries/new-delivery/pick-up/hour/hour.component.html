@@ -9,10 +9,19 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
+  <ion-row>
+    <ion-col [size]="type ==='date' ? '12' : '6'">
+      <ion-item>
+        <ion-datetime #dateTime [presentation]="type === 'date' ? 'date' : 'time'" [value]="defaultValue" mode="ios" (ionChange)="onChange(dateTime.value)" [min]="minVal" ></ion-datetime>
+      </ion-item>
+    </ion-col>
+    <ion-col *ngIf="type ==='time'" size="6" class="hour-selected">
+      <div>
+        {{defaultValue | date: 'HH:mm'}}
+      </div>
+    </ion-col>
+  </ion-row>
 
-  <ion-item>
-    <ion-datetime #dateTime [presentation]="type === 'date' ? 'date' : 'time'" [value]="defaultValue" (ionChange)="onChange(dateTime.value)" [min]="minVal" ></ion-datetime>
-  </ion-item>
 
 
   <ion-buttons class="ion-justify-content-end ion-padding">

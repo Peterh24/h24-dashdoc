@@ -1,11 +1,14 @@
+import { InvoiceService } from 'src/app/services/invoice.service';
+import { AddressService } from 'src/app/services/address.service';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { IonSelect, ModalController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
-import { Subscription, take } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ModalAddTokenComponent } from './modal-add-token/modal-add-token.component';
 import { Company } from '../models/company.model';
 import { CompanyService } from 'src/app/services/company.service';
 import { DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
+import { DeliveriesService } from 'src/app/services/deliveries.service';
 
 
 @Component({
@@ -22,7 +25,7 @@ export class HomePage implements OnInit, OnDestroy {
   constructor(
     private storage: Storage,
     public companyService: CompanyService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
   ) { }
 
   ngOnInit() {
@@ -57,8 +60,6 @@ export class HomePage implements OnInit, OnDestroy {
       this.storage.set(USER_STORAGE_KEY, company.token);
       this.storage.set(DASHDOC_COMPANY, currentCompany);
       this.isCompanySelected = true;
-
-
     });
   }
 

@@ -120,4 +120,8 @@ export class AddressService {
     );
   }
 
+  resetAddresses() {
+    this._address.next([]);
+  }
+
 }

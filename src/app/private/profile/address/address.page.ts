@@ -36,6 +36,9 @@ export class AddressPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.addressService.resetAddresses();
+    this.address = [];
+    this.jsonData = [];
     this.storage.get(USER_STORAGE_KEY).then(token => {
       console.log('get token from address: ', token);
     })

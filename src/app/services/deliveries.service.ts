@@ -111,4 +111,8 @@ export class DeliveriesService {
 
     return objectSource.address +', '+ objectSource.postcode +' '+ objectSource.city +' '+ this.countriesService.getCountry(objectSource.country);
   }
+
+  resetDeliveries() {
+    this._deliveries.next([]);
+  }
 }

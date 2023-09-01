@@ -59,4 +59,8 @@ export class InvoiceService {
       })
     );
   }
+
+  resetInvoices() {
+    this._invoices.next([]);
+  }
 }

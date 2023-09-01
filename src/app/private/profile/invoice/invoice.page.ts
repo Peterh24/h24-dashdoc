@@ -33,6 +33,9 @@ export class InvoicePage implements OnInit {
 
   ionViewWillEnter() {
     this.isLoading = true;
+    this.invoiceService.resetInvoices();
+    this.invoices = [];
+    this.jsonData = [];
     this.invoiceService.fetchInvoices().subscribe((invoices) => {
       this.invoices = invoices;
       this.jsonData = this.invoices.slice(0, 10);

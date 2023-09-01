@@ -91,6 +91,7 @@ ionViewWillEnter() {
 
   async onChange(value:any){
     const val = value;
+    this.defaultValue = value;
     if(this.type === 'date') {
       await this.modalController.dismiss(value);
     }

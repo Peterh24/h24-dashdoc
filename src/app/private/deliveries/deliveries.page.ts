@@ -29,6 +29,9 @@ export class DeliveriesPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.deliveriesService.resetDeliveries();
+    this.deliveries = [];
+    this.jsonData = [];
     this.isLoading = true;
     this.deliveriesService.fetchDeliveries().subscribe((deliveries) => {
       this.deliveries = deliveries;
