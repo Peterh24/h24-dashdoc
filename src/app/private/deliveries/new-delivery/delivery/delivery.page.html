@@ -2,8 +2,45 @@
 
 <ion-content>
   <app-progress-bar [current]="0.60" [next]="0.80" ></app-progress-bar>
-
   <ion-grid class="page-grid">
+    <ion-row *ngIf="addressSelected.length > 0">
+      <ion-col size="12">
+        <h2>Livraison(s) planifié(s)</h2>
+      </ion-col>
+      <ion-col>
+        <ion-list>
+          <ion-reorder-group [disabled]="isReorderDisabled" (ionItemReorder)="handleReorder($any($event))">
+            <ion-reorder *ngFor="let address of addressSelected">
+              <ion-card class="ion-margin-bottom ion-padding ion-text-center" color="dark">
+
+                <ion-card-title>{{address.address.name}}</ion-card-title>
+                
+                <ion-card-content class="ion-no-padding">
+                  <p>{{address.address.address}},<br/>{{address.address.postcode}} {{address.address.city}}, {{getCountry(address.address.country)}}</p>
+                  <p><ion-icon name="calendar"></ion-icon> {{address.date}}</p>
+                </ion-card-content>
+                
+                <ion-footer class="ion-text-center">
+                  <ion-button shape="round" (click)="removeSelectedAddress(address.address.pk)" [color]="isReorderDisabled ? 'danger' : 'secondary'">
+                    <ion-icon [name]="isReorderDisabled ? 'trash' : 'reorder-three'" slot="icon-only"></ion-icon>
+                  </ion-button>
+                </ion-footer>
+              </ion-card>
+            </ion-reorder>
+          </ion-reorder-group>
+        </ion-list>
+
+        <ion-buttons *ngIf="addressSelected.length > 1" class="ion-justify-content-end">
+          <ion-button type="button" color="primary" fill="outline" shape="round" (click)="toggleReorder()">
+            <span class="custom-btn">
+              <ion-text class="ion-margin-bottom" [innerText]="isReorderDisabled ? 'Changer l\'ordre' : 'Supprimer des addresse'"></ion-text>
+            </span>
+          </ion-button>
+        </ion-buttons>
+
+      </ion-col>
+    </ion-row>
+
     <ion-row>
       <ion-col>
         <h2>Livraison</h2>
@@ -13,39 +50,9 @@
     <ion-row *ngIf="!isLoading && address.length <= 0">
       <ion-col>
         <p class="ion-text-center">
-          Pas encore d'adresses dans votre carnet!<br />
-          Merci d'en ajouter une!
+          Votre carnet d'adresse est vide.<br />
+          Veuillez ajouter une adresse.
         </p>
-      </ion-col>
-    </ion-row>
-    <ion-row *ngIf="addressSelected.length > 0">
-      <ion-col size="12" class="ion-padding-start ion-padding-end">
-        <h2>Livraison(s) planifié(s)</h2>
-      </ion-col>
-      <ion-col>
-        <ion-list>
-          <ion-reorder-group [disabled]="isReorderDisabled" (ionItemReorder)="handleReorder($any($event))">
-            <ion-reorder *ngFor="let address of addressSelected">
-              <ion-card class="card ion-padding-start ion-padding-end ion-padding-bottom ion-margin-bottom" [color]="'success'">
-                <button *ngIf="isReorderDisabled" class="center-right" (click)="removeSelectedAddress(address.address.pk)">
-                  <ion-icon name="close-outline" slot="icon-only"></ion-icon>
-                </button>
-                <ion-card-header>
-                  <p class="ion-no-margin">{{address.date}}</p>
-                  <ion-card-title>{{address.address.name}}</ion-card-title>
-                </ion-card-header>
-                <div>{{address.address.address}}<br /> {{address.address.postcode}} {{address.address.city}} {{getCountry(address.address.country)}}</div>
-              </ion-card>
-            </ion-reorder>
-          </ion-reorder-group>
-        </ion-list>
-        <ion-buttons *ngIf="addressSelected.length > 1" class="ion-justify-content-end">
-          <ion-button type="button" color="primary" fill="outline" shape="round" (click)="toggleReorder()">
-            <span class="custom-btn">
-              <ion-text class="ion-margin-bottom" [innerText]="isReorderDisabled ? 'Changer l\'ordre' : 'Supprimer des addresse'"></ion-text>
-            </span>
-          </ion-button>
-        </ion-buttons>
       </ion-col>
     </ion-row>
 
@@ -66,14 +73,14 @@
                     <ion-col>
                       <ion-item class="ion-no-padding">
                         <ion-icon name="calendar" size="small" class="ion-margin-end custom-icon" color="primary"></ion-icon>
-                        <ion-label position="floating" class="custom-size">Date d'enlèvement</ion-label>
+                        <ion-label position="floating" class="custom-size">Date de livraison</ion-label>
                         <ion-input type="text" formControlName="date" (click)="openDatePicker('date')" [disabled]="selectedAccordionPk !== address.pk"></ion-input>
                       </ion-item>
                     </ion-col>
                     <ion-col>
                       <ion-item class="ion-no-padding" [class.disabled]="!form.get('date').value">
                         <ion-icon name="time" size="small" class="ion-margin-end custom-icon" color="primary"></ion-icon>
-                        <ion-label position="floating" class="custom-size">Heure d'enlèvement</ion-label>
+                        <ion-label position="floating" class="custom-size">Heure de livraison</ion-label>
                         <ion-input type="text" formControlName="hour" (click)="openDatePicker('time')" [disabled]="selectedAccordionPk !== address.pk" [readonly]="!form.get('date').value"></ion-input>
                       </ion-item>
                     </ion-col>
@@ -107,8 +114,8 @@
   </ion-grid>
 
   <ion-fab slot="fixed" horizontal="end" vertical="bottom" (click)="addAddress()">
-    <ion-button>
-      Ajouter une addresse
+    <ion-button shape="round">
+      Ajouter une adresse
     </ion-button>
   </ion-fab>
 </ion-content>
