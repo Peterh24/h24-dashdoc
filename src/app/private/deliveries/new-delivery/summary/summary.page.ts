@@ -12,6 +12,24 @@ export class SummaryPage implements OnInit {
   vehicle: any;
   deliveries: Array<any> = [];
   isSingleOrigin: Boolean = false;
+  defaultTransport: any = {
+    "carrier_address": 47895693,
+    "deliveries": [
+    ],
+    "segments": [
+    ],
+    "instructions": "Notes exploitant",
+    "volume_display_unit": "m3",
+    "business_privacy": false,
+    "is_template": false,
+    "is_multiple_compartments": false,
+    "requires_washing": false,
+    "send_to_trucker": false,
+    "send_to_carrier": true,
+    "analytics": {
+        "has_price": false
+    }
+}
   constructor(
     private transportService: TransportService,
     private utilsService: UtilsService
@@ -31,7 +49,6 @@ export class SummaryPage implements OnInit {
       this.transportService.segments.push(segment);
     })
     console.log('DELIVERIES: ', this.transportService.deliveries);
-    console.log('TRAILERS: ', this.transportService.trailers);
     console.log('SEGMENTS: ', this.transportService.segments);
   }
 
@@ -53,6 +70,16 @@ export class SummaryPage implements OnInit {
 
   editParts(){
 
+  }
+
+  onValidate(){
+    let dataToApi = {
+      ...this.defaultTransport,
+      deliveries: this.transportService.deliveries,
+      segments: this.transportService.segments
+    };
+
+    console.log('dataToApi: ', dataToApi);
   }
 
 

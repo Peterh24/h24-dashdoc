@@ -54,10 +54,10 @@ ionViewWillEnter() {
           const pastDate = new Date(2000, 0, 1);
           this.minVal = format(pastDate, "yyyy-MM-dd'T'HH:mm:ss");
         } else {
-          const minTime = addHours(new Date(), 1);
+          const minTime = addHours(maxDeliveryDate, 1);
           this.minVal = format(minTime, "yyyy-MM-dd'T'HH:mm:ss");
         }
-        this.defaultValue = this.minVal;
+        //this.defaultValue = this.minVal;
       }
 
 
