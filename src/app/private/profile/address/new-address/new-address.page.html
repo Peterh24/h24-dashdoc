@@ -1,8 +1,21 @@
-<app-header [defaultHref]="'/private/tabs/profile/details'"></app-header>
+<app-header *ngIf="!isModal" [defaultHref]="'/private/tabs/profile/details'"></app-header>
+
+<ion-header *ngIf="isModal">
+  <ion-toolbar>
+    <ion-title>
+      <h2>Ajouter une adresse</h2>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="medium" (click)="cancel()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 
 <ion-content>
   <ion-grid class="page-grid">
-    <ion-row>
+    <ion-row *ngIf="!isModal">
       <ion-col>
         <h2>Ajouter une adresse</h2>
       </ion-col>

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { TransportService } from 'src/app/services/transport.service';
 import { UtilsService } from 'src/app/utils/services/utils.service';
 import { Delivery } from '../../delivery.model';
+import { ModalController } from '@ionic/angular';
+import { AddReferenceComponent } from './add-reference/add-reference.component';
 
 @Component({
   selector: 'app-summary',
@@ -32,7 +34,8 @@ export class SummaryPage implements OnInit {
 }
   constructor(
     private transportService: TransportService,
-    private utilsService: UtilsService
+    private utilsService: UtilsService,
+    private modalCtrl: ModalController,
     ) { }
 
   ngOnInit() {
@@ -72,14 +75,31 @@ export class SummaryPage implements OnInit {
 
   }
 
-  onValidate(){
+  async onValidate(){
     let dataToApi = {
       ...this.defaultTransport,
       deliveries: this.transportService.deliveries,
       segments: this.transportService.segments
     };
 
-    console.log('dataToApi: ', dataToApi);
+    const modal = await this.modalCtrl.create({
+      component: AddReferenceComponent,
+    });
+    modal.present();
+
+    const { data, role } = await modal.onWillDismiss();
+
+    if (role === 'confirm') {
+      const ref = data;
+      // Ajoutez la propriété "shipper_reference" à chaque élément de l'array "deliveries"
+      dataToApi.deliveries.forEach((delivery: any) => {
+        delivery.shipper_reference = ref;
+      });
+      console.log('dataToApi: ', dataToApi);
+    } else {
+      console.log('dataToApi: ', dataToApi);
+    }
+
   }
 
 

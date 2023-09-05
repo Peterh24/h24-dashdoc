@@ -8,6 +8,7 @@ import { SummaryPageRoutingModule } from './summary-routing.module';
 
 import { SummaryPage } from './summary.page';
 import { HeaderModule, ProgressBarModule } from 'src/app/components';
+import { AddReferenceComponent } from './add-reference/add-reference.component';
 
 @NgModule({
   imports: [
@@ -18,6 +19,6 @@ import { HeaderModule, ProgressBarModule } from 'src/app/components';
     HeaderModule,
     ProgressBarModule
   ],
-  declarations: [SummaryPage]
+  declarations: [SummaryPage, AddReferenceComponent]
 })
 export class SummaryPageModule {}

@@ -79,4 +79,8 @@ export class NewAddressPage implements OnInit {
     });
   }
 
+  cancel() {
+    this.modalController.dismiss();
+  }
+
 }
