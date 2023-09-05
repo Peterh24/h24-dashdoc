@@ -71,7 +71,7 @@
               <div class="ion-card-wrapper" *ngIf="!isSingleOrigin">
                 <ion-card *ngFor="let delivery of deliveries; let index = index">
                   <ion-card-content>
-                    <h3 class="card-title">Enlèvement {{index+1}}</h3>
+                    <h3 class="card-title">Etape {{index+1}}</h3>
                     <ion-label>
                       <h3>{{delivery.origin.address.name}}</h3>
                       <p>
@@ -118,7 +118,7 @@
               <div class="ion-card-wrapper" *ngIf="isSingleOrigin || deliveries.length === 1">
                 <ion-card *ngFor="let delivery of deliveries; let index = index">
                   <ion-card-content>
-                    <h3 class="card-title">Enlèvement {{index+1}}</h3>
+                    <h3 class="card-title">Etape {{index+1}}</h3>
                     <ion-label>
                       <h3>{{delivery.destination.address.name}}</h3>
                       <p>

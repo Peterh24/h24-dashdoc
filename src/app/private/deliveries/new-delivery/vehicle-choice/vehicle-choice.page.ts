@@ -35,6 +35,13 @@ export class VehicleChoicePage implements OnInit {
     ).subscribe();
   }
 
+  ionViewWillEnter() {
+    this.transportService.deliveries = [];
+    this.transportService.segments = [];
+    this.transportService.trailers = [];
+    this.transportService.vehicle = {};
+  }
+
   onSlideChange(elem: any){
     const currentIndex = elem.srcElement.swiper.realIndex;
     this.currentVehicle = this.vehicles[currentIndex];
