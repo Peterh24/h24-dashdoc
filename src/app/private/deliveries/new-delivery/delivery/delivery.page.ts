@@ -11,6 +11,7 @@ import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { ModalCourseComponent } from '../merchandise/modal-course/modal-course.component';
 import { NewAddressPage } from 'src/app/private/profile/address/new-address/new-address.page';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-delivery',
@@ -33,6 +34,7 @@ export class DeliveryPage implements OnInit {
     hour: ['', [Validators.required]],
     instruction: [''],
   });
+  originFormControl: FormControl = new FormControl('');
   constructor(
     private formBuilder: FormBuilder,
     private transportService: TransportService,
@@ -50,6 +52,9 @@ export class DeliveryPage implements OnInit {
 
   ionViewWillEnter() {
     this.isSingleOrigin = this.utilsService.areAllValuesIdentical(this.transportService.deliveries, 'origin', 'address');
+    if (this.transportService.deliveries.length > 0) {
+      this.originFormControl.setValue(this.transportService.deliveries[0].origin.address.pk);
+    }
     this.isLoading = true;
     this.addressSub = this.addressService.address
       .pipe(

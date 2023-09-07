@@ -52,6 +52,7 @@ export class SummaryPage implements OnInit {
         destination: delivery.destination,
         trailer:this.transportService.trailers
       }
+
       this.transportService.segments.push(segment);
     })
     console.log('DELIVERIES: ', this.transportService.deliveries);
@@ -98,6 +99,32 @@ export class SummaryPage implements OnInit {
             },
           };
         });
+
+        // Tri des segments en fonction de this.isSingleOrigin
+        if (this.isSingleOrigin) {
+          // Trier les segments en fonction des plages horaires de destination
+          this.transportService.segments.sort((segment1, segment2) => {
+            const endTime1: Date = new Date(segment1.destination.slots[0].start);
+            const endTime2: Date = new Date(segment2.destination.slots[0].start);
+            return endTime1.getTime() - endTime2.getTime(); // Utilisez getTime() pour comparer les dates
+          });
+        } else {
+          // Trier les segments en fonction des plages horaires de départ
+          this.transportService.segments.sort((segment1, segment2) => {
+            const startTime1: Date = new Date(segment1.origin.slots[0].start);
+            const startTime2: Date = new Date(segment2.origin.slots[0].start);
+            return startTime1.getTime() - startTime2.getTime(); // Utilisez getTime() pour comparer les dates
+          });
+        }
+
+        // Réorganisez les origines des segments à partir de l'étape 2
+        for (let i = 1; i < this.transportService.segments.length; i++) {
+          this.transportService.segments[i].origin = {
+            address: { ...this.transportService.segments[i - 1].destination.address },
+            instructions: "",
+            slots: [{ ...this.transportService.segments[i].origin.slots[0] }]
+          };
+        }
 
         // Ajoutez également les données à dataToApi
         let dataToApi = {
