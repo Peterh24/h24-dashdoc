@@ -56,7 +56,9 @@ export class AddressService {
           city,
           postcode,
           country,
-          instructions
+          instructions,
+          is_origin: true,
+          is_destination: true
       };
 
         return this.http.post(
