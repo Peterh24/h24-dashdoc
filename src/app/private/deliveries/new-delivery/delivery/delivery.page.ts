@@ -52,9 +52,6 @@ export class DeliveryPage implements OnInit {
 
   ionViewWillEnter() {
     this.isSingleOrigin = this.utilsService.areAllValuesIdentical(this.transportService.deliveries, 'origin', 'address');
-    if (this.transportService.deliveries.length > 0) {
-      this.originFormControl.setValue(this.transportService.deliveries[0].origin.address.pk);
-    }
     this.isLoading = true;
     this.addressSub = this.addressService.address
       .pipe(
@@ -73,6 +70,22 @@ export class DeliveryPage implements OnInit {
 
         this.addAddressCard();
       });
+  }
+
+
+  detectAccordionVisible(addressPk:string) {
+    if (typeof this.transportService.deliveries[0].destination == 'undefined') {
+      const originAddressPk = this.transportService.deliveries[0].origin.address.pk;
+      if(addressPk === originAddressPk){
+        return false;
+      }
+      return true;
+    } else {
+      if(addressPk == this.transportService.deliveries[this.transportService.deliveries.length -1].destination.address.pk){
+        return false;
+      }
+      return true;
+    }
   }
 
   handleReorder(ev: CustomEvent<ItemReorderEventDetail>) {
@@ -115,7 +128,6 @@ export class DeliveryPage implements OnInit {
 
   onSelectedAddress(addressPk: any) {
     this.selectedAccordionPk = addressPk;
-
     this.addressService.getAddress(addressPk).pipe(take(1)).subscribe((address) => {
       const slotDate = this.date + 'T' + this.hour;
 
@@ -163,6 +175,7 @@ export class DeliveryPage implements OnInit {
           // If destination never set we add the destination on the first delivery
           this.transportService.deliveries[0].destination = course;
         }
+        this.detectAccordionVisible(addressPk);
         this.openPopupAdd();
       }
     })
