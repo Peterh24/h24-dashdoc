@@ -108,6 +108,15 @@ export class SummaryPage implements OnInit {
             const endTime2: Date = new Date(segment2.destination.slots[0].start);
             return endTime1.getTime() - endTime2.getTime(); // Utilisez getTime() pour comparer les dates
           });
+
+          // Réorganisez les origines des segments à partir de l'étape 2
+          for (let i = 1; i < this.transportService.segments.length; i++) {
+            this.transportService.segments[i].origin = {
+              address: { ...this.transportService.segments[i - 1].destination.address },
+              instructions: "",
+              slots: [{ ...this.transportService.segments[i].origin.slots[0] }]
+            };
+          }
         } else {
           // Trier les segments en fonction des plages horaires de départ
           this.transportService.segments.sort((segment1, segment2) => {
@@ -115,15 +124,15 @@ export class SummaryPage implements OnInit {
             const startTime2: Date = new Date(segment2.origin.slots[0].start);
             return startTime1.getTime() - startTime2.getTime(); // Utilisez getTime() pour comparer les dates
           });
-        }
+          for (let i = 0; i < this.transportService.segments.length - 1; i++) {
+            // Remplacez la destination actuelle par l'origin du segment suivant
+            this.transportService.segments[i].destination = {
+              address: { ...this.transportService.segments[i + 1].origin.address },
+              instructions: "",
+              slots: [{ ...this.transportService.segments[i].destination.slots[0] }]
+            };
+          }
 
-        // Réorganisez les origines des segments à partir de l'étape 2
-        for (let i = 1; i < this.transportService.segments.length; i++) {
-          this.transportService.segments[i].origin = {
-            address: { ...this.transportService.segments[i - 1].destination.address },
-            instructions: "",
-            slots: [{ ...this.transportService.segments[i].origin.slots[0] }]
-          };
         }
 
         // Ajoutez également les données à dataToApi
