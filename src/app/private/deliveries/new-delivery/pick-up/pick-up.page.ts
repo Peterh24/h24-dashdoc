@@ -71,6 +71,19 @@ export class PickUpPage implements OnInit {
       });
   }
 
+  detectAccordionVisible(addressPk:string) {
+    if(this.transportService.deliveries.length === 0){
+      //if the first time all address was visible
+      return true;
+    } else {
+      //take the last origin and remove from the list
+      if(addressPk == this.transportService.deliveries[this.transportService.deliveries.length -1].origin.address.pk){
+        return false;
+      }
+    }
+    return true;
+  }
+
   getCountry(countryCode: string): string {
     return countryCode;
   }
@@ -130,7 +143,10 @@ export class PickUpPage implements OnInit {
 
       this.addressSelected.push({ address: delivery.origin.address, date: format(new Date(delivery.origin.slots[0].start), 'dd-MM-yyyy HH:mm') });
 
+      this.detectAccordionVisible(addressPk);
+
       this.router.navigateByUrl('/private/tabs/transports/new-delivery/merchandise');
+
    });
   }
 
