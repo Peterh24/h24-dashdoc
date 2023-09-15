@@ -8,6 +8,8 @@ import { Storage } from '@ionic/storage-angular';
 import { from, switchMap } from 'rxjs';
 import { DASHDOC_COMPANY } from 'src/app/services/constants';
 import { VehicleChoicePage } from '../vehicle-choice/vehicle-choice.page';
+import { HourComponent } from '../pick-up/hour/hour.component';
+import { EditComponent } from './edit/edit.component';
 
 @Component({
   selector: 'app-summary',
@@ -62,17 +64,21 @@ export class SummaryPage implements OnInit {
     return image;
   }
 
-  async editParts(type: string, data: any) {
+  async editParts(type: string, data: any, index: number) {
     let componentElem;
     if (type == 'vehicle') {
       componentElem = VehicleChoicePage
+    } else if(type === 'date-origin' || 'date-destination') {
+      componentElem = HourComponent
     }
 
     const modalEdit = await this.modalCtrl.create({
       component: componentElem,
       componentProps: {
+        modalType: type,
         isModal: true,
-        dataToEdit: data
+        dataToEdit: data,
+        index: index
       }
     });
 
@@ -85,6 +91,19 @@ export class SummaryPage implements OnInit {
       // Mettez à jour les segments (replicating ngOnInit logic)
 
     }
+  }
+
+  async editDelivery(type: string, data: any, index: number){
+    const modalDelivery = await this.modalCtrl.create({
+      component: EditComponent,
+      componentProps: {
+        modalType: type,
+        dataToEdit: data,
+        index: index
+      }
+    });
+    modalDelivery.present();
+
   }
 
   async onValidate() {

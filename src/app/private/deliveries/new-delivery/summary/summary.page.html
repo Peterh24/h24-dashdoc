@@ -15,7 +15,7 @@
           <ion-card-content *ngIf="vehicle">
             <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/cars/'+vehicle+'.jpg'"></ion-img>
               <div class="edit-wrap">
-                <ion-button (click)="editParts('vehicle', vehicle)"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
+                <ion-button (click)="editParts('vehicle', vehicle, null)"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
               </div>
           </ion-card-content>
         </ion-card>
@@ -65,6 +65,9 @@
                         </ion-row>
                       </div>
                     </ion-label>
+                    <div class="edit-wrap">
+                      <ion-button (click)="editDelivery('date-origin', deliveries[0], 0)"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
+                    </div>
                   </ion-card-content>
                 </ion-card>
               </div>
@@ -81,7 +84,7 @@
                     </ion-label>
                     <ion-label>
                       <h3>Date:</h3>
-                      <p>{{delivery.origin.slots[0].start | date: 'dd/MM/yyyy - HH:mm'}}</p>
+                      <p >{{delivery.origin.slots[0].start | date: 'dd/MM/yyyy - HH:mm'}}</p>
                     </ion-label>
                     <ion-label *ngIf="delivery.origin.instructions !== ''">
                       <h3>Instructions:</h3>
@@ -103,11 +106,17 @@
                         </ion-row>
                       </div>
                     </ion-label>
+                    <div class="edit-wrap">
+                      <ion-button (click)="editDelivery('date-origin', delivery, 0)"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
+                    </div>
                   </ion-card-content>
                 </ion-card>
               </div>
             </ion-item>
           </ion-accordion>
+
+
+
           <ion-accordion>
             <ion-item slot="header">
               <ion-label>
@@ -134,6 +143,9 @@
                       <h3>Instructions:</h3>
                       <p>{{delivery.destination.instructions}}</p>
                     </ion-label>
+                    <div class="edit-wrap">
+                      <ion-button (click)="editDelivery('date-destination', delivery, 0)"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
+                    </div>
                   </ion-card-content>
                 </ion-card>
               </div>
@@ -156,56 +168,14 @@
                       <h3>Instructions:</h3>
                       <p>{{deliveries[0].destination.instructions}}</p>
                     </ion-label>
+                    <div class="edit-wrap">
+                      <ion-button (click)="editDelivery('date-destination', deliveries[0], 0)"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
+                    </div>
                   </ion-card-content>
                 </ion-card>
               </div>
             </ion-item>
           </ion-accordion>
-          <!-- <ion-accordion *ngFor="let delivery of deliveries; let index = index">
-            <ion-item slot="header" class="accordion-wrap">
-              <div class="accordion-header">
-                <ion-label>
-                  <h3>Etape {{index+1}}</h3>
-                </ion-label>
-              </div>
-            </ion-item>
-            <ion-item slot="content">
-              <div class="ion-card-wrapper">
-                <ion-card class="custom-ion-card">
-                  <ion-card-content>
-                    <h3 class="card-title">Enlèvements</h3>
-                    <ion-label>
-                      <h3>{{delivery.origin.address.name}}</h3>
-                      <p>{{delivery.origin.address.address}}<br /> {{delivery.origin.address.postcode}} {{delivery.origin.address.city}} {{getCountry(delivery.origin.address.country)}}</p>
-                    </ion-label>
-                    <ion-label *ngIf="delivery.origin.instructions !== ''">
-                      <h3>Instructions:</h3>
-                      <p>{{delivery.origin.instructions}}</p>
-                    </ion-label>
-                    <div class="edit-wrap">
-                      <ion-button (click)="editParts()"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
-                    </div>
-                  </ion-card-content>
-                </ion-card>
-                <ion-card class="custom-ion-card">
-                  <ion-card-content>
-                    <h3 class="card-title">Livraison</h3>
-                    <div class="edit-wrap">
-                      <ion-button (click)="editParts()"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
-                    </div>
-                  </ion-card-content>
-                </ion-card>
-                <ion-card class="custom-ion-card">
-                  <ion-card-content>
-                    <h3 class="card-title">Chargement</h3>
-                    <div class="edit-wrap">
-                      <ion-button (click)="editParts()"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
-                    </div>
-                  </ion-card-content>
-                </ion-card>
-              </div>
-            </ion-item>
-          </ion-accordion> -->
         </ion-accordion-group>
       </ion-col>
     </ion-row>

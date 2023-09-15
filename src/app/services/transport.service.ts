@@ -22,5 +22,9 @@ export class TransportService {
   deliveries: Array<any> = [];
   segments: Array<any> = [];
   transport: any = {};
+  minDateOrigin: string;
+  minHourOrigin: string;
+  minDateDestination: string;
+  minHourDestination: string;
   constructor() { }
 }
