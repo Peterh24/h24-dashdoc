@@ -18,7 +18,7 @@ export class NewAddressPage implements OnInit {
   address: Address;
   form: FormGroup;
   countries: Array<Country>;
-  @Input()isModal: boolean
+  @Input()isModal: boolean;
   constructor(
     private route: ActivatedRoute,
     private navController: NavController,

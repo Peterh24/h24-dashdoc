@@ -1,10 +1,11 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Vehicle } from '../../vehicle.model';
 import { VehiclesService } from 'src/app/services/vehicles.service';
 import { map, take } from 'rxjs';
 import Swiper from 'swiper';
 import { TransportService } from 'src/app/services/transport.service';
 import { Router } from '@angular/router';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-vehicle-choice',
@@ -12,15 +13,17 @@ import { Router } from '@angular/router';
   styleUrls: ['./vehicle-choice.page.scss'],
 })
 export class VehicleChoicePage implements OnInit {
+  @Input()isModal: boolean;
+  @Input()dataToEdit: any;
   vehicles: Array<Vehicle>;
   currentVehicle: Vehicle;
   @ViewChild('swiper') swiperRef: ElementRef | undefined;
   swiper?: Swiper;
-  isEditMode = false;
   constructor(
     private vehicleService: VehiclesService,
     private transportService: TransportService,
-    private router: Router
+    private router: Router,
+    private modalController: ModalController,
   ) {}
 
   ngOnInit() {
@@ -35,11 +38,13 @@ export class VehicleChoicePage implements OnInit {
     ).subscribe();
   }
 
-  ionViewWillEnter() {
-    this.transportService.deliveries = [];
-    this.transportService.segments = [];
-    this.transportService.trailers = [];
-    this.transportService.vehicle = {};
+  ionViewDidEnter() {
+    if(!this.isModal) {
+      this.transportService.deliveries = [];
+      this.transportService.segments = [];
+      this.transportService.trailers = [];
+      this.transportService.vehicle = {};
+    }
   }
 
   onSlideChange(elem: any){
@@ -55,9 +60,18 @@ export class VehicleChoicePage implements OnInit {
     this.swiperRef.nativeElement.swiper.slideNext();
   }
 
+  cancel(){
+    this.modalController.dismiss();
+  }
+
   onVehicleSelected(licensePlate: string){
     this.transportService.vehicle = licensePlate
-    this.router.navigateByUrl('/private/tabs/transports/new-delivery/pick-up');
+    if(this.isModal){
+      this.modalController.dismiss(licensePlate);
+    } else {
+      this.router.navigateByUrl('/private/tabs/transports/new-delivery/pick-up');
+    }
+
   }
 
 }

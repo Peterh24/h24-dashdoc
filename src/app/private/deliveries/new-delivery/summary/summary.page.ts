@@ -7,6 +7,7 @@ import { AddReferenceComponent } from './add-reference/add-reference.component';
 import { Storage } from '@ionic/storage-angular';
 import { from, switchMap } from 'rxjs';
 import { DASHDOC_COMPANY } from 'src/app/services/constants';
+import { VehicleChoicePage } from '../vehicle-choice/vehicle-choice.page';
 
 @Component({
   selector: 'app-summary',
@@ -43,20 +44,6 @@ export class SummaryPage implements OnInit {
 
   ngOnInit() {
     this.isSingleOrigin = this.utilsService.areAllValuesIdentical(this.transportService.deliveries, 'origin', 'address');
-    this.transportService.trailers.push({
-      "license_plate": this.transportService.vehicle
-    });
-    this.transportService.deliveries.forEach(delivery => {
-      let segment = {
-        origin: delivery.origin,
-        destination: delivery.destination,
-        trailer:this.transportService.trailers
-      }
-
-      this.transportService.segments.push(segment);
-    })
-    console.log('DELIVERIES: ', this.transportService.deliveries);
-    console.log('SEGMENTS: ', this.transportService.segments);
   }
 
   ionViewDidEnter() {
@@ -75,11 +62,47 @@ export class SummaryPage implements OnInit {
     return image;
   }
 
-  editParts(){
+  async editParts(type: string, data: any) {
+    let componentElem;
+    if (type == 'vehicle') {
+      componentElem = VehicleChoicePage
+    }
 
+    const modalEdit = await this.modalCtrl.create({
+      component: componentElem,
+      componentProps: {
+        isModal: true,
+        dataToEdit: data
+      }
+    });
+
+    modalEdit.present();
+    const { data: dataEdit } = await modalEdit.onWillDismiss();
+    if(dataEdit){
+      // Remplacez this.vehicle par dataEdit
+      this.vehicle = dataEdit;
+
+      // Mettez à jour les segments (replicating ngOnInit logic)
+
+    }
   }
 
   async onValidate() {
+    this.transportService.trailers = [];
+    this.transportService.segments = [];
+    this.transportService.trailers.push({
+      "license_plate": this.transportService.vehicle
+    });
+    this.transportService.deliveries.forEach(delivery => {
+      let segment = {
+        origin: delivery.origin,
+        destination: delivery.destination,
+        trailer:this.transportService.trailers
+      }
+
+      this.transportService.segments.push(segment);
+    })
+
     const modal = await this.modalCtrl.create({
       component: AddReferenceComponent,
     });

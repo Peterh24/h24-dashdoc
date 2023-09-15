@@ -1,11 +1,24 @@
-<app-header [defaultHref]="'/private/home'"></app-header>
+<app-header *ngIf="!isModal" [defaultHref]="'/private/home'"></app-header>
 
-<ion-content>
+<ion-header *ngIf="isModal" >
+  <ion-toolbar>
+    <ion-title>
+      <h2>Changer de Vehicule</h2>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="medium" (click)="cancel()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="currentVehicle">
   <app-progress-bar [current]="0" [next]="0.20" ></app-progress-bar>
   <ion-grid class="page-grid">
     <ion-row>
       <ion-col>
-        <h2>Sélection du vehicule</h2>
+        <h2>Sélection du vehicule {{isModal}}</h2>
       </ion-col>
     </ion-row>
     <ion-row>

@@ -15,7 +15,7 @@
           <ion-card-content *ngIf="vehicle">
             <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/cars/'+vehicle+'.jpg'"></ion-img>
               <div class="edit-wrap">
-                <ion-button (click)="editParts()"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
+                <ion-button (click)="editParts('vehicle', vehicle)"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
               </div>
           </ion-card-content>
         </ion-card>
