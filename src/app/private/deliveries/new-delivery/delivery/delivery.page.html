@@ -61,7 +61,7 @@
         <form [formGroup]="form">
           <ion-accordion-group (ionChange)="resetField()">
             <ng-container *ngFor="let address of address">
-              <ion-accordion  *ngIf="!addressIsSelected(address.pk) && detectAccordionVisible(address.pk)" [value]="address.pk">
+              <ion-accordion  *ngIf="!addressIsSelected(address.pk)" [value]="address.pk">
                 <ion-item slot="header" class="ion-align-items-start">
                   <ion-label>
                     <h3>{{address.name}}</h3>

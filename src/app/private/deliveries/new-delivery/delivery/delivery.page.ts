@@ -72,22 +72,6 @@ export class DeliveryPage implements OnInit {
       });
   }
 
-
-  detectAccordionVisible(addressPk:string) {
-    if (typeof this.transportService.deliveries[0].destination == 'undefined') {
-      const originAddressPk = this.transportService.deliveries[0].origin.address.pk;
-      if(addressPk === originAddressPk){
-        return false;
-      }
-      return true;
-    } else {
-      if(addressPk == this.transportService.deliveries[this.transportService.deliveries.length -1].destination.address.pk){
-        return false;
-      }
-      return true;
-    }
-  }
-
   handleReorder(ev: CustomEvent<ItemReorderEventDetail>) {
     const fromIndex = ev.detail.from;
     const toIndex = ev.detail.to;
@@ -119,7 +103,14 @@ export class DeliveryPage implements OnInit {
   }
 
   addressIsSelected(addressPk: any): boolean {
-    return this.addressSelected.some(selected => selected.pk === addressPk);
+    const originAddressPk = this.transportService.deliveries[0].origin.address.pk;
+    if(this.addressSelected.length < 1){
+      if(addressPk === originAddressPk){
+        return true;
+      }
+    }
+
+    return this.addressSelected.some(selected => selected.address.pk === addressPk);
   }
 
   toggleReorder() {
@@ -175,7 +166,6 @@ export class DeliveryPage implements OnInit {
           // If destination never set we add the destination on the first delivery
           this.transportService.deliveries[0].destination = course;
         }
-        this.detectAccordionVisible(addressPk);
         this.openPopupAdd();
       }
     })
