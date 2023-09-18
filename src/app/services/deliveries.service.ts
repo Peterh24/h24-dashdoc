@@ -88,13 +88,19 @@ export class DeliveriesService {
     let data;
 
     if (source === 'origin') {
-      const startDate = new Date(delivery[0].origin.slots[0].start);
-      const formattedStartDate = format(startDate, 'dd-MM-yyyy');
-      data = `${formattedStartDate} - ${delivery[0].origin.address.postcode}`;
+      if(delivery[0].origin.slots[0]){
+        const startDate = new Date(delivery[0].origin.slots[0].start);
+        const formattedStartDate = format(startDate, 'dd-MM-yyyy');
+        data = `${formattedStartDate} - ${delivery[0].origin.address.postcode}`;
+      }
+
+
     } else if (source === 'destination') {
-      const endDate = new Date(delivery[delivery.length - 1].destination.slots[0].end);
-      const formattedEndDate = format(endDate, 'dd-MM-yyyy');
-      data = `${formattedEndDate} - ${delivery[delivery.length - 1].destination.address.postcode}`;
+      if(delivery[0].destination.slots[0]){
+        const endDate = new Date(delivery[delivery.length - 1].destination.slots[0].end);
+        const formattedEndDate = format(endDate, 'dd-MM-yyyy');
+        data = `${formattedEndDate} - ${delivery[delivery.length - 1].destination.address.postcode}`;
+      }
     }
 
     return data;

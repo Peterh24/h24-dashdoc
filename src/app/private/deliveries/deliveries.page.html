@@ -58,7 +58,7 @@
                 <ion-icon name="create" slot="icon-only"></ion-icon>
               </ion-item-option>
             </ion-item-options>
-            <ion-accordion  [value]="item.uid" >
+            <ion-accordion *ngIf="item" [value]="item.uid" >
               <ion-item slot="header">
                 <div class="accordion-header">
                   <div class="accordion-row">
@@ -67,7 +67,7 @@
                     </ion-label>
                     <ion-badge [class]="'status-'+item.global_status" slot="end">{{getStatus(item.global_status)}}</ion-badge>
                   </div>
-                  <div class="accordion-row accordion-row-destination">
+                  <div class="accordion-row accordion-row-destination" >
                     <ion-label class="centered-label" color="secondary">
                       {{getDate(item.deliveries, 'origin')}} <ion-icon name="arrow-forward-outline"></ion-icon> {{getDate(item.deliveries, 'destination')}}
                     </ion-label>

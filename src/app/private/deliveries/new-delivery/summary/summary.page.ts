@@ -6,10 +6,12 @@ import { ModalController } from '@ionic/angular';
 import { AddReferenceComponent } from './add-reference/add-reference.component';
 import { Storage } from '@ionic/storage-angular';
 import { from, switchMap } from 'rxjs';
-import { DASHDOC_COMPANY } from 'src/app/services/constants';
+import { DASHDOC_API_URL, DASHDOC_COMPANY } from 'src/app/services/constants';
 import { VehicleChoicePage } from '../vehicle-choice/vehicle-choice.page';
 import { HourComponent } from '../pick-up/hour/hour.component';
 import { EditComponent } from './edit/edit.component';
+import { HttpClient } from '@angular/common/http';
+import { Route, Router } from '@angular/router';
 
 @Component({
   selector: 'app-summary',
@@ -42,6 +44,8 @@ export class SummaryPage implements OnInit {
     private utilsService: UtilsService,
     private modalCtrl: ModalController,
     private storage: Storage,
+    private http: HttpClient,
+    private route: Router,
     ) { }
 
   ngOnInit() {
@@ -135,9 +139,10 @@ export class SummaryPage implements OnInit {
       this.storage.get(DASHDOC_COMPANY).then(pk => {
         // Parcourez les livraisons et ajoutez la propriété "shipper_address"
         this.transportService.deliveries.forEach((delivery: any) => {
+          delivery.shipper_reference = ref;
           delivery.shipper_address = {
             company: {
-              pk: pk,
+              pk: pk
             },
           };
         });
@@ -181,11 +186,14 @@ export class SummaryPage implements OnInit {
         let dataToApi = {
           ...this.defaultTransport,
           deliveries: this.transportService.deliveries,
-          segments: this.transportService.segments,
+          segments: this.transportService.segments
         };
 
-        // Log pour vérification
-        console.log('Updated dataToApi: ', dataToApi);
+        this.http.post(`${DASHDOC_API_URL}transports/`, dataToApi).subscribe(res => {
+
+          console.log('res: ', res);
+          this.route.navigateByUrl('/private/tabs/transports');
+        })
       });
     }
   }
