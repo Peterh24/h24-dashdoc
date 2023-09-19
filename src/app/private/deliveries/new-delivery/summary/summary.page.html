@@ -30,88 +30,103 @@
                 <h3 [innerText]="isSingleOrigin ? 'Enlèvement': 'Enlèvements'"></h3>
               </ion-label>
             </ion-item>
-            <ion-item slot="content">
-              <div class="ion-card-wrapper" *ngIf="isSingleOrigin || deliveries.length === 1">
-                <ion-card *ngIf="deliveries[0]">
-                  <ion-card-content>
-                      <h3 class="card-title">{{deliveries[0].origin.address.name}}</h3>
-                      <ion-label>
-                      <p>
-                        {{deliveries[0].origin.address.address}}<br />
-                        {{deliveries[0].origin.address.postcode}} {{deliveries[0].origin.address.city}} {{getCountry(deliveries[0].origin.address.country)}}
-                      </p>
-                    </ion-label>
-                    <ion-label>
-                      <h3>Date:</h3>
-                      <p>{{deliveries[0].origin.slots[0].start | date: 'dd/MM/yyyy - HH:mm'}}</p>
-                    </ion-label>
-                    <ion-label *ngIf="deliveries[0].origin.instructions !== ''">
-                      <h3>Instructions:</h3>
-                      <p>{{deliveries[0].origin.instructions}}</p>
-                    </ion-label>
-                    <ion-label>
-                      <h3>Chargement:</h3>
-                      <div class="loads_wrap">
-                        <ion-row>
-                          <ion-col *ngFor="let merchandise of deliveries[0].planned_loads" size="6">
-                            <ion-item class="ion-no-padding" lines="none">
-                              <ion-badge slot="start" color="danger">{{merchandise.quantity}}</ion-badge>
-                              <ion-card color="light-tint">
-                                <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/'+getImage(merchandise.id)+'.png'"  [alt]="merchandise.name"></ion-img>
-                                <ion-label>{{merchandise.name}}</ion-label>
-                              </ion-card>
-                            </ion-item>
-                          </ion-col>
-                        </ion-row>
-                      </div>
-                    </ion-label>
+
+            <ion-item slot="content" class="content-wrap">
+              <ion-grid>
+                <ion-row>
+                  <ion-col>
                     <div class="edit-wrap">
-                      <ion-button (click)="editDelivery('date-origin', deliveries[0], 0)"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
+                      <ion-button (click)="editAddresses('pickup')"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
                     </div>
-                  </ion-card-content>
-                </ion-card>
-              </div>
-              <div class="ion-card-wrapper" *ngIf="!isSingleOrigin">
-                <ion-card *ngFor="let delivery of deliveries; let index = index">
-                  <ion-card-content>
-                    <h3 class="card-title">Etape {{index+1}}</h3>
-                    <ion-label>
-                      <h3>{{delivery.origin.address.name}}</h3>
-                      <p>
-                        {{delivery.origin.address.address}}<br />
-                        {{delivery.origin.address.postcode}} {{delivery.origin.address.city}} {{getCountry(delivery.origin.address.country)}}
-                      </p>
-                    </ion-label>
-                    <ion-label>
-                      <h3>Date:</h3>
-                      <p >{{delivery.origin.slots[0].start | date: 'dd/MM/yyyy - HH:mm'}}</p>
-                    </ion-label>
-                    <ion-label *ngIf="delivery.origin.instructions !== ''">
-                      <h3>Instructions:</h3>
-                      <p>{{delivery.origin.instructions}}</p>
-                    </ion-label>
-                    <ion-label>
-                      <h3>Chargement:</h3>
-                      <div class="loads_wrap">
-                        <ion-row>
-                          <ion-col *ngFor="let merchandise of delivery.planned_loads" size="6">
-                            <ion-item class="ion-no-padding" lines="none">
-                              <ion-badge slot="start" color="danger">{{merchandise.quantity}}</ion-badge>
-                              <ion-card color="light-tint">
-                                <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/'+getImage(merchandise.id)+'.png'"  [alt]="merchandise.name"></ion-img>
-                                <ion-label>{{merchandise.name}}</ion-label>
-                              </ion-card>
-                            </ion-item>
-                          </ion-col>
-                        </ion-row>
-                      </div>
-                    </ion-label>
-                    <div class="edit-wrap">
-                      <ion-button (click)="editDelivery('date-origin', delivery, 0)"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col>
+                    <div class="ion-card-wrapper" *ngIf="isSingleOrigin || deliveries.length === 1">
+                      <ion-card *ngIf="deliveries[0]">
+                        <ion-card-content>
+                            <h3 class="card-title">{{deliveries[0].origin.address.name}}</h3>
+                            <ion-label>
+                            <p>
+                              {{deliveries[0].origin.address.address}}<br />
+                              {{deliveries[0].origin.address.postcode}} {{deliveries[0].origin.address.city}} {{getCountry(deliveries[0].origin.address.country)}}
+                            </p>
+                          </ion-label>
+                          <ion-label>
+                            <h3>Date:</h3>
+                            <p>{{deliveries[0].origin.slots[0].start | date: 'dd/MM/yyyy - HH:mm'}}</p>
+                          </ion-label>
+                          <ion-label *ngIf="deliveries[0].origin.instructions !== ''">
+                            <h3>Instructions:</h3>
+                            <p>{{deliveries[0].origin.instructions}}</p>
+                          </ion-label>
+                          <ion-label>
+                            <h3>Chargement:</h3>
+                            <div class="loads_wrap">
+                              <ion-row>
+                                <ion-col *ngFor="let merchandise of deliveries[0].planned_loads" size="6">
+                                  <ion-item class="ion-no-padding" lines="none">
+                                    <ion-badge slot="start" color="danger">{{merchandise.quantity}}</ion-badge>
+                                    <ion-card color="light-tint">
+                                      <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/'+getImage(merchandise.id)+'.png'"  [alt]="merchandise.name"></ion-img>
+                                      <ion-label>{{merchandise.name}}</ion-label>
+                                    </ion-card>
+                                  </ion-item>
+                                </ion-col>
+                              </ion-row>
+                            </div>
+                          </ion-label>
+                          <div class="edit-wrap">
+                            <ion-button (click)="editDelivery('date-origin', deliveries[0], 0)"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
+                          </div>
+                        </ion-card-content>
+                      </ion-card>
                     </div>
-                  </ion-card-content>
-                </ion-card>
-              </div>
+                    <div class="ion-card-wrapper" *ngIf="!isSingleOrigin">
+                      <ion-card *ngFor="let delivery of deliveries; let index = index">
+                        <ion-card-content>
+                          <h3 class="card-title">Etape {{index+1}}</h3>
+                          <ion-label>
+                            <h3>{{delivery.origin.address.name}}</h3>
+                            <p>
+                              {{delivery.origin.address.address}}<br />
+                              {{delivery.origin.address.postcode}} {{delivery.origin.address.city}} {{getCountry(delivery.origin.address.country)}}
+                            </p>
+                          </ion-label>
+                          <ion-label>
+                            <h3>Date:</h3>
+                            <p >{{delivery.origin.slots[0].start | date: 'dd/MM/yyyy - HH:mm'}}</p>
+                          </ion-label>
+                          <ion-label *ngIf="delivery.origin.instructions !== ''">
+                            <h3>Instructions:</h3>
+                            <p>{{delivery.origin.instructions}}</p>
+                          </ion-label>
+                          <ion-label>
+                            <h3>Chargement:</h3>
+                            <div class="loads_wrap">
+                              <ion-row>
+                                <ion-col *ngFor="let merchandise of delivery.planned_loads" size="6">
+                                  <ion-item class="ion-no-padding" lines="none">
+                                    <ion-badge slot="start" color="danger">{{merchandise.quantity}}</ion-badge>
+                                    <ion-card color="light-tint">
+                                      <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/'+getImage(merchandise.id)+'.png'"  [alt]="merchandise.name"></ion-img>
+                                      <ion-label>{{merchandise.name}}</ion-label>
+                                    </ion-card>
+                                  </ion-item>
+                                </ion-col>
+                              </ion-row>
+                            </div>
+                          </ion-label>
+                          <div class="edit-wrap">
+                            <ion-button (click)="editDelivery('date-origin', delivery, 0)"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
+                          </div>
+                        </ion-card-content>
+                      </ion-card>
+                    </div>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+
             </ion-item>
           </ion-accordion>
 
@@ -124,56 +139,71 @@
               </ion-label>
             </ion-item>
             <ion-item slot="content">
-              <div class="ion-card-wrapper" *ngIf="isSingleOrigin || deliveries.length === 1">
-                <ion-card *ngFor="let delivery of deliveries; let index = index">
-                  <ion-card-content>
-                    <h3 class="card-title">Etape {{index+1}}</h3>
-                    <ion-label>
-                      <h3>{{delivery.destination.address.name}}</h3>
-                      <p>
-                        {{delivery.destination.address.address}}<br />
-                        {{delivery.destination.address.postcode}} {{delivery.destination.address.city}} {{getCountry(delivery.destination.address.country)}}
-                      </p>
-                    </ion-label>
-                    <ion-label>
-                      <h3>Date:</h3>
-                      <p>{{delivery.destination.slots[0].start | date: 'dd/MM/yyyy - HH:mm'}}</p>
-                    </ion-label>
-                    <ion-label *ngIf="delivery.destination.instructions !== ''">
-                      <h3>Instructions:</h3>
-                      <p>{{delivery.destination.instructions}}</p>
-                    </ion-label>
+              <ion-grid>
+                <ion-row>
+                  <ion-col>
                     <div class="edit-wrap">
-                      <ion-button (click)="editDelivery('date-destination', delivery, 0)"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
+                      <ion-button (click)="editAddresses('delivery')"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
                     </div>
-                  </ion-card-content>
-                </ion-card>
-              </div>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col>
+                    <div class="ion-card-wrapper" *ngIf="isSingleOrigin || deliveries.length === 1">
+                      <ion-card *ngFor="let delivery of deliveries; let index = index">
+                        <ion-card-content>
+                          <h3 class="card-title">Etape {{index+1}}</h3>
+                          <ion-label>
+                            <h3>{{delivery.destination.address.name}}</h3>
+                            <p>
+                              {{delivery.destination.address.address}}<br />
+                              {{delivery.destination.address.postcode}} {{delivery.destination.address.city}} {{getCountry(delivery.destination.address.country)}}
+                            </p>
+                          </ion-label>
+                          <ion-label>
+                            <h3>Date:</h3>
+                            <p>{{delivery.destination.slots[0].start | date: 'dd/MM/yyyy - HH:mm'}}</p>
+                          </ion-label>
+                          <ion-label *ngIf="delivery.destination.instructions !== ''">
+                            <h3>Instructions:</h3>
+                            <p>{{delivery.destination.instructions}}</p>
+                          </ion-label>
+                          <div class="edit-wrap">
+                            <ion-button (click)="editDelivery('date-destination', delivery, 0)"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
+                          </div>
+                        </ion-card-content>
+                      </ion-card>
+                    </div>
 
-              <div class="ion-card-wrapper" *ngIf="!isSingleOrigin">
-                <ion-card *ngIf="deliveries[0]">
-                  <ion-card-content>
-                      <h3 class="card-title">{{deliveries[0].destination.address.name}}</h3>
-                      <ion-label>
-                      <p>
-                        {{deliveries[0].destination.address.address}}<br />
-                        {{deliveries[0].destination.address.postcode}} {{deliveries[0].destination.address.city}} {{getCountry(deliveries[0].destination.address.country)}}
-                      </p>
-                    </ion-label>
-                    <ion-label>
-                      <h3>Date:</h3>
-                      <p>{{deliveries[0].destination.slots[0].start | date: 'dd/MM/yyyy - HH:mm'}}</p>
-                    </ion-label>
-                    <ion-label *ngIf="deliveries[0].destination.instructions !== ''">
-                      <h3>Instructions:</h3>
-                      <p>{{deliveries[0].destination.instructions}}</p>
-                    </ion-label>
-                    <div class="edit-wrap">
-                      <ion-button (click)="editDelivery('date-destination', deliveries[0], 0)"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
+
+
+                    <div class="ion-card-wrapper" *ngIf="!isSingleOrigin">
+                      <ion-card *ngIf="deliveries[0]?.destination.address">
+                        <ion-card-content>
+                            <h3 class="card-title">{{deliveries[0]?.destination.address.name}}</h3>
+                            <ion-label>
+                            <p>
+                              {{deliveries[0].destination.address.address}}<br />
+                              {{deliveries[0].destination.address.postcode}} {{deliveries[0].destination.address.city}} {{getCountry(deliveries[0].destination.address.country)}}
+                            </p>
+                          </ion-label>
+                          <ion-label>
+                            <h3>Date:</h3>
+                            <p>{{deliveries[0].destination.slots[0].start | date: 'dd/MM/yyyy - HH:mm'}}</p>
+                          </ion-label>
+                          <ion-label *ngIf="deliveries[0].destination.instructions !== ''">
+                            <h3>Instructions:</h3>
+                            <p>{{deliveries[0].destination.instructions}}</p>
+                          </ion-label>
+                          <div class="edit-wrap">
+                            <ion-button (click)="editDelivery('date-destination', deliveries[0], 0)"><ion-icon size="small" name="create-outline" class="ion-margin" ></ion-icon> Editer</ion-button>
+                          </div>
+                        </ion-card-content>
+                      </ion-card>
                     </div>
-                  </ion-card-content>
-                </ion-card>
-              </div>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
             </ion-item>
           </ion-accordion>
         </ion-accordion-group>

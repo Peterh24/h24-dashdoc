@@ -26,5 +26,6 @@ export class TransportService {
   minHourOrigin: string;
   minDateDestination: string;
   minHourDestination: string;
+  isEditMode = false;
   constructor() { }
 }

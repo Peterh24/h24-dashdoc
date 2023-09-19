@@ -1,3 +1,10 @@
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .edit-wrap {
   text-align: right;
   ion-button {

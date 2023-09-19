@@ -40,6 +40,7 @@ export class VehicleChoicePage implements OnInit {
 
   ionViewDidEnter() {
     if(!this.isModal) {
+      this.transportService.isEditMode = false;
       this.transportService.deliveries = [];
       this.transportService.segments = [];
       this.transportService.trailers = [];

@@ -135,19 +135,22 @@ export class MerchandisePage implements OnInit {
   }
 
   async onMerchandiseSelected(){
+    if(!this.transportService.isEditMode){
       if(this.transportService.deliveries.length <= 1){
         //Just 1 delvivery so we call the popup for add new delivery
         this.openPopupAdd();
       } else {
-        // multiple delivery so we can check if the origin are different
-        if(!this.utilsService.areAllValuesIdentical(this.transportService.deliveries, 'origin', 'address')){
-          //if origin are the same so we can open the popup
-          this.openPopupAdd();
-        } else {
-          //if not we go to the next page
-          this.router.navigateByUrl('/private/tabs/transports/new-delivery/delivery');
+          // multiple delivery so we can check if the origin are different
+          if(!this.utilsService.areAllValuesIdentical(this.transportService.deliveries, 'origin', 'address')){
+            //if origin are the same so we can open the popup
+            this.openPopupAdd();
+          } else {
+            this.router.navigateByUrl('/private/tabs/transports/new-delivery/delivery');
+          }
         }
-
+      } else {
+        this.transportService.deliveries[this.transportService.deliveries.length -1].destination = this.transportService.deliveries[0].destination;
+        this.router.navigateByUrl('/private/tabs/transports/new-delivery/summary');
       }
   }
 

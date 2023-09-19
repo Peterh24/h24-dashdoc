@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ItemReorderEventDetail, ModalController } from '@ionic/angular';
+import { AlertController, ItemReorderEventDetail, ModalController } from '@ionic/angular';
 import { EMPTY, Subscription, catchError, of, switchMap, take } from 'rxjs';
 import { AddressService } from 'src/app/services/address.service';
 import { TransportService } from 'src/app/services/transport.service';
@@ -37,11 +37,12 @@ export class DeliveryPage implements OnInit {
   originFormControl: FormControl = new FormControl('');
   constructor(
     private formBuilder: FormBuilder,
-    private transportService: TransportService,
+    public transportService: TransportService,
     private addressService: AddressService,
     private router: Router,
     private utilsService: UtilsService,
     private modalController: ModalController,
+    private alertController: AlertController,
   ) { }
 
   ngOnInit() {
@@ -90,15 +91,24 @@ export class DeliveryPage implements OnInit {
     return countryCode;
   }
 
-  removeSelectedAddress(addressPk: any) {
-    const indexAddressSelected = this.addressSelected.findIndex(selected => selected.address.pk === addressPk);
-    if (indexAddressSelected !== -1) {
-      this.addressSelected.splice(indexAddressSelected, 1);
+  async removeSelectedAddress(addressPk: any) {
+    if(this.transportService.deliveries.length > 1){
+      const indexAddressSelected = this.addressSelected.findIndex(selected => selected.address.pk === addressPk);
+      if (indexAddressSelected !== -1) {
+        this.addressSelected.splice(indexAddressSelected, 1);
 
-      const indexDelivery = this.transportService.deliveries.findIndex(delivery => delivery.destination.address.pk === addressPk);
-      if (indexDelivery !== -1) {
-        this.transportService.deliveries.splice(indexDelivery, 1);
+        const indexDelivery = this.transportService.deliveries.findIndex(delivery => delivery.destination.address.pk === addressPk);
+        if (indexDelivery !== -1) {
+          this.transportService.deliveries.splice(indexDelivery, 1);
+        }
       }
+    } else {
+      const alert = await this.alertController.create({
+        header: 'Action impossible',
+        message: 'merci d\'ajouter une autre addresse avant de supprimer celle-ci',
+        buttons: ['Compris'],
+      });
+      await alert.present();
     }
   }
 
@@ -166,9 +176,15 @@ export class DeliveryPage implements OnInit {
           // If destination never set we add the destination on the first delivery
           this.transportService.deliveries[0].destination = course;
         }
-        this.openPopupAdd();
+
+        if(!this.transportService.isEditMode){
+          this.openPopupAdd();
+        } else {
+          this.router.navigateByUrl('/private/tabs/transports/new-delivery/summary');
+        }
       }
     })
+
   }
 
   async openDatePicker(type: string) {

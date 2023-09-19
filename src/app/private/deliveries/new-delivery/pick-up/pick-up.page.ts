@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ItemReorderEventDetail, LoadingController, ModalController } from '@ionic/angular';
+import { AlertController, ItemReorderEventDetail, LoadingController, ModalController } from '@ionic/angular';
 import { EMPTY, Subscription, catchError, of, switchMap, take } from 'rxjs';
 import { AddressService } from 'src/app/services/address.service';
 import { TransportService } from 'src/app/services/transport.service';
@@ -33,12 +33,11 @@ export class PickUpPage implements OnInit {
   isReorderDisabled = true;
   constructor(
     private formBuilder: FormBuilder,
-    private transportService: TransportService,
+    public transportService: TransportService,
     private addressService: AddressService,
-    private loadingController: LoadingController,
     private modalController: ModalController,
     private router: Router,
-    private utilsService: UtilsService
+    private alertController: AlertController,
   ) { }
 
   ngOnInit() {
@@ -135,16 +134,26 @@ export class PickUpPage implements OnInit {
    });
   }
 
-  removeSelectedAddress(addressPk: any) {
-    const indexAddressSelected = this.addressSelected.findIndex(selected => selected.address.pk === addressPk);
-    if (indexAddressSelected !== -1) {
-      this.addressSelected.splice(indexAddressSelected, 1);
+  async removeSelectedAddress(addressPk: any) {
+    if(this.transportService.deliveries.length > 1){
+      const indexAddressSelected = this.addressSelected.findIndex(selected => selected.address.pk === addressPk);
+      if (indexAddressSelected !== -1) {
+        this.addressSelected.splice(indexAddressSelected, 1);
 
-      const indexDelivery = this.transportService.deliveries.findIndex(delivery => delivery.origin.address.pk === addressPk);
-      if (indexDelivery !== -1) {
-        this.transportService.deliveries.splice(indexDelivery, 1);
+        const indexDelivery = this.transportService.deliveries.findIndex(delivery => delivery.origin.address.pk === addressPk);
+        if (indexDelivery !== -1) {
+          this.transportService.deliveries.splice(indexDelivery, 1);
+        }
       }
+    } else {
+      const alert = await this.alertController.create({
+        header: 'Action impossible',
+        message: 'merci de d\'ajouter une autre addresse avant de supprimer celle-ci',
+        buttons: ['Compris'],
+      });
+      await alert.present();
     }
+
   }
 
   async openDatePicker(type: string) {

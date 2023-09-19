@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { NewDeliveryPage } from './new-delivery.page';
-
 const routes: Routes = [
   {
     path: '',
@@ -23,7 +21,8 @@ const routes: Routes = [
   },
   {
     path: 'delivery',
-    loadChildren: () => import('../../deliveries/new-delivery/delivery/delivery.module').then( m => m.DeliveryPageModule)
+    loadChildren: () => import('../../deliveries/new-delivery/delivery/delivery.module').then( m => m.DeliveryPageModule),
+    data: {edit:false}
   },
   {
     path: 'summary',

@@ -1,17 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { TransportService } from 'src/app/services/transport.service';
 import { UtilsService } from 'src/app/utils/services/utils.service';
-import { Delivery } from '../../delivery.model';
-import { ModalController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { AddReferenceComponent } from './add-reference/add-reference.component';
 import { Storage } from '@ionic/storage-angular';
-import { from, switchMap } from 'rxjs';
 import { DASHDOC_API_URL, DASHDOC_COMPANY } from 'src/app/services/constants';
 import { VehicleChoicePage } from '../vehicle-choice/vehicle-choice.page';
 import { HourComponent } from '../pick-up/hour/hour.component';
 import { EditComponent } from './edit/edit.component';
 import { HttpClient } from '@angular/common/http';
-import { Route, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-summary',
@@ -22,7 +20,15 @@ export class SummaryPage implements OnInit {
   vehicle: any;
   deliveries: Array<any> = [];
   isSingleOrigin: Boolean = false;
+  isSingleDestination: Boolean = false;
   defaultTransport: any = {
+    "carrier_address": {
+      "pk": 67398197,
+      "company": {
+        "pk": 1755557,
+      },
+      "is_verified": true,
+    },
     "deliveries": [
     ],
     "segments": [
@@ -46,10 +52,12 @@ export class SummaryPage implements OnInit {
     private storage: Storage,
     private http: HttpClient,
     private route: Router,
+    private alertController: AlertController,
     ) { }
 
   ngOnInit() {
     this.isSingleOrigin = this.utilsService.areAllValuesIdentical(this.transportService.deliveries, 'origin', 'address');
+    this.isSingleDestination = this.utilsService.areAllValuesIdentical(this.transportService.deliveries, 'destination', 'address');
   }
 
   ionViewDidEnter() {
@@ -107,6 +115,34 @@ export class SummaryPage implements OnInit {
       }
     });
     modalDelivery.present();
+  }
+
+  async editAddresses(type:string) {
+    this.transportService.isEditMode = true;
+    if(type === 'pickup'){
+      if(!this.isSingleDestination){
+        const alert = await this.alertController.create({
+          header: 'Action impossible',
+          message: 'vous ne pouvez pas avoir plusieurs origine et plusieur destinations merci d\'editer vos destination afin de n\'en conserver qu\'une seule',
+          buttons: ['Compris'],
+        });
+
+        await alert.present();
+        return;
+      }
+      this.route.navigateByUrl('/private/tabs/transports/new-delivery/pick-up');
+    } else if(type === 'delivery') {
+      if(!this.isSingleOrigin){
+        const alert = await this.alertController.create({
+          header: 'Action impossible',
+          message: 'vous ne pouvez pas avoir plusieurs destination et plusieur points d\'enlevement merci de supprimer des points enlevement afin de n\'en conserver qu\'un',
+          buttons: ['Compris'],
+        });
+        await alert.present();
+        return;
+      }
+      this.route.navigateByUrl('/private/tabs/transports/new-delivery/delivery');
+    }
 
   }
 
@@ -189,9 +225,14 @@ export class SummaryPage implements OnInit {
           segments: this.transportService.segments
         };
 
-        this.http.post(`${DASHDOC_API_URL}transports/`, dataToApi).subscribe(res => {
+        this.http.post(`${DASHDOC_API_URL}transports/`, dataToApi).subscribe(async res => {
+          const confirm = await this.alertController.create({
+            header: 'Bravo votre course a été enregistré',
+            message: 'Votre course a été validé et nous est parvenue, en cas de besoin d\'informations complementaire nous vous contacterons sur le numero de telephone present dans votre profile',
+            buttons: ['Compris'],
+          });
 
-          console.log('res: ', res);
+          await confirm.present();
           this.route.navigateByUrl('/private/tabs/transports');
         })
       });
