@@ -58,13 +58,25 @@
                   </div>
                 </ion-col>
               </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
+                    <ion-input type="password" label="Mot de passe" labelPlacement="floating" formControlName="password"></ion-input>
+                  </ion-item>
+                  <div class="ion-margin-bottom" *ngIf="!form.get('password').valid && form.get('password').touched">
+                    <ion-label class="validator-error">
+                      {{regexErrors['password']}}
+                    </ion-label>
+                  </div>
+                </ion-col>
+              </ion-row>
               <ion-row class="ion-align-items-center">
                 <ion-col size="auto">
                   <ion-back-button type="button" text="Login" defaultHref="/auth"></ion-back-button>
                 </ion-col>
                 <ion-col class="ion-text-right">
                   <ion-button type="submit" color="primary" shape="round" [disabled]="!form.valid">
-                    Connexion
+                    Créer mon compte
                   </ion-button>
                 </ion-col>
               </ion-row>

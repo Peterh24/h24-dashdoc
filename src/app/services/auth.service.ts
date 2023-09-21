@@ -42,10 +42,10 @@ export class AuthService {
     }
   }
 
-  register(firstname: string, lastname:string, phone: string, email: string) {
-    return this.http.post(`${API_URL}/register`, { firstname, lastname, phone, email }).pipe(
-      switchMap(() => {
-        return this.login(email, 'password')
+  register(firstname: string, lastname: string, phone: string, email: string, password: string) {
+    return this.http.post(`${API_URL}/app_users`, { firstname, lastname, phone, email, password }).pipe(
+      map((res) => {
+
       })
     );
   }

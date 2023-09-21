@@ -16,7 +16,8 @@ export class SignUpPage implements OnInit {
     firstname: ['', [Validators.required]],
     lastname: ['', [Validators.required]],
     phone: ['', [Validators.required, Validators.pattern(this.regex.phone)]],
-    email: ['', [Validators.required, Validators.pattern(this.regex.email)]]
+    email: ['', [Validators.required, Validators.pattern(this.regex.email)]],
+    password: ['', [Validators.required]]
   });
 
   constructor(
@@ -30,32 +31,38 @@ export class SignUpPage implements OnInit {
 
   }
 
-  async onSubmit(){
-    const { firstname, lastname, phone, email } = this.form.getRawValue();
+  async onSubmit() {
+    const { firstname, lastname, phone, email, password } = this.form.getRawValue();
 
     const loading = await this.loadingController.create({
       keyboardClose: true,
-      message: 'Creation du compte...',
+      message: 'Création du compte...',
       spinner: 'bubbles'
-    })
+    });
     await loading.present();
-
-    this.authService.register(firstname, lastname, phone, email).subscribe({
+    this.authService.register(firstname, lastname, phone, email, password).subscribe({
       next: (res) => {
         loading.dismiss();
+        this.authService.login(email, password);
       },
       error: async (error) => {
-        console.log('error: ', error);
         loading.dismiss();
+        console.log('error: ', error);
+        let errorMessage = 'Une erreur inconnue s\'est produite';
+
+        if (error && error.error && error.error.message) {
+          errorMessage = 'Enregistrement échoué: ' + error.error.message;
+        }
+
         const alert = await this.alertController.create({
-          header: 'Error',
-          message: 'Registration Failed: '+ error.error.message,
+          header: 'Erreur',
+          message: errorMessage,
           buttons: ['Ok']
         });
 
         await alert.present();
       }
-    })
+    });
   }
 
 }

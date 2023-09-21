@@ -20,7 +20,8 @@ export class DetailsPage implements OnInit {
     firstname: ['', [Validators.required]],
     lastname: ['', [Validators.required]],
     phone: ['', [Validators.required, Validators.pattern(this.regex.phone)]],
-    email: ['', [Validators.required, Validators.pattern(this.regex.email)]]
+    email: ['', [Validators.required, Validators.pattern(this.regex.email)]],
+    password: ['', [Validators.required]]
   });
 
   constructor(
@@ -38,7 +39,7 @@ export class DetailsPage implements OnInit {
 
 
   async onSubmit(){
-    const { firstname, lastname, phone, email } = this.form.getRawValue();
+    const { firstname, lastname, phone, email, password } = this.form.getRawValue();
 
     const loading = await this.loadingController.create({
       keyboardClose: true,
@@ -47,7 +48,7 @@ export class DetailsPage implements OnInit {
     })
     await loading.present();
 
-    this.authService.register(firstname, lastname, phone, email).subscribe({
+    this.authService.register(firstname, lastname, phone, email, password).subscribe({
       next: (res) => {
         loading.dismiss();
       },

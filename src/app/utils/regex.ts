@@ -5,5 +5,6 @@ export const regex = {
 
 export const regexErrors = {
   email: 'Merci d\'indiquer un email valide',
-  phone: 'Merci d\'indiquer un numéro de téléphone valide'
+  phone: 'Merci d\'indiquer un numéro de téléphone valide',
+  password: 'Merci d\'indiquer votre mot de passe',
 }
