@@ -30,15 +30,23 @@ export class AuthService {
 
   async loadUser() {
     const data = await this.storage.get(JWT_KEY);
+    const currentTime = Math.floor(Date.now() / 1000);
     if (data) {
       const decoded: any = jwt_decode(data);
-      const userData = {
-        token: data,
-        id: decoded.sub
+      if(decoded.exp > currentTime){
+        const userData = {
+          token: data,
+          id: decoded.sub
+        }
+        this.user.next(userData);
+      } else {
+        this.user.next(null);
+        this.router.navigateByUrl('/auth');
       }
-      this.user.next(userData)
+
     } else {
       this.user.next(null);
+      this.router.navigateByUrl('/auth');
     }
   }
 
