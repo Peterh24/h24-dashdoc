@@ -47,7 +47,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   declarations: [AppComponent],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(),
+    IonicModule.forRoot(
+      {
+        innerHTMLTemplatesEnabled : true
+      }
+    ),
     AppRoutingModule,
     IonicStorageModule.forRoot({
       driverOrder: [
