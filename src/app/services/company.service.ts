@@ -31,13 +31,15 @@ export class CompanyService {
   ) { }
 
   fetchCompanies() {
+    this.dashdocService.fetchTokens();
+
     this.dashdocService.tokens.pipe(take(1)).subscribe(async tokens => {
       if (this._companies.getValue().length > 0) {
         return;
       }
-
       for (const token of tokens) {
         const tokenCurrent = token.token;
+
         const headers = new HttpHeaders().set('Authorization', `Token ${tokenCurrent}`);
         const resData: any = await firstValueFrom(this.http.get(`${DASHDOC_API_URL}addresses/`, { headers }));
         const newCompany = { ...resData.results[0].created_by, token: token.token };

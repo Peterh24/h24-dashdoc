@@ -59,7 +59,7 @@ export class AuthService {
   }
 
   login(username: string, password: string) {
-    return this.http.post(`${API_URL}/login`, { username, password }).pipe(
+    return this.http.post(`${API_URL}login`, { username, password }).pipe(
       map((res: any) => {
         console.log(res);
         this.storage.set(JWT_KEY, res.token); // Assurez-vous que le service de stockage est correctement configuré

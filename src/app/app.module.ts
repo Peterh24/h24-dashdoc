@@ -11,36 +11,52 @@ import { AppRoutingModule } from './app-routing.module';
 import { Drivers } from '@ionic/storage';
 import { Storage } from '@ionic/storage-angular';
 import * as cordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
-import { from, switchMap } from 'rxjs';
-import { USER_STORAGE_KEY } from './services/constants';
+import { concatMap, from, switchMap, take } from 'rxjs';
+import { API_URL, JWT_KEY, USER_STORAGE_KEY } from './services/constants';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const storage = inject(Storage);
   const platform = inject(Platform);
   const tokenObs = from(storage.get(USER_STORAGE_KEY));
+  const h24token = from(storage.get(JWT_KEY));
 
   return tokenObs.pipe(
-    switchMap((token) => {
+    concatMap((token) => {
       const currentUrl = platform.url();
-      if(req.url.includes('app.pennylane.com')){
+
+      if (req.url.includes('app.pennylane.com')) {
         req = req.clone({
           setHeaders: {
             Authorization: `Bearer 9vPF8rbIvtMoksQyhVBLWtqwjYflTx9z4-LCqZ2PFwY`
           }
         });
-      } else if(req.url.includes('api.dashdoc.eu')) {
-        if(!currentUrl.includes('/private/tabs/home') && token ) {
+      } else if (req.url.includes('api.dashdoc.eu')) {
+        if (!currentUrl.includes('/private/tabs/home') && token) {
           req = req.clone({
             setHeaders: {
               Authorization: `Token ${token}`
             }
           });
         }
+      } else if (req.url.includes('api.h24transports.com')) {
+        return h24token.pipe(
+          take(1),
+          concatMap((token) => {
+            req = req.clone({
+              setHeaders: {
+                Authorization: `Bearer ${token}`
+              }
+            });
+            console.log('test: ', req);
+            return next(req);
+          })
+        );
       }
-
+      alert('toto')
+      console.log('req req: ', req);
       return next(req);
     })
-  )
+  );
 }
 
 @NgModule({
