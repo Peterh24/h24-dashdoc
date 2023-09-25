@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, take } from 'rxjs';
+import { BehaviorSubject, Observable, map, take } from 'rxjs';
 import { DashdocToken } from '../private/models/dashdoc-token.model';
 import { API_URL } from './constants';
 import { HttpClient } from '@angular/common/http';
@@ -21,9 +21,22 @@ export class DashdocService {
     private http: HttpClient,
   ) { }
 
-  fetchTokens() {
-    return this.http.get(`${API_URL}app_dashdoc_tokens/`).pipe(take(1)).subscribe(tokens => {
-      console.log('tokens: ', tokens);
-    });
+  fetchTokens(): Observable<void> {
+    return this.http.get(`${API_URL}app_dashdoc_tokens/`)
+      .pipe(
+        take(1),
+        map((tokens: any) => tokens['hydra:member'])
+      )
+      .pipe(
+        map((tokenData: any[]) => {
+          const tokens = tokenData.map((token: any) => {
+            return new DashdocToken(token['@id'], token.token);
+          });
+
+          this._tokens.next(tokens);
+
+          return;
+        })
+      );
   }
 }

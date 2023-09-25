@@ -47,13 +47,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
                 Authorization: `Bearer ${token}`
               }
             });
-            console.log('test: ', req);
             return next(req);
           })
         );
       }
-      alert('toto')
-      console.log('req req: ', req);
       return next(req);
     })
   );
