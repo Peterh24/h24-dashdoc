@@ -35,6 +35,7 @@ export class CompanyService {
   fetchCompanies() {
     this.dashdocService.fetchTokens().pipe(take(1)).subscribe((tokens) => {
       this.dashdocService.tokens.pipe(take(1)).subscribe(async tokens => {
+        
         if (this._companies.getValue().length > 0) {
           return;
         }

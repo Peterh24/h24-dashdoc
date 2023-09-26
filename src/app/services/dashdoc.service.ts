@@ -1,42 +1,33 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, map, take } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, map, take } from 'rxjs';
 import { DashdocToken } from '../private/models/dashdoc-token.model';
-import { API_URL } from './constants';
-import { HttpClient } from '@angular/common/http';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DashdocService {
-  private _tokens = new BehaviorSubject<Array<DashdocToken>>([
-    // new DashdocToken('Token1', '82c37b96a444bc266ea1c0594570c847e2c94a67'),
-    // new DashdocToken('Token2', 'd279f42372b01e95b7ff5a88fc71cd972dcd09d7'),
-    // new DashdocToken('Token3', '31655b74ee8a65cc933b5b00bc1d085fa11f2fb5'),
-  ]);
+  private _tokens = new BehaviorSubject<Array<DashdocToken>>([]);
 
   get tokens() {
     return this._tokens.asObservable();
   }
   constructor(
-    private http: HttpClient,
+    private authService: AuthService,
   ) { }
 
+
   fetchTokens(): Observable<void> {
-    return this.http.get(`${API_URL}app_dashdoc_tokens/`)
-      .pipe(
-        take(1),
-        map((tokens: any) => tokens['hydra:member'])
-      )
-      .pipe(
-        map((tokenData: any[]) => {
-          const tokens = tokenData.map((token: any) => {
-            return new DashdocToken(token['@id'], token.token);
-          });
+    const tokens = this.authService.currentUserDetail.appDashdocTokens.map((token:any) => {
+      return new DashdocToken(token['@id'], token.token);
+    });
+    this._tokens.next(tokens);
 
-          this._tokens.next(tokens);
-
-          return;
-        })
-      );
+    this.tokens.subscribe(token => {
+      console.log('tata: ', token);
+    })
+    
+    return EMPTY;
   }
+
 }

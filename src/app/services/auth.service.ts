@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Storage } from '@ionic/storage-angular';
 import { API_URL, JWT_KEY, USER_STORAGE_KEY } from './constants';
-import { BehaviorSubject, delay, of, switchMap, take, map, catchError } from 'rxjs';
+import { BehaviorSubject, delay, of, switchMap, take, map, catchError, filter, tap } from 'rxjs';
 import jwt_decode from 'jwt-decode';
 import { Router } from '@angular/router';
 
@@ -19,7 +19,8 @@ export class AuthService {
   userIsAuthenticated: boolean = true;
 
   private user: BehaviorSubject<UserData | null | undefined> = new BehaviorSubject<UserData | null | undefined>(undefined);
-
+  currentUser: any;
+  currentUserDetail: any;
   constructor(
     private http: HttpClient,
     private storage: Storage,
@@ -31,19 +32,20 @@ export class AuthService {
   async loadUser() {
     const data = await this.storage.get(JWT_KEY);
     const currentTime = Math.floor(Date.now() / 1000);
+    
     if (data) {
       const decoded: any = jwt_decode(data);
-      if(decoded.exp > currentTime){
+      if (decoded.exp > currentTime) {
         const userData = {
           token: data,
-          id: decoded.sub
+          id: decoded.id
         }
+        this.currentUser = decoded;
         this.user.next(userData);
       } else {
         this.user.next(null);
         this.router.navigateByUrl('/auth');
       }
-
     } else {
       this.user.next(null);
       this.router.navigateByUrl('/auth');
@@ -66,7 +68,7 @@ export class AuthService {
         const decoded: any = jwt_decode(res.token); // Assurez-vous que jwt_decode est correctement importé
         const userData = {
           token: res.token,
-          id: decoded.sub
+          id: decoded.id
         };
         this.user.next(userData);
         return userData;
@@ -78,18 +80,6 @@ export class AuthService {
     );
   }
 
-  // FAKE API SIMULATION JUST FOR TESTING NOT USE THIS IN PRODUCTION
-  // login(email: string, password: string) {
-  //   const userData = {
-  //     token: 'd279f42372b01e95b7ff5a88fc71cd972dcd09d7',
-  //     id: 'someUserId',
-  //   };
-  //   this.storage.set(JWT_KEY, userData.token);
-  //   this.user.next(userData);
-  //   this.userIsAuthenticated = true;
-  //   return of(userData).pipe(delay(1000));
-  // }
-
   async signOut(){
     await this.storage.remove(JWT_KEY);
     this.userIsAuthenticated = false;
@@ -97,11 +87,4 @@ export class AuthService {
     this.user.next(null);
   }
 
-  getCurrentUser() {
-    return this.user.asObservable();
-  }
-
-  getCurrentUserId() {
-    return this.user.getValue()!.id;
-  }
 }

@@ -61,28 +61,6 @@ export class AuthPage implements OnInit {
     })
     await loading.present();
 
-    //WE WAITING FOR REAL API
-    //
-    // this.authService.login(email, password).subscribe({
-    //   next: (res) => {
-    //     console.log('After Login: ', res);
-    //     loading.dismiss();
-    //     this.router.navigateByUrl('/private/tabs/home');
-    //   },
-    //   error: async (error) => {
-    //     console.log('error: ', error);
-    //     loading.dismiss();
-    //     const alert = await this.alertController.create({
-    //       header: 'Error',
-    //       message: 'Login Failed: '+ error.error.message,
-    //       buttons: ['Ok']
-    //     });
-
-    //     await alert.present();
-    //   }
-    // })
-
-
 
     // FAKE API SIMULATION JUST FOR TESTING NOT USE THIS IN PRODUCTION
     this.authService.login(email, password).subscribe({
