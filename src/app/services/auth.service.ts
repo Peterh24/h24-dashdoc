@@ -71,6 +71,7 @@ export class AuthService {
           id: decoded.id
         };
         this.user.next(userData);
+        this.currentUser = decoded;
         return userData;
       }),
       catchError((error: any) => {

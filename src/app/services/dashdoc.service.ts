@@ -22,10 +22,6 @@ export class DashdocService {
       return new DashdocToken(token['@id'], token.token);
     });
     this._tokens.next(tokens);
-
-    this.tokens.subscribe(token => {
-      console.log('tata: ', token);
-    })
     
     return EMPTY;
   }

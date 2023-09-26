@@ -52,6 +52,7 @@ export class HomePage implements OnInit, OnDestroy {
 
   ionViewWillEnter(){
     const user = this.authService.currentUser;
+    console.log("user: ", user);
     this.http.get(`${API_URL}app_users/${user.id}`).pipe(take(1)).subscribe((user:any) => {
       this.authService.currentUserDetail = user;
       this.firstname = user.firstname;
