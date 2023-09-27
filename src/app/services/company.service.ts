@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, concatMap, firstValueFrom, forkJoin, from, map, switchMap, take, tap, throwError, toArray } from 'rxjs';
+import { BehaviorSubject, EMPTY, catchError, concatMap, firstValueFrom, forkJoin, from, map, switchMap, take, tap, throwError, toArray } from 'rxjs';
 import { Company } from '../private/models/company.model';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { DASHDOC_API_URL, USER_STORAGE_KEY } from './constants';
@@ -35,26 +35,19 @@ export class CompanyService {
   fetchCompanies() {
     this.dashdocService.fetchTokens().pipe(take(1)).subscribe((tokens) => {
       this.dashdocService.tokens.pipe(take(1)).subscribe(async tokens => {
-        
         if (this._companies.getValue().length > 0) {
           return;
         }
-        for (const token of tokens) {
+
+        tokens.forEach(token => {
           const tokenCurrent = token.token;
           const headers = new HttpHeaders().set('Authorization', `Token ${tokenCurrent}`);
-
-
-          try {
-            const resData: any = await firstValueFrom(this.http.get(`${DASHDOC_API_URL}addresses/`, { headers }));
+          
+          this.http.get(`${DASHDOC_API_URL}addresses/`, { headers }).pipe(
             
-            // request success
-            const newCompany = { ...resData.results[0].created_by, token: token.token };
-            if (!this._companies.getValue().includes(newCompany)) {
-              this._companies.next([...this._companies.getValue(), newCompany]);
-            }
-          } catch (error) {
-            if (error instanceof HttpErrorResponse) {
-              if (error.status === 401) {
+            catchError(async error => {
+              if (error instanceof HttpErrorResponse) {
+                if (error.status === 401) {
                 const alert = await this.alertController.create({
                   header: 'Erreur',
                   message: 'votre token <b>' + token.token+ '</b> est incorect merci de le verifier dans votre interface dashdoc',
@@ -62,33 +55,24 @@ export class CompanyService {
                 });
         
                 await alert.present();
-                return;
-              } else {
-                // Other Http error
-                console.error('Erreur inattendue:', error);
-                const alert = await this.alertController.create({
-                  header: 'Erreur',
-                  message: 'Votre requete n\'a pas aboutie merci de reesayer ulterieurement',
-                  buttons: ['Compris'],
-                });
-        
-                await alert.present();
-                return;
+                }
+                return EMPTY;
+              } 
+              
+              return EMPTY;
+               // Continuer l'itération malgré l'erreur
+            })
+          ).subscribe(((res:any) => {
+            
+            if(res.results !== undefined ){
+              const newCompany = { ...res.results[0].created_by, token: token.token };
+              if (!this._companies.getValue().includes(newCompany)) {
+                this._companies.next([...this._companies.getValue(), newCompany]);
               }
-            } else {
-              // Other error
-              console.error('Erreur inattendue:', error);
-              const alert = await this.alertController.create({
-                header: 'Erreur',
-                message: 'Votre requete n\'a pas aboutie merci de reesayer ulterieurement',
-                buttons: ['Compris'],
-              });
-      
-              await alert.present();
-              return;
             }
-          }
-        }
+            
+          }));
+        });
       })
     });
   }

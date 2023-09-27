@@ -18,12 +18,16 @@ export class DashdocService {
 
 
   fetchTokens(): Observable<void> {
-    const tokens = this.authService.currentUserDetail.appDashdocTokens.map((token:any) => {
+    const tokens = this.authService.currentUserDetail.appDashdocTokens.map((token: any) => {
       return new DashdocToken(token['@id'], token.token);
     });
     this._tokens.next(tokens);
-    
-    return EMPTY;
+  
+    // Créez un nouvel Observable qui émettra une valeur une fois que les tokens seront mis à jour
+    return this._tokens.pipe(
+      take(1), // Prenez la première valeur émise
+      map(() => undefined) // Émettez une valeur (ou une autre chose) une fois que les tokens sont mis à jour
+    );
   }
 
 }

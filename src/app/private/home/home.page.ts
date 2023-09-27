@@ -58,6 +58,9 @@ export class HomePage implements OnInit, OnDestroy {
       this.firstname = user.firstname;
       this.lastname = user.lastname
       this.companyService.fetchCompanies();
+      this.companyService.companies.subscribe((companies) => {
+        this.loadedCompanies = companies;
+      })
     }) 
     
     
