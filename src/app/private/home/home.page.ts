@@ -1,16 +1,16 @@
 import { InvoiceService } from 'src/app/services/invoice.service';
 import { AddressService } from 'src/app/services/address.service';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { IonSelect, ModalController } from '@ionic/angular';
+import { AlertController, IonSelect, ModalController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
-import { Subscription, take } from 'rxjs';
+import { EMPTY, Subscription, catchError, of, take, throwError } from 'rxjs';
 import { ModalAddTokenComponent } from './modal-add-token/modal-add-token.component';
 import { Company } from '../models/company.model';
 import { CompanyService } from 'src/app/services/company.service';
-import { API_URL, DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
+import { API_URL, DASHDOC_API_URL, DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { AuthService } from 'src/app/services/auth.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 
 
 @Component({
@@ -25,6 +25,7 @@ export class HomePage implements OnInit, OnDestroy {
   isCompanySelected: boolean = false;
   firstname: string;
   lastname: string;
+  currentUser: any;
   @ViewChild('companyChoose', { static: false }) companyChoose: IonSelect;
   constructor(
     private storage: Storage,
@@ -32,6 +33,7 @@ export class HomePage implements OnInit, OnDestroy {
     public companyService: CompanyService,
     private authService: AuthService,
     private modalCtrl: ModalController,
+    private alertController: AlertController,
   ) { }
 
   ngOnInit() {
@@ -51,9 +53,9 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   ionViewWillEnter(){
-    const user = this.authService.currentUser;
-    console.log("user: ", user);
-    this.http.get(`${API_URL}app_users/${user.id}`).pipe(take(1)).subscribe((user:any) => {
+    this.currentUser = this.authService.currentUser;
+    console.log("user: ", this.currentUser);
+    this.http.get(`${API_URL}app_users/${this.currentUser.id}`).pipe(take(1)).subscribe((user:any) => {
       this.authService.currentUserDetail = user;
       this.firstname = user.firstname;
       this.lastname = user.lastname
@@ -77,8 +79,32 @@ export class HomePage implements OnInit, OnDestroy {
 
     if (role === 'confirm') {
       const token = data;
-      //Requette API pour ajouter le token
-      alert('Le token ' +data+ ' a ete ajouté');
+      const headers = new HttpHeaders().set('Authorization', `Token ${token}`);
+      this.http.get(`${DASHDOC_API_URL}addresses/`, { headers }).pipe(
+        take(1),
+        catchError(async (error) => {
+          if (error instanceof HttpErrorResponse) {
+            if (error.status === 401) {
+              const alert = await this.alertController.create({
+                header: 'Erreur',
+                message: 'votre token <b>' + token + '</b> est incorect merci de le verifier dans votre interface dashdoc',
+                buttons: ['Compris'],
+              });
+              await alert.present();
+            }
+            throw error;
+          }
+          
+        })
+      ).subscribe((res: any) => {
+        const tokenToAdd = {user:`${API_URL}app_users/${this.currentUser.id}`, token: token}
+        this.http.post(`${API_URL}app_dashdoc_tokens`, tokenToAdd).pipe(take(1)).subscribe((res) => {
+          console.log('res: ', res);
+        })
+        }
+      )
+
+
     }
   }
 

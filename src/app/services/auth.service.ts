@@ -64,8 +64,8 @@ export class AuthService {
     return this.http.post(`${API_URL}login`, { username, password }).pipe(
       map((res: any) => {
         console.log(res);
-        this.storage.set(JWT_KEY, res.token); // Assurez-vous que le service de stockage est correctement configuré
-        const decoded: any = jwt_decode(res.token); // Assurez-vous que jwt_decode est correctement importé
+        this.storage.set(JWT_KEY, res.token);
+        const decoded: any = jwt_decode(res.token); 
         const userData = {
           token: res.token,
           id: decoded.id
