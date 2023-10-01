@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, take } from 'rxjs';
+import { BehaviorSubject, map, take, tap } from 'rxjs';
 import { Vehicle } from '../private/deliveries/vehicle.model';
 import { API_URL } from './constants';
 import { HttpClient } from '@angular/common/http';
@@ -19,12 +19,14 @@ export class VehiclesService {
   ) { }
 
   fetchVehicles() {
-    return this.http.get(`${API_URL}vehicles`).pipe(take(1)).subscribe((res:any) => {
-      const data = res['hydra:member'];
-      console.log('data ', data);
-      this._vehicles.next(data);
-      
-    })
+    return this.http.get(`${API_URL}vehicles`).pipe(
+      take(1),
+      map((res: any) => res['hydra:member']),
+      tap((data: Vehicle[]) => {
+        console.log('data ', data);
+        this._vehicles.next(data);
+      })
+    );
   }
 
   getVehicle(id: string) {

@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Vehicle } from '../../vehicle.model';
 import { VehiclesService } from 'src/app/services/vehicles.service';
-import { map, take } from 'rxjs';
+import { map, take, tap } from 'rxjs';
 import Swiper from 'swiper';
 import { TransportService } from 'src/app/services/transport.service';
 import { Router } from '@angular/router';
@@ -29,10 +29,20 @@ export class VehicleChoicePage implements OnInit {
   ngOnInit() {
     this.vehicleService.vehicles.pipe(
       take(1),
-      map(vehicles => {
-        this.vehicles = vehicles;
-        if (!this.currentVehicle) {
-          this.currentVehicle = this.vehicles[0];
+      tap((vehicles) => {
+        console.log('vehicles: ', vehicles);
+        if (vehicles.length > 0) {
+          this.vehicles = vehicles;
+          if (!this.currentVehicle) {
+            this.currentVehicle = this.vehicles[0];
+          }
+        } else {
+          this.vehicleService.fetchVehicles().subscribe((vehicles) => {
+            this.vehicles = vehicles;
+            if (!this.currentVehicle && vehicles.length > 0) {
+              this.currentVehicle = vehicles[0];
+            }
+          });
         }
       })
     ).subscribe();

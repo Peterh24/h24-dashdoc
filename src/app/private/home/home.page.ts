@@ -64,7 +64,6 @@ export class HomePage implements OnInit, OnDestroy {
       this.companyService.companies.subscribe((companies) => {
         this.loadedCompanies = companies;
       })
-      this.vehicleService.fetchVehicles();
     }) 
     
     
