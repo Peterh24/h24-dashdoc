@@ -111,7 +111,7 @@ export class PickUpPage implements OnInit {
 
       // Constructing the vehicle object
       const vehicle = {
-        "license_plate": this.vehicle
+        "licensePlate": this.vehicle
       };
 
       // Constructing the delivery object

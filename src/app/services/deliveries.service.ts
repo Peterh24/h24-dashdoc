@@ -52,7 +52,7 @@ export class DeliveriesService {
 
 
           // check if data.segments[0].trailers[0] is defined
-          const licensePlate = data.segments[0].trailers[0] ? data.segments[0].trailers[0].license_plate : '';
+          const licensePlate = data.segments[0].trailers[0] ? data.segments[0].trailers[0].licensePlate : '';
           return new Delivery(
             data.uid,
             data.deliveries[0].shipper_reference,

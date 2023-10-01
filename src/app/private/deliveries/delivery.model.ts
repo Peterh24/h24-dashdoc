@@ -7,7 +7,7 @@ export class Delivery {
     public deliveries: Array<Deliveries>,
     public messages: Array<Message>,
     public documents: Array<Document>,
-    public license_plate: string,
+    public licensePlate: string,
   ){}
 }
 

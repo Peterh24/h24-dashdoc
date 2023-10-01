@@ -4,7 +4,7 @@ interface Transport {
   segments: Array<
   {
     trailers:Array<{
-      license_plate: string
+      licensePlate: string
     }
     >,
   }

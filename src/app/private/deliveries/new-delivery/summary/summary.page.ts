@@ -150,7 +150,7 @@ export class SummaryPage implements OnInit {
     this.transportService.trailers = [];
     this.transportService.segments = [];
     this.transportService.trailers.push({
-      "license_plate": this.transportService.vehicle
+      "licensePlate": this.transportService.vehicle
     });
     this.transportService.deliveries.forEach(delivery => {
       let segment = {

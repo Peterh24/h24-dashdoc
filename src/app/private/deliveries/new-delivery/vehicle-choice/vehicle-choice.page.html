@@ -33,7 +33,7 @@
         </ion-buttons>
         <swiper-container *ngIf="vehicles" #swiper [loop]="true" (slidechange)="onSlideChange($event)">
           <swiper-slide *ngFor="let vehicle of vehicles">
-            <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/cars/' + vehicle.license_plate + '.jpg'"></ion-img>
+            <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/cars/' + vehicle.licensePlate + '.jpg'"></ion-img>
           </swiper-slide>
         </swiper-container>
       </ion-col>
@@ -57,11 +57,11 @@
     <ion-row class="description">
       <ion-col>
         <span>hauteur du véhicule</span>
-        {{currentVehicle.height_car}} mètres
+        {{currentVehicle.heightCar}} mètres
       </ion-col>
       <ion-col>
         <span>hauteur du coffre</span>
-        {{currentVehicle.height_chest}} mètres
+        {{currentVehicle.heightChest}} mètres
       </ion-col>
     </ion-row>
     <ion-row class="description">
@@ -71,7 +71,7 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-fab slot="fixed" horizontal="end" vertical="bottom" (click)="onVehicleSelected(currentVehicle.license_plate)">
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom" (click)="onVehicleSelected(currentVehicle.licensePlate)">
     <ion-button>
       A partir de {{currentVehicle.price}} €
       <ion-icon name="arrow-forward" class="ion-margin-start"></ion-icon>

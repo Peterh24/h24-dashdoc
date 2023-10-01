@@ -24,7 +24,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private storage: Storage,
-    private router: Router
+    private router: Router,
   ) {
     this.loadUser();
   }

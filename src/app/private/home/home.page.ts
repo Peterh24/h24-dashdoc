@@ -11,6 +11,7 @@ import { API_URL, DASHDOC_API_URL, DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src
 import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { VehiclesService } from 'src/app/services/vehicles.service';
 
 
 @Component({
@@ -34,10 +35,10 @@ export class HomePage implements OnInit, OnDestroy {
     private authService: AuthService,
     private modalCtrl: ModalController,
     private alertController: AlertController,
+    private vehicleService: VehiclesService
   ) { }
 
   ngOnInit() {
-
     // this.authService.getCurrentUser().pipe(take(1)).subscribe((user:any) => {
     //   console.log('user: ', user);
     //   // this.firstname = user.firstname;
@@ -63,6 +64,7 @@ export class HomePage implements OnInit, OnDestroy {
       this.companyService.companies.subscribe((companies) => {
         this.loadedCompanies = companies;
       })
+      this.vehicleService.fetchVehicles();
     }) 
     
     
