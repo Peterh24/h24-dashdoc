@@ -60,6 +60,14 @@ export class AuthService {
     );
   }
 
+  update(firstname: string, lastname: string, phone: string, email: string) {
+    return this.http.put(`${API_URL}app_users/${this.currentUser.id}`, { firstname, lastname, phone, email}).pipe(
+      map((res) => {
+
+      })
+    );
+  }
+
   login(username: string, password: string) {
     return this.http.post(`${API_URL}login`, { username, password }).pipe(
       map((res: any) => {

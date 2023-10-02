@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { regex, regexErrors } from '../utils/regex';
 import { AuthService } from '../services/auth.service';
@@ -12,13 +12,7 @@ import { AuthService } from '../services/auth.service';
 export class SignUpPage implements OnInit {
   private regex: any = regex;
   regexErrors: any = regexErrors;
-  form = this.formBuilder.nonNullable.group({
-    firstname: ['', [Validators.required]],
-    lastname: ['', [Validators.required]],
-    phone: ['', [Validators.required, Validators.pattern(this.regex.phone)]],
-    email: ['', [Validators.required, Validators.pattern(this.regex.email)]],
-    password: ['', [Validators.required]]
-  });
+  form: FormGroup;
 
   constructor(
     private formBuilder: FormBuilder,
