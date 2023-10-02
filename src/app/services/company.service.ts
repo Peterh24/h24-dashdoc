@@ -61,6 +61,18 @@ export class CompanyService {
       }))
   }
 
+  addCompany(token:number) {
+    const headers = new HttpHeaders().set('Authorization', `Token ${token}`);
+    this.http.get(`${DASHDOC_API_URL}addresses/`, { headers }).pipe(take(1)).subscribe(((res:any) => {
+      if(res.results !== undefined ){
+        const newCompany = { ...res.results[0].created_by, token: token };
+        if (!this._companies.getValue().includes(newCompany)) {
+          this._companies.next([...this._companies.getValue(), newCompany]);
+        }
+      }
+    }))
+  }
+
   setCompanyName(name: string) {
     this._companyName.next(name);
   }

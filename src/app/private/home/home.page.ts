@@ -56,12 +56,13 @@ export class HomePage implements OnInit, OnDestroy {
   ionViewWillEnter(){
     this.currentUser = this.authService.currentUser;
     console.log("user: ", this.currentUser);
-    this.http.get(`${API_URL}app_users/${this.currentUser.id}`).pipe(take(1)).subscribe((user:any) => {
+    this.http.get(`${API_URL}app_users/${this.currentUser.id}`).subscribe((user:any) => {
       this.authService.currentUserDetail = user;
       this.firstname = user.firstname;
       this.lastname = user.lastname
       this.companyService.fetchCompanies();
       this.companyService.companies.subscribe((companies) => {
+        console.log('companies: ', companies);
         this.loadedCompanies = companies;
       })
     }) 
@@ -100,7 +101,8 @@ export class HomePage implements OnInit, OnDestroy {
       ).subscribe((res: any) => {
         const tokenToAdd = {user:`${API_URL}app_users/${this.currentUser.id}`, token: token}
         this.http.post(`${API_URL}app_dashdoc_tokens`, tokenToAdd).pipe(take(1)).subscribe((res) => {
-          console.log('res: ', res);
+          // Ajout du token
+          this.companyService.addCompany(token);
         })
         }
       )
