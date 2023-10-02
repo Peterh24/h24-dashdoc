@@ -82,7 +82,7 @@
                       <ion-item class="ion-no-padding" [class.disabled]="!form.get('date').value">
                         <ion-icon name="time" size="small" class="ion-margin-end custom-icon" color="primary"></ion-icon>
                         <ion-label position="floating" class="custom-size">Heure d'enlèvement</ion-label>
-                        <ion-input type="text" formControlName="hour" (click)="openDatePicker('time')" [disabled]="selectedAccordionPk !== address.pk" [readonly]="!form.get('date').value"></ion-input>
+                        <ion-input type="text" formControlName="hour" [disabled]="selectedAccordionPk !== address.pk" [readonly]="true"></ion-input>
                       </ion-item>
                     </ion-col>
                   </ion-row>

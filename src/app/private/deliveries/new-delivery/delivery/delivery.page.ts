@@ -191,7 +191,7 @@ export class DeliveryPage implements OnInit {
     if (type === 'time' && !this.form.get('date').value) {
       return;
     }
-
+  
     const modal = await this.modalController.create({
       component: HourComponent,
       componentProps: {
@@ -201,17 +201,30 @@ export class DeliveryPage implements OnInit {
         initialBreakpoint: 1,
         breakpoints: [0, 1]
       },
-    })
+    });
     modal.present();
+  
     const { data } = await modal.onWillDismiss();
-    if(data) {
-      if(type === 'date') {
-        const date = format(new Date(data), "yyyy-MM-dd");
-        const formatedDate = format(parseISO(date), 'dd MMMM yyyy', { locale: fr });
+    if (data) {
+      if (type === 'date') {
+        const date = format(new Date(data), 'yyyy-MM-dd');
+        const formattedDate = format(parseISO(date), 'dd MMMM yyyy', { locale: fr });
         this.date = date;
         this.form.controls['date'].setValue(date);
+  
+        // change type for time
+        type = 'time';
+        modal.componentProps = {
+          type: type,
+          page: 'destination',
+          form: this.form,
+          initialBreakpoint: 1,
+          breakpoints: [0, 1]
+        };
+        modal.dismiss(); // close first popup
+        this.openDatePicker(type); // reopen the popup with type "time"
       } else {
-        const hour = format(new Date(data), "HH:mm");
+        const hour = format(new Date(data), 'HH:mm');
         this.hour = hour;
         this.form.controls['hour'].setValue(hour);
       }
