@@ -58,7 +58,7 @@ export class DetailsPage {
 
     const loading = await this.loadingController.create({
       keyboardClose: true,
-      message: 'Edition du compte...',
+      message: '<div class="h24loader"></div>',
       spinner: 'bubbles'
     })
     await loading.present();

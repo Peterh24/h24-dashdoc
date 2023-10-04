@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { AlertController, LoadingController } from '@ionic/angular';
-import { regex, regexErrors } from '../utils/regex';
+import { regexErrors } from '../utils/regex';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -10,12 +10,10 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./sign-up.page.scss'],
 })
 export class SignUpPage implements OnInit {
-  private regex: any = regex;
   regexErrors: any = regexErrors;
   form: FormGroup;
 
   constructor(
-    private formBuilder: FormBuilder,
     private loadingController: LoadingController,
     private authService: AuthService,
     private alertController: AlertController
@@ -30,7 +28,7 @@ export class SignUpPage implements OnInit {
 
     const loading = await this.loadingController.create({
       keyboardClose: true,
-      message: 'Création du compte...',
+      message: '<div class="h24loader"></div>',
       spinner: 'bubbles'
     });
     await loading.present();

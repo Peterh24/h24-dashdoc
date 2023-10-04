@@ -56,13 +56,12 @@ export class AuthPage implements OnInit {
 
     const loading = await this.loadingController.create({
       keyboardClose: true,
-      message: '<img src ="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt=""><br /> Connection...',
+      message: '<div class="h24loader"></div>',
       spinner: null,
     })
     await loading.present();
 
 
-    // FAKE API SIMULATION JUST FOR TESTING NOT USE THIS IN PRODUCTION
     this.authService.login(email, password).subscribe({
       next: (res) => {
         loading.dismiss();
@@ -80,7 +79,6 @@ export class AuthPage implements OnInit {
         await alert.present();
       },
       complete: () => {
-        // Cette partie est ajoutée pour traiter la réussite de la simulation
         loading.dismiss();
         this.router.navigateByUrl('/private/tabs/home');
       }

@@ -1,42 +1,16 @@
-/*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
- */
-
-/* Core CSS required for Ionic components to work properly */
-@import "@ionic/angular/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
-@import "@ionic/angular/css/normalize.css";
-@import "@ionic/angular/css/structure.css";
-@import "@ionic/angular/css/typography.css";
-@import '@ionic/angular/css/display.css';
-
-/* Optional CSS utils that can be commented out */
-@import "@ionic/angular/css/padding.css";
-@import "@ionic/angular/css/float-elements.css";
-@import "@ionic/angular/css/text-alignment.css";
-@import "@ionic/angular/css/text-transformation.css";
-@import "@ionic/angular/css/flex-utils.css";
-@import "~leaflet/dist/leaflet.css";
-
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Overpass:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
+$font-primary: 'Overpass', sans-serif;
+$font-secondary: 'Roboto', sans-serif;
 
 $anime-time-1: 6s;
 $anime-time-2: 9s;
 
-$box-size: 150px;
+$box-size: 200px;
 $clip-distance: .05;
 $clip-size: $box-size * (1 + $clip-distance * 2);
 $path-width: 2px;
 
-$main-color: #fff;
+$main-color: #000;
 $background: #191916;
 
 $codepen-logo-path: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI2LjUuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9ImxvZ28iIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgoJIHZpZXdCb3g9IjAgMCAxMzYgMTE3LjUiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDEzNiAxMTcuNTsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8c3R5bGUgdHlwZT0idGV4dC9jc3MiPgoJLnN0MHtmaWxsOiNGRkZGRkY7fQo8L3N0eWxlPgo8cGF0aCBpZD0iVHJhY8OpXzc5IiBjbGFzcz0ic3QwIiBkPSJNMjQuMSwxMDcuMmMwLTMtMS45LTQuNi00LjgtNC42aC01Ljd2MTQuNkgxNnYtNS41aDIuOGwzLjEsNS41aDIuOGwtMy41LTUuOAoJQzIzLjEsMTEwLjgsMjQuMywxMDkuMSwyNC4xLDEwNy4yIE0xOS4zLDEwOS41SDE2VjEwNWgzLjNjMS40LDAsMi40LDAuNywyLjQsMi4yYzAuMSwxLjItMC44LDIuMi0yLDIuMwoJQzE5LjYsMTA5LjUsMTkuNSwxMDkuNSwxOS4zLDEwOS41Ii8+CjxwYXRoIGlkPSJUcmFjw6lfODAiIGNsYXNzPSJzdDAiIGQ9Ik0zMS44LDEwMi42bC01LjIsMTQuNmgyLjZsMS0zSDM2bDEsM2gyLjZsLTUuMi0xNC42SDMxLjh6IE0zMSwxMTEuOWwyLjEtNi4ybDIuMSw2LjJIMzF6Ii8+CjxwYXRoIGlkPSJUcmFjw6lfODEiIGNsYXNzPSJzdDAiIGQ9Ik01MC44LDExMi41bC02LTkuOGgtMi41djE0LjZoMi41di05LjdsNi4yLDkuN2gyLjN2LTE0LjZoLTIuNVYxMTIuNXoiLz4KPHBhdGggaWQ9IlRyYWPDqV84MiIgY2xhc3M9InN0MCIgZD0iTTY1LjEsMTA5LjFjLTEuNC0wLjYtMy4yLTAuNy00LjQtMS4yYy0wLjctMC4zLTEuMi0wLjctMS4yLTEuNWMwLTEsMS0xLjcsMi42LTEuNwoJYzEuNCwwLDIuNywwLjUsMy42LDEuNmwxLjctMS42Yy0xLjMtMS42LTMuMi0yLjQtNS4yLTIuM2MtMy4yLDAtNS4xLDEuNy01LjEsNC4xYzAsMS44LDEsMi43LDIuNSwzLjNjMS41LDAuNiwzLjEsMC44LDQuMywxLjMKCWMwLjgsMC4zLDEuNCwwLjcsMS40LDEuN2MwLDEuNC0xLjIsMi4yLTMuMSwyLjJjLTEuNiwwLTMuMi0wLjctNC4yLTEuOWwtMS45LDEuNmMxLjUsMS44LDMuNywyLjgsNiwyLjZjMy4zLDAsNS43LTEuNSw1LjctNC41CglDNjcuNywxMTEuMiw2Ni43LDEwOS43LDY1LjEsMTA5LjEiLz4KPHBhdGggaWQ9IlRyYWPDqV84MyIgY2xhc3M9InN0MCIgZD0iTTc2LjcsMTAyLjZoLTUuOXYxNC42aDIuNXYtNS40aDMuNGMyLjksMCw0LjgtMS42LDQuOC00LjZTNzkuNiwxMDIuNiw3Ni43LDEwMi42IE03Ni43LDEwOS41CgloLTMuNFYxMDVoMy40YzEuMy0wLjEsMi4zLDAuOSwyLjQsMi4xYzAuMSwxLjMtMC45LDIuMy0yLjEsMi40Qzc2LjksMTA5LjYsNzYuOCwxMDkuNiw3Ni43LDEwOS41Ii8+CjxwYXRoIGlkPSJUcmFjw6lfODQiIGNsYXNzPSJzdDAiIGQ9Ik05MC41LDEwMi4zYy0zLjYsMC02LjIsMi42LTYuMiw3LjZjMCw0LjksMi41LDcuNSw2LjIsNy41YzMuNiwwLDYuMi0yLjYsNi4yLTcuNQoJQzk2LjYsMTA0LjksOTQuMSwxMDIuMyw5MC41LDEwMi4zIE05MC41LDExNS4xYy0yLjIsMC0zLjctMS43LTMuNy01LjFzMS41LTUuMiwzLjctNS4yczMuNywxLjgsMy43LDUuMgoJQzk0LjIsMTEzLjMsOTIuNywxMTUuMSw5MC41LDExNS4xIi8+CjxwYXRoIGlkPSJUcmFjw6lfODUiIGNsYXNzPSJzdDAiIGQ9Ik0xMTAuOSwxMDcuMmMwLTMtMS45LTQuNi00LjgtNC42aC01Ljd2MTQuNmgyLjV2LTUuNWgyLjhsMy4xLDUuNWgyLjhsLTMuNS01LjgKCUMxMDkuOSwxMTAuOCwxMTEsMTA5LjEsMTEwLjksMTA3LjIgTTEwNi4xLDEwOS41aC0zLjNWMTA1aDMuM2MxLjQsMCwyLjQsMC43LDIuNCwyLjJjMC4xLDEuMi0wLjgsMi4yLTIsMi4zCglDMTA2LjQsMTA5LjUsMTA2LjIsMTA5LjUsMTA2LjEsMTA5LjUiLz4KPHBhdGggaWQ9IlRyYWPDqV84NiIgY2xhc3M9InN0MCIgZD0iTTExMi43LDEwNWg0LjF2MTIuMmgyLjVWMTA1aDQuMXYtMi40aC0xMC43VjEwNXoiLz4KPHBhdGggaWQ9IlRyYWPDqV84NyIgY2xhc3M9InN0MCIgZD0iTTEzMy40LDEwOS4xYy0xLjQtMC42LTMuMi0wLjctNC40LTEuMmMtMC43LTAuMy0xLjItMC43LTEuMi0xLjVjMC0xLDEtMS43LDIuNi0xLjcKCWMxLjQsMCwyLjcsMC41LDMuNiwxLjZsMS43LTEuNmMtMS4zLTEuNi0zLjItMi40LTUuMi0yLjNjLTMuMiwwLTUuMSwxLjctNS4xLDQuMWMwLDEuOCwxLDIuNywyLjUsMy4zYzEuNSwwLjYsMy4xLDAuOCw0LjMsMS4zCgljMC44LDAuMywxLjQsMC43LDEuNCwxLjdjMCwxLjQtMS4yLDIuMi0zLjEsMi4yYy0xLjYsMC0zLjItMC43LTQuMi0xLjlsLTEuOSwxLjZjMS41LDEuOCwzLjcsMi44LDYsMi42YzMuMywwLDUuNy0xLjUsNS43LTQuNQoJQzEzNi4xLDExMS4yLDEzNSwxMDkuNywxMzMuNCwxMDkuMSIvPgo8cGF0aCBpZD0iVHJhY8OpXzg4IiBjbGFzcz0ic3QwIiBkPSJNMzkuMSw5Mi4zaDMyLjJ2LTguOEg1MnYtNi42aDE5LjRWNTEuMUgzOS4ydjguOGgxOS40djguMkgzOS4xVjkyLjN6Ii8+CjxwYXRoIGlkPSJUcmFjw6lfODkiIGNsYXNzPSJzdDAiIGQ9Ik0xMTEuMiw5Mi4zdi0xMmg3di04LjhoLTd2LTYuM0g5OC40djYuM0g5MlYwSDc5LjF2MzQuMkgzMC45VjBIMTh2OTIuM2gxMi44di00OGg0OC4zdjM2aDE5LjIKCXYxMkgxMTEuMnoiLz4KPHBhdGggaWQ9IlRyYWPDqV83OCIgY2xhc3M9InN0MCIgZD0iTTAsMTAyLjZ2Mi40aDQuMXYxMi4yaDIuNVYxMDVoNC4xdi0yLjRIMHoiLz4KPC9zdmc+Cg==");
@@ -49,43 +23,16 @@ $codepen-logo-path: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlb
   right: 0;
 }
 
-ion-item {
-  &.ion-invalid {
-    &.ion-touched {
-      color: var(--ion-color-danger);
-      --border-color: var(--ion-color-danger);
-    }
-  }
-}
-
-h2 {
-  font-size: 16px;
-}
-
-.validator-error {
-  font-size: .9em;
-  color: var(--ion-color-danger);
-}
-
-.loading-wrapper {
-  background: transparent!important;
-  box-shadow: none!important;
-}
-
-.backdrop-no-tappable {
-  --backdrop-opacity: var(--ion-backdrop-opacity, 0.82);
-}
-
-.h24loader {
+.bb {
   @extend %full-fill;
   width: $box-size;
   height: $box-size;
   margin: auto;
   background: $codepen-logo-path center no-repeat;
-  background-size: 90px; 
+  background-size: 125px; 
   color: $main-color;
   border-radius: 50%;
-  transform: translateX(-32%);
+
   &::before,
   &::after {
     @extend %full-fill;

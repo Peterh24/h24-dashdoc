@@ -80,7 +80,7 @@ export class EditAddressPage implements OnInit {
     this.address = {...this.address, ...this.form.value}
 
     this.loadingController.create({
-      message: 'Mise a jour de l\'addresse'
+      message: '<div class="h24loader"></div>',
     }).then(loadingElement  =>  {
       loadingElement.present();
       this.addressService.updateAddress(this.address.pk,  this.address.name, this.address.address, this.address.postcode, this.address.city, this.address.country, this.address.instructions).subscribe(() => {

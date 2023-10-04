@@ -73,7 +73,7 @@ export class AddressPage implements OnInit {
   onRemoveAddress(addressPk: number, slidingElement: IonItemSliding, isOrigin:boolean): void {
     if (!isOrigin) {
       this.loadingController.create({
-        message: 'Suppression de l\'adresse...',
+        message: '<div class="h24loader"></div>',
         mode: "ios"
       }).then(loadingElement => {
         loadingElement.present();

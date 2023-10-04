@@ -63,7 +63,7 @@ export class NewAddressPage implements OnInit {
       return;
     }
     this.loadingController.create({
-      message: 'Creating place...'
+      message: '<div class="h24loader"></div>',
     }).then(loadingElement => {
       loadingElement.present();
       this.addressService.addAdress(this.form.value.name, this.form.value.address, this.form.value.city, this.form.value.postal, this.form.value.country, this.form.value.instructions).subscribe(() => {
