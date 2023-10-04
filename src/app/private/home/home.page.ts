@@ -1,14 +1,11 @@
-import { InvoiceService } from 'src/app/services/invoice.service';
-import { AddressService } from 'src/app/services/address.service';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { AlertController, IonSelect, ModalController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
-import { EMPTY, Subscription, catchError, of, take, throwError } from 'rxjs';
+import { Subscription, catchError, of, take, throwError } from 'rxjs';
 import { ModalAddTokenComponent } from './modal-add-token/modal-add-token.component';
 import { Company } from '../models/company.model';
 import { CompanyService } from 'src/app/services/company.service';
 import { API_URL, DASHDOC_API_URL, DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
-import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { VehiclesService } from 'src/app/services/vehicles.service';
@@ -19,7 +16,7 @@ import { VehiclesService } from 'src/app/services/vehicles.service';
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
 })
-export class HomePage implements OnInit, OnDestroy {
+export class HomePage implements OnDestroy {
   private companiesSub: Subscription;
   private currentCompany: Subscription;
   loadedCompanies: Array<Company>;
@@ -37,21 +34,6 @@ export class HomePage implements OnInit, OnDestroy {
     private alertController: AlertController,
     private vehicleService: VehiclesService
   ) { }
-
-  ngOnInit() {
-    // this.authService.getCurrentUser().pipe(take(1)).subscribe((user:any) => {
-    //   console.log('user: ', user);
-    //   // this.firstname = user.firstname;
-    //   // this.lastname = user.lastname
-    //   // this.loadedCompanies = user.appDashdocTokens;
-      
-    // })
-
-    // this.companiesSub = this.companyService.companies.subscribe(companies => {
-      
-
-    // })
-  }
 
   ionViewWillEnter(){
     this.currentUser = this.authService.currentUser;
@@ -100,10 +82,29 @@ export class HomePage implements OnInit, OnDestroy {
         })
       ).subscribe((res: any) => {
         const tokenToAdd = {user:`${API_URL}app_users/${this.currentUser.id}`, token: token}
-        this.http.post(`${API_URL}app_dashdoc_tokens`, tokenToAdd).pipe(take(1)).subscribe((res) => {
+        this.http.post(`${API_URL}app_dashdoc_tokens`, tokenToAdd).pipe(
+          take(1),
+          catchError(async (error) => {
+            if (error instanceof HttpErrorResponse) {
+              if (error.status === 400) {
+                const alert = await this.alertController.create({
+                  header: 'Erreur',
+                  message: 'votre token <b>' + token + '</b> a déja été ajouté précédement',
+                  buttons: ['Compris'],
+                });
+                await alert.present();
+              }
+              throw error;
+            }
+          })
+          ).subscribe(
+          (res) => {
+            console.log('res: ', res);
           // Ajout du token
           this.companyService.addCompany(token);
-        })
+          },
+          
+        )
         }
       )
 
