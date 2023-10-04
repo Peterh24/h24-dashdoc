@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Vehicle } from '../../vehicle.model';
 import { VehiclesService } from 'src/app/services/vehicles.service';
 import { map, take, tap } from 'rxjs';
@@ -17,6 +17,7 @@ export class VehicleChoicePage implements OnInit {
   @Input()dataToEdit: any;
   vehicles: Array<Vehicle>;
   currentVehicle: Vehicle;
+  currentIndex: number = 0;
   @ViewChild('swiper') swiperRef: ElementRef | undefined;
   swiper?: Swiper;
   constructor(
@@ -24,13 +25,13 @@ export class VehicleChoicePage implements OnInit {
     private transportService: TransportService,
     private router: Router,
     private modalController: ModalController,
+    private _ngZone: NgZone
   ) {}
 
   ngOnInit() {
     this.vehicleService.vehicles.pipe(
       take(1),
       tap((vehicles) => {
-        console.log('vehicles: ', vehicles);
         if (vehicles.length > 0) {
           this.vehicles = vehicles;
           if (!this.currentVehicle) {
@@ -59,8 +60,8 @@ export class VehicleChoicePage implements OnInit {
   }
 
   onSlideChange(elem: any){
-    const currentIndex = elem.srcElement.swiper.realIndex;
-    this.currentVehicle = this.vehicles[currentIndex];
+    this.currentIndex = elem.srcElement.swiper.realIndex;
+    this.currentVehicle = this.vehicles[this.currentIndex];
   }
 
   goPrev(){

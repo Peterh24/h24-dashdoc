@@ -23,7 +23,6 @@ export class VehiclesService {
       take(1),
       map((res: any) => res['hydra:member']),
       tap((data: Vehicle[]) => {
-        console.log('data ', data);
         this._vehicles.next(data);
       })
     );

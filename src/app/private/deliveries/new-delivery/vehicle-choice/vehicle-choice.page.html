@@ -24,14 +24,14 @@
     <ion-row>
       <ion-col class="swiper-wrap">
         <ion-buttons class="ion-justify-content-between">
-          <ion-button (click)="goPrev()">
+          <ion-button (click)="goPrev()" [disabled]="currentIndex === 0">
             <ion-icon slot="icon-only" name="arrow-back-circle"></ion-icon>
           </ion-button>
-          <ion-button (click)="goNext()">
+          <ion-button (click)="goNext()" [disabled]="currentIndex === vehicles.length -1">
             <ion-icon slot="icon-only" name="arrow-forward-circle"></ion-icon>
           </ion-button>
         </ion-buttons>
-        <swiper-container *ngIf="vehicles" #swiper [loop]="true" (slidechange)="onSlideChange($event)">
+        <swiper-container *ngIf="vehicles" #swiper [slidesPerView]="1" (slidechange)="onSlideChange($event)">
           <swiper-slide *ngFor="let vehicle of vehicles">
             <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/cars/' + vehicle.licensePlate + '.jpg'"></ion-img>
           </swiper-slide>
