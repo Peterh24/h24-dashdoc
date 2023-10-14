@@ -10,6 +10,8 @@ import { HourComponent } from '../pick-up/hour/hour.component';
 import { EditComponent } from './edit/edit.component';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { format, parseISO } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 @Component({
   selector: 'app-summary',
@@ -73,6 +75,18 @@ export class SummaryPage implements OnInit {
       return 'other';
     }
     return image;
+  }
+
+  getDate(dateString : string) {
+    const date = parseISO(dateString);
+    const formattedDate = format(date, 'dd MMMM yyyy', { locale: fr });
+    return formattedDate;
+  }
+
+  getHour(dateString : string) {
+    const date = parseISO(dateString);
+    const formattedTime = format(date, 'HH:mm');
+    return formattedTime;
   }
 
   async editParts(type: string, data: any, index: number) {
