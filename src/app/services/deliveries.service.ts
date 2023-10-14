@@ -33,7 +33,6 @@ export class DeliveriesService {
         }
       }),
       map((resData: Request) => {
-        console.log('resData: ', resData);
         const deliveries: Array<Delivery> = resData.results.map((data:any) => {
           // Parse deliveries array for get needed data
           const deliveriesData = data.deliveries.map((delivery: any) => {
@@ -53,8 +52,7 @@ export class DeliveriesService {
 
 
           // check if data.segments[0].trailers[0] is defined
-          const licensePlate = data.segments[0].trailers[0] ? data.segments[0].trailers[0].licensePlate : '';
-          
+          const licensePlate = data.segments[0].trailers[0] ? data.segments[0].trailers[0].license_plate : '';
           return new Delivery(
             data.uid,
             data.deliveries[0].shipper_reference,
