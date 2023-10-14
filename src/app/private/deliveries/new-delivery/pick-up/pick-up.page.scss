@@ -4,22 +4,27 @@
   gap: 20px;
   flex-direction: row-reverse;
 }
+
 .drodown-btn {
   text-align: right;
 }
+
 .custom-size {
   font-size: 14px;
 }
+
 .custom-icon {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   right: -15px;
 }
+
 h3 {
   font-weight: 700;
   margin-bottom: 10px;
 }
+
 p {
   padding: 0;
   margin-bottom: 10px;
@@ -40,4 +45,21 @@ ion-item {
 
 .page-grid {
   margin-bottom: 40px;
+}
+
+ion-button {
+  --padding-end: 10px;
+  --padding-start: 10px;
+  ion-text {
+    margin-left: 5px;
+  }
+}
+
+.flex-col {
+  display: flex;
+}
+
+.btn-cicle {
+  height: 44px;
+  width: 44px;
 }
