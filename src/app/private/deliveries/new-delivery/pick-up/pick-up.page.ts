@@ -148,7 +148,7 @@ export class PickUpPage implements OnInit {
     } else {
       const alert = await this.alertController.create({
         header: 'Action impossible',
-        message: 'merci de d\'ajouter une autre addresse avant de supprimer celle-ci',
+        message: 'Merci de d\'ajouter une autre adresse avant de supprimer celle-ci',
         buttons: ['Compris'],
       });
       await alert.present();

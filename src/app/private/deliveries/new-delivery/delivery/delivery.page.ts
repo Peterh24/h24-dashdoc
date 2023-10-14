@@ -105,7 +105,7 @@ export class DeliveryPage implements OnInit {
     } else {
       const alert = await this.alertController.create({
         header: 'Action impossible',
-        message: 'merci d\'ajouter une autre addresse avant de supprimer celle-ci',
+        message: 'Merci d\'ajouter une autre adresse avant de supprimer celle-ci',
         buttons: ['Compris'],
       });
       await alert.present();

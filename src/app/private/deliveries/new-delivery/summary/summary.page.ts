@@ -136,7 +136,7 @@ export class SummaryPage implements OnInit {
       if(!this.isSingleDestination){
         const alert = await this.alertController.create({
           header: 'Action impossible',
-          message: 'vous ne pouvez pas avoir plusieurs origine et plusieur destinations merci d\'editer vos destination afin de n\'en conserver qu\'une seule',
+          message: 'Vous ne pouvez pas avoir plusieures adresses d\'enlèvement et plusieures adresses de livraisons. Merci d\'éditer vos adresses d\'enlèvement afin de n\'en conserver qu\'une seule.',
           buttons: ['Compris'],
         });
 
@@ -148,7 +148,7 @@ export class SummaryPage implements OnInit {
       if(!this.isSingleOrigin){
         const alert = await this.alertController.create({
           header: 'Action impossible',
-          message: 'vous ne pouvez pas avoir plusieurs destination et plusieur points d\'enlevement merci de supprimer des points enlevement afin de n\'en conserver qu\'un',
+          message: 'Vous ne pouvez pas avoir plusieures adresses d\'enlèvement et plusieures adresses de livraisons. Merci d\'éditer vos adresses de livraison afin de n\'en conserver qu\'une seule.',
           buttons: ['Compris'],
         });
         await alert.present();
