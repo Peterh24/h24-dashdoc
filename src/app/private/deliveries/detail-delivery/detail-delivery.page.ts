@@ -43,6 +43,7 @@ export class DetailDeliveryPage implements OnInit {
         }
         this.deliveriesService.getDelivery(paramMap.get('id')).subscribe(delivery => {
           this.delivery = delivery;
+          console.log('delivery: ', delivery);
           if(!this.delivery) {
             this.navController.navigateBack('/private/tabs/transports')
             return;
