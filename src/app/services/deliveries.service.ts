@@ -33,6 +33,7 @@ export class DeliveriesService {
         }
       }),
       map((resData: Request) => {
+        console.log('resData: ', resData);
         const deliveries: Array<Delivery> = resData.results.map((data:any) => {
           // Parse deliveries array for get needed data
           const deliveriesData = data.deliveries.map((delivery: any) => {

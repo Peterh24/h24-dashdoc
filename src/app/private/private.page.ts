@@ -14,7 +14,7 @@ import { CompanyService } from '../services/company.service';
   templateUrl: './private.page.html',
   styleUrls: ['./private.page.scss'],
 })
-export class PrivatePage implements OnInit {
+export class PrivatePage {
   private dashdocTokensSub: Subscription;
   private userhasChooseCompanySub: Subscription;
   showBackButton: boolean = true;
@@ -27,7 +27,7 @@ export class PrivatePage implements OnInit {
     private companyService: CompanyService
   ) { }
 
-  ngOnInit() {
+  ionViewWillEnter() {
     this.userhasChooseCompanySub = this.companyService.userHasChooseCompany.subscribe((res) => {
       this.router.events.subscribe((event) => {
         if (event instanceof NavigationEnd) {

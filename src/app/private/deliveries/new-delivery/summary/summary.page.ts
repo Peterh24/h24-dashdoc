@@ -23,7 +23,6 @@ export class SummaryPage implements OnInit {
   isSingleDestination: Boolean = false;
   defaultTransport: any = {
     "carrier_address": {
-      "pk": 67398197,
       "company": {
         "pk": 1755557,
       },
