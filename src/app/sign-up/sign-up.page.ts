@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertController, LoadingController } from '@ionic/angular';
-import { regexErrors } from '../utils/regex';
+import { regex, regexErrors } from '../utils/regex';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -10,17 +10,25 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./sign-up.page.scss'],
 })
 export class SignUpPage implements OnInit {
+  private regex: any = regex;
   regexErrors: any = regexErrors;
-  form: FormGroup;
+  form = this.formBuilder.nonNullable.group({
+    firstname: ['', [Validators.required]],
+    lastname: ['', [Validators.required]],
+    phone: ['', [Validators.required, Validators.pattern(this.regex.phone)]],
+    email: ['', [Validators.required, Validators.pattern(this.regex.email)]],
+    password: ['', [Validators.required]]
+  });
+
 
   constructor(
     private loadingController: LoadingController,
     private authService: AuthService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private formBuilder: FormBuilder
   ) { }
 
   ngOnInit() {
-
   }
 
   async onSubmit() {
