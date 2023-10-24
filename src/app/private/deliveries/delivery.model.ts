@@ -8,6 +8,7 @@ export class Delivery {
     public messages: Array<Message>,
     public documents: Array<Document>,
     public licensePlate: string,
+    public requested_vehicle: string,
   ){}
 }
 

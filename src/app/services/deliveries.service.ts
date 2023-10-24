@@ -61,7 +61,8 @@ export class DeliveriesService {
             deliveriesData,
             data.messages,
             data.documents,
-            licensePlate
+            licensePlate,
+            data.requested_vehicle,
           )
         });
 

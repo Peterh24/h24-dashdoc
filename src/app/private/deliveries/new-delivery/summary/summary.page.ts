@@ -234,6 +234,7 @@ export class SummaryPage implements OnInit {
         // Ajoutez également les données à dataToApi
         let dataToApi = {
           ...this.defaultTransport,
+          requested_vehicle: this.transportService.vehicle,
           deliveries: this.transportService.deliveries,
           segments: this.transportService.segments
         };
