@@ -52,7 +52,7 @@ export class SignUpPage implements OnInit {
         let errorMessage = 'Une erreur inconnue s\'est produite';
 
         if (error && error.error && error.error.message) {
-          errorMessage = 'Enregistrement échoué: ';
+          errorMessage = 'Enregistrement échoué';
         }
 
         const alert = await this.alertController.create({

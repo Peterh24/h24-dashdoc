@@ -9,6 +9,7 @@ import { API_URL, DASHDOC_API_URL, DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src
 import { AuthService } from 'src/app/services/auth.service';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { VehiclesService } from 'src/app/services/vehicles.service';
+import { ModalAddCompanyComponent } from './modal-add-company/modal-add-company.component';
 
 
 @Component({
@@ -53,43 +54,73 @@ export class HomePage implements OnDestroy {
     
   }
 
-  async onAddCompany() {
+  async onAddCompany(type:string) {
     const modal = await this.modalCtrl.create({
-      component: ModalAddTokenComponent,
+      component: type ==='token' ? ModalAddTokenComponent : ModalAddCompanyComponent,
     });
     modal.present();
 
     const { data, role } = await modal.onWillDismiss();
 
     if (role === 'confirm') {
-      const token = data;
-      const headers = new HttpHeaders().set('Authorization', `Token ${token}`);
-      this.http.get(`${DASHDOC_API_URL}addresses/`, { headers }).pipe(
-        take(1),
-        catchError(async (error) => {
-          if (error instanceof HttpErrorResponse) {
-            if (error.status === 401) {
-              const alert = await this.alertController.create({
-                header: 'Erreur',
-                message: 'votre token <b>' + token + '</b> est incorect merci de le verifier dans votre interface dashdoc',
-                buttons: ['Compris'],
-              });
-              await alert.present();
+      if(type === "token"){
+        const token = data;
+        const headers = new HttpHeaders().set('Authorization', `Token ${token}`);
+        this.http.get(`${DASHDOC_API_URL}addresses/`, { headers }).pipe(
+          take(1),
+          catchError(async (error) => {
+            if (error instanceof HttpErrorResponse) {
+              if (error.status === 401) {
+                const alert = await this.alertController.create({
+                  header: 'Erreur',
+                  message: 'votre token <b>' + token + '</b> est incorect merci de le verifier dans votre interface dashdoc',
+                  buttons: ['Compris'],
+                });
+                await alert.present();
+              }
+              throw error;
             }
-            throw error;
+            
+          })
+        ).subscribe((res: any) => {
+          const tokenToAdd = {user:`${API_URL}app_users/${this.currentUser.id}`, token: token}
+          this.http.post(`${API_URL}app_dashdoc_tokens`, tokenToAdd).pipe(
+            take(1),
+            catchError(async (error) => {
+              if (error instanceof HttpErrorResponse) {
+                if (error.status === 400) {
+                  const alert = await this.alertController.create({
+                    header: 'Erreur',
+                    message: 'votre token <b>' + token + '</b> a déja été ajouté précédement',
+                    buttons: ['Compris'],
+                  });
+                  await alert.present();
+                }
+                throw error;
+              }
+            })
+            ).subscribe(
+            (res) => {
+              console.log('res: ', res);
+            // Ajout du token
+            this.companyService.addCompany(token);
+            },
+            
+          )
           }
-          
-        })
-      ).subscribe((res: any) => {
-        const tokenToAdd = {user:`${API_URL}app_users/${this.currentUser.id}`, token: token}
-        this.http.post(`${API_URL}app_dashdoc_tokens`, tokenToAdd).pipe(
+        )
+      } else {
+        const company = data;
+        const companyToAdd = {user:`${API_URL}app_users/${this.currentUser.id}`, company: company};
+
+        this.http.post(`${API_URL}app_company`, companyToAdd).pipe(
           take(1),
           catchError(async (error) => {
             if (error instanceof HttpErrorResponse) {
               if (error.status === 400) {
                 const alert = await this.alertController.create({
                   header: 'Erreur',
-                  message: 'votre token <b>' + token + '</b> a déja été ajouté précédement',
+                  message: 'votre company <b>' + company + '</b> a déja été ajouté précédement',
                   buttons: ['Compris'],
                 });
                 await alert.present();
@@ -100,15 +131,11 @@ export class HomePage implements OnDestroy {
           ).subscribe(
           (res) => {
             console.log('res: ', res);
-          // Ajout du token
-          this.companyService.addCompany(token);
-          },
-          
+          }
         )
-        }
-      )
-
-
+      }
+      
+      
     }
   }
 

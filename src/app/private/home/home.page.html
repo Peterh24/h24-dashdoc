@@ -13,14 +13,14 @@
     <label>
       <div class="title ion-margin-bottom">Bonjour <span>{{firstname}} {{lastname}}</span>,</div>
       <ion-text>
-        Avant de commencer, veuillez sélectionner le donneur d’ordres :
+        Sélectionnez le donneur d’ordres ou ajoutez une nouvelle société.
       </ion-text>
     </label>
   </ion-item>
-  <form class="ion-padding">
+  <form class="ion-padding-start ion-padding-end ion-padding-bottom">
     <ion-grid>
       <ion-row>
-        <ion-col size="9">
+        <ion-col size="12">
           <ion-list>
             <ion-item class="ion-no-margin ion-no-padding" lines="full">
               <ion-select #companyChoose mode="md" placeholder="Société" okText="Valider" cancelText="Annuler"  class="ion-no-margin ion-no-padding" (ionChange)="onchooseCompany($event)">
@@ -29,12 +29,33 @@
               <ion-icon color="primary" name="chevron-down" slot="end" (click)="openSelect()"></ion-icon>
             </ion-item>
           </ion-list>
+          <ion-grid class="ion-no-padding">
+            <ion-row>
+              <ion-col>
+                <ion-card class="ion-no-margin ion-margin-end ion-margin-top ion-margin-bottom" (click)="onAddCompany('company')" color="light-tint">
+                  <div>
+                    <ion-icon name="add" size="large"></ion-icon>
+                  </div>
+                  <ion-label>Ajouter une société</ion-label>
+                </ion-card>
+              </ion-col>
+              <ion-col>
+                <ion-card class="ion-no-margin ion-margin-start ion-margin-top ion-margin-bottom" (click)="onAddCompany('token')" color="light-tint">
+                  <div>
+                    <ion-icon name="key" size="large"></ion-icon>
+                  </div>
+                  <ion-label>Renseigner ma clé API</ion-label>
+                </ion-card>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
         </ion-col>
-        <ion-col size="3" class="ion-align-self-center ion-text-end">
+        
+        <!-- <ion-col size="3" class="ion-align-self-center ion-text-end">
           <ion-button type="button" class="ion-margin-top ion-margin-bottom" (click)="onAddCompany()">
             <ion-icon slot="icon-only" name="add"></ion-icon>
           </ion-button>
-        </ion-col>
+        </ion-col> -->
       </ion-row>
     </ion-grid>
 
@@ -45,7 +66,6 @@
       <ion-text>Créer une demande</ion-text>
       <ion-icon class="ion-margin-start" name="arrow-forward"></ion-icon>
     </ion-button>
-
   </form>
   <ion-grid class="ion-padding-start ion-padding-end">
     <ion-row class="ion-justify-content-between">
