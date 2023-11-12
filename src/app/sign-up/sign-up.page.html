@@ -70,6 +70,13 @@
                   </div>
                 </ion-col>
               </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
+                    <ion-toggle (ionChange)="onAlreadyClientChange()" labelPlacement="start" mode="ios">Déja client ?</ion-toggle>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
               <ion-row class="ion-align-items-center">
                 <ion-col size="auto">
                   <ion-back-button type="button" text="Login" defaultHref="/auth"></ion-back-button>

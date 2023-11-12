@@ -12,12 +12,14 @@ import { AuthService } from '../services/auth.service';
 export class SignUpPage implements OnInit {
   private regex: any = regex;
   regexErrors: any = regexErrors;
+  isClient:boolean = false;
   form = this.formBuilder.nonNullable.group({
     firstname: ['', [Validators.required]],
     lastname: ['', [Validators.required]],
     phone: ['', [Validators.required, Validators.pattern(this.regex.phone)]],
     email: ['', [Validators.required, Validators.pattern(this.regex.email)]],
-    password: ['', [Validators.required]]
+    password: ['', [Validators.required]],
+    isClient: [this.isClient, [Validators.required]]
   });
 
 
@@ -32,7 +34,7 @@ export class SignUpPage implements OnInit {
   }
 
   async onSubmit() {
-    const { firstname, lastname, phone, email, password } = this.form.getRawValue();
+    const { firstname, lastname, phone, email, password, isClient } = this.form.getRawValue();
 
     const loading = await this.loadingController.create({
       keyboardClose: true,
@@ -40,10 +42,9 @@ export class SignUpPage implements OnInit {
       spinner: 'bubbles'
     });
     await loading.present();
-    this.authService.register(firstname, lastname, phone, email, password).subscribe({
+    this.authService.register(firstname, lastname, phone, email, password, isClient).subscribe({
       next: (res) => {
         loading.dismiss();
-        this.authService.login(email, password);
       },
       error: async (error) => {
         loading.dismiss();
@@ -51,7 +52,7 @@ export class SignUpPage implements OnInit {
         let errorMessage = 'Une erreur inconnue s\'est produite';
 
         if (error && error.error && error.error.message) {
-          errorMessage = 'Enregistrement échoué: ' + error.error.message;
+          errorMessage = 'Enregistrement échoué: ';
         }
 
         const alert = await this.alertController.create({
@@ -63,6 +64,12 @@ export class SignUpPage implements OnInit {
         await alert.present();
       }
     });
+  }
+
+  onAlreadyClientChange(){
+    this.isClient = !this.isClient;
+    this.form.get('isClient').patchValue(this.isClient);
+    this.form.get('isClient').updateValueAndValidity();
   }
 
 }
