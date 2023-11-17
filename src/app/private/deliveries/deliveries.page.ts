@@ -12,7 +12,7 @@ import { StatusService } from 'src/app/utils/services/status.service';
 })
 export class DeliveriesPage implements OnInit {
   deliveries: Array<Delivery> = [];
-  jsonData: any;
+  jsonData: Array<Delivery> = [];
   isLoading: boolean = false;
   startIndex: number = 0;
   noFilter: boolean;
@@ -31,18 +31,18 @@ export class DeliveriesPage implements OnInit {
   ionViewWillEnter() {
     this.deliveriesService.resetDeliveries();
     this.deliveries = [];
-    this.jsonData = [];
     this.isLoading = true;
     this.deliveriesService.fetchDeliveries().subscribe((deliveries) => {
       this.deliveries = deliveries;
-      this.jsonData = this.deliveries.slice(0, 10);
+      this.jsonData = deliveries;
       this.isLoading = false;
 
     });
     this.filter.value = 'all';
   }
 
-  onDetail(deliveryId: number, slidingItem: IonItemSliding) {
+  onDetail(deliveryId: string, slidingItem: IonItemSliding) {
+    console.log('deliveryId: ', deliveryId);
     slidingItem.close();
     this.router.navigate([`/private/tabs/transports/detail-delivery/${deliveryId}`]);
   }
@@ -60,40 +60,34 @@ export class DeliveriesPage implements OnInit {
   }
 
   loadMoreData(event: any) {
-    if (this.startIndex === 0) {
-      this.startIndex += 10;
-    }
-
-    const nextDeliveries = this.deliveries.slice(this.startIndex, this.startIndex + 10);
-
-    if (nextDeliveries.length > 0) {
-      this.jsonData.push(...nextDeliveries);
-      this.startIndex += 10;
-    } else {
-      event.target.disabled = true; // Désactiver le chargement supplémentaire s'il n'y a plus d'adresses
-    }
-
-    event.target.complete(); // Indiquer que le chargement est terminé
+    this.deliveriesService.fetchDeliveries().subscribe((additionalDeliveries) => {
+      this.deliveries = this.deliveries.concat(additionalDeliveries);
+      this.jsonData = this.deliveries;
+      event.target.complete();
+    });
   }
 
   filterChanged(status: any) {
     this.startIndex = 0;
     const statusValue = status.detail.value;
     let filteredDeliveries: Array<Delivery>;
+    
 
     if (this.infiniteScroll) {
       this.infiniteScroll.disabled = false;
     }
+
     if (statusValue === 'all') {
-      filteredDeliveries = this.deliveries.slice(0, this.startIndex + 10);
+      filteredDeliveries = this.deliveries.slice();
     } else {
       filteredDeliveries = this.deliveries.filter((item) => {
         return item.global_status.toLowerCase().includes(statusValue.toLowerCase());
-      });
-      filteredDeliveries = filteredDeliveries.slice(0, 10);
+      })
     }
     this.jsonData = filteredDeliveries;
+
     this.noFilter = filteredDeliveries.length === 0;
+
   }
 
 }

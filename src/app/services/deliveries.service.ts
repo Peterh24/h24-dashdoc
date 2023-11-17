@@ -13,7 +13,7 @@ import { CountriesService } from '../utils/services/countries.service';
 })
 export class DeliveriesService {
   private _deliveries = new BehaviorSubject<Array<Delivery>>([]);
-
+  private next:string = null;
   get deliveries() {
     return this._deliveries.asObservable();
   }
@@ -24,35 +24,31 @@ export class DeliveriesService {
   ) { }
 
   fetchDeliveries() {
-    return this.http.get(`${DASHDOC_API_URL}transports/`).pipe(
-      expand((resData: Request) => {
-        if (resData.next !== null) {
-          return this.http.get(resData.next);
-        } else {
-          return EMPTY;
-        }
+    const url = this.next ? this.next : `${DASHDOC_API_URL}transports/`;
+    return this.http.get(url).pipe(
+      tap((resData: any) => {
+        this.next = resData.next; // Mettez à jour la valeur de next
       }),
       map((resData: Request) => {
-        const deliveries: Array<Delivery> = resData.results.map((data:any) => {
-          // Parse deliveries array for get needed data
-          const deliveriesData = data.deliveries.map((delivery: any) => {
+        const data = resData;
+        this.next = resData.next;
+        const deliveries: Array<Delivery> = data.results.map((data:any)=> {
+          const deliveriesData = data.deliveries.map((delivery: any)=> {
             const { uid, origin, destination, loads } = delivery;
             return { uid, origin, destination, loads };
           }).sort((delivery1: Deliveries, delivery2: Deliveries) => {
-
             const dateDiff = compareAsc(new Date(delivery1.origin.real_start), new Date(delivery2.origin.real_start));
             if(dateDiff != 0) {
               return dateDiff;
             }
             return compareAsc(new Date(delivery1.destination.real_end), new Date(delivery2.destination.real_end));
-            //return format(new Date(delivery1.origin.real_start), 't') > format(new Date(delivery2.origin.real_start), 't') ? -1 : 1;
-          });
-
-          //console.log('deliveriesData: ', deliveriesData)
+          })
+          
 
 
-          // check if data.segments[0].trailers[0] is defined
           const licensePlate = data.segments[0].trailers[0] ? data.segments[0].trailers[0].license_plate : '';
+
+
           return new Delivery(
             data.uid,
             data.deliveries[0].shipper_reference,
@@ -65,8 +61,7 @@ export class DeliveriesService {
             data.requested_vehicle,
           )
         });
-
-
+        
         return deliveries;
       }),
       reduce((deliveries: Delivery[], results: Delivery[]) => deliveries.concat(results), []),
@@ -74,6 +69,10 @@ export class DeliveriesService {
         this._deliveries.next(deliveries);
       })
     )
+  }
+
+  loadMoreData(){
+
   }
 
   getDelivery(id: any){
@@ -85,25 +84,25 @@ export class DeliveriesService {
     );
   }
 
-  getDatePostcode(delivery: Array<any>, source:string){
+  getDatePostcode(delivery: Array<any>, source: string) {
     let data;
 
     if (source === 'origin') {
-      if(delivery[0].origin.slots[0]){
+      if (delivery[0]?.origin?.slots[0]?.start) {
         const startDate = new Date(delivery[0].origin.slots[0].start);
         const formattedStartDate = format(startDate, 'dd-MM-yyyy');
         data = `${formattedStartDate} - ${delivery[0].origin.address.postcode}`;
       }
-
-
     } else if (source === 'destination') {
-      if(delivery[0].destination.slots[0]){
+      if (  delivery[0]?.destination &&
+        delivery[0].destination.slots &&
+        delivery[0].destination.slots[0]?.end) {
         const endDate = new Date(delivery[delivery.length - 1].destination.slots[0].end);
         const formattedEndDate = format(endDate, 'dd-MM-yyyy');
         data = `${formattedEndDate} - ${delivery[delivery.length - 1].destination.address.postcode}`;
       }
     }
-
+  
     return data;
   }
 
