@@ -3,7 +3,7 @@
     <ion-buttons [slot]="slot" *ngIf="defaultHref">
       <ion-back-button [defaultHref]="defaultHref"></ion-back-button>
     </ion-buttons>
-    <ion-title>
+    <ion-title [class.active]="companyService.isCompanySwitch">
       {{getcompanyName() | async}}
     </ion-title>
     <ion-buttons slot="end" (click)="signOut()">

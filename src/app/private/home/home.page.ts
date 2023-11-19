@@ -33,12 +33,10 @@ export class HomePage implements OnDestroy {
     private authService: AuthService,
     private modalCtrl: ModalController,
     private alertController: AlertController,
-    private vehicleService: VehiclesService
   ) { }
 
   ionViewWillEnter(){
     this.currentUser = this.authService.currentUser;
-    console.log("user: ", this.currentUser);
     this.http.get(`${API_URL}app_users/${this.currentUser.id}`).subscribe((user:any) => {
       this.authService.currentUserDetail = user;
       this.firstname = user.firstname;
@@ -146,6 +144,10 @@ export class HomePage implements OnDestroy {
       this.storage.set(USER_STORAGE_KEY, company.token);
       this.storage.set(DASHDOC_COMPANY, currentCompany);
       this.isCompanySelected = true;
+      this.companyService.isCompanySwitch = true;
+      setTimeout(() => {
+        this.companyService.isCompanySwitch = false;
+      }, 500)
     });
   }
 

@@ -12,6 +12,7 @@ export class CompanyService {
   private _companies = new BehaviorSubject<Array<Company>>([]);
   private _companyName = new BehaviorSubject<string>('');
   private _userHasChooseCompany = new BehaviorSubject<boolean>(false);
+  isCompanySwitch: boolean = false;
 
   get userHasChooseCompany() {
     return this._userHasChooseCompany.asObservable();
