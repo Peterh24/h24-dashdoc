@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { Delivery } from './delivery.model';
-import { IonInfiniteScroll, IonItemSliding, IonSegment } from '@ionic/angular';
+import { IonInfiniteScroll, IonItemSliding, IonSegment, LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { StatusService } from 'src/app/utils/services/status.service';
 
@@ -21,21 +21,27 @@ export class DeliveriesPage implements OnInit {
   constructor(
     private deliveriesService: DeliveriesService,
     private router: Router,
-    private statusService: StatusService
+    private statusService: StatusService,
+    private loadingController: LoadingController,
   ) { }
 
   ngOnInit() {
 
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.deliveriesService.resetDeliveries();
     this.deliveries = [];
-    this.isLoading = true;
+    const loading = await this.loadingController.create({
+      keyboardClose: true,
+      message: '<div class="h24loader"></div>',
+      spinner: null,
+    })
+    await loading.present();
     this.deliveriesService.fetchDeliveries().subscribe((deliveries) => {
+      loading.dismiss();
       this.deliveries = deliveries;
       this.jsonData = deliveries;
-      this.isLoading = false;
 
     });
     this.filter.value = 'all';
