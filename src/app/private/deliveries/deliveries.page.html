@@ -96,7 +96,9 @@
         </ion-accordion-group>
 
         <ion-infinite-scroll #infiniteScroll threshold="0" (ionInfinite)="loadMoreData($event)">
-          <ion-infinite-scroll-content></ion-infinite-scroll-content>
+          <ion-infinite-scroll-content loadingSpinner="none">
+            <div class="h24loader"></div>
+          </ion-infinite-scroll-content>
         </ion-infinite-scroll>
       </ion-col>
     </ion-row>

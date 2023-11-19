@@ -37,3 +37,16 @@ ion-segment-button {
     font-weight: 700;
   }
 }
+
+.h24loader {
+  filter: invert(100%);
+  position: relative;
+  background-size: 2rem;
+  width: 3rem;
+  height: 3rem;
+  margin-top: 1.5rem;
+  &::before, &::after {
+    border-right: 2px solid #fff;
+    border-top: 2px solid #fff;
+  }
+}
