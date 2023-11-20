@@ -41,9 +41,9 @@ ion-segment-button {
 .h24loader {
   filter: invert(100%);
   position: relative;
-  background-size: 2rem;
-  width: 3rem;
-  height: 3rem;
+  background-size: 3rem;
+  width: 5rem;
+  height: 5rem;
   margin-top: 1.5rem;
   &::before, &::after {
     border-right: 2px solid #fff;

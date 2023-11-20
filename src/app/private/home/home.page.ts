@@ -1,5 +1,5 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core';
-import { AlertController, IonSelect, ModalController } from '@ionic/angular';
+import { AlertController, IonSelect, LoadingController, ModalController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
 import { Subscription, catchError, of, take, throwError } from 'rxjs';
 import { ModalAddTokenComponent } from './modal-add-token/modal-add-token.component';
@@ -33,6 +33,7 @@ export class HomePage implements OnDestroy {
     private authService: AuthService,
     private modalCtrl: ModalController,
     private alertController: AlertController,
+    private loadingController: LoadingController,
   ) { }
 
   ionViewWillEnter(){
@@ -137,17 +138,22 @@ export class HomePage implements OnDestroy {
     }
   }
 
-  onchooseCompany(event: any){
+  async onchooseCompany(event: any){
     const currentCompany = event.detail.value;
+    this.companyService.isCompanySwitch = true;
+    const loading = await this.loadingController.create({
+      keyboardClose: true,
+      message: '<div class="h24loader"></div>',
+      spinner: null,
+    })
+    await loading.present();
     this.currentCompany = this.companyService.getCompany(currentCompany).subscribe(company => {
+      loading.dismiss();
       this.companyService.setCompanyName(company.name);
       this.storage.set(USER_STORAGE_KEY, company.token);
       this.storage.set(DASHDOC_COMPANY, currentCompany);
       this.isCompanySelected = true;
-      this.companyService.isCompanySwitch = true;
-      setTimeout(() => {
-        this.companyService.isCompanySwitch = false;
-      }, 500)
+      this.companyService.isCompanySwitch = false;
     });
   }
 

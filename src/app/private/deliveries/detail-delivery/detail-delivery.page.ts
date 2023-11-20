@@ -20,12 +20,6 @@ export class DetailDeliveryPage implements OnInit {
   vehicles: any;
   map: Map;
   mapMarkers:Array<Marker> = [];
-  cityMarkerIcon: any = icon({
-    iconUrl:'https://h24-public-website.s3.eu-west-3.amazonaws.com/assets/logo-noir-sur-fond-blanc.jpeg',
-    iconSize: [48, 48],
-    iconAnchor: [24, 48],
-    popupAnchor: [0, -48]
-  })
   constructor(
     private route: ActivatedRoute,
     private navController: NavController,
@@ -118,6 +112,12 @@ export class DetailDeliveryPage implements OnInit {
   }
 
   initMap() {
+    const cityMarkerIcon = icon({
+      iconUrl:`https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/cars/${(this.delivery.licensePlate || this.delivery.requested_vehicle)}.jpg`,
+      iconSize: [75, 42],
+      iconAnchor: [24, 42],
+      popupAnchor: [0, -42]
+    })
     // map Initialisation
     this.map = new Map('map').setView([46, 2], 5);
     tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -129,7 +129,7 @@ export class DetailDeliveryPage implements OnInit {
     this.mapMarkers.forEach(markerItem => {
       const markerPosition:any = [markerItem.latitude, markerItem.longitude];
 
-      marker(markerPosition, { icon: this.cityMarkerIcon })
+      marker(markerPosition, { icon: cityMarkerIcon })
         .bindPopup(`Ville de <strong>${markerItem.name}</strong>`, { autoClose: false })
         .on('click', () => {
           this.map.setView([markerItem.latitude, markerItem.longitude], 13);
