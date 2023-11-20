@@ -10,6 +10,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { VehiclesService } from 'src/app/services/vehicles.service';
 import { ModalAddCompanyComponent } from './modal-add-company/modal-add-company.component';
+import { DeliveriesService } from 'src/app/services/deliveries.service';
 
 
 @Component({
@@ -34,6 +35,7 @@ export class HomePage implements OnDestroy {
     private modalCtrl: ModalController,
     private alertController: AlertController,
     private loadingController: LoadingController,
+    public deliveriesService: DeliveriesService,
   ) { }
 
   ionViewWillEnter(){
@@ -139,6 +141,7 @@ export class HomePage implements OnDestroy {
   }
 
   async onchooseCompany(event: any){
+    this.deliveriesService.resetDeliveries();
     const currentCompany = event.detail.value;
     this.companyService.isCompanySwitch = true;
     const loading = await this.loadingController.create({

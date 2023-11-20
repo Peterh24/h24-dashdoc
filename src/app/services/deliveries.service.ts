@@ -14,6 +14,8 @@ import { CountriesService } from '../utils/services/countries.service';
 export class DeliveriesService {
   private _deliveries = new BehaviorSubject<Array<Delivery>>([]);
   private next:string = null;
+  private url:string = null;
+  isLastPageReached = false;
   get deliveries() {
     return this._deliveries.asObservable();
   }
@@ -23,10 +25,15 @@ export class DeliveriesService {
     private countriesService: CountriesService
   ) { }
 
+
   fetchDeliveries() {
-    const url = this.next ? this.next : `${DASHDOC_API_URL}transports/`;
-    return this.http.get(url).pipe(
+    if (this.isLastPageReached) {
+      return EMPTY; // ou tout autre observable approprié
+    }
+    this.url = this.next ? this.next : `${DASHDOC_API_URL}transports/`;
+    return this.http.get(this.url).pipe(
       tap((resData: any) => {
+        console.log('url: ', this.url);
         this.next = resData.next; // Mettez à jour la valeur de next
       }),
       map((resData: Request) => {
@@ -61,6 +68,11 @@ export class DeliveriesService {
             data.requested_vehicle,
           )
         });
+
+              // Mettez à jour l'état de la pagination
+      if (resData.next === null) {
+        this.isLastPageReached = true;
+      }
         
         return deliveries;
       }),
@@ -69,10 +81,6 @@ export class DeliveriesService {
         this._deliveries.next(deliveries);
       })
     )
-  }
-
-  loadMoreData(){
-
   }
 
   getDelivery(id: any){
@@ -120,5 +128,6 @@ export class DeliveriesService {
 
   resetDeliveries() {
     this._deliveries.next([]);
+    this.next = null;
   }
 }

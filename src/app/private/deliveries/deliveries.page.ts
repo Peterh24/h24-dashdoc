@@ -4,6 +4,7 @@ import { Delivery } from './delivery.model';
 import { IonInfiniteScroll, IonItemSliding, IonSegment, LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { StatusService } from 'src/app/utils/services/status.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-deliveries',
@@ -16,10 +17,11 @@ export class DeliveriesPage implements OnInit {
   isLoading: boolean = false;
   startIndex: number = 0;
   noFilter: boolean;
+  statusValue:string = 'all';
   @ViewChild('infiniteScroll') infiniteScroll: IonInfiniteScroll;
   @ViewChild('filter') filter: IonSegment;
   constructor(
-    private deliveriesService: DeliveriesService,
+    public deliveriesService: DeliveriesService,
     private router: Router,
     private statusService: StatusService,
     private loadingController: LoadingController,
@@ -30,20 +32,29 @@ export class DeliveriesPage implements OnInit {
   }
 
   async ionViewWillEnter() {
-    this.deliveriesService.resetDeliveries();
-    this.deliveries = [];
+    this.deliveriesService.deliveries.pipe(take(1)).subscribe((data) => {
+      if(data.length == 0){
+        this.deliveries = [];
+        this.jsonData = [];
+      }
+    });
     const loading = await this.loadingController.create({
       keyboardClose: true,
       message: '<div class="h24loader"></div>',
       spinner: null,
     })
     await loading.present();
-    this.deliveriesService.fetchDeliveries().subscribe((deliveries) => {
-      loading.dismiss();
-      this.deliveries = deliveries;
-      this.jsonData = deliveries;
+    if(this.jsonData.length === 0){
+      this.deliveriesService.fetchDeliveries().subscribe((deliveries) => {
+        loading.dismiss();
+        this.deliveries = deliveries;
+        this.jsonData = deliveries;
+      });
 
-    });
+    } else {
+        loading.dismiss();
+    }
+
     this.filter.value = 'all';
   }
 
@@ -66,7 +77,9 @@ export class DeliveriesPage implements OnInit {
   }
 
   loadMoreData(event: any) {
+    console.log('is last page: ', this.deliveriesService.isLastPageReached);
     this.deliveriesService.fetchDeliveries().subscribe((additionalDeliveries) => {
+      
       this.deliveries = this.deliveries.concat(additionalDeliveries);
       this.jsonData = this.deliveries;
       event.target.complete();
@@ -75,7 +88,7 @@ export class DeliveriesPage implements OnInit {
 
   filterChanged(status: any) {
     this.startIndex = 0;
-    const statusValue = status.detail.value;
+    this.statusValue = status.detail.value;
     let filteredDeliveries: Array<Delivery>;
     
 
@@ -83,11 +96,11 @@ export class DeliveriesPage implements OnInit {
       this.infiniteScroll.disabled = false;
     }
 
-    if (statusValue === 'all') {
+    if (this.statusValue === 'all') {
       filteredDeliveries = this.deliveries.slice();
     } else {
       filteredDeliveries = this.deliveries.filter((item) => {
-        return item.global_status.toLowerCase().includes(statusValue.toLowerCase());
+        return item.global_status.toLowerCase().includes(this.statusValue.toLowerCase());
       })
     }
     this.jsonData = filteredDeliveries;

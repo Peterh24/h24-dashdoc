@@ -45,8 +45,15 @@ ion-segment-button {
   width: 5rem;
   height: 5rem;
   margin-top: 1.5rem;
+  transform: translateX(0);
   &::before, &::after {
     border-right: 2px solid #fff;
     border-top: 2px solid #fff;
   }
+}
+
+.endOfList {
+  text-align: center;
+  font-weight: 600;
+  font-size: .7rem;
 }
