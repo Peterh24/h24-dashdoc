@@ -4,6 +4,7 @@ export class Delivery {
     public shipper_reference: string,
     public global_status: string,
     public pricing_total_price: number,
+    public quotation_total_price: number,
     public deliveries: Array<Deliveries>,
     public messages: Array<Message>,
     public documents: Array<Document>,

@@ -57,3 +57,14 @@ ion-segment-button {
   font-weight: 600;
   font-size: .7rem;
 }
+
+.accordion-row-price {
+  font-weight: 500;
+  ion-label {
+    min-width: 30%;
+  }
+  p {
+    color: var(--ion-color-base);
+    font-weight: 400;
+  }
+}

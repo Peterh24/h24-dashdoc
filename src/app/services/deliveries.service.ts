@@ -33,7 +33,7 @@ export class DeliveriesService {
     this.url = this.next ? this.next : `${DASHDOC_API_URL}transports/`;
     return this.http.get(this.url).pipe(
       tap((resData: any) => {
-        console.log('url: ', this.url);
+        console.log('resData: ', resData);
         this.next = resData.next; // Mettez à jour la valeur de next
       }),
       map((resData: Request) => {
@@ -61,6 +61,7 @@ export class DeliveriesService {
             data.deliveries[0].shipper_reference,
             data.global_status,
             data.pricing_total_price,
+            data.quotation_total_price,
             deliveriesData,
             data.messages,
             data.documents,

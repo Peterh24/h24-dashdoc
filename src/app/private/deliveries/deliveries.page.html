@@ -74,6 +74,11 @@
                   </div>
                   <div class="accordion-row accordion-row-price" *ngIf="item.pricing_total_price">
                     <ion-label color="secondary">
+                      <p>Prix estimé</p>
+                      {{item.quotation_total_price | priceFormat }} € HT
+                    </ion-label>
+                    <ion-label color="secondary">
+                      <p>Prix réel</p>
                       {{item.pricing_total_price | priceFormat }} € HT
                     </ion-label>
                   </div>
