@@ -35,7 +35,6 @@ export class DetailsPage {
 
   ionViewWillEnter() {
     const currentUser = this.authService.currentUser;
-    console.log('currentUser: ', currentUser);
 
     if(!currentUser){
       this.router.navigateByUrl('/private/tabs/home');

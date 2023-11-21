@@ -59,7 +59,6 @@ export class DeliveriesPage implements OnInit {
   }
 
   onDetail(deliveryId: string, slidingItem: IonItemSliding) {
-    console.log('deliveryId: ', deliveryId);
     slidingItem.close();
     this.router.navigate([`/private/tabs/transports/detail-delivery/${deliveryId}`]);
   }
@@ -77,7 +76,6 @@ export class DeliveriesPage implements OnInit {
   }
 
   loadMoreData(event: any) {
-    console.log('is last page: ', this.deliveriesService.isLastPageReached);
     this.deliveriesService.fetchDeliveries().subscribe((additionalDeliveries) => {
       
       this.deliveries = this.deliveries.concat(additionalDeliveries);

@@ -15,7 +15,6 @@ export class ModalCourseComponent  implements OnInit {
   ngOnInit() {}
 
   async onChoice(choice: string){
-    console.log(choice);
     await this.modalController.dismiss({choice: choice});
   }
 }

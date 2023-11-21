@@ -76,7 +76,6 @@ export class EditComponent {
           maxDestinationDate = destinationStartDate;
         }
       });
-      console.log('maxDestinationDate: ', maxDestinationDate);
       this.maxVal = format(new Date(maxDestinationDate), 'yyyy-MM-dd');
 
       // If date is equal to current date min val is Current date + 1 hour
@@ -102,7 +101,6 @@ export class EditComponent {
         merchandise.quantity = plannedLoad.quantity;
       }
     })
-    console.log(this.dataToEdit);
   }
 
   toggleDate(){
@@ -155,7 +153,6 @@ export class EditComponent {
       this.dataToEdit.destination.slots[0].start = value;
       this.dataToEdit.destination.slots[0].end = value;
     }
-    console.log()
     this.defaultValue = value;
   }
 

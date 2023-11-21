@@ -238,7 +238,6 @@ export class SummaryPage implements OnInit {
           deliveries: this.transportService.deliveries,
           segments: this.transportService.segments
         };
-        console.log('dataToApi: ', dataToApi);
         this.http.post(`${DASHDOC_API_URL}transports/`, dataToApi).subscribe(async res => {
           const confirm = await this.alertController.create({
             header: 'Bravo votre course a été enregistré',

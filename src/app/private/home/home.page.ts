@@ -46,13 +46,9 @@ export class HomePage implements OnDestroy {
       this.lastname = user.lastname
       this.companyService.fetchCompanies();
       this.companyService.companies.subscribe((companies) => {
-        console.log('companies: ', companies);
         this.loadedCompanies = companies;
       })
     }) 
-    
-    
-    
   }
 
   async onAddCompany(type:string) {
@@ -102,7 +98,6 @@ export class HomePage implements OnDestroy {
             })
             ).subscribe(
             (res) => {
-              console.log('res: ', res);
             // Ajout du token
             this.companyService.addCompany(token);
             },
@@ -112,9 +107,9 @@ export class HomePage implements OnDestroy {
         )
       } else {
         const company = data;
-        const companyToAdd = {user:`${API_URL}app_users/${this.currentUser.id}`, company: company};
+        const companyToAdd = {company: company};
 
-        this.http.post(`${API_URL}app_company`, companyToAdd).pipe(
+        this.http.put(`${API_URL}app_users/${this.currentUser.id}/company`, companyToAdd).pipe(
           take(1),
           catchError(async (error) => {
             if (error instanceof HttpErrorResponse) {
@@ -131,7 +126,6 @@ export class HomePage implements OnDestroy {
           })
           ).subscribe(
           (res) => {
-            console.log('res: ', res);
           }
         )
       }

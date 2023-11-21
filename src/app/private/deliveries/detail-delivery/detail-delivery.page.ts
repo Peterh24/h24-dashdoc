@@ -37,7 +37,6 @@ export class DetailDeliveryPage implements OnInit {
         }
         this.deliveriesService.getDelivery(paramMap.get('id')).subscribe(delivery => {
           this.delivery = delivery;
-          console.log('delivery: ', delivery);
           if(!this.delivery) {
             this.navController.navigateBack('/private/tabs/transports')
             return;
@@ -62,8 +61,6 @@ export class DetailDeliveryPage implements OnInit {
                 this.mapMarkers.push({ name: origin.city, latitude: origin.latitude, longitude: origin.longitude });
               }
             }
-
-            console.log('this.mapMarkers: ', this.mapMarkers);
           });
         })
       }

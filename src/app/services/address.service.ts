@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Storage } from '@ionic/storage-angular';
 import { DASHDOC_API_URL } from './constants';
 import { Request } from '../private/models/request.model';
+import { LoadingController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -48,6 +49,7 @@ export class AddressService {
   }
 
   addAdress(name: string, address:string, city:string, postcode:string, country: string, instructions:string) {
+
     return from(this.storage.get('DASHDOC_COMPANY')).pipe(
       switchMap(companyPk => {
         const newAddress = {
@@ -72,10 +74,6 @@ export class AddressService {
             return of(resData);
           })
         );
-      }),
-      take(1),
-      tap(resData => {
-        console.log('resData Address: ', resData);
       })
     );
   }

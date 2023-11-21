@@ -91,8 +91,6 @@ ionViewWillEnter() {
       selectedDate = format(new Date(), 'yyyy-MM-dd');
     }
 
-    console.log('selectedDate: ', selectedDate);
-    console.log('storedDate: ', storedDate);
     if(selectedDate === storedDate){
       return true;
     } else {
@@ -105,7 +103,6 @@ ionViewWillEnter() {
     if(this.transportService.deliveries.length > 0) {
       let maxDeliveryDate: any;
       this.transportService.deliveries.forEach(delivery => {
-        console.log('delivery: ', delivery);
         const deliveryStartDate = new Date(delivery[type].slots[0].start);
         if (!maxDeliveryDate || deliveryStartDate > maxDeliveryDate) {
           maxDeliveryDate = deliveryStartDate;

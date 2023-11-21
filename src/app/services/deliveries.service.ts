@@ -33,7 +33,6 @@ export class DeliveriesService {
     this.url = this.next ? this.next : `${DASHDOC_API_URL}transports/`;
     return this.http.get(this.url).pipe(
       tap((resData: any) => {
-        console.log('resData: ', resData);
         this.next = resData.next; // Mettez à jour la valeur de next
       }),
       map((resData: Request) => {
