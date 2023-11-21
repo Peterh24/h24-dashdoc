@@ -68,3 +68,24 @@ ion-segment-button {
     font-weight: 400;
   }
 }
+
+
+.reset-filter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 1.5rem;
+  button {
+    background: var(--ion-color-primary);
+    color: #fff;
+    border-radius: .7rem;
+    min-width: 123px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    padding: 0 1rem;
+  }
+}

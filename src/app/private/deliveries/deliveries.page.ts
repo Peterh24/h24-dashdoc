@@ -18,6 +18,7 @@ export class DeliveriesPage implements OnInit {
   startIndex: number = 0;
   noFilter: boolean;
   statusValue:string = 'all';
+  segmentValue:string = "all"
   @ViewChild('infiniteScroll') infiniteScroll: IonInfiniteScroll;
   @ViewChild('filter') filter: IonSegment;
   constructor(
@@ -25,6 +26,7 @@ export class DeliveriesPage implements OnInit {
     private router: Router,
     private statusService: StatusService,
     private loadingController: LoadingController,
+    
   ) { }
 
   ngOnInit() {
@@ -104,7 +106,7 @@ export class DeliveriesPage implements OnInit {
     this.jsonData = filteredDeliveries;
 
     this.noFilter = filteredDeliveries.length === 0;
-
+    this.segmentValue = this.statusValue;
   }
 
 }

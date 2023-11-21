@@ -9,9 +9,12 @@
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-segment value="all" mode="ios" (ionChange)="filterChanged($event)" value="all" #filter>
-          <ion-segment-button color="primary" value="all">
-            <ion-label>Tous</ion-label>
+        <div class="reset-filter">
+          <button color="secondary" (click)="filterChanged({detail:{value:'all'}})" *ngIf="statusValue !== 'all'">Reinitialiser</button>
+        </div>
+        <ion-segment mode="ios" (ionChange)="filterChanged($event)" [value]="segmentValue" #filter>
+          <ion-segment-button color="primary" value="accepted">
+            <ion-label>En attente</ion-label>
           </ion-segment-button>
           <ion-segment-button color="primary" value="accepted">
             <ion-label>Validé(s)</ion-label>
