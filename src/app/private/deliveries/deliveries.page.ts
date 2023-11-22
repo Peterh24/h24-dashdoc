@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { Delivery } from './delivery.model';
 import { IonInfiniteScroll, IonItemSliding, IonSegment, LoadingController } from '@ionic/angular';
@@ -11,7 +11,7 @@ import { take } from 'rxjs';
   templateUrl: './deliveries.page.html',
   styleUrls: ['./deliveries.page.scss'],
 })
-export class DeliveriesPage implements OnInit {
+export class DeliveriesPage {
   deliveries: Array<Delivery> = [];
   jsonData: Array<Delivery> = [];
   isLoading: boolean = false;
@@ -28,10 +28,6 @@ export class DeliveriesPage implements OnInit {
     private loadingController: LoadingController,
     
   ) { }
-
-  ngOnInit() {
-
-  }
 
   async ionViewWillEnter() {
     this.deliveriesService.deliveries.pipe(take(1)).subscribe((data) => {
@@ -82,6 +78,7 @@ export class DeliveriesPage implements OnInit {
       
       this.deliveries = this.deliveries.concat(additionalDeliveries);
       this.jsonData = this.deliveries;
+
       event.target.complete();
     });
   }

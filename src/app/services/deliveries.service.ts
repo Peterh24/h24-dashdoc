@@ -78,7 +78,7 @@ export class DeliveriesService {
       }),
       reduce((deliveries: Delivery[], results: Delivery[]) => deliveries.concat(results), []),
       tap((deliveries: Delivery[]) => {
-        this._deliveries.next(deliveries);
+        this._deliveries.next([...this._deliveries.value, ...deliveries]);
       })
     )
   }

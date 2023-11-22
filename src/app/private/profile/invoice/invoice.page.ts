@@ -4,7 +4,7 @@ import { Invoice } from './invoice.model';
 import { IonInfiniteScroll, IonSegment } from '@ionic/angular';
 import { StatusService } from 'src/app/utils/services/status.service';
 import { CountriesService } from 'src/app/utils/services/countries.service';
-import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { Browser } from '@capacitor/browser';
 
 @Component({
   selector: 'app-invoice',
@@ -23,8 +23,7 @@ export class InvoicePage implements OnInit {
   constructor(
     private invoiceService: InvoiceService,
     private statusService: StatusService,
-    private countryService: CountriesService,
-    private fileOpener: FileOpener
+    private countryService: CountriesService
   ) { }
 
   ngOnInit() {
@@ -87,13 +86,7 @@ export class InvoicePage implements OnInit {
 
 
   onDownload(pdf: string) {
-    this.fileOpener.open(pdf, 'application/pdf')
-    .then(() => {
-      console.log('File is opened')
-    })
-    .catch(e => {
-      console.log('Error opening file', e)
-    });
+    Browser.open({ url: pdf});
   }
 
   getStatus(statusKey: string){

@@ -23,6 +23,7 @@ log.txt
 /platforms
 /plugins
 
+
 # Compiled output
 /dist
 /tmp
@@ -31,6 +32,7 @@ log.txt
 
 # Node
 /node_modules
+/android
 npm-debug.log
 yarn-error.log
 

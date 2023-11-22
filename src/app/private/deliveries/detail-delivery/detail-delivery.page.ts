@@ -6,9 +6,9 @@ import { Delivery } from '../delivery.model';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { ModalImgComponent } from './modal-img/modal-img.component';
-import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { Map, tileLayer, marker, icon } from 'leaflet';
 import { Marker } from '../marker.model';
+import { Browser } from '@capacitor/browser';
 
 @Component({
   selector: 'app-detail-delivery',
@@ -25,8 +25,8 @@ export class DetailDeliveryPage implements OnInit {
     private navController: NavController,
     private deliveriesService: DeliveriesService,
     private modalController: ModalController,
-    private fileOpener: FileOpener
   ) { }
+  
 
   ngOnInit() {
     this.route.paramMap.subscribe(
@@ -35,8 +35,13 @@ export class DetailDeliveryPage implements OnInit {
           this.navController.navigateBack('/private/tabs/transports')
           return;
         }
-        this.deliveriesService.getDelivery(paramMap.get('id')).subscribe(delivery => {
+        this.deliveriesService.deliveries.subscribe((data) => {
+          console.log('data: ', data);
+        })
+         this.deliveriesService.getDelivery(paramMap.get('id')).subscribe(delivery => {
           this.delivery = delivery;
+          console.log("Id",paramMap.get('id'))
+          console.log("delivery: ", delivery);
           if(!this.delivery) {
             this.navController.navigateBack('/private/tabs/transports')
             return;
@@ -99,13 +104,15 @@ export class DetailDeliveryPage implements OnInit {
   }
 
   openPdf(pdf: string) {
-    this.fileOpener.open(pdf, 'application/pdf')
-    .then(() => {
-      console.log('File is opened')
-    })
-    .catch(e => {
-      console.log('Error opening file', e)
-    });
+    console.log(pdf);
+    Browser.open({ url: pdf});
+    // this.fileOpener.open(pdf, 'application/pdf')
+    // .then(() => {
+    //   console.log('File is opened')
+    // })
+    // .catch(e => {
+    //   console.log('Error opening file', e)
+    // });
   }
 
   initMap() {
