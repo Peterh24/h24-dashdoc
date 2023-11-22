@@ -13,7 +13,7 @@
           <button color="secondary" (click)="filterChanged({detail:{value:'all'}})" *ngIf="statusValue !== 'all'">Reinitialiser</button>
         </div>
         <ion-segment mode="ios" (ionChange)="filterChanged($event)" [value]="segmentValue" #filter>
-          <ion-segment-button color="primary" value="accepted">
+          <ion-segment-button color="primary" value="ordered">
             <ion-label>En attente</ion-label>
           </ion-segment-button>
           <ion-segment-button color="primary" value="accepted">
