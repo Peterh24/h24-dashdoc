@@ -30,7 +30,9 @@ export class DeliveriesPage {
   ) { }
 
   async ionViewWillEnter() {
+    
     this.deliveriesService.deliveries.pipe(take(1)).subscribe((data) => {
+      
       if(data.length == 0){
         this.deliveries = [];
         this.jsonData = [];
@@ -43,10 +45,11 @@ export class DeliveriesPage {
     })
     await loading.present();
     if(this.jsonData.length === 0){
+      
       this.deliveriesService.fetchDeliveries().subscribe((deliveries) => {
-        loading.dismiss();
         this.deliveries = deliveries;
         this.jsonData = deliveries;
+        loading.dismiss();
       });
 
     } else {

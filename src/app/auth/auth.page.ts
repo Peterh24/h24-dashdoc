@@ -1,17 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { StorageService } from '../utils/services/storage.service';
 import { regex, regexErrors } from '../utils/regex';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
+import { Storage } from '@ionic/storage-angular';
 
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.page.html',
   styleUrls: ['./auth.page.scss'],
 })
-export class AuthPage implements OnInit {
+export class AuthPage {
   private regex: any = regex;
   regexErrors: any = regexErrors;
 
@@ -29,10 +30,17 @@ export class AuthPage implements OnInit {
     private authService: AuthService,
     private router: Router,
     private loadingController: LoadingController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private storage: Storage
   ) { }
 
-  ngOnInit() {
+  async ionViewWillEnter() {
+    const token = await this.storage.get('JWT_KEY');
+    
+    if(this.authService.userIsAuthenticated || token){
+      this.router.navigateByUrl('/private/tabs/home');
+    }
+    
     this.loadEmail();
   }
 

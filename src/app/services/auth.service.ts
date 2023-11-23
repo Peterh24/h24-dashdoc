@@ -16,7 +16,7 @@ export interface UserData {
 })
 export class AuthService {
   //TODO: Set to true for debug please leave this property to false;
-  userIsAuthenticated: boolean = true;
+  userIsAuthenticated: boolean = false;
 
   private user: BehaviorSubject<UserData | null | undefined> = new BehaviorSubject<UserData | null | undefined>(undefined);
   currentUser: any;

@@ -35,13 +35,9 @@ export class DetailDeliveryPage implements OnInit {
           this.navController.navigateBack('/private/tabs/transports')
           return;
         }
-        this.deliveriesService.deliveries.subscribe((data) => {
-          console.log('data: ', data);
-        })
+
          this.deliveriesService.getDelivery(paramMap.get('id')).subscribe(delivery => {
           this.delivery = delivery;
-          console.log("Id",paramMap.get('id'))
-          console.log("delivery: ", delivery);
           if(!this.delivery) {
             this.navController.navigateBack('/private/tabs/transports')
             return;
@@ -106,13 +102,6 @@ export class DetailDeliveryPage implements OnInit {
   openPdf(pdf: string) {
     console.log(pdf);
     Browser.open({ url: pdf});
-    // this.fileOpener.open(pdf, 'application/pdf')
-    // .then(() => {
-    //   console.log('File is opened')
-    // })
-    // .catch(e => {
-    //   console.log('Error opening file', e)
-    // });
   }
 
   initMap() {

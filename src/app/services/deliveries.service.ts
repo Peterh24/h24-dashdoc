@@ -28,12 +28,12 @@ export class DeliveriesService {
 
   fetchDeliveries() {
     if (this.isLastPageReached) {
-      return EMPTY; // ou tout autre observable approprié
+      return EMPTY; 
     }
     this.url = this.next ? this.next : `${DASHDOC_API_URL}transports/`;
     return this.http.get(this.url).pipe(
       tap((resData: any) => {
-        this.next = resData.next; // Mettez à jour la valeur de next
+        this.next = resData.next;
       }),
       map((resData: Request) => {
         const data = resData;
@@ -129,5 +129,6 @@ export class DeliveriesService {
   resetDeliveries() {
     this._deliveries.next([]);
     this.next = null;
+    this.isLastPageReached = false;
   }
 }
