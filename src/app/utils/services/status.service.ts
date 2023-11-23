@@ -16,6 +16,7 @@ export class StatusService {
       {key: 'paid', value: 'Réglée'},
       {key: 'upcoming', value: 'En cours'},
       {key: 'cancelled', value: 'Annulée'},
+      {key: 'ordered', value: 'En Attente'}
     ]
 
 
