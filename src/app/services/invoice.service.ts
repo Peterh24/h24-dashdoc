@@ -21,7 +21,7 @@ export class InvoiceService {
   fetchInvoices(): Observable<Invoice[]> {
     return from(this.storage.get('DASHDOC_COMPANY')).pipe(
       switchMap(companyPk => {
-        return this.http.get(`https://h24api.herokuapp.com/api/invoices/${companyPk}/`).pipe(
+        return this.http.get(`https://api.h24transports.com/api/invoices/${companyPk}/`).pipe(
           map((resData: any) => {
             const invoices: Invoice[] = [];
             resData.invoices.forEach((jsonData: any) => {
