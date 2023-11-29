@@ -20,9 +20,21 @@ ion-img {
 ion-badge {
   position: absolute;
   top: 0;
-  right: 0;
   z-index: 100;
   min-width: 0;
   margin: 0;
+  &.right-badge {
+    right: 0;
+  }
 }
 
+.left-badge {
+  position: absolute;
+  top: -.1rem;
+  z-index: 100;
+  min-width: 0;
+  margin: 0;
+  left: -.1rem;
+  cursor: pointer;
+  font-size: 2.5rem;
+}

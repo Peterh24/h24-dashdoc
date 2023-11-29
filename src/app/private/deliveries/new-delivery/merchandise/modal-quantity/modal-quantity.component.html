@@ -21,13 +21,18 @@
     </ion-col>
   </ion-row>
   <ng-container>
-    <ion-row>
-      <form [formGroup]="form">
-        <ion-item *ngIf="state">
-          <ion-input type="text" label="Nature de la marchandise" labelPlacement="floating" formControlName="merchandiseLabel"></ion-input>
+    <form [formGroup]="form">
+      <ion-row>
+          <ion-item *ngIf="state">
+            <ion-input type="text" label="Nature de la marchandise" labelPlacement="floating" formControlName="merchandiseLabel"></ion-input>
+          </ion-item>
+      </ion-row>
+      <ion-row>
+        <ion-item>
+          <ion-textarea label="Informations complementaire" labelPlacement="floating" formControlName="complementaryInformation"></ion-textarea>
         </ion-item>
-      </form>
-    </ion-row>
+      </ion-row>
+    </form>
   </ng-container>
   <ion-row>
     <ion-col class="ion-padding-start ion-padding-end">

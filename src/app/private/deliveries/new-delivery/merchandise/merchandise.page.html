@@ -11,8 +11,12 @@
     <ion-row size-sm="12">
       <ion-col *ngFor="let merchandise of merchandises" size="6">
         <ion-item class="ion-no-padding" lines="none">
-          <ion-badge slot="start" color="danger">{{merchandise.quantity}}</ion-badge>
-          <ion-card (click)="onMerchandiseClick(merchandise.id, merchandise.name, merchandise.quantity)" color="light-tint">
+
+          <ion-icon *ngIf="merchandise.complementary_information !== ''" name="information-circle-outline" class="left-badge" size="default" (click)="openInfo(merchandise.complementary_information)"></ion-icon>
+
+
+          <ion-badge slot="end" color="danger" class="right-badge">{{merchandise.quantity}}</ion-badge>
+          <ion-card (click)="onMerchandiseClick(merchandise.id, merchandise.name, merchandise.quantity, merchandise.complementary_information)" color="light-tint">
             <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/'+getImage(merchandise.id)+'.png'"  [alt]="merchandise.name"></ion-img>
             <ion-label>{{merchandise.name}}</ion-label>
           </ion-card>
@@ -20,7 +24,7 @@
       </ion-col>
       <ion-col size="6">
         <ion-item class="ion-no-padding" lines="none">
-          <ion-card (click)="onMerchandiseClick('other', 'Autres', 0)" color="light-tint">
+          <ion-card (click)="onMerchandiseClick('other', 'Autres', 0, '')" color="light-tint">
             <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/other-add.png'"  [alt]="'Autres'"></ion-img>
             <ion-label>Autres</ion-label>
           </ion-card>

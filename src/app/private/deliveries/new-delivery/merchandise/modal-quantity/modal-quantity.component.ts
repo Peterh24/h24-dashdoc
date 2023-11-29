@@ -11,8 +11,10 @@ export class ModalQuantityComponent  implements OnInit {
   @Input() id: string;
   @Input() name: string;
   @Input() quantity: number = 0;
+  @Input() complementary_information: string;
   form = this.formBuilder.group({
     merchandiseLabel: new FormControl({value: '', disabled: true}, Validators.required),
+    complementaryInformation: new FormControl({value: '', disabled: false})
   });
   state:boolean = false;
   constructor(
@@ -21,6 +23,7 @@ export class ModalQuantityComponent  implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.form.get('complementaryInformation').setValue(this.complementary_information);
     if (this.id.includes('other')) {
       this.state = true;
       this.form.get('merchandiseLabel')?.enable();
@@ -55,7 +58,10 @@ export class ModalQuantityComponent  implements OnInit {
     if(this.form.get('merchandiseLabel').value != ''){
       this.name = this.form.get('merchandiseLabel').value;
     }
-    await this.modalController.dismiss({id: this.id, name: this.name, quantity: this.quantity});
+
+    this.complementary_information = this.form.get('complementaryInformation').value;
+
+    await this.modalController.dismiss({id: this.id, name: this.name, quantity: this.quantity, complementary_information: this.complementary_information});
   }
 
 }

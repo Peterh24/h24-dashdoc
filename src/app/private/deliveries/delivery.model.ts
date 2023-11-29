@@ -60,4 +60,5 @@ export interface Merchandise {
   id: string,
   name: string,
   quantity: number;
+  complementary_information: string;
 }

@@ -159,6 +159,16 @@ export class SummaryPage implements OnInit {
 
   }
 
+  async openInfo(info: string) {
+    const alert = await this.alertController.create({
+      header: 'Information',
+      message: info,
+      buttons: ['OK']
+    });
+
+    await alert.present();
+  }
+
   async onValidate() {
     this.transportService.trailers = [];
     this.transportService.segments = [];
@@ -238,6 +248,7 @@ export class SummaryPage implements OnInit {
           deliveries: this.transportService.deliveries,
           segments: this.transportService.segments
         };
+
         this.http.post(`${DASHDOC_API_URL}transports/`, dataToApi).subscribe(async res => {
           const confirm = await this.alertController.create({
             header: 'Bravo votre course a été enregistré',

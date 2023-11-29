@@ -1,5 +1,5 @@
 import { Component, Input, ViewChild } from '@angular/core';
-import { IonDatetime, ModalController } from '@ionic/angular';
+import { AlertController, IonDatetime, ModalController } from '@ionic/angular';
 import { addHours, format, getHours, getMinutes, setHours, setMinutes, subHours } from 'date-fns';
 import { TransportService } from 'src/app/services/transport.service';
 import { Merchandise } from '../../../delivery.model';
@@ -23,41 +23,49 @@ export class EditComponent {
     {
       id: 'camera',
       name: 'Caméra',
-      quantity: 0
+      quantity: 0,
+      complementary_information: ''
     },
     {
       id: 'light',
       name: 'lumières',
-      quantity: 0
+      quantity: 0,
+      complementary_information: ''
     },
     {
       id: 'photo',
       name: 'Photographie',
-      quantity: 0
+      quantity: 0,
+      complementary_information: ''
     },
     {
       id: 'management',
       name: 'Régie',
-      quantity: 0
+      quantity: 0,
+      complementary_information: ''
     },
     {
       id: 'clothe',
       name: 'Vêtements',
-      quantity: 0
+      quantity: 0,
+      complementary_information: ''
     },
     {
       id: 'machinery',
       name: 'Machinerie',
-      quantity: 0
+      quantity: 0,
+      complementary_information: ''
     },
     {
       id: 'furniture',
       name: 'Mobilier / Décor',
-      quantity: 0
+      quantity: 0,
+      complementary_information: ''
     }
   ];
   constructor(
     private modalController: ModalController,
+    private alertController: AlertController,
     private transportService: TransportService,
   ) { }
 
@@ -99,8 +107,19 @@ export class EditComponent {
       const merchandise = this.merchandises.find(item => item.id === plannedLoad.id);
       if (merchandise) {
         merchandise.quantity = plannedLoad.quantity;
+        merchandise.complementary_information = plannedLoad.complementary_information;
       }
     })
+  }
+
+  async openInfo(info: string) {
+    const alert = await this.alertController.create({
+      header: 'Information',
+      message: info,
+      buttons: ['OK']
+    });
+
+    await alert.present();
   }
 
   toggleDate(){
@@ -182,7 +201,8 @@ export class EditComponent {
         this.merchandises.push({
           id: data.id,
           name: data.name,
-          quantity: data.quantity
+          quantity: data.quantity,
+          complementary_information: data.complementary_information
         });
       }
 

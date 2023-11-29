@@ -75,3 +75,14 @@ ion-button {
     margin-left: 5px;
   }
 }
+
+.left-badge {
+  position: absolute;
+  top: -.1rem;
+  z-index: 100;
+  min-width: 0;
+  margin: 0;
+  left: -.1rem;
+  cursor: pointer;
+  font-size: 2.5rem;
+}

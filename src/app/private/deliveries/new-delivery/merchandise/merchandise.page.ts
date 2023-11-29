@@ -1,7 +1,7 @@
 import { TransportService } from './../../../../services/transport.service';
 import { Component, OnInit } from '@angular/core';
 import { Merchandise } from '../../delivery.model';
-import { ModalController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { ModalQuantityComponent } from './modal-quantity/modal-quantity.component';
 import { ModalCourseComponent } from './modal-course/modal-course.component';
 import { Router } from '@angular/router';
@@ -18,41 +18,49 @@ export class MerchandisePage implements OnInit {
     {
       id: 'camera',
       name: 'Caméra',
-      quantity: 0
+      quantity: 0,
+      complementary_information: ''
     },
     {
       id: 'light',
       name: 'lumières',
-      quantity: 0
+      quantity: 0,
+      complementary_information: ''
     },
     {
       id: 'photo',
       name: 'Photographie',
-      quantity: 0
+      quantity: 0,
+      complementary_information: ''
     },
     {
       id: 'management',
       name: 'Régie',
-      quantity: 0
+      quantity: 0,
+      complementary_information: ''
     },
     {
       id: 'clothe',
       name: 'Vêtements',
-      quantity: 0
+      quantity: 0,
+      complementary_information: ''
     },
     {
       id: 'machinery',
       name: 'Machinerie',
-      quantity: 0
+      quantity: 0,
+      complementary_information: ''
     },
     {
       id: 'furniture',
       name: 'Mobilier / Décor',
-      quantity: 0
+      quantity: 0,
+      complementary_information: ''
     }
   ];
   constructor(
     private modalController: ModalController,
+    private alertController: AlertController,
     private transportService: TransportService,
     private router: Router,
     private utilsService: UtilsService
@@ -66,13 +74,14 @@ export class MerchandisePage implements OnInit {
   ionViewWillEnter() {
   }
 
-  async onMerchandiseClick(itemId: string, itemName: string, quantity: number) {
+  async onMerchandiseClick(itemId: string, itemName: string, quantity: number, complementary_information: string) {
     const modal = await this.modalController.create({
       component: ModalQuantityComponent,
       componentProps: {
         id: itemId,
         name: itemName,
-        quantity: quantity
+        quantity: quantity,
+        complementary_information: complementary_information
       },
       cssClass: 'quantity-modal',
       mode: 'ios'
@@ -80,7 +89,6 @@ export class MerchandisePage implements OnInit {
 
     modal.present();
     const { data } = await modal.onWillDismiss();
-
     if (data) {
       const index = this.merchandises.findIndex(merchandise => merchandise.id === data.id);
 
@@ -88,11 +96,13 @@ export class MerchandisePage implements OnInit {
       if (index !== -1) {
         this.merchandises[index].quantity = data.quantity;
         this.merchandises[index].name = data.name;
+        this.merchandises[index].complementary_information = data.complementary_information;
       } else {
         this.merchandises.push({
           id: data.id,
           name: data.name,
-          quantity: data.quantity
+          quantity: data.quantity,
+          complementary_information: data.complementary_information,
         });
       }
 
@@ -106,13 +116,15 @@ export class MerchandisePage implements OnInit {
         plannedLoads[existingIndex] = {
           id: data.id,
           name: data.name,
-          quantity: data.quantity
+          quantity: data.quantity,
+          complementary_information: data.complementary_information
         };
       } else {
         plannedLoads.push({
           id: data.id,
           name: data.name,
-          quantity: data.quantity
+          quantity: data.quantity,
+          complementary_information: data.complementary_information
         });
       }
 
@@ -132,6 +144,16 @@ export class MerchandisePage implements OnInit {
     if(this.merchandises.some(merchandise => merchandise.quantity > 0)){
       this.isPageValid = true;
     }
+  }
+
+  async openInfo(info: string) {
+    const alert = await this.alertController.create({
+      header: 'Information',
+      message: info,
+      buttons: ['OK']
+    });
+
+    await alert.present();
   }
 
   async onMerchandiseSelected(){
@@ -166,7 +188,6 @@ export class MerchandisePage implements OnInit {
     });
     modalCourse.present();
     const { data } = await modalCourse.onWillDismiss();
-
     if (data.choice === 'yes') {
       //If user choose to add one origin
       this.router.navigateByUrl('/private/tabs/transports/new-delivery/pick-up');
