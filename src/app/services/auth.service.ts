@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Storage } from '@ionic/storage-angular';
-import { API_URL, JWT_KEY, USER_STORAGE_KEY } from './constants';
+import { API_URL, DASHDOC_COMPANY, JWT_KEY, USER_STORAGE_KEY } from './constants';
 import { BehaviorSubject, delay, of, switchMap, take, map, catchError, filter, tap } from 'rxjs';
 import jwt_decode from 'jwt-decode';
 import { Router } from '@angular/router';
@@ -90,6 +90,8 @@ export class AuthService {
 
   async signOut(){
     await this.storage.remove(JWT_KEY);
+    await this.storage.remove(USER_STORAGE_KEY);
+    await this.storage.remove(DASHDOC_COMPANY);
     this.userIsAuthenticated = false;
     this.router.navigateByUrl('/');
     this.user.next(null);
