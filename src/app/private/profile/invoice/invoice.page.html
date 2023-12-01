@@ -70,7 +70,7 @@
                   </div>
                   <div class="accordion-row accordion-row-price" *ngIf="item.amount">
                     <ion-label color="secondary">
-                      {{item.amount | priceFormat }} {{item.currency }} TTC
+                      {{item.currency_amount_before_tax | priceFormat }} € HT
                     </ion-label>
                   </div>
                 </div>

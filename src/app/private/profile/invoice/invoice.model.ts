@@ -2,6 +2,7 @@ export class Invoice {
     constructor(
       public id: string,
       public invoice_number: string,
+      public currency_amount_before_tax: string,
       public amount: string,
       public currency: string,
       public status: string,

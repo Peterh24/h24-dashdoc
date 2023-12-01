@@ -37,6 +37,7 @@ export class InvoicePage implements OnInit {
     this.jsonData = [];
     this.invoiceService.fetchInvoices().subscribe((invoices) => {
       this.invoices = invoices;
+      console.log("invoices: ", invoices);
       this.jsonData = this.invoices.slice(0, 10);
       this.isLoading = false;
     }, (error) => {

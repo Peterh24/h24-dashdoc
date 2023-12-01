@@ -40,6 +40,7 @@ export class InvoiceService {
               const invoice: Invoice = new Invoice(
                 jsonData.id,
                 jsonData.invoice_number,
+                jsonData.currency_amount_before_tax,
                 jsonData.amount,
                 jsonData.currency,
                 jsonData.status,
