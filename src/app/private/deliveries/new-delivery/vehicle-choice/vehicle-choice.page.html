@@ -24,10 +24,10 @@
     <ion-row>
       <ion-col class="swiper-wrap">
         <ion-buttons class="ion-justify-content-between">
-          <ion-button (click)="goPrev()" [disabled]="currentIndex === 0">
+          <ion-button (click)="goPrev()" color="tertiary" [disabled]="currentIndex === 0">
             <ion-icon slot="icon-only" name="arrow-back-circle"></ion-icon>
           </ion-button>
-          <ion-button (click)="goNext()" [disabled]="currentIndex === vehicles.length -1">
+          <ion-button (click)="goNext()" color="tertiary " [disabled]="currentIndex === vehicles.length -1">
             <ion-icon slot="icon-only" name="arrow-forward-circle"></ion-icon>
           </ion-button>
         </ion-buttons>
