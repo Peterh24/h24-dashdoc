@@ -12,8 +12,9 @@ import { AppRoutingModule } from './app-routing.module';
 import { Drivers } from '@ionic/storage';
 import { Storage } from '@ionic/storage-angular';
 import * as cordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
-import { concatMap, from, switchMap, take, tap } from 'rxjs';
-import { API_URL, JWT_KEY, USER_STORAGE_KEY } from './services/constants';
+import { concatMap, from, take, tap } from 'rxjs';
+import { JWT_KEY, USER_STORAGE_KEY } from './services/constants';
+import { AuthService } from './services/auth.service';
 
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
@@ -22,6 +23,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const tokenObs = from(storage.get(USER_STORAGE_KEY));
   const h24token = from(storage.get(JWT_KEY));
   const router = inject(Router);
+  const authService = inject(AuthService)
 
 
   
@@ -61,9 +63,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           error: (error) => {
             if (error.status === 401) {
               // if token expired, remove token from application and redirect to home
-              storage.remove(USER_STORAGE_KEY);
-              storage.remove(JWT_KEY);
-
+              authService.signOut()
               router.navigate(['/'], { replaceUrl: true });
             }
           }

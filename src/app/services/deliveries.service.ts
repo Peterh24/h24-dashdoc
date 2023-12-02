@@ -16,6 +16,8 @@ export class DeliveriesService {
   private next:string = null;
   private url:string = null;
   isLastPageReached = false;
+  private filtreSubject = new BehaviorSubject<string>('all');
+  filtre$ = this.filtreSubject.asObservable();
   get deliveries() {
     return this._deliveries.asObservable();
   }
@@ -25,7 +27,10 @@ export class DeliveriesService {
     private countriesService: CountriesService
   ) { }
 
-
+  setFiltre(valeur: string) {
+    this.filtreSubject.next(valeur);
+  }
+  
   fetchDeliveries() {
     if (this.isLastPageReached) {
       return EMPTY; 

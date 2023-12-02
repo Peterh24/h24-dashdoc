@@ -16,7 +16,7 @@ export class DeliveriesPage {
   jsonData: Array<Delivery> = [];
   isLoading: boolean = false;
   startIndex: number = 0;
-  noFilter: boolean;
+  noFilter = false;
   statusValue:string = 'all';
   segmentValue:string = "all"
   @ViewChild('infiniteScroll') infiniteScroll: IonInfiniteScroll;
@@ -30,7 +30,10 @@ export class DeliveriesPage {
   ) { }
 
   async ionViewWillEnter() {
-    
+
+    await this.deliveriesService.filtre$.pipe(take(1)).subscribe((filter) => {
+      this.filter.value = filter || 'all';
+    }) ;
     this.deliveriesService.deliveries.pipe(take(1)).subscribe((data) => {
       
       if(data.length == 0){
@@ -49,14 +52,17 @@ export class DeliveriesPage {
       this.deliveriesService.fetchDeliveries().subscribe((deliveries) => {
         this.deliveries = deliveries;
         this.jsonData = deliveries;
+        this.filterChanged(this.filter.value);
         loading.dismiss();
       });
 
     } else {
+        this.filterChanged(this.filter.value);
+        this.isLoading = false;
         loading.dismiss();
     }
+    
 
-    this.filter.value = 'all';
   }
 
   onDetail(deliveryId: string, slidingItem: IonItemSliding) {
@@ -87,26 +93,15 @@ export class DeliveriesPage {
   }
 
   filterChanged(status: any) {
-    this.startIndex = 0;
-    this.statusValue = status.detail.value;
-    let filteredDeliveries: Array<Delivery>;
-    
+    const currentFilter = status && status.detail ? status.detail.value || status : status;
+    this.deliveriesService.setFiltre(currentFilter);
 
-    if (this.infiniteScroll) {
-      this.infiniteScroll.disabled = false;
-    }
-
-    if (this.statusValue === 'all') {
-      filteredDeliveries = this.deliveries.slice();
+    if (currentFilter === 'all') {
+      this.jsonData = this.deliveries;
+      this.filter.value = 'all';
     } else {
-      filteredDeliveries = this.deliveries.filter((item) => {
-        return item.global_status.toLowerCase().includes(this.statusValue.toLowerCase());
-      })
+      this.jsonData = this.deliveries.filter(delivery => delivery.global_status === currentFilter);
     }
-    this.jsonData = filteredDeliveries;
-
-    this.noFilter = filteredDeliveries.length === 0;
-    this.segmentValue = this.statusValue;
   }
 
 }

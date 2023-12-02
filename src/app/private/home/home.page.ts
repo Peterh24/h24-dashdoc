@@ -26,6 +26,7 @@ export class HomePage implements OnDestroy {
   firstname: string;
   lastname: string;
   currentUser: any;
+  selectedCompanyId: any; // Ajoutez cette variable
   @ViewChild('companyChoose', { static: false }) companyChoose: IonSelect;
   constructor(
     private storage: Storage,
@@ -45,8 +46,17 @@ export class HomePage implements OnDestroy {
       this.firstname = user.firstname;
       this.lastname = user.lastname
       this.companyService.fetchCompanies();
+      
       this.companyService.companies.subscribe((companies) => {
         this.loadedCompanies = companies;
+      })
+
+      this.storage.get(DASHDOC_COMPANY).then((company) => {
+        if(company){
+          this.selectedCompanyId = company;
+          this.onchooseCompany(company)
+        } else {}
+
       })
     }) 
   }
@@ -134,23 +144,37 @@ export class HomePage implements OnDestroy {
     }
   }
 
-  async onchooseCompany(event: any){
-    this.deliveriesService.resetDeliveries();
-    const currentCompany = event.detail.value;
-    this.companyService.isCompanySwitch = true;
-    const loading = await this.loadingController.create({
-      keyboardClose: true,
-      message: '<div class="h24loader"></div>',
-      spinner: null,
-    })
-    await loading.present();
-    this.currentCompany = this.companyService.getCompany(currentCompany).subscribe(company => {
-      loading.dismiss();
-      this.companyService.setCompanyName(company.name);
-      this.storage.set(USER_STORAGE_KEY, company.token);
-      this.storage.set(DASHDOC_COMPANY, currentCompany);
-      this.isCompanySelected = true;
-      this.companyService.isCompanySwitch = false;
+  async onchooseCompany(event: any) {
+    const currentCompany = event && event.detail ? event.detail.value || event : event;
+  
+    await this.storage.get(DASHDOC_COMPANY).then(async (company) => {
+      if (company !== currentCompany) {
+        this.deliveriesService.resetDeliveries();
+        this.companyService.isCompanySwitch = true;
+  
+        const loading = await this.loadingController.create({
+          keyboardClose: true,
+          message: '<div class="h24loader"></div>',
+          spinner: null,
+        });
+  
+        await loading.present();
+  
+        this.currentCompany = this.companyService.getCompany(currentCompany).subscribe((company) => {
+          loading.dismiss();
+          this.companyService.setCompanyName(company.name);
+          this.storage.set(USER_STORAGE_KEY, company.token);
+          this.storage.set(DASHDOC_COMPANY, currentCompany);
+          this.isCompanySelected = true;
+          this.companyService.isCompanySwitch = false;
+        });
+      } else {
+        this.currentCompany = this.companyService.getCompany(currentCompany).subscribe((company) => {
+          this.companyService.setCompanyName(company.name);
+          this.isCompanySelected = true;
+          this.companyService.isCompanySwitch = false;
+        });
+      }
     });
   }
 
