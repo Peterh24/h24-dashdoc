@@ -19,6 +19,7 @@ export class DeliveriesPage {
   noFilter = false;
   statusValue:string = 'all';
   segmentValue:string = "all"
+  isManualReload:boolean = false;
   @ViewChild('infiniteScroll') infiniteScroll: IonInfiniteScroll;
   @ViewChild('filter') filter: IonSegment;
   constructor(
@@ -31,36 +32,7 @@ export class DeliveriesPage {
 
   async ionViewWillEnter() {
 
-    await this.deliveriesService.filtre$.pipe(take(1)).subscribe((filter) => {
-      this.filter.value = filter || 'all';
-    }) ;
-    this.deliveriesService.deliveries.pipe(take(1)).subscribe((data) => {
-      
-      if(data.length == 0){
-        this.deliveries = [];
-        this.jsonData = [];
-      }
-    });
-    const loading = await this.loadingController.create({
-      keyboardClose: true,
-      message: '<div class="h24loader"></div>',
-      spinner: null,
-    })
-    await loading.present();
-    if(this.jsonData.length === 0){
-      
-      this.deliveriesService.fetchDeliveries().subscribe((deliveries) => {
-        this.deliveries = deliveries;
-        this.jsonData = deliveries;
-        this.filterChanged(this.filter.value);
-        loading.dismiss();
-      });
-
-    } else {
-        this.filterChanged(this.filter.value);
-        this.isLoading = false;
-        loading.dismiss();
-    }
+    await this.loadData();
     
 
   }
@@ -102,6 +74,55 @@ export class DeliveriesPage {
     } else {
       this.jsonData = this.deliveries.filter(delivery => delivery.global_status === currentFilter);
     }
+  }
+
+
+  async loadData(){
+    this.deliveriesService.filtre$.pipe(take(1)).subscribe((filter) => {
+      this.filter.value = filter || 'all';
+    }) ;
+
+    this.deliveriesService.deliveries.pipe(take(1)).subscribe((data) => {
+      
+      if(data.length == 0){
+        this.deliveries = [];
+        this.jsonData = [];
+      }
+    });
+    const loading = await this.loadingController.create({
+      keyboardClose: true,
+      message: '<div class="h24loader"></div>',
+      spinner: null,
+    })
+    await loading.present();
+    if(this.jsonData.length === 0){
+      
+      this.deliveriesService.fetchDeliveries().subscribe((deliveries) => {
+        this.deliveries = deliveries;
+        this.jsonData = deliveries;
+        this.filterChanged(this.filter.value);
+        loading.dismiss();
+        this.isManualReload = false;
+      });
+
+    } else {
+        this.filterChanged(this.filter.value);
+        this.isLoading = false;
+        loading.dismiss();
+    }
+
+  }
+
+  handleRefresh(event:any) {
+    this.isManualReload = true;
+    setTimeout(() => {
+      this.jsonData = [];
+      this.deliveriesService.resetDeliveries();
+      this.loadData();
+      event.target.complete(() => {
+        alert("ok ok");
+      });
+    }, 2000);
   }
 
 }
