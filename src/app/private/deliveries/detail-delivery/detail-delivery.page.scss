@@ -7,43 +7,73 @@ ion-thumbnail {
   position: relative;
 }
 
-ion-card-content {
+ion-grid {
+  width: 100%;
+}
+
+.card-title {
+  font-size: 20px;
+  text-align: left;
+}
+
+h3 {
+  font-weight: 500;
+  font-size: 18px;
+  margin-top: 10px;
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+ion-item {
+  font-size: 18px;
+  font-weight: 500;
+  text-align: left;
+  padding: 10px;
+  position: relative;
+  flex: 1;
+  margin: 0;
+}
+
+.cards-wrapper {
   text-align: center;
   display: flex;
   flex-direction: column;
   gap: 10px;
   font-size: 14px;
   font-weight: 400;
-  span {
-    &:first-child {
-      font-weight: 700;
-    }
-  }
-  .card-title {
-    font-size: 18px;
-    font-weight: 500;
-  }
-  .card-date {
-    span {
-      font-weight: 700;
-    }
+}
+
+ion-button {
+  --padding-end: 10px;
+  --padding-start: 10px;
+  ion-text {
+    margin-left: 5px;
   }
 }
 
 .image-label {
   position: absolute;
-  bottom: 3px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  bottom: 0;
   text-align: center;
   padding: 3px;
   width: 100%;
+  border-radius: 0 0 6px 6px;
   left: 0;
   color: white;
   font-size: 12px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(red(#20201D), green(#20201D), blue(#20201D), .8);
 }
 
 #map {
   display: block;
   width: 100%;
   height: 300px;
+}
+
+.instructions {
+  white-space: wrap;
 }

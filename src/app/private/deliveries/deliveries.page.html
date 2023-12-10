@@ -5,13 +5,13 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-grid class="page-grid">
-    <ion-row>
+  <ion-grid class="page-grid ion-no-padding">
+    <ion-row class="ion-padding-start ion-padding-end">
       <ion-col>
         <h2>Transports</h2>
       </ion-col>
     </ion-row>
-    <ion-row>
+    <ion-row class="ion-padding-start ion-padding-end ion-padding-bottom">
       <ion-col>
         <div class="reset-filter">
           <button color="secondary" (click)="filterChanged({detail:{value:'all'}})" *ngIf="filter.value !== 'all'">Reinitialiser</button>

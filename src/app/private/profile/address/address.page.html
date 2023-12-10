@@ -1,13 +1,13 @@
 <app-header [defaultHref]="'/private/tabs/profile/details'"></app-header>
 
 <ion-content>
-  <ion-grid class="page-grid">
-    <ion-row>
+  <ion-grid class="page-grid ion-no-padding">
+    <ion-row class="ion-padding-start ion-padding-end">
       <ion-col>
         <h2>Adresses</h2>
       </ion-col>
     </ion-row>
-    <ion-row *ngIf="!isLoading && address.length > 0">
+    <ion-row *ngIf="!isLoading && address.length > 0" class="ion-padding-start ion-padding-end ion-padding-bottom">
       <ion-col>
         <ion-searchbar #searchbarElem placeholder="Rechercher" mode="ios" class="ion-no-padding" [(ngModel)]="searchAddress" (ionInput)="setFilteredItems(searchAddress)"></ion-searchbar>
       </ion-col>

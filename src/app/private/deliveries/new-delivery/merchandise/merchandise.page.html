@@ -12,8 +12,7 @@
       <ion-col *ngFor="let merchandise of merchandises" size="6">
         <ion-item class="ion-no-padding" lines="none">
 
-          <ion-icon *ngIf="merchandise.complementary_information !== ''" name="information-circle-outline" class="left-badge" size="default" (click)="openInfo(merchandise.complementary_information)"></ion-icon>
-
+          <ion-icon *ngIf="merchandise.complementary_information !== ''" name="information-circle" class="left-badge" size="default" (click)="openInfo(merchandise.complementary_information)"></ion-icon>
 
           <ion-badge slot="end" color="danger" class="right-badge">{{merchandise.quantity}}</ion-badge>
           <ion-card (click)="onMerchandiseClick(merchandise.id, merchandise.name, merchandise.quantity, merchandise.complementary_information)" color="light-tint">

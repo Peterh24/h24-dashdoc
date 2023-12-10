@@ -1,14 +1,14 @@
 <app-header [defaultHref]="'/private/tabs/profile/details'"></app-header>
 
 <ion-content>
-  <ion-grid class="page-grid">
-    <ion-row>
+  <ion-grid class="page-grid ion-no-padding">
+    <ion-row class="ion-padding-start ion-padding-end">
       <ion-col>
         <h2>Factures</h2>
       </ion-col>
     </ion-row>
 
-    <ion-row>
+    <ion-row class="ion-padding-start ion-padding-end ion-padding-bottom">
       <ion-col>
         <ion-segment value="all" mode="ios" (ionChange)="filterChanged($event)" value="all" #filter>
           <ion-segment-button color="primary" value="all">
