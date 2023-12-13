@@ -106,7 +106,7 @@ export class DetailDeliveryPage implements OnInit {
 
   initMap() {
     const cityMarkerIcon = icon({
-      iconUrl:`https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/cars/${(this.delivery.licensePlate || this.delivery.requested_vehicle)}.jpg`,
+      iconUrl:`https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/cars/${(this.delivery.licensePlate || this.delivery.requested_vehicle)}.png`,
       iconSize: [75, 42],
       iconAnchor: [24, 42],
       popupAnchor: [0, -42]
