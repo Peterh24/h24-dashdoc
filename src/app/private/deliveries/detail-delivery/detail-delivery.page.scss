@@ -12,17 +12,15 @@ ion-grid {
 }
 
 .card-title {
-  font-size: 20px;
+  font-size: 16px;
   text-align: left;
-}
+} 
 
 h3 {
   font-weight: 500;
   font-size: 18px;
   margin-top: 10px;
-  &:first-child {
-    margin-top: 0;
-  }
+  color: #20201D;
 }
 
 ion-item {
@@ -33,6 +31,13 @@ ion-item {
   position: relative;
   flex: 1;
   margin: 0;
+
+  &[slot="header"] {
+    ion-label {
+      font-size: 16px;
+      font-weight: 700;
+    }
+  }
 }
 
 .cards-wrapper {
@@ -50,6 +55,26 @@ ion-button {
   ion-text {
     margin-left: 5px;
   }
+}
+
+ion-label {
+  font-size: 16px !important;
+  font-weight: 400;
+
+  span { font-weight: 700; }
+  p {
+    font-size: 16px !important;
+    color: #20201D;
+  }
+}
+
+.delivery-date-and-time {
+  color: #4D4D4A;
+}
+
+.status {
+  &-started { background-color: #8BC34A; }
+  &-ended { background-color: #20201D; }
 }
 
 .image-label {
