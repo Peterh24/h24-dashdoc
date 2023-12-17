@@ -11,16 +11,15 @@
 
     <ion-row>
       <ion-col>
-        <ion-card>
-          <ion-card-content *ngIf="vehicle">
-            <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/cars/'+vehicle+'.jpg'"></ion-img>
+        <ion-card class="ion-no-padding">
+          <ion-card-content *ngIf="vehicle" class="ion-no-padding">
+            <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/cars/'+vehicle+'.gif'"></ion-img>
             <!-- <h3>Vehicle name</h3> -->
-            <hr>
-              <div class="edit-wrap">
-                <ion-button (click)="editParts('vehicle', vehicle, null)"><ion-icon size="small" name="create"></ion-icon><ion-text class="ion-margin-start">Changer de véhicule</ion-text></ion-button>
-              </div>
           </ion-card-content>
         </ion-card>
+        <div class="edit-wrap">
+          <ion-button (click)="editParts('vehicle', vehicle, null)"><ion-icon size="small" name="create"></ion-icon><ion-text class="ion-margin-start">Changer de véhicule</ion-text></ion-button>
+        </div>
       </ion-col>
     </ion-row>
     <ion-row>
@@ -48,14 +47,16 @@
                   <ion-col class="ion-no-padding">
                     <div class="ion-card-wrapper" *ngIf="isSingleOrigin || deliveries.length === 1">
                       <div *ngIf="deliveries[0]" class="card-content ion-padding-top ion-padding-bottom">
-                        <h3>{{deliveries[0].origin.address.name}}</h3>
+                        <ion-label class="ion-margin-bottom">
+                          <span>{{deliveries[0].origin.address.name}}</span>
+                        </ion-label>
 
-                        <ion-label>
+                        <ion-label class="delivery-date-and-time ion-margin-bottom">
                           <!-- <p>{{deliveries[0].origin.slots[0].start | date: 'dd MMMM yyyy à HH:mm'}}</p> -->
                           <span>{{getDate(deliveries[0].origin.real_start || deliveries[0].origin.slots[0].start)}}</span> à <span>{{getHour(deliveries[0].origin.real_start || deliveries[0].origin.slots[0].start)}}</span>
                         </ion-label>
 
-                        <ion-label>
+                        <ion-label class="ion-margin-bottom">
                           <p>
                             {{deliveries[0].origin.address.address}}<br />
                             {{deliveries[0].origin.address.postcode}} {{deliveries[0].origin.address.city}}, {{getCountry(deliveries[0].origin.address.country)}}
@@ -66,9 +67,8 @@
                           <p><b>Contact :</b> {{deliveries[0].origin.contact}}</p>
                         </ion-label> -->
 
-                        <ion-label *ngIf="deliveries[0].origin.instructions !== ''">
-                          <h3>Instructions :</h3>
-                          <p>{{deliveries[0].origin.instructions}}</p>
+                        <ion-label *ngIf="deliveries[0].origin.instructions !== ''" class="ion-margin-bottom instructions">
+                          <p><b>Instructions :</b> {{deliveries[0].origin.instructions}}</p>
                         </ion-label>
 
                         <ion-label>
@@ -96,23 +96,30 @@
                     </div>
                     <div class="ion-card-wrapper" *ngIf="!isSingleOrigin">
                       <div *ngFor="let delivery of deliveries; let index = index" class="card-content ion-padding-top ion-padding-bottom">
-                        <h3>{{index+1}}. {{delivery.origin.address.name}}</h3>
-                        <ion-label>
-                          <p>{{delivery.origin.slots[0].start | date: 'dd MMMM yyyy à HH:mm'}}</p>
+                        <ion-label class="ion-margin-bottom">
+                          <span>{{index+1}}. {{delivery.origin.address.name}}</span>
+                        </ion-label>
+
+                        <ion-label class="delivery-date-and-time ion-margin-bottom">
+                          <span>{{delivery.origin.slots[0].start | date: 'dd MMMM yyyy à HH:mm'}}</span>
                           <!-- <span>{{getDate(delivery.deliveries[0].origin.real_start || delivery.deliveries[0].origin.slots[0].start)}}</span> à <span>{{getHour(delivery.deliveries[0].origin.real_start || delivery.deliveries[0].origin.slots[0].start)}}</span> -->
                         </ion-label>
-                        <ion-label>
-                          <p>
-                            {{delivery.origin.address.address}}<br />
-                            {{delivery.origin.address.postcode}} {{delivery.origin.address.city}}, {{getCountry(delivery.origin.address.country)}}
-                          </p>
+
+
+
+                        <ion-label class="ion-margin-bottom">
+                          <p>{{delivery.origin.address.address}}<br />
+                            {{delivery.origin.address.postcode}} {{delivery.origin.address.city}}, {{getCountry(delivery.origin.address.country)}}</p>
                         </ion-label>
+
                         <!-- <ion-label *ngIf="delivery.origin.contact !== ''">
                           <p><b>Contact :</b> {{delivery.origin.contact}}</p>
                         </ion-label> -->
-                        <ion-label *ngIf="delivery.origin.instructions !== ''">
+
+                        <ion-label *ngIf="delivery.origin.instructions !== ''" class="ion-margin-bottom instructions">
                           <p><b>Instructions :</b> {{delivery.origin.instructions}}</p>
                         </ion-label>
+
                         <ion-label>
                           <div class="loads_wrap cards-wrapper">
                             <ion-row>
@@ -161,24 +168,28 @@
                   <ion-col class="ion-no-padding">
                     <div class="ion-card-wrapper" *ngIf="isSingleDestination || deliveries.length === 1">
                       <div *ngIf="deliveries[0]" class="card-content ion-padding-top ion-padding-bottom">
-                        <h3>{{deliveries[0].destination.address.name}}</h3>
-                        <ion-label>
+                        <ion-label class="ion-margin-bottom">
+                          <span>{{deliveries[0].destination.address.name}}</span>
+                        </ion-label>
+
+                        <ion-label class="delivery-date-and-time ion-margin-bottom">
                           <!-- <p>{{deliveries[0].destination.slots[0].start | date: 'dd MMMM yyyy à HH:mm'}}</p> -->
                           <span>{{getDate(deliveries[0].destination.real_start || deliveries[0].destination.slots[0].start)}}</span> à <span>{{getHour(deliveries[0].destination.real_start || deliveries[0].destination.slots[0].start)}}</span>
                         </ion-label>
+
                         <ion-label>
-                          <p>
-                            {{deliveries[0].destination.address.address}}<br />
-                            {{deliveries[0].destination.address.postcode}} {{deliveries[0].destination.address.city}}, {{getCountry(deliveries[0].destination.address.country)}}
-                          </p>
+                          <p>{{deliveries[0].destination.address.address}}<br />
+                            {{deliveries[0].destination.address.postcode}} {{deliveries[0].destination.address.city}}, {{getCountry(deliveries[0].destination.address.country)}}</p>
                         </ion-label>
+
                         <!-- <ion-label *ngIf="deliveries[0].destination.contact !== ''">
                           <p><b>Contact :</b> {{deliveries[0].destination.contact}}</p>
                         </ion-label> -->
-                        <ion-label *ngIf="deliveries[0].destination.instructions !== ''">
-                          <h3>Instructions :</h3>
-                          <p>{{deliveries[0].destination.instructions}}</p>
+
+                        <ion-label *ngIf="deliveries[0].destination.instructions !== ''" class="ion-margin-bottom instructions">
+                          <p><b>Instructions :</b> {{deliveries[0].destination.instructions}}</p>
                         </ion-label>
+
                         <div class="edit-wrap">
                           <ion-button (click)="editDelivery('date-destination', deliveries[0], 0)"><ion-icon size="small" name="create"></ion-icon><ion-text class="ion-margin-start">Éditer</ion-text></ion-button>
                         </div>
@@ -187,23 +198,28 @@
 
                     <div class="ion-card-wrapper" *ngIf="!isSingleDestination"> 
                       <div *ngFor="let delivery of deliveries; let index = index" class="card-content ion-padding-top ion-padding-bottom">
-                        <h3>{{index+1}}. {{delivery.destination.address.name}}</h3>
-                        <ion-label>
-                          <p>{{delivery.destination.slots[0].start | date: 'dd MMMM yyyy à HH:mm'}}</p>
+                        <ion-label class="ion-margin-bottom">
+                          <h3>{{index+1}}. {{delivery.destination.address.name}}</h3>
+                        </ion-label>
+
+                        <ion-label class="ion-margin-bottom">
+                          <span>{{delivery.destination.slots[0].start | date: 'dd MMMM yyyy à HH:mm'}}</span>
                           <!-- <span>{{getDate(delivery.deliveries[0].destination.real_start || delivery.deliveries[0].destination.slots[0].start)}}</span> à <span>{{getHour(delivery.deliveries[0].destination.real_start || delivery.deliveries[0].destination.slots[0].start)}}</span> -->
                         </ion-label>
-                        <ion-label>
-                          <p>
-                            {{delivery.destination.address.address}}<br />
-                            {{delivery.destination.address.postcode}} {{delivery.destination.address.city}}, {{getCountry(delivery.destination.address.country)}}
-                          </p>
+
+                        <ion-label class="ion-margin-bottom">
+                          <p>{{delivery.destination.address.address}}<br />
+                            {{delivery.destination.address.postcode}} {{delivery.destination.address.city}}, {{getCountry(delivery.destination.address.country)}}</p>
                         </ion-label>
+
                         <!-- <ion-label *ngIf="delivery.destination.contact !== ''">
                           <p><b>Contact :</b> {{delivery.destination.contact}}</p>
                         </ion-label> -->
-                        <ion-label *ngIf="delivery.destination.instructions !== ''">
+
+                        <ion-label *ngIf="delivery.destination.instructions !== ''" class="ion-margin-bottom instructions">
                           <p><b>Instructions :</b> {{delivery.destination.instructions}}</p>
                         </ion-label>
+
                         <div class="edit-wrap">
                           <ion-button (click)="editDelivery('date-destination', delivery, 0)"><ion-icon size="small" name="create"></ion-icon><ion-text class="ion-margin-start">Éditer</ion-text></ion-button>
                         </div>
