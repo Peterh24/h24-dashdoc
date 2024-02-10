@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'io.ionic.starter',
-  appName: 'h24-transports-ionic',
+  appName: 'H24 Transports',
   webDir: 'www',
   server: {
     androidScheme: 'https'

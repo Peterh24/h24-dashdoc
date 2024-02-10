@@ -69,6 +69,7 @@ export class AuthService {
   }
 
   login(username: string, password: string) {
+    this.storage.remove('DASHDOC_COMPANY');
     return this.http.post(`${API_URL}login`, { username, password }).pipe(
       map((res: any) => {
         this.storage.set(JWT_KEY, res.token);

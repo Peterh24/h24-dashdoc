@@ -4,6 +4,7 @@ ion-content {
 
 .header-logo {
   width: 106px;
+  height: auto;
 }
 
 .title {
@@ -12,6 +13,10 @@ ion-content {
   span {
     color: var(--ion-color-medium);
   }
+}
+
+.logo-container {
+  text-align: center;
 }
 
 ion-button {
@@ -31,7 +36,15 @@ ion-card {
   position: relative;
   flex: 1;
 }
+
 ion-icon {
   margin: 0 auto;
   text-align: center;
+}
+
+@media only screen and (min-device-width : 768px) and (max-device-width : 1366px) {
+  ion-button {
+    width: fit-content;
+    margin: 0 auto;
+  }
 }
