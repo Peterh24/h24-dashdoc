@@ -51,8 +51,10 @@ export interface Address {
 
 export interface Load {
   description: string,
+  category: string,
   volume: number,
   volume_display_unit: string,
+  complementary_information: string,
   weight: number
 }
 

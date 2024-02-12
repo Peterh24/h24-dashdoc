@@ -61,8 +61,11 @@
 
                       <ion-label *ngIf="delivery.deliveries[0].loads.length > 0" class="ion-margin-bottom">
                         <span>Chargement : </span>
-                        <p *ngFor="let load of delivery.deliveries[0].loads; let last = last">
-                          {{load.description}}{{ !last ? ', ' : '' }}
+                        <p *ngFor="let load of delivery.deliveries[0].loads; let last = last" class="ion-margin-bottom">
+                          <span>Catégorie :</span> {{load.category === "bulk" ? "Vrac" : load.category}}<br>
+                          <span>Nature :</span> {{load.description}}<br>
+                          <span>Info :</span> {{load.complementary_information}}
+                          <br>
                         </p>
                       </ion-label>
                     </div>
