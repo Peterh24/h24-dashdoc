@@ -17,44 +17,51 @@ export class MerchandisePage implements OnInit {
   merchandises: Array<Merchandise> = [
     {
       id: 'camera',
-      name: 'Caméra',
+      description: 'Caméra',
       quantity: 0,
+      category: 'bulk',
       complementary_information: ''
     },
     {
       id: 'light',
-      name: 'lumières',
+      description: 'lumières',
       quantity: 0,
+      category: 'bulk',
       complementary_information: ''
     },
     {
       id: 'photo',
-      name: 'Photographie',
+      description: 'Photographie',
       quantity: 0,
+      category: 'bulk',
       complementary_information: ''
     },
     {
       id: 'management',
-      name: 'Régie',
+      description: 'Régie',
       quantity: 0,
+      category: 'bulk',
       complementary_information: ''
     },
     {
       id: 'clothe',
-      name: 'Vêtements',
+      description: 'Vêtements',
       quantity: 0,
+      category: 'bulk',
       complementary_information: ''
     },
     {
       id: 'machinery',
-      name: 'Machinerie',
+      description: 'Machinerie',
       quantity: 0,
+      category: 'bulk',
       complementary_information: ''
     },
     {
       id: 'furniture',
-      name: 'Mobilier / Décor',
+      description: 'Mobilier / Décor',
       quantity: 0,
+      category: 'bulk',
       complementary_information: ''
     }
   ];
@@ -79,8 +86,9 @@ export class MerchandisePage implements OnInit {
       component: ModalQuantityComponent,
       componentProps: {
         id: itemId,
-        name: itemName,
+        description: itemName,
         quantity: quantity,
+        category: 'bulk',
         complementary_information: complementary_information
       },
       cssClass: 'quantity-modal',
@@ -95,13 +103,14 @@ export class MerchandisePage implements OnInit {
       // Mise à jour dans la liste de merchandises
       if (index !== -1) {
         this.merchandises[index].quantity = data.quantity;
-        this.merchandises[index].name = data.name;
+        this.merchandises[index].description = data.name;
         this.merchandises[index].complementary_information = data.complementary_information;
       } else {
         this.merchandises.push({
           id: data.id,
-          name: data.name,
+          description: data.name,
           quantity: data.quantity,
+          category: 'bulk',
           complementary_information: data.complementary_information,
         });
       }
@@ -115,15 +124,17 @@ export class MerchandisePage implements OnInit {
       if (existingIndex !== -1) {
         plannedLoads[existingIndex] = {
           id: data.id,
-          name: data.name,
+          description: data.name,
           quantity: data.quantity,
+          category: 'bulk',
           complementary_information: data.complementary_information
         };
       } else {
         plannedLoads.push({
           id: data.id,
-          name: data.name,
+          description: data.name,
           quantity: data.quantity,
+          category: 'bulk',
           complementary_information: data.complementary_information
         });
       }

@@ -22,44 +22,51 @@ export class EditComponent {
   merchandises: Array<Merchandise> = [
     {
       id: 'camera',
-      name: 'Caméra',
+      description: 'Caméra',
       quantity: 0,
+      category: 'bulk',
       complementary_information: ''
     },
     {
       id: 'light',
-      name: 'lumières',
+      description: 'lumières',
       quantity: 0,
+      category: 'bulk',
       complementary_information: ''
     },
     {
       id: 'photo',
-      name: 'Photographie',
+      description: 'Photographie',
       quantity: 0,
+      category: 'bulk',
       complementary_information: ''
     },
     {
       id: 'management',
-      name: 'Régie',
+      description: 'Régie',
       quantity: 0,
+      category: 'bulk',
       complementary_information: ''
     },
     {
       id: 'clothe',
-      name: 'Vêtements',
+      description: 'Vêtements',
       quantity: 0,
+      category: 'bulk',
       complementary_information: ''
     },
     {
       id: 'machinery',
-      name: 'Machinerie',
+      description: 'Machinerie',
       quantity: 0,
+      category: 'bulk',
       complementary_information: ''
     },
     {
       id: 'furniture',
-      name: 'Mobilier / Décor',
+      description: 'Mobilier / Décor',
       quantity: 0,
+      category: 'bulk',
       complementary_information: ''
     }
   ];
@@ -156,12 +163,7 @@ export class EditComponent {
           
         })
       }
-
     }
-
-
-
-    
   }
 
   onChange(value:any){
@@ -180,7 +182,8 @@ export class EditComponent {
       component: ModalQuantityComponent,
       componentProps: {
         id: itemId,
-        name: itemName,
+        description: itemName,
+        category: 'bulk',
         quantity: quantity
       },
       cssClass: 'quantity-modal',
@@ -196,12 +199,13 @@ export class EditComponent {
       // Mise à jour dans la liste de merchandises
       if (index !== -1) {
         this.merchandises[index].quantity = data.quantity;
-        this.merchandises[index].name = data.name;
+        this.merchandises[index].description = data.name;
       } else {
         this.merchandises.push({
           id: data.id,
-          name: data.name,
+          description: data.name,
           quantity: data.quantity,
+          category: 'bulk',
           complementary_information: data.complementary_information
         });
       }
@@ -215,13 +219,15 @@ export class EditComponent {
       if (existingIndex !== -1) {
         plannedLoads[existingIndex] = {
           id: data.id,
-          name: data.name,
+          description: data.name,
+          category: 'bulk',
           quantity: data.quantity
         };
       } else {
         plannedLoads.push({
           id: data.id,
-          name: data.name,
+          description: data.name,
+          category: 'bulk',
           quantity: data.quantity
         });
       }

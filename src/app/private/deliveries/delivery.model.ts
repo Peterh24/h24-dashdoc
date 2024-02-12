@@ -58,7 +58,8 @@ export interface Load {
 
 export interface Merchandise {
   id: string,
-  name: string,
-  quantity: number;
-  complementary_information: string;
+  description: string,
+  quantity: number,
+  category: string,
+  complementary_information: string
 }

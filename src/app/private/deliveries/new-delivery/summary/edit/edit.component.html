@@ -43,9 +43,9 @@
         <ion-item class="ion-no-padding" lines="none">
           <ion-icon *ngIf="merchandise.complementary_information !== ''" name="information-circle-outline" class="left-badge" size="default" (click)="openInfo(merchandise.complementary_information)"></ion-icon>
           <ion-badge slot="start" color="danger">{{merchandise.quantity}}</ion-badge>
-          <ion-card (click)="onMerchandiseClick(merchandise.id, merchandise.name, merchandise.quantity)" color="light-tint">
-            <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/'+getImage(merchandise.id)+'.png'"  [alt]="merchandise.name"></ion-img>
-            <ion-label>{{merchandise.name}}</ion-label>
+          <ion-card (click)="onMerchandiseClick(merchandise.id, merchandise.description, merchandise.quantity)" color="light-tint">
+            <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/'+getImage(merchandise.id)+'.png'"  [alt]="merchandise.description"></ion-img>
+            <ion-label>{{merchandise.description}}</ion-label>
           </ion-card>
         </ion-item>
       </ion-col>
