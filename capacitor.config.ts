@@ -1,21 +1,15 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'H24 Transports',
+  appId: 'io.h24transports',
+  appName: 'h24-transports-ionic',
   webDir: 'www',
   server: {
     androidScheme: 'https'
   },
   plugins: {
     SplashScreen: {
-      "launchShowDuration": 10000,
-      "backgroundColor": "#FFFFFF",
-      "showSpinner": true,
-      "androidSpinnerStyle": "small",
-      "iosSpinnerStyle": "small",
-      "splashFullScreen": true,
-      "splashImmersive": true,
+      launchAutoHide: false
     }
   }
 };
