@@ -248,11 +248,11 @@ export class SummaryPage implements OnInit {
           deliveries: this.transportService.deliveries,
           segments: this.transportService.segments
         };
-
+        console.log(dataToApi);
         this.http.post(`${DASHDOC_API_URL}transports/`, dataToApi).subscribe(async res => {
           const confirm = await this.alertController.create({
-            header: 'Bravo votre course a été enregistré',
-            message: 'Votre course a été validé et nous est parvenue, en cas de besoin d\'informations complementaire nous vous contacterons sur le numero de telephone present dans votre profile',
+            header: 'Bravo, votre course a été enregistrée',
+            message: 'Votre course a été validée et nous est parvenue, en cas de besoin d\'informations complementaires, nous vous contacterons sur le numero de téléphone présent dans votre profil.',
             buttons: ['Compris'],
           });
 

@@ -40,6 +40,17 @@ ion-item {
   }
 }
 
+.merchandise {
+  background: #E9E9E8;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  padding: 10px;
+  position: relative;
+  flex: 1;
+  margin: 4px;
+}
+
 .cards-wrapper {
   text-align: center;
   display: flex;
@@ -65,6 +76,10 @@ ion-label {
   p {
     font-size: 16px !important;
     color: #20201D;
+  }
+  hr {
+    background: #c8c7cc;
+    margin: 16px 0 0;
   }
 }
 

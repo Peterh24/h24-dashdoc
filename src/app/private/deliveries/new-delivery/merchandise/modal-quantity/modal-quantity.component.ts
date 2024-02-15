@@ -9,7 +9,7 @@ import { ModalController } from '@ionic/angular';
 })
 export class ModalQuantityComponent  implements OnInit {
   @Input() id: string;
-  @Input() name: string;
+  @Input() description: string;
   @Input() quantity: number = 0;
   @Input() complementary_information: string;
   form = this.formBuilder.group({
@@ -28,7 +28,7 @@ export class ModalQuantityComponent  implements OnInit {
       this.state = true;
       this.form.get('merchandiseLabel')?.enable();
       if(this.id !== 'other'){
-        this.form.get('merchandiseLabel').setValue(this.name);
+        this.form.get('merchandiseLabel').setValue(this.description);
       }
     }
   }
@@ -52,16 +52,16 @@ export class ModalQuantityComponent  implements OnInit {
 
   async addMerchandise(){
     if(this.id =='other') {
-      this.name = this.form.get('merchandiseLabel').value;
+      this.description = this.form.get('merchandiseLabel').value;
       this.id = this.id + (Math.floor(Math.random() * (10000 - 99999 +1)) + 1000);
     }
     if(this.form.get('merchandiseLabel').value != ''){
-      this.name = this.form.get('merchandiseLabel').value;
+      this.description = this.form.get('merchandiseLabel').value;
     }
 
     this.complementary_information = this.form.get('complementaryInformation').value;
 
-    await this.modalController.dismiss({id: this.id, name: this.name, quantity: this.quantity, complementary_information: this.complementary_information});
+    await this.modalController.dismiss({id: this.id, description: this.description, quantity: this.quantity, complementary_information: this.complementary_information});
   }
 
 }

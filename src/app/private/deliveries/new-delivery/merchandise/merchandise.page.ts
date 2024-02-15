@@ -103,12 +103,12 @@ export class MerchandisePage implements OnInit {
       // Mise à jour dans la liste de merchandises
       if (index !== -1) {
         this.merchandises[index].quantity = data.quantity;
-        this.merchandises[index].description = data.name;
+        this.merchandises[index].description = data.description;
         this.merchandises[index].complementary_information = data.complementary_information;
       } else {
         this.merchandises.push({
           id: data.id,
-          description: data.name,
+          description: data.description,
           quantity: data.quantity,
           category: 'bulk',
           complementary_information: data.complementary_information,
@@ -124,7 +124,7 @@ export class MerchandisePage implements OnInit {
       if (existingIndex !== -1) {
         plannedLoads[existingIndex] = {
           id: data.id,
-          description: data.name,
+          description: data.description,
           quantity: data.quantity,
           category: 'bulk',
           complementary_information: data.complementary_information
@@ -132,7 +132,7 @@ export class MerchandisePage implements OnInit {
       } else {
         plannedLoads.push({
           id: data.id,
-          description: data.name,
+          description: data.description,
           quantity: data.quantity,
           category: 'bulk',
           complementary_information: data.complementary_information

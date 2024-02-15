@@ -59,15 +59,26 @@
                         <p><b>Instructions :</b> {{delivery.deliveries[0].origin.instructions}}</p>
                       </ion-label>
 
-                      <ion-label *ngIf="delivery.deliveries[0].loads.length > 0" class="ion-margin-bottom">
-                        <span>Chargement : </span>
-                        <p *ngFor="let load of delivery.deliveries[0].loads; let last = last" class="ion-margin-bottom">
-                          <span>Catégorie :</span> {{load.category === "bulk" ? "Vrac" : load.category}}<br>
-                          <span>Nature :</span> {{load.description}}<br>
-                          <span>Info :</span> {{load.complementary_information}}
-                          <br>
-                        </p>
-                      </ion-label>
+                      <div class="cards-wrapper" *ngIf="delivery.deliveries[0].loads.length > 0">
+                        <ion-label class="ion-text-start">
+                          <p><span>Chargement :</span></p>
+                        </ion-label>
+                        <ion-row>
+                          <ion-col *ngFor="let load of delivery.deliveries[0].loads; let last = last" size="6" class="ion-no-padding">
+                            <ion-item class="ion-no-margin ion-no-padding" lines="none">
+                              <!-- <ion-icon *ngIf="load.complementary_information !== ''" name="information-circle-outline" class="left-badge" size="default"></ion-icon> -->
+                              <!-- <ion-badge slot="start" color="danger">{{load.quantity}}</ion-badge> -->
+                              <ion-card color="light-tint merchandise">
+                                <!-- <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/'+getImage(load.id)+'.png'"  [alt]="load.description"></ion-img> -->
+                                <ion-card-header>
+                                  <ion-card-title>{{load.description}}</ion-card-title>
+                                  <ion-card-subtitle>{{load.complementary_information}}</ion-card-subtitle>
+                                </ion-card-header>
+                              </ion-card>
+                            </ion-item>
+                          </ion-col>
+                        </ion-row>
+                      </div>
                     </div>
                   </ion-col>
                 </ion-row>
