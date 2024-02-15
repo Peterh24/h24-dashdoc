@@ -9,7 +9,7 @@
     <label>
       <div class="title ion-margin-bottom">Bonjour <span>{{firstname}} {{lastname}}</span>,</div>
       <ion-text>
-        Sélectionnez le donneur d’ordres ou ajoutez une nouvelle société.
+        Sélectionnez un compte client.
       </ion-text>
     </label>
   </ion-item>
@@ -40,7 +40,7 @@
                   <div>
                     <ion-icon name="key" size="large"></ion-icon>
                   </div>
-                  <ion-label>Renseigner ma clé API</ion-label>
+                  <ion-label>Valider l'ajout de société</ion-label>
                 </ion-card>
               </ion-col>
             </ion-row>
@@ -59,7 +59,7 @@
 
     <ion-button shape="round" fill="solid" color="primary" expand="block" [routerLink]="['/private/tabs/transports/new-delivery']" [disabled]="!isCompanySelected">
       <ion-icon class="ion-margin-end" name="add-circle"></ion-icon>
-      <ion-text>Créer une demande</ion-text>
+      <ion-text>Créer un transport</ion-text>
       <ion-icon class="ion-margin-start" name="arrow-forward"></ion-icon>
     </ion-button>
   </form>

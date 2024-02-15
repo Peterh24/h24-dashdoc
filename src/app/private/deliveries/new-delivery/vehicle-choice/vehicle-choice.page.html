@@ -40,7 +40,7 @@
     </ion-row>
     <ion-row>
       <ion-col>
-        <h3>{{currentVehicle.model +' '+ currentVehicle.type}} {{currentVehicle.hayon ? 'Hayon' : ''}}</h3>
+        <h3>Utilitaire : {{currentVehicle.type}} {{currentVehicle.hayon ? 'avec Hayon' : ''}}</h3>
       </ion-col>
     </ion-row>
     <ion-row class="description">
@@ -49,18 +49,19 @@
         {{currentVehicle.length}} mètres
       </ion-col>
       <ion-col>
-        <span>Profondeur du coffre</span>
-        {{currentVehicle.depth}} mètres
+        <span>Hauteur du véhicule</span>
+        {{currentVehicle.heightCar}} mètres
+    
       </ion-col>
     </ion-row>
 
     <ion-row class="description">
       <ion-col>
-        <span>Hauteur du véhicule</span>
-        {{currentVehicle.heightCar}} mètres
+            <span>Longeur utile</span>
+        {{currentVehicle.depth}} mètres
       </ion-col>
       <ion-col>
-        <span>Hauteur du coffre</span>
+        <span>Hauteur utile</span>
         {{currentVehicle.heightChest}} mètres
       </ion-col>
     </ion-row>

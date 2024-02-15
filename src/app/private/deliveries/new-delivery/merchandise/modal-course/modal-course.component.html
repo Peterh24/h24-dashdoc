@@ -1,7 +1,7 @@
 <div>
   <ion-header class="ion-no-border ion-padding-start">
     <ion-toolbar>
-      <h2>Ajouter une étape<br> d'enlevement</h2>
+      <h2>{{type === 'origin' ? "Ajouter un pick up" : "Souhaitez vous ajouter une autre étape de livraison"}} ?</h2>
       <ion-buttons slot="end">
       </ion-buttons>
     </ion-toolbar>
@@ -9,11 +9,9 @@
   <ion-row>
     <ion-col class="ion-padding-start ion-padding-end">
       <p>
-        Souhaitez-vous ajouter une adresse {{type === 'origin' ? "d'enlèvement" : " de livraison"}} à votre demande de transport ?
+        <span>Attention :</span> S'il y a plusieurs {{type === 'origin' ? "pick up" : " de livraison"}}, il n'aura qu'une seul {{type === 'origin' ? "de livraison" : "d'enlèvement"}} .
       </p>
-      <p>
-        <span>Attention :</span> En sélectionnant plusieurs adresses {{type === 'origin' ? "d'enlèvement" : " de livraison"}}, vous ne pourrez pas sélectionner plusieurs adresses {{type === 'origin' ? "de livraison" : "d'enlèvement"}} .
-      </p>
+      <p>Pour plus d'infos, merci de nous contacter par téléphone.</p>
     </ion-col>
   </ion-row>
   <ion-row>
