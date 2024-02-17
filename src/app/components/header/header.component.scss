@@ -2,12 +2,17 @@ ion-title {
     // transform: scale(1);
     transition: all .2s ease;
     text-align: left;
-    padding: 0 0 0 2rem;
     font-size: 1rem;
     &.active {
         // color: var(--ion-color-success);
         font-size: 1.2rem;
         // transform: scale(1.2);
         
+    }
+}
+
+ion-buttons {
+    ion-back-button {
+        margin-right: -1em;
     }
 }

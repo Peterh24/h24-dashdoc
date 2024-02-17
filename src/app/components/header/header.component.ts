@@ -31,6 +31,11 @@ export class HeaderComponent  implements OnInit {
     return this.companyService.companyName;
   }
 
+  callTo() {
+    const phoneNumber = '0180275460';
+    window.open(`tel:${phoneNumber}`, '_system');
+  }
+
   signOut(){
     this.authService.signOut();
   }
