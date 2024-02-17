@@ -3,6 +3,7 @@ import { BehaviorSubject, map, take, tap } from 'rxjs';
 import { Vehicle } from '../private/deliveries/vehicle.model';
 import { API_URL } from './constants';
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class VehiclesService {
 
   constructor(
     private http: HttpClient,
+    private authService: AuthService
   ) { }
 
   fetchVehicles() {
@@ -23,6 +25,7 @@ export class VehiclesService {
       take(1),
       map((res: any) => res['hydra:member']),
       tap((data: Vehicle[]) => {
+        this.authService.SetUserInfo();
         this._vehicles.next(data);
       })
     );

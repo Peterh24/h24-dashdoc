@@ -21,6 +21,7 @@ export class AuthService {
   private user: BehaviorSubject<UserData | null | undefined> = new BehaviorSubject<UserData | null | undefined>(undefined);
   currentUser: any;
   currentUserDetail: any;
+  userInfo: any;
   constructor(
     private http: HttpClient,
     private storage: Storage,
@@ -79,7 +80,7 @@ export class AuthService {
           id: decoded.id
         };
         this.user.next(userData);
-        this.currentUser = decoded;
+        this.currentUser = decoded;        
         return userData;
       }),
       catchError((error: any) => {
@@ -87,6 +88,12 @@ export class AuthService {
         throw error;
       })
     );
+  }
+
+  SetUserInfo(){
+      this.http.get(`${API_URL}app_users/${this.currentUser.id}`).subscribe(res => {
+        this.userInfo = res;
+      });
   }
 
   async signOut(){

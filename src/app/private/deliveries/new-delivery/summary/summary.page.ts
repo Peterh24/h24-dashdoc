@@ -12,6 +12,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-summary',
@@ -47,6 +48,7 @@ export class SummaryPage implements OnInit {
     }
 }
   constructor(
+    private authService: AuthService,
     private transportService: TransportService,
     private utilsService: UtilsService,
     private modalCtrl: ModalController,
@@ -204,6 +206,19 @@ export class SummaryPage implements OnInit {
               pk: pk
             },
           };
+          delivery.tracking_contacts = [
+            {
+              contact: {
+                company : {
+                  pk: pk
+                },
+                first_name: this.authService.userInfo.firstname,
+                last_name: this.authService.userInfo.lastname,
+                email: this.authService.userInfo.email,
+                phone_number: this.authService.userInfo.phone
+              }
+            }
+          ]
         });
 
         // Tri des segments en fonction de this.isSingleOrigin
