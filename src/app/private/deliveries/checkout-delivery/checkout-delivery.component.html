@@ -1,0 +1,59 @@
+<ion-content>
+  <div class="container">
+    <div class="logo-container ion-text-center">
+      <img class="header-logo"
+        src="https://h24-public-website.s3.eu-west-3.amazonaws.com/assets/logo-noir-sur-fond-blanc.jpeg"
+        alt="H24 Transports">
+    </div>
+
+    <div class="status" *ngIf="status">
+      <div class="ion-text-center" *ngIf="status === 'ok'">
+        <ion-icon name="checkmark-circle-outline" class="ok"></ion-icon><br>
+        <h2 class="ion-text-center ion-text-uppercase">Paiement validé !</h2>
+        <p>Votre paiement a été effectué avec succès</p>
+        <p>Nous vous remercions de votre commande</p>
+      </div>
+      <div class="ion-text-center" *ngIf="status !== 'ok'">
+        <ion-icon name="ban-outline" class="error"></ion-icon><br>
+        <h2 class="ion-text-center">La transaction a échouée</h2>
+      </div>
+      <p class="ion-text-center">
+        <ion-button routerLink="/private/tabs/home"><ion-icon name="home-outline"></ion-icon> &nbsp; Retour à l'acceuil</ion-button>
+      </p>
+    </div>
+
+    <div class="request" *ngIf="!status">
+      <div>
+        <h1 class="ion-text-center" style="margin-top: 100px;">Valider ma commande</h1>
+        <br>
+        <p><ion-item><ion-icon name="person-outline" size="large"></ion-icon> &nbsp; {{ paymentRequest.company }}</ion-item></p>
+        <p><ion-item><ion-icon name="exit-outline" size="large"></ion-icon> &nbsp; {{ paymentRequest.origin }}</ion-item></p>
+        <p><ion-item><ion-icon name="enter-outline" size="large"></ion-icon> &nbsp; {{ paymentRequest.destination }}</ion-item></p>
+        <p><ion-item><ion-icon name="logo-euro" size="large"></ion-icon> &nbsp; {{ paymentRequest.price }} € TTC</ion-item></p>
+        <ion-toggle labelPlacement="end" class="ion-margin-start" (ionChange)="onPaymentExpressToggle($event)">Paiement express, sauvegarder ma CB</ion-toggle><br /><br />
+        <form method="post" class="ion-text-center" action="{{ paymentRequest.paymentUrl }}" #paymentForm>
+          <input type="hidden" [name]="field.key" [value]="field.value" *ngFor="let field of paymentRequest.formFields | keyvalue" />
+          <br>
+          <ion-button type="submit" class="mainbutton" (click)="pay(paymentForm)">
+            <ion-icon name="logo-euro"></ion-icon> &nbsp; Payer
+          </ion-button>
+        </form>
+        <br>
+        <div class="ion-text-center">
+          <ion-button size="small" (click)="payByIframe ()">Payer via iFrame</ion-button>
+          <ion-button size="small" routerLink="/private/tabs/transports/checkout-delivery"
+            [queryParams]="{'transport': transportId, 'status': 'ok' }">Success page</ion-button>
+          <ion-button size="small" routerLink="/private/tabs/transports/checkout-delivery"
+            [queryParams]="{'transport': transportId, 'status': 'err' }">Error page</ion-button>
+        </div>
+        <br>
+        <br>
+
+        <div style="text-align: center;">
+          <iframe [src]="iframeSrc" id="idFramePaiement" name="nomFramePaiement" *ngIf="iframeSrc">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
