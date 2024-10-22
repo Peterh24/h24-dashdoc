@@ -15,7 +15,11 @@ const routes: Routes = [
   {
     path: 'detail-delivery/:id',
     loadChildren: () => import('./detail-delivery/detail-delivery.module').then( m => m.DetailDeliveryPageModule)
-  }
+  },
+  {
+    path: 'checkout-delivery',
+    loadChildren: () => import('./checkout-delivery/checkout-delivery.module').then( m => m.CheckoutDeliveryComponentModule)
+  },
 
 ];
 

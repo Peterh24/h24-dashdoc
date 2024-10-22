@@ -1,6 +1,6 @@
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { Router } from '@angular/router';
-import { NgModule, inject } from '@angular/core';
+import { NgModule, inject, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { HttpInterceptorFn, provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -39,7 +39,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             }
           });
         }
-      } else if (req.url.includes('api.h24transports.com')) {
+      } else if (req.url.includes('api.h24transports.com') || isDevMode() && req.url.includes('localhost')) {
         return h24token.pipe(
           take(1),
           concatMap((token) => {
@@ -79,6 +79,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     BrowserModule,
     IonicModule.forRoot(
       {
+//        hardwareBackButton: true,
         innerHTMLTemplatesEnabled : true
       }
     ),

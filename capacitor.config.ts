@@ -11,6 +11,9 @@ const config: CapacitorConfig = {
     SplashScreen: {
       launchAutoHide: false
     }
+  },
+  android: {
+    allowMixedContent: true,
   }
 };
 

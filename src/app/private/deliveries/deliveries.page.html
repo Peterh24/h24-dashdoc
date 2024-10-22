@@ -89,6 +89,11 @@
                   <p class="ion-no-margin ion-text-truncate"  color="primary">
                     <ion-text color="primary"><span>Livraison:</span> {{getAddress(item.deliveries, 'destination')}}</ion-text>
                   </p>
+                  <p>
+                    <ion-button size="small" routerLink="/private/tabs/transports/detail-delivery/{{ item.uid }}"><ion-icon name="eye-outline"></ion-icon> &nbsp; Détails</ion-button>
+                    <ion-button size="small"><ion-icon name="create-outline"></ion-icon> &nbsp; Editer</ion-button>
+                    <ion-button size="small" routerLink="/private/tabs/transports/checkout-delivery" [queryParams]="{ transport: item.uid }"><ion-icon name="logo-euro"></ion-icon> &nbsp; Payer</ion-button>  
+                  </p>
                 </ion-label>
               </ion-item>
             </ion-accordion>
