@@ -1,7 +1,9 @@
 <ion-content>
   <div class="container">
-    <div class="logo-container ion-text-center">
-      <img class="header-logo"
+    <div class="header ion-text-center">
+      <img class="logo-monetico" src="assets/monetico-paiement.jpg" >
+
+      <img class="logo-h24"
         src="https://h24-public-website.s3.eu-west-3.amazonaws.com/assets/logo-noir-sur-fond-blanc.jpeg"
         alt="H24 Transports">
     </div>
@@ -24,12 +26,13 @@
 
     <div class="request" *ngIf="!status">
       <div>
-        <h1 class="ion-text-center" style="margin-top: 100px;">Valider ma commande</h1>
+        <h1 class="ion-text-center" style="padding-top: 0px;">Valider ma commande</h1>
         <br>
-        <p><ion-item><ion-icon name="person-outline" size="large"></ion-icon> &nbsp; {{ paymentRequest.company }}</ion-item></p>
-        <p><ion-item><ion-icon name="exit-outline" size="large"></ion-icon> &nbsp; {{ paymentRequest.origin }}</ion-item></p>
-        <p><ion-item><ion-icon name="enter-outline" size="large"></ion-icon> &nbsp; {{ paymentRequest.destination }}</ion-item></p>
-        <p><ion-item><ion-icon name="logo-euro" size="large"></ion-icon> &nbsp; {{ paymentRequest.price }} € TTC</ion-item></p>
+        <ion-item><ion-icon name="person-outline" size="large"></ion-icon> <ion-label class="ion-text-wrap">{{ paymentRequest.company }}</ion-label></ion-item>
+        <ion-item><ion-icon name="exit-outline" size="large"></ion-icon> <ion-label class="ion-text-wrap">{{ paymentRequest.origin }}</ion-label></ion-item>
+        <ion-item><ion-icon name="enter-outline" size="large"></ion-icon> <ion-label class="ion-text-wrap">{{ paymentRequest.destination }}</ion-label></ion-item>
+        <ion-item><ion-icon name="logo-euro" size="large"></ion-icon> <ion-label class="ion-text-wrap">{{ paymentRequest.price }} € TTC</ion-label></ion-item>
+        <br>
         <ion-toggle labelPlacement="end" class="ion-margin-start" (ionChange)="onPaymentExpressToggle($event)">Paiement express, sauvegarder ma CB</ion-toggle><br /><br />
         <form method="post" class="ion-text-center" action="{{ paymentRequest.paymentUrl }}" #paymentForm>
           <input type="hidden" [name]="field.key" [value]="field.value" *ngFor="let field of paymentRequest.formFields | keyvalue" />

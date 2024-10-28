@@ -43,6 +43,7 @@ export class AuthService {
         }
         this.currentUser = decoded;
         this.user.next(userData);
+        this.router.navigateByUrl('/private/tabs/home');
       } else {
         this.user.next(null);
         this.router.navigateByUrl('/auth');
