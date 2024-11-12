@@ -42,24 +42,25 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           Authorization: `Bearer ${tokens.h24token}`
         }
       });
+
+      // Check for 401 errors for all requests
+      return next(req).pipe(
+        tap({
+          next: (event) => {
+            // success
+          },
+          error: (error) => {
+            if (error.status === 401) {
+              // if token expired, remove token from application and redirect to home
+              authService.signOut()
+              router.navigate(['/'], { replaceUrl: true });
+            }
+          }
+        })
+      );
     }
 
-    // Check for 401 errors for all requests
-    return next(req).pipe(
-      tap({
-        next: (event) => {
-          // success
-        },
-        error: (error) => {
-          if (error.status === 401) {
-            // if token expired, remove token from application and redirect to home
-            authService.signOut()
-            router.navigate(['/'], { replaceUrl: true });
-          }
-        }
-      })
-    );
-
+    return next(req);
   }));
 }
 
