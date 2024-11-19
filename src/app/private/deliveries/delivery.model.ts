@@ -10,6 +10,7 @@ export class Delivery {
     public documents: Array<Document>,
     public licensePlate: string,
     public requested_vehicle: string,
+    public carbon_footprint: number
   ){}
 }
 

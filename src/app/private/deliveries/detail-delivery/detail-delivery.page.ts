@@ -47,19 +47,21 @@ export class DetailDeliveryPage implements OnInit {
             const destination = delivery.destination.address;
             const origin = delivery.origin.address;
 
-            // Check if the destination city is not equal to the destination origin
-            if (destination.city !== origin.city) {
-              // Check if the city is already in array
-              if (!this.mapMarkers.find(marker => marker.latitude === destination.latitude)) {
-                this.mapMarkers.push({ name: destination.city, latitude: destination.latitude, longitude: destination.longitude });
+            if (destination && origin) {
+              // Check if the destination city is not equal to the destination origin
+              if (destination.city !== origin.city) {
+                // Check if the city is already in array
+                if (!this.mapMarkers.find(marker => marker.latitude === destination.latitude)) {
+                  this.mapMarkers.push({ name: destination.city, latitude: destination.latitude, longitude: destination.longitude });
+                }
               }
-            }
 
-            // Check if the origin city is not equal to the destination city
-            if (origin.city !== destination.city) {
-              // Check if the city is already in array
-              if (!this.mapMarkers.find(marker => marker.latitude === origin.latitude)) {
-                this.mapMarkers.push({ name: origin.city, latitude: origin.latitude, longitude: origin.longitude });
+              // Check if the origin city is not equal to the destination city
+              if (origin.city !== destination.city) {
+                // Check if the city is already in array
+                if (!this.mapMarkers.find(marker => marker.latitude === origin.latitude)) {
+                  this.mapMarkers.push({ name: origin.city, latitude: origin.latitude, longitude: origin.longitude });
+                }
               }
             }
           });
@@ -74,12 +76,16 @@ export class DetailDeliveryPage implements OnInit {
 
 
   getDate(dateString : string) {
+    if (!dateString) return "";
+
     const date = parseISO(dateString);
     const formattedDate = format(date, 'dd MMMM yyyy', { locale: fr });
     return formattedDate;
   }
 
   getHour(dateString : string) {
+    if (!dateString) return "";
+
     const date = parseISO(dateString);
     const formattedTime = format(date, 'HH:mm');
     return formattedTime;
@@ -120,16 +126,18 @@ export class DetailDeliveryPage implements OnInit {
     const markerBounds:any = []; // Tableau pour stocker les coordonnées des marqueurs
 
     this.mapMarkers.forEach(markerItem => {
-      const markerPosition:any = [markerItem.latitude, markerItem.longitude];
+      if (markerItem && markerItem.latitude && markerItem.longitude) {
+        const markerPosition:any = [markerItem.latitude, markerItem.longitude];
 
-      marker(markerPosition, { icon: cityMarkerIcon })
-        .bindPopup(`Ville de <strong>${markerItem.name}</strong>`, { autoClose: false })
-        .on('click', () => {
-          this.map.setView([markerItem.latitude, markerItem.longitude], 13);
-        })
-        .addTo(this.map);
+        marker(markerPosition, { icon: cityMarkerIcon })
+          .bindPopup(`Ville de <strong>${markerItem.name}</strong>`, { autoClose: false })
+          .on('click', () => {
+            this.map.setView([markerItem.latitude, markerItem.longitude], 13);
+          })
+          .addTo(this.map);
 
-      markerBounds.push(markerPosition); // Ajouter la position du marqueur au tableau des limites
+        markerBounds.push(markerPosition); // Ajouter la position du marqueur au tableau des limites
+      }
     });
 
     // Adapter la carte pour inclure tous les marqueurs

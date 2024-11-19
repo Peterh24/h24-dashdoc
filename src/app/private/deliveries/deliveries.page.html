@@ -76,7 +76,7 @@
                   </div>
                   <div class="accordion-row-price" *ngIf="item.pricing_total_price">
                     <ion-label color="secondary">
-                      {{item.pricing_total_price | priceFormat }} € HT
+                      {{item.pricing_total_price | priceFormat }} € HT <span *ngIf="item.carbon_footprint">- co2: {{ item.carbon_footprint?.toFixed (2) }}Kg</span>
                     </ion-label>
                   </div>
                 </div>

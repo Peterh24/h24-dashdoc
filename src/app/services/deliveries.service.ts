@@ -71,6 +71,7 @@ export class DeliveriesService {
             data.documents,
             licensePlate,
             data.requested_vehicle,
+            data.carbon_footprint
           )
         });
 
