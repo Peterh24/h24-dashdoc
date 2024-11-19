@@ -8,7 +8,6 @@ import { CompanyService } from 'src/app/services/company.service';
 import { API_URL, DASHDOC_API_URL, DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
 import { AuthService } from 'src/app/services/auth.service';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { VehiclesService } from 'src/app/services/vehicles.service';
 import { ModalAddCompanyComponent } from './modal-add-company/modal-add-company.component';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
 
@@ -41,8 +40,7 @@ export class HomePage implements OnDestroy {
 
   ionViewWillEnter(){
     this.currentUser = this.authService.currentUser;
-    this.http.get(`${API_URL}app_users/${this.currentUser.id}`).subscribe((user:any) => {
-      this.authService.currentUserDetail = user;
+    this.authService.loadCurrentUserDetail(this.currentUser.id).subscribe((user:any) => {
       this.firstname = user.firstname;
       this.lastname = user.lastname
       this.companyService.fetchCompanies();

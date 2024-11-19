@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Storage } from '@ionic/storage-angular';
-import { API_URL, DASHDOC_COMPANY, JWT_KEY, USER_STORAGE_KEY } from './constants';
-import { BehaviorSubject, delay, of, switchMap, take, map, catchError, filter, tap } from 'rxjs';
+import { API_URL, DASHDOC_COMPANY, FIREBASE_TOKEN_KEY, JWT_KEY, USER_STORAGE_KEY } from './constants';
+import { BehaviorSubject, take, map, catchError, tap } from 'rxjs';
 import jwt_decode from 'jwt-decode';
 import { Router } from '@angular/router';
+import { ActionPerformed, PushNotifications, PushNotificationSchema, Token } from '@capacitor/push-notifications';
+import { Platform } from '@ionic/angular';
 
 export interface UserData {
   token: string;
@@ -26,8 +28,10 @@ export class AuthService {
     private http: HttpClient,
     private storage: Storage,
     private router: Router,
+    private platform: Platform
   ) {
     this.loadUser();
+    this.initializeFirebasePushNotifications ();
   }
 
   async loadUser() {
@@ -52,7 +56,7 @@ export class AuthService {
         this.router.navigateByUrl('/auth');
       }
     } else {
-      this.user.next(null);
+      this.user.next(null); 
       this.router.navigateByUrl('/auth');
     }
   }
@@ -84,7 +88,7 @@ export class AuthService {
           id: decoded.id
         };
         this.user.next(userData);
-        this.currentUser = decoded;        
+        this.currentUser = decoded;
         return userData;
       }),
       catchError((error: any) => {
@@ -92,6 +96,14 @@ export class AuthService {
         throw error;
       })
     );
+  }
+
+  loadCurrentUserDetail (userId: number) {
+    return this.http.get(`${API_URL}app_users/${userId}`).pipe(take(1),
+      tap ((userDetail: any) => {
+        this.currentUserDetail = userDetail;
+        this.registerFirebasePushNotifications();
+      }));
   }
 
   SetUserInfo(){
@@ -107,6 +119,72 @@ export class AuthService {
     this.userIsAuthenticated = false;
     this.user.next(null);
     this.router.navigate(['/'], { replaceUrl: true });
+  }
+
+  resetFirebasePushNotifications () {
+    this.storage.remove (FIREBASE_TOKEN_KEY).then ((value) => {
+      this.registerFirebasePushNotifications ();
+    });
+  }
+
+  registerFirebasePushNotifications () {
+    if (this.platform.is('desktop') || this.platform.is ('mobileweb')) {
+      return;
+    }
+
+    // Request permission to use push notifications
+    // iOS will prompt user and return if they granted permission or not
+    // Android will just grant without prompting
+    PushNotifications.requestPermissions().then((result) => {
+      if (result.receive === 'granted') {
+        PushNotifications.register();
+      } else {
+        // Show some error
+      }
+    });
+  }
+  
+  initializeFirebasePushNotifications () {
+    if (this.platform.is('desktop') || this.platform.is ('mobileweb')) {
+      return;
+    }
+
+    // On success, we should be able to receive notifications
+    PushNotifications.addListener('registration', async (token: Token) => {
+      const savedToken = await this.storage.get (FIREBASE_TOKEN_KEY);
+      // TODO: add firebaseToken to app_users end point
+      if (this.currentUserDetail?.firebaseToken && this.currentUserDetail?.firebaseToken == savedToken) {
+        return;
+      }
+
+      if (token && token.value) {
+        const data = {id: this.currentUser.id, username: this.currentUser.username, token: token.value};
+        // TODO: cgt url pour l'enregistrement des tokens
+        this.http.post ('https://orbiteur.fr/h24/notifications/register.php', data).pipe (take(1)).subscribe ({
+          next: (result) => {
+            this.storage.set (FIREBASE_TOKEN_KEY, token.value);
+          },
+          error: (error) => {
+            console.log (error);
+          }
+        })
+      }
+    });
+
+    // Some issue with our setup and push will not work
+    PushNotifications.addListener('registrationError', (error: any) => {
+      console.log('Error on registration', error);
+    });
+
+    // Show us the notification payload if the app is open on our device
+    PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
+      console.log('Push received', notification);
+    });
+
+    // Method called when tapping on a notification
+    PushNotifications.addListener('pushNotificationActionPerformed', (notification: ActionPerformed) => {
+      console.log('Push action performed', notification);
+    });
   }
 
 }
