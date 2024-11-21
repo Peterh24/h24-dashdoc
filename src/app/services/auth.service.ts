@@ -102,7 +102,11 @@ export class AuthService {
     return this.http.get(`${API_URL}app_users/${userId}`).pipe(take(1),
       tap ((userDetail: any) => {
         this.currentUserDetail = userDetail;
-        this.registerFirebasePushNotifications();
+
+        // On renouvelle le token firebase tous les mois
+        this.anacron('FIREBASE', 30 * 24 * 86400, () => {
+          this.resetFirebasePushNotifications ();
+        });
       }));
   }
 
@@ -152,12 +156,12 @@ export class AuthService {
     // On success, we should be able to receive notifications
     PushNotifications.addListener('registration', async (token: Token) => {
       const savedToken = await this.storage.get (FIREBASE_TOKEN_KEY);
-      // TODO: add firebaseToken to app_users end point
-      if (this.currentUserDetail?.firebaseToken && this.currentUserDetail?.firebaseToken == savedToken) {
-        return;
-      }
 
-      if (token && token.value) {
+      // TODO: add firebaseToken to app_users end point
+      const remoteTokenChanged = this.currentUserDetail?.firebase_token && this.currentUserDetail?.firebase_token != savedToken;
+      const localTokenChanged = savedToken == null || savedToken != token?.value; 
+
+      if (remoteTokenChanged || localTokenChanged) {
         const data = {id: this.currentUser.id, username: this.currentUser.username, token: token.value};
         // TODO: cgt url pour l'enregistrement des tokens
         this.http.post ('https://orbiteur.fr/h24/notifications/register.php', data).pipe (take(1)).subscribe ({
@@ -178,6 +182,7 @@ export class AuthService {
 
     // Show us the notification payload if the app is open on our device
     PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
+      // TODO: show notification to user
       console.log('Push received', notification);
     });
 
@@ -187,4 +192,15 @@ export class AuthService {
     });
   }
 
+  // excecute la fonction callback quand le timer est dépassé
+  async anacron (type: string, seconds: number, callback: Function) {
+    const key = 'ANACRON_' + type;
+    const lastRun = await this.storage.get (key);
+
+    if (lastRun == null || new Date().valueOf() - lastRun > seconds * 1000) {
+      this.storage.set (key, new Date().valueOf()).then ((value) => {
+        callback ();
+      })
+    }
+  }
 }

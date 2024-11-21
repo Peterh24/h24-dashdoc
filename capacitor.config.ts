@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'io.h24transports',
-  appName: 'h24-transports-ionic',
+  appName: 'H24 Transports',
   webDir: 'www',
   server: {
     androidScheme: 'https'
@@ -10,6 +10,9 @@ const config: CapacitorConfig = {
   plugins: {
     SplashScreen: {
       launchAutoHide: false
+    },
+    PushNotifications: {
+      presentationOptions: ["badge", "sound", "alert"]
     }
   },
   android: {
