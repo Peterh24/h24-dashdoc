@@ -35,16 +35,17 @@ iframe {
 .header {
     display: flex;
     justify-content: space-between;
-    padding: 30px;
 }
 
 .logo-h24 {
     width: 100px;
+    padding: 15px;
 }
 
 .logo-monetico {
-    margin: 15px;
+    padding: 15px;
     height: 80px;
+    max-width: calc(100% - 100px);
 }
 
 .request {

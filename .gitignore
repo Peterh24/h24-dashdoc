@@ -32,7 +32,7 @@ log.txt
 
 # Node
 /node_modules
-/android
+#/android
 npm-debug.log
 yarn-error.log
 

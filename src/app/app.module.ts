@@ -70,7 +70,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     BrowserModule,
     IonicModule.forRoot(
       {
-//        hardwareBackButton: true,
+        hardwareBackButton: true,
         innerHTMLTemplatesEnabled : true
       }
     ),

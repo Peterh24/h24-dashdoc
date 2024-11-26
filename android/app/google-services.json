@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "198133437861",
+    "project_id": "h24transports-1ed1c",
+    "storage_bucket": "h24transports-1ed1c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:198133437861:android:d043b566e75386fb7b044c",
+        "android_client_info": {
+          "package_name": "fr.orbiteur.mreader.android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8PzaqvCp541Vz6HQkjQMMFzCZF8nA40g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:198133437861:android:e3084a0768755fe57b044c",
+        "android_client_info": {
+          "package_name": "io.h24transports"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8PzaqvCp541Vz6HQkjQMMFzCZF8nA40g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

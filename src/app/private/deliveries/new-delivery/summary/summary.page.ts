@@ -266,7 +266,7 @@ export class SummaryPage implements OnInit {
         console.log(dataToApi);
         this.http.post(`${DASHDOC_API_URL}transports/`, dataToApi).subscribe(async res => {
           // On renouvelle le token firebase pour éviter qu'il n'expire bientot
-          this.authService.resetFirebasePushNotifications ();
+          this.authService.resetFirebasePushNotificationToken ();
 
           const confirm = await this.alertController.create({
             header: 'Bravo, votre course a été enregistrée',

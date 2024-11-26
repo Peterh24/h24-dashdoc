@@ -6,7 +6,7 @@ import { BehaviorSubject, take, map, catchError, tap } from 'rxjs';
 import jwt_decode from 'jwt-decode';
 import { Router } from '@angular/router';
 import { ActionPerformed, PushNotifications, PushNotificationSchema, Token } from '@capacitor/push-notifications';
-import { Platform } from '@ionic/angular';
+import { NavController, Platform } from '@ionic/angular';
 
 export interface UserData {
   token: string;
@@ -28,6 +28,7 @@ export class AuthService {
     private http: HttpClient,
     private storage: Storage,
     private router: Router,
+    private navCtrl: NavController,
     private platform: Platform
   ) {
     this.loadUser();
@@ -49,7 +50,7 @@ export class AuthService {
         this.user.next(userData);
 
         if (this.router.url.match(/^\/(auth)?$/)) {
-          this.router.navigateByUrl('/private/tabs/home');
+          this.navCtrl.navigateRoot('/private/tabs/home');
         }
       } else {
         this.user.next(null);
@@ -105,7 +106,7 @@ export class AuthService {
 
         // On renouvelle le token firebase tous les mois
         this.anacron('FIREBASE', 30 * 24 * 86400, () => {
-          this.resetFirebasePushNotifications ();
+          this.resetFirebasePushNotificationToken ();
         });
       }));
   }
@@ -125,14 +126,26 @@ export class AuthService {
     this.router.navigate(['/'], { replaceUrl: true });
   }
 
-  resetFirebasePushNotifications () {
-    this.storage.remove (FIREBASE_TOKEN_KEY).then ((value) => {
-      this.registerFirebasePushNotifications ();
-    });
+  supportsFirebaseNotifications () {
+    return !this.platform.is('desktop') && !this.platform.is ('mobileweb');
+  }
+
+  removeAllDeliveredNotifications (){
+    if (this.supportsFirebaseNotifications ()) {
+      PushNotifications.removeAllDeliveredNotifications ();
+    }
+  }
+
+  resetFirebasePushNotificationToken () {
+    if (this.supportsFirebaseNotifications()) {
+      this.storage.remove (FIREBASE_TOKEN_KEY).then ((value) => {
+        this.registerFirebasePushNotifications ();
+      });
+    }
   }
 
   registerFirebasePushNotifications () {
-    if (this.platform.is('desktop') || this.platform.is ('mobileweb')) {
+    if (!this.supportsFirebaseNotifications()) {
       return;
     }
 
@@ -149,7 +162,7 @@ export class AuthService {
   }
   
   initializeFirebasePushNotifications () {
-    if (this.platform.is('desktop') || this.platform.is ('mobileweb')) {
+    if (!this.supportsFirebaseNotifications ()) {
       return;
     }
 
