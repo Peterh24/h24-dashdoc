@@ -42,4 +42,22 @@ public class MainActivity extends BridgeActivity {
         }
       }
     }
+
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
+    WebView webView = getBridge().getWebView();
+
+    if (keyCode == KeyEvent.KEYCODE_BACK) {
+      if (webView != null) {
+        if (webView.canGoBack()) {
+          webView.goBack();
+        } else {
+          finish();
+        }
+      }
+      return true;
+    }
+
+    return super.onKeyDown(keyCode, event);
+  }
 }

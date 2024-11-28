@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Browser } from '@capacitor/browser';
 import { AlertController } from '@ionic/angular';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
 
@@ -13,6 +14,7 @@ export class CheckoutDeliveryComponent {
   transportId: string;
   paymentRequest: any = {};
   iframeSrc: any;
+  iframeFullScreen: boolean;
   status: string;
   paymentExpress: boolean;
 
@@ -20,7 +22,8 @@ export class CheckoutDeliveryComponent {
     private deliveriesService: DeliveriesService,
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private cdRef: ChangeDetectorRef
   ) { }
 
   ionViewWillEnter() {
@@ -29,11 +32,26 @@ export class CheckoutDeliveryComponent {
     // TODO: sauvegarde/restauration de la préférence de paiement de l'utilisateur
     this.paymentExpress = false;
 
-    this.route.queryParamMap.subscribe (queryMap => {
+    (window as any).validatePaymentFromIFrame = (status: any) => { 
+      this.iframeSrc = null;
+      this.iframeFullScreen = false;
+      this.status = status;
+
+      this.cdRef.detectChanges ();
+    };
+
+    this.route.queryParamMap.subscribe (queryMap => {  
       // TODO: on lit le statut depuis l'api
       this.transportId = queryMap.get ("transport");
       if (queryMap.get('status')) {
         this.status = queryMap.get('status');
+      }
+
+      // ferme l'iframe & change le statut du paiement dans l'élément parent
+      if (this.status && parent && (parent as any).validatePaymentFromIFrame) {
+        this.iframeSrc = null;
+        (parent as any).validatePaymentFromIFrame (this.status);
+        return;
       }
 
       // TODO: à supprimer
@@ -60,7 +78,7 @@ export class CheckoutDeliveryComponent {
       url_retour_err: location.href + '&status=err',
     }
   }
-
+  
   pay (form: any) {
     this.deliveriesService.getMoneticoPaymentRequest (this.getPaymentRequestParams (false)).subscribe ({
       next: (res) => {
@@ -75,8 +93,9 @@ export class CheckoutDeliveryComponent {
     });
   }
 
-  payByIframe () {
-    this.deliveriesService.getMoneticoPaymentRequest (this.getPaymentRequestParams(true)).subscribe ({
+  payByIframe (iframeFullScreen: boolean = false) {
+    this.iframeFullScreen = iframeFullScreen;
+    this.deliveriesService.getMoneticoPaymentRequest (this.getPaymentRequestParams(!iframeFullScreen)).subscribe ({
       next: (res: any) => {
         const src = res.paymentUrl + '?' + new URLSearchParams(res.formFields).toString ();
         this.iframeSrc = this.sanitizer.bypassSecurityTrustResourceUrl (src);

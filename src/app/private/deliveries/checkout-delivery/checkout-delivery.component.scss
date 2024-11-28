@@ -12,7 +12,7 @@ iframe {
     flex-direction: column;
     width: 100%;
     height: 100%;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
     padding-bottom: 200px;
 }
@@ -51,9 +51,26 @@ iframe {
 .request {
     display: flex;
     justify-content: center;
-    align-items: center;
+    width: 100%;
+    height: 100%;
 }
 
 .request ion-item ion-label {
     padding-left: 15px;
+}
+
+iframe.fullscreen {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+iframe.normal {
+    width: 100%;
 }

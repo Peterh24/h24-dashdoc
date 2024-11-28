@@ -1,6 +1,6 @@
 <ion-content>
   <div class="container">
-    <div class="header ion-text-center">
+    <div class="header ion-text-center" *ngIf="!iframeFullScreen">
       <img class="logo-monetico" src="assets/monetico-paiement.jpg" >
 
       <img class="logo-h24"
@@ -25,7 +25,7 @@
     </div>
 
     <div class="request" *ngIf="!status">
-      <div>
+      <div *ngIf="!iframeSrc">
         <h1 class="ion-text-center" style="padding-top: 0px;">Valider ma commande</h1>
         <br>
         <ion-item><ion-icon name="person-outline" size="large"></ion-icon> <ion-label class="ion-text-wrap">{{ paymentRequest.company }}</ion-label></ion-item>
@@ -43,19 +43,23 @@
         </form>
         <br>
         <div class="ion-text-center">
-          <ion-button size="small" (click)="payByIframe ()">Payer via iFrame</ion-button>
+          <ion-button size="small" (click)="payByIframe (false)">Payer via iFrame</ion-button>
+          <ion-button size="small" (click)="payByIframe (true)">Payer via iFrame full screen</ion-button>
           <ion-button size="small" routerLink="/private/tabs/transports/checkout-delivery"
             [queryParams]="{'transport': transportId, 'status': 'ok' }">Success page</ion-button>
           <ion-button size="small" routerLink="/private/tabs/transports/checkout-delivery"
             [queryParams]="{'transport': transportId, 'status': 'err' }">Error page</ion-button>
+            <br>
+            <br>
         </div>
-        <br>
-        <br>
-
-        <div style="text-align: center;">
-          <iframe [src]="iframeSrc" id="idFramePaiement" name="nomFramePaiement" *ngIf="iframeSrc">
-          </iframe>
-        </div>
+      </div>
+      <div class="wrapper" *ngIf="iframeSrc">
+        <iframe [src]="iframeSrc" class="{{ iframeFullScreen ? 'fullscreen' : 'normal' }}" 
+          id="idFramePaiement" 
+          name="nomFramePaiement" 
+          frameborder="0" 
+          width="400" height="200" 
+          *ngIf="iframeSrc"></iframe>
       </div>
     </div>
   </div>

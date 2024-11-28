@@ -6,7 +6,6 @@ import { register } from 'swiper/element/bundle';
 import { NavController, Platform } from '@ionic/angular';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { App } from '@capacitor/app';
-import { Router } from '@angular/router';
 
 register();
 @Component({
@@ -16,7 +15,6 @@ register();
 })
 export class AppComponent {
   constructor(
-    private router: Router,
     private navCtrl: NavController,
     private storage: Storage, 
     private platform: Platform,
@@ -31,20 +29,22 @@ export class AppComponent {
 
     this.removeAllDeliveredNotifications ();
 
+    /*
+    App.addListener ('backButton', data => {
+      console.log ("backButton", data.canGoBack);
+      
+      if (data.canGoBack) {
+        this.navCtrl.back ();
+      } else {
+        App.exitApp ();
+      }
+    });
+    */
+   
     // TODO: enlever la notofication quand l'utlisateur visite la 
     // page concernée
-    this.platform.pause.subscribe(async () => {
+    App.addListener ('pause', () => {
       this.removeAllDeliveredNotifications ();
-    });
-
-    document.addEventListener('ionBackButton', (ev:any) => {
-      ev.detail.register(1, () => {
-        if (this.router.url == '/' || this.router.url == '/auth' || this.router.url == '/private/tabs/home') {
-          App.exitApp ();
-        } else {
-          this.navCtrl.back ();
-        }
-      });
     });
   }
 

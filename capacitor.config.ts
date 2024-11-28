@@ -5,7 +5,10 @@ const config: CapacitorConfig = {
   appName: 'H24 Transports',
   webDir: 'www',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
+    allowNavigation: [
+//      'p.monetico-services.com'
+    ]
   },
   plugins: {
     SplashScreen: {
