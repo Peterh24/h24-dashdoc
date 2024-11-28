@@ -53,14 +53,13 @@
             <br>
         </div>
       </div>
-      <div class="wrapper" *ngIf="iframeSrc">
-        <iframe [src]="iframeSrc" class="{{ iframeFullScreen ? 'fullscreen' : 'normal' }}" 
-          id="idFramePaiement" 
-          name="nomFramePaiement" 
-          frameborder="0" 
-          width="400" height="200" 
-          *ngIf="iframeSrc"></iframe>
-      </div>
+      <iframe [src]="iframeSrc" class="{{ iframeFullScreen ? 'fullscreen' : 'normal' }}"
+        id="idFramePaiement"
+        name="nomFramePaiement"
+        frameborder="0"
+        scrolling="no"
+        width="100%" height="100%"
+        *ngIf="iframeSrc"></iframe>
     </div>
   </div>
 </ion-content>
