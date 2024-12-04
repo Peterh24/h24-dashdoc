@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
 import * as CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { register } from 'swiper/element/bundle';
-import { NavController, Platform } from '@ionic/angular';
+import { ModalController, NavController, Platform } from '@ionic/angular';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { App } from '@capacitor/app';
 
@@ -18,6 +18,7 @@ export class AppComponent {
     private navCtrl: NavController,
     private storage: Storage, 
     private platform: Platform,
+    private modalCtrl: ModalController
   ) {
     this.init();
   }
@@ -29,17 +30,17 @@ export class AppComponent {
 
     this.removeAllDeliveredNotifications ();
 
-    /*
     App.addListener ('backButton', data => {
-      console.log ("backButton", data.canGoBack);
-      
-      if (data.canGoBack) {
-        this.navCtrl.back ();
-      } else {
-        App.exitApp ();
-      }
+      this.modalCtrl.getTop().then ((modal) => {
+        if (modal) {
+          modal.dismiss ();
+        } else if (data.canGoBack) {
+          this.navCtrl.back ();
+        } else {
+          App.exitApp ();
+        } 
+      });
     });
-    */
    
     // TODO: enlever la notofication quand l'utlisateur visite la 
     // page concernée

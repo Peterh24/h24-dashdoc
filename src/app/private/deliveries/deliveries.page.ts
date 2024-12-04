@@ -96,7 +96,8 @@ export class DeliveriesPage {
     })
     await loading.present();
     if(this.jsonData.length === 0){
-      
+      this.deliveriesService.resetDeliveries();
+
       this.deliveriesService.fetchDeliveries().subscribe((deliveries) => {
         this.deliveries = deliveries;
         this.jsonData = deliveries;

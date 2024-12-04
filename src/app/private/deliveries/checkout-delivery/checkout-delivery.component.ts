@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Browser } from '@capacitor/browser';
+import { ActivatedRoute } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
 
@@ -48,7 +47,7 @@ export class CheckoutDeliveryComponent {
       }
 
       // ferme l'iframe & change le statut du paiement dans l'élément parent
-      if (this.status && parent && (parent as any).validatePaymentFromIFrame) {
+      if (this.status && parent !== window && (parent as any).validatePaymentFromIFrame) {
         this.iframeSrc = null;
         (parent as any).validatePaymentFromIFrame (this.status);
         return;
@@ -64,7 +63,7 @@ export class CheckoutDeliveryComponent {
         error: (error) => {
           this.handleRequestError (error);        
         }
-      });  
+      });
     })
   }
 

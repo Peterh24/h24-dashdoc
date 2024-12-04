@@ -2,8 +2,6 @@ package io.h24transports;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -47,15 +45,19 @@ public class MainActivity extends BridgeActivity {
   public boolean onKeyDown(int keyCode, KeyEvent event) {
     WebView webView = getBridge().getWebView();
 
-    if (keyCode == KeyEvent.KEYCODE_BACK) {
-      if (webView != null) {
+    if (keyCode == KeyEvent.KEYCODE_BACK && webView != null) {
+      String url = webView.getUrl();
+
+      if (url == null || url.contains("://localhost/")) {
+        return super.onKeyDown(keyCode, event);
+      } else {
         if (webView.canGoBack()) {
           webView.goBack();
         } else {
           finish();
         }
+        return true;
       }
-      return true;
     }
 
     return super.onKeyDown(keyCode, event);

@@ -6,13 +6,11 @@ const config: CapacitorConfig = {
   webDir: 'www',
   server: {
     androidScheme: 'https',
-    allowNavigation: [
-//      'p.monetico-services.com'
-    ]
   },
   plugins: {
     SplashScreen: {
-      launchAutoHide: false
+      launchAutoHide: false,
+      backgroundColor: "#000000"
     },
     PushNotifications: {
       presentationOptions: ["badge", "sound", "alert"]

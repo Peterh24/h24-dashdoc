@@ -170,7 +170,6 @@ export class AuthService {
     PushNotifications.addListener('registration', async (token: Token) => {
       const savedToken = await this.storage.get (FIREBASE_TOKEN_KEY);
 
-      // TODO: add firebaseToken to app_users end point
       const remoteTokenChanged = this.currentUserDetail?.firebase_token && this.currentUserDetail?.firebase_token != savedToken;
       const localTokenChanged = savedToken == null || savedToken != token?.value; 
 

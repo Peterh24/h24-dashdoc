@@ -199,11 +199,11 @@ export class EditComponent {
       // Mise à jour dans la liste de merchandises
       if (index !== -1) {
         this.merchandises[index].quantity = data.quantity;
-        this.merchandises[index].description = data.name;
+        this.merchandises[index].description = data.description;
       } else {
         this.merchandises.push({
           id: data.id,
-          description: data.name,
+          description: data.description,
           quantity: data.quantity,
           category: 'bulk',
           complementary_information: data.complementary_information
@@ -211,22 +211,21 @@ export class EditComponent {
       }
 
       // Mise à jour dans la liste des planned_loads
-      const lastIndex = this.transportService.deliveries.length - 1;
-      const plannedLoads = this.transportService.deliveries[lastIndex].planned_loads;
+      const plannedLoads = this.transportService.deliveries[this.index].planned_loads;
 
       const existingIndex = plannedLoads.findIndex((item:any) => item.id === data.id);
 
       if (existingIndex !== -1) {
         plannedLoads[existingIndex] = {
           id: data.id,
-          description: data.name,
+          description: data.description,
           category: 'bulk',
           quantity: data.quantity
         };
       } else {
         plannedLoads.push({
           id: data.id,
-          description: data.name,
+          description: data.description,
           category: 'bulk',
           quantity: data.quantity
         });

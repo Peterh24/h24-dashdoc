@@ -36,7 +36,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           }
         });
       }
-    } else if (req.url.includes('api.h24transports.com') || isDevMode() && req.url.includes('localhost')) {
+    } else if (tokens.h24token && req.url.includes('api.h24transports.com') || isDevMode() && req.url.includes('localhost')) {
       req = req.clone({
         setHeaders: {
           Authorization: `Bearer ${tokens.h24token}`
