@@ -5,7 +5,7 @@ import { take } from 'rxjs';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
-import { regex, regexErrors } from 'src/app/utils/regex';
+import { phoneValidator, regex, regexErrors } from 'src/app/utils/regex';
 import { Router } from '@angular/router';
 @Component({
   selector: 'app-details',
@@ -19,7 +19,7 @@ export class DetailsPage {
   form = this.formBuilder.nonNullable.group({
     firstname: ['', [Validators.required]],
     lastname: ['', [Validators.required]],
-    phone: ['', [Validators.required, Validators.pattern(this.regex.phone)]],
+    phone: ['', [Validators.required, phoneValidator ()]],
     email: ['', [Validators.required, Validators.pattern(this.regex.email)]],
 
   });

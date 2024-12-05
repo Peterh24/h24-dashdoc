@@ -28,36 +28,38 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return forkJoin ({tokenObs, h24token}).pipe (concatMap (tokens => {
     const currentUrl = platform.url();
 
-    if (req.url.includes('api.dashdoc.eu')) {
-      if (!currentUrl.includes('/private/tabs/home') && tokens.tokenObs) {
+    if (!req.headers?.get ("Authorization")) {
+      if (req.url.includes('api.dashdoc.eu')) {
+        if (!currentUrl.includes('/private/tabs/home') && tokens.tokenObs) {
+          req = req.clone({
+            setHeaders: {
+              Authorization: `Token ${tokens.tokenObs}`
+            }
+          });
+        }
+      } else if (tokens.h24token && req.url.includes('api.h24transports.com') || isDevMode() && req.url.includes('localhost')) {
         req = req.clone({
           setHeaders: {
-            Authorization: `Token ${tokens.tokenObs}`
+            Authorization: `Bearer ${tokens.h24token}`
           }
         });
-      }
-    } else if (tokens.h24token && req.url.includes('api.h24transports.com') || isDevMode() && req.url.includes('localhost')) {
-      req = req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${tokens.h24token}`
-        }
-      });
 
-      // Check for 401 errors for all requests
-      return next(req).pipe(
-        tap({
-          next: (event) => {
-            // success
-          },
-          error: (error) => {
-            if (error.status === 401) {
-              // if token expired, remove token from application and redirect to home
-              authService.signOut()
-              router.navigate(['/'], { replaceUrl: true });
+        // Check for 401 errors for all requests
+        return next(req).pipe(
+          tap({
+            next: (event) => {
+              // success
+            },
+            error: (error) => {
+              if (error.status === 401) {
+                // if token expired, remove token from application and redirect to home
+                authService.signOut()
+                router.navigate(['/'], { replaceUrl: true });
+              }
             }
-          }
-        })
-      );
+          })
+        );
+      }
     }
 
     return next(req);
