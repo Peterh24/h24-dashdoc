@@ -35,7 +35,7 @@ export const phoneValidator = (): ValidatorFn => {
           return null;
       }
 
-      if (value.match (/^0[1-9]{9}$/)) {
+      if (value.match (/^0[0-9]{9}$/)) {
         return null;
       }
 

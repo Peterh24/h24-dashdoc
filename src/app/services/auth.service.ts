@@ -78,6 +78,11 @@ export class AuthService {
     );
   }
 
+  resetPasswordRequest (email: string) {
+    return this.http.post(`${API_URL}../password/reset/request`, { email }).pipe(
+    );
+  }
+
   login(username: string, password: string) {
     this.storage.remove('DASHDOC_COMPANY');
     return this.http.post(`${API_URL}login`, { username, password }).pipe(
