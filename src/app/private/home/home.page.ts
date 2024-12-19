@@ -10,6 +10,9 @@ import { AuthService } from 'src/app/services/auth.service';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { ModalAddCompanyComponent } from './modal-add-company/modal-add-company.component';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
+import { TransportService } from 'src/app/services/transport.service';
+import { Router } from '@angular/router';
+import { AddressService } from 'src/app/services/address.service';
 
 
 @Component({
@@ -32,10 +35,13 @@ export class HomePage implements OnDestroy {
     private http: HttpClient,
     public companyService: CompanyService,
     private authService: AuthService,
+    private addressService: AddressService,
     private modalCtrl: ModalController,
     private alertController: AlertController,
     private loadingController: LoadingController,
+    private router: Router,
     public deliveriesService: DeliveriesService,
+    private transportService: TransportService
   ) { }
 
   ionViewWillEnter(){
@@ -56,7 +62,9 @@ export class HomePage implements OnDestroy {
         } else {}
 
       })
-    }) 
+    })
+
+    this.authService.updateFirebasePushNotifications ();
   }
 
   async onAddCompany(type:string) {
@@ -160,11 +168,14 @@ export class HomePage implements OnDestroy {
   
         this.currentCompany = this.companyService.getCompany(currentCompany).subscribe((company) => {
           loading.dismiss();
-          this.companyService.setCompanyName(company.name);
-          this.storage.set(USER_STORAGE_KEY, company.token);
-          this.storage.set(DASHDOC_COMPANY, currentCompany);
-          this.isCompanySelected = true;
-          this.companyService.isCompanySwitch = false;
+          if (company && company.token) {
+            this.companyService.setCompanyName(company.name);
+            this.storage.set(USER_STORAGE_KEY, company.token);
+            this.storage.set(DASHDOC_COMPANY, currentCompany);
+            this.isCompanySelected = true;
+            this.companyService.isCompanySwitch = false;
+            this.addressService.resetAddresses();
+          }
         });
       } else {
         this.currentCompany = this.companyService.getCompany(currentCompany).subscribe((company) => {
@@ -178,6 +189,11 @@ export class HomePage implements OnDestroy {
 
   openSelect(){
     this.companyChoose.open();
+  }
+
+  onNewOrder () {
+    this.transportService.resetTransport ();
+    this.router.navigateByUrl ('/private/tabs/transports/new-order');
   }
 
   ngOnDestroy() {

@@ -1,0 +1,30 @@
+ion-content {
+    --padding-start: 30px;
+    --padding-end: 30px;
+}
+
+.user-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.user-header ion-icon {
+    font-size: 30pt;
+}
+
+.user-infos {
+    margin-top: 60px;
+}
+
+.user-infos ion-button {
+    display: block;
+    margin-top: 30px;
+}
+
+ion-badge {
+    min-width: 15pt;
+}

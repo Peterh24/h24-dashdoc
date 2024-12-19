@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { StorageService } from '../utils/services/storage.service';
 import { regex, regexErrors } from '../utils/regex';
@@ -20,7 +20,8 @@ export class ForgotPasswordPage implements OnInit {
   constructor(
     private authService: AuthService,
     private storageService: StorageService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private cdRef: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
@@ -31,6 +32,10 @@ export class ForgotPasswordPage implements OnInit {
     });
 
     this.loadEmail();
+  }
+
+  ionViewWillEnter() {
+    this.success = undefined;
   }
 
   loadEmail () {
@@ -46,15 +51,21 @@ export class ForgotPasswordPage implements OnInit {
     this.authService.resetPasswordRequest (this.form.value.email).subscribe ({
       next: (res) => {
         this.success = true;
+        this.form.controls['email'].setErrors(null);
       },
       error: async (error) => {
+        this.success = false;
+        this.form.controls['email'].setErrors({ 'incorrect': true });
+
+        /*
         const alert = await this.alertController.create({
           header: 'Erreur',
           message: 'Echec requête changement de mot de passe: ' + error.error.message,
           buttons: ['Ok']
         });  
     
-        await alert.present();    
+        await alert.present();
+        */
       }
     })
   }

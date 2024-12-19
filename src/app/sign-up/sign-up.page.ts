@@ -19,6 +19,7 @@ export class SignUpPage implements OnInit {
     phone: ['', [Validators.required, phoneValidator ()]],
     email: ['', [Validators.required, Validators.pattern(this.regex.email)]],
     password: ['', [Validators.required, passwordValidator ()]],
+    company: [''],
     isClient: [this.isClient, [Validators.required]]
   });
 
@@ -66,10 +67,9 @@ export class SignUpPage implements OnInit {
     });
   }
 
-  onAlreadyClientChange(){
-    this.isClient = !this.isClient;
+  onAlreadyClientChange(event: any){
+    this.isClient = event.target?.value == "oui";
     this.form.get('isClient').patchValue(this.isClient);
     this.form.get('isClient').updateValueAndValidity();
   }
-
 }

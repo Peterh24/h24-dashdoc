@@ -1,0 +1,36 @@
+ion-content {
+    --padding-start: 30px;
+    --padding-end: 30px;
+}
+
+ion-spinner {
+    display: block;
+    margin: 30px auto 30px auto;
+}
+
+.address {
+    margin-top: 15px;
+    padding: 15px;
+    border: 1px solid grey;
+    border-radius: 15px;
+}
+
+.address .title {
+    font-weight: bold;
+    font-family: sans-serif;
+}
+
+.address:active {
+    background-color: black;
+    color: white;
+}
+
+h3 {
+    font-size: smaller;
+}
+
+.close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}

@@ -1,15 +1,18 @@
-<app-header [defaultHref]="'/private/tabs/profile/details'"></app-header>
+<app-header [defaultHref]="'/private/tabs/profile'" title="Mes adresses"></app-header>
 
 <ion-content>
   <ion-grid class="page-grid ion-no-padding">
-    <ion-row class="ion-padding-start ion-padding-end">
+    <ion-row *ngIf="!isLoading && address.length > 0" class="searchbar">
       <ion-col>
-        <h2>Adresses</h2>
+        <ion-searchbar #searchbarElem placeholder="Rechercher" class="ion-no-padding" [(ngModel)]="searchAddress" (ionInput)="setFilteredItems(searchAddress)"></ion-searchbar>
       </ion-col>
     </ion-row>
-    <ion-row *ngIf="!isLoading && address.length > 0" class="ion-padding-start ion-padding-end ion-padding-bottom">
+
+    <ion-row>
       <ion-col>
-        <ion-searchbar #searchbarElem placeholder="Rechercher" mode="ios" class="ion-no-padding" [(ngModel)]="searchAddress" (ionInput)="setFilteredItems(searchAddress)"></ion-searchbar>
+        <ion-button shape="round" routerLink="/private/tabs/profile/address/new-address"><ion-icon name="location-outline"></ion-icon> &nbsp; Ajouter une adresse</ion-button>
+        <ion-button shape="round" fill="outline" id="create-folder"><ion-icon name="folder-outline"></ion-icon> &nbsp; Créer un dossier</ion-button>
+        <ion-button class="ion-hide" id="move-to-folder"></ion-button>
       </ion-col>
     </ion-row>
 
@@ -27,6 +30,17 @@
         </p>
       </ion-col>
     </ion-row>
+
+    <ion-row *ngFor="let folder of folders">
+      <ion-col>
+        <div class="folder" [class.selected]="folder === currentFolder" (click)="selectFolder (folder)">
+          <ion-icon name="folder-outline"></ion-icon> &nbsp; &nbsp; 
+          {{ folder }} &nbsp; 
+          <ion-badge slot="end" *ngIf="addressFolderItems (folder)">{{ addressFolderItems (folder) }}</ion-badge>
+        </div>
+      </ion-col>
+    </ion-row>
+
     <ion-row *ngIf="!isLoading && address.length > 0">
       <ion-col>
         <ion-accordion-group>
@@ -37,20 +51,35 @@
               </ion-item-option>
             </ion-item-options>
 
-          <ion-accordion  [value]="item.pk" >
+          <ion-accordion  [value]="item.pk">
 
               <ion-item slot="header" class="ion-align-items-start">
                 <ion-label>
-                  <h3>{{item.name}}</h3>
+                  <ion-chip class="ion-float-right" *ngIf="item.is_destination">Livraison</ion-chip>
+                  <ion-chip class="ion-float-right" *ngIf="item.is_origin">Enlèvement</ion-chip>
+                   <h3>
+                    <ion-icon name="stop-outline" (click)="toggleSelectedAddress (item, $event)" *ngIf="!selectedAddress[item.pk]"></ion-icon> 
+                    <ion-icon name="checkbox-outline" (click)="toggleSelectedAddress (item, $event)" *ngIf="selectedAddress[item.pk]"></ion-icon> &nbsp; 
+                    &nbsp; 
+                    {{item.name}}
+                  </h3>
                   <p>{{item.address}} {{item.postcode}} {{item.city}} {{getCountry(item.country)}}</p>
                 </ion-label>
               </ion-item>
               <div class="content ion-no-padding" slot="content">
+                <div *ngIf="item.company?.name">
+                  <ion-text>Contact: {{item.company.name}} 
+                    <span *ngIf="item.company?.phone_number"> - <a href="tel:{{ item.company.phone_number }}">{{ formatPhone (item.company.phone_number) }}</a></span>
+                  </ion-text>
+                </div>
                 <div *ngIf="item.instructions">
-                  <ion-text>{{item.instructions}}</ion-text>
+                  <ion-text>Instuctions: {{item.instructions}}</ion-text>
                 </div>
                 <div *ngIf="!item.instructions">
                   <ion-text>Pas d'instructions particulières</ion-text>
+                </div>
+                <div class="delete" (click)="onRemoveAddress(item.pk, null, item.is_origin)">
+                  Supprimer l'adresse
                 </div>
               </div>
 
@@ -65,9 +94,42 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-fab slot="fixed" horizontal="end" vertical="bottom" [routerLink]="['/private/tabs/profile/address/new-address']">
-    <ion-fab-button>
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
 </ion-content>
+
+<ion-modal id="create-folder-modal" #createFolderModal trigger="create-folder">
+  <ng-template>
+    <div class="wrapper">
+      <ion-icon name="close-outline" class="ion-float-right" (click)="createFolderModal.dismiss ()"></ion-icon>
+      <div class="title">Création d'un dossier d'adresses</div>
+
+      <ion-input #folderName
+        label="Nom du dossier d'adresses"
+        label-placement="floating"
+        fill="outline"
+        shape="round"
+        autofocus="true"
+        placeholder="Nom du dossier d'adresses">
+      </ion-input>
+
+      <ion-button (click)="createFolder (createFolderModal, folderName.value)"><ion-icon name="folder-outline"></ion-icon> &nbsp; Créer le dossier</ion-button>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<ion-modal id="move-to-folder-modal" #moveToFolderModal trigger="move-to-folder">
+  <ng-template>
+    <div class="wrapper">
+      <ion-icon name="close-outline" class="ion-float-right" (click)="moveToFolderModal.dismiss ()"></ion-icon>
+      <div class="title">Déplacer les adresses selectionnées dans un dossier</div>
+
+      <div class="folder" (click)="moveToFolder (moveToFolderModal, folder)" *ngFor="let folder of folders">
+        <ion-icon name="folder-outline"></ion-icon> &nbsp; &nbsp; 
+        {{ folder }}
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<ion-toolbar *ngIf="haveSelectedAddress ()">
+  <ion-button shape="round" (click)="showMoveToFolderModal ()"><ion-icon name="folder-outline"></ion-icon> &nbsp; Déplacer dans un dossier</ion-button>
+</ion-toolbar>

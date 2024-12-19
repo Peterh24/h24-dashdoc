@@ -1,96 +1,57 @@
-<app-header [defaultHref]="'/private'"></app-header>
+<app-header [defaultHref]="'/private'" title="Informations personnelles"></app-header>
 
-<ion-content cclass="ion-padding" scrollY="false">
+<ion-content cclass="ion-padding">
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <ion-grid class="page-grid">
-      <ion-row>
-        <ion-col>
-          <h2>Informations personnelles</h2>
-        </ion-col>
-      </ion-row>
-      <ion-row class="page-content ion-align-items-center">
-        <ion-col>
-            <ion-grid>
-              <ion-row>
-                <ion-col>
-                  <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
-                    <ion-input type="text" label="Prénom" labelPlacement="floating" formControlName="firstname"></ion-input>
-                  </ion-item>
-                  <div class="ion-margin-bottom" *ngIf="!form.get('firstname').valid && form.get('firstname').touched">
-                    <ion-label class="validator-error">
-                      Merci d'indiquer votre prenom
-                    </ion-label>
-                  </div>
-                </ion-col>
-                <ion-col>
-                  <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
-                    <ion-input type="text" label="Nom" labelPlacement="floating" formControlName="lastname"></ion-input>
-                  </ion-item>
-                  <div class="ion-margin-bottom" *ngIf="!form.get('lastname').valid && form.get('lastname').touched">
-                    <ion-label class="validator-error">
-                      Merci d'indiquer votre nom
-                    </ion-label>
-                  </div>
-                </ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col>
-                  <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
-                    <ion-input type="text" label="Numéro de téléphone" labelPlacement="floating" formControlName="phone"></ion-input>
-                  </ion-item>
-                  <div class="ion-margin-bottom" *ngIf="!form.get('phone').valid && form.get('phone').touched">
-                    <ion-label class="validator-error">
-                      {{regexErrors['phone']}}
-                    </ion-label>
-                  </div>
-                </ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col>
-                  <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
-                    <ion-input type="email" label="Adresse e-mail" labelPlacement="floating" formControlName="email"></ion-input>
-                  </ion-item>
-                  <div class="ion-margin-bottom" *ngIf="!form.get('email').valid && form.get('email').touched">
-                    <ion-label class="validator-error">
-                      {{regexErrors['email']}}
-                    </ion-label>
-                  </div>
-                </ion-col>
-              </ion-row>
-              <ion-row class="ion-align-items-center">
-                <ion-col class="ion-text-right">
-                  <ion-button type="submit" fill="outline" color="primary" shape="round" [disabled]="!form.valid">
-                    Enregistrer
-                  </ion-button>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+
+    <ion-list lines="none">
+      <ion-item>
+        <ion-input
+          label="Prénom"
+          label-placement="floating"
+          placeholder="Prénom"
+          errorText="Merci d'indiquer votre prénom"
+          formControlName="firstname">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          label="Nom"
+          label-placement="floating"
+          placeholder="Nom"
+          errorText="Merci d'indiquer votre nom"
+          formControlName="lastname">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          label="Téléphone"
+          label-placement="floating"
+          placeholder="Téléphone"
+          errorText="Merci d'indiquer votre téléphone"
+          formControlName="phone">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          label="Email"
+          label-placement="floating"
+          placeholder="Email"
+          errorText="Merci d'indiquer votre email"
+          formControlName="email">
+        </ion-input>
+      </ion-item>
+
+    </ion-list>
+
+    <div class="alert-success" *ngIf="success">
+      Vos informations ont été enregistrées avec succès
+    </div>
+
+    <ion-button type="submit" class="submit" [disabled]="!form.valid || !form.dirty">
+      Enregistrer les informations
+    </ion-button>
   </form>
 </ion-content>
-
-<ion-footer class="ion-no-border">
-<ion-buttons class="ion-justify-content-around ion-padding">
-  <ion-button type="button" color="primary" fill="solid" strong="true" [routerLink]="['/private/tabs/profile/change-password']" class="btn-cat">
-    <span class="custom-btn">
-      <ion-icon name="shield-half" class="ion-margin" size="large"></ion-icon>
-      <ion-text class="ion-margin-bottom">Mot de passe</ion-text>
-    </span>
-  </ion-button>
-  <ion-button type="button" color="primary" fill="solid" strong="true" [routerLink]="['/private/tabs/profile/address']" class="btn-cat">
-    <span class="custom-btn">
-      <ion-icon name="location" size="large" class="ion-margin"></ion-icon>
-      <ion-text class="ion-margin-bottom">Mes adresses</ion-text>
-    </span>
-  </ion-button>
-  <ion-button type="button" color="primary" fill="solid" strong="true" [routerLink]="['/private/tabs/profile/invoice']" class="btn-cat">
-    <span class="custom-btn">
-      <ion-icon name="receipt" size="large" class="ion-margin"></ion-icon>
-      <ion-text class="ion-margin-bottom">Mes factures</ion-text>
-    </span>
-  </ion-button>
-</ion-buttons>
-
-</ion-footer>

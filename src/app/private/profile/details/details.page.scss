@@ -1,17 +1,27 @@
-ion-content {
-  --padding-top: 56px;
+ion-content  {
+  --padding-top: 30px;
+  --padding-start: 30px;
+  --padding-end: 30px;
 }
 
-ion-button.btn-cat {
-  height: auto;
-  --border-radius: 8px!important;
-  --padding-end: 4px;
-  --padding-start: 4px;
-  .custom-btn {
-    display: flex;
-    border-radius: 15px;
-    flex-direction: column;
-    align-items: center;
-  }
+.user-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  text-align: center;
 }
 
+.user-header ion-icon {
+  font-size: 30pt;
+}
+ 
+.user-infos {
+  margin-top: 60px;
+}
+
+ion-button.submit {
+  display: block;
+  margin-top: 30px;
+}

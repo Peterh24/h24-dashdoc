@@ -1,0 +1,109 @@
+ion-content {
+    --padding-start: 20px;
+    --padding-end: 20px;
+}
+
+h2 {
+    font-size: 14pt;
+    position: relative;
+}
+
+h3 {
+    font-size: 12pt;
+    position: relative;
+}
+
+h4 {
+    font-size: 10pt;
+    position: relative;
+}
+
+b {
+    font-family: sans-serif;
+}
+
+ion-button {
+    display: block;
+}
+
+ion-modal {
+    & {
+        --width: fit-content;
+        --min-width: 250px;
+        --height: fit-content;
+        --border-radius: 6px;
+        --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+    }
+
+    .wrapper {
+        padding: 15px;
+    }
+
+    .title {
+        font-weight: bold;
+        font-family: sans-serif;
+    }
+}
+
+.delivery {
+    & {
+        line-height: 2lh;
+    }
+
+    .name {
+        font-weight: bold;
+        font-family: sans-serif;
+    }
+}
+.type {
+    & {
+        position: relative;
+        max-height: 100px;
+        object-fit: cover;
+        overflow: hidden;
+        border-radius: 15px;
+        background-color: black;
+    }
+
+    .title {
+        position: absolute;
+        left: 20px;
+        bottom: 20px;
+        color: white;
+        font-family: sans-serif;
+        font-weight: bold;    
+    }
+
+    img {
+        -webkit-mask-image: -webkit-gradient(linear, left 0%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)))
+    }
+}
+
+
+.vehicle {
+    img {
+        display: block;
+        max-width: 200px;
+        margin: auto;
+    }
+}
+
+.edit-button {
+    position: absolute;
+    right: 0;
+    font-size: 18pt;
+    font-weight: bold;
+}
+
+ion-accordion {
+    & {
+        border: 1px solid black;
+        border-radius: 15px;
+        padding: 10px 20px 10px 10px;
+        margin-bottom: 20px;
+    }
+
+    ion-icon {
+        padding-right: 20px;
+    }
+}

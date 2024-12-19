@@ -1,95 +1,87 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar no-border>
-    <ion-title class="ion-text-center">
-      <img class="header-logo" src="https://h24-public-website.s3.eu-west-3.amazonaws.com/assets/logo-noir-sur-fond-blanc.jpeg" alt="H24 Transports">
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content cclass="ion-padding" scrollY="false">
+<ion-content cclass="ion-padding">
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <ion-grid class="page-grid">
-      <ion-row class="page-content ion-align-items-center">
-        <ion-col>
-            <ion-grid>
-              <ion-row>
-                <ion-col>
-                  <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
-                    <ion-input type="text" label="Prénom" labelPlacement="floating" formControlName="firstname"></ion-input>
-                  </ion-item>
-                  <div class="ion-margin-bottom" *ngIf="!form.get('firstname').valid && form.get('firstname').touched">
-                    <ion-label class="validator-error">
-                      Merci d'indiquer votre prenom
-                    </ion-label>
-                  </div>
-                </ion-col>
-                <ion-col>
-                  <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
-                    <ion-input type="text" label="Nom" labelPlacement="floating" formControlName="lastname"></ion-input>
-                  </ion-item>
-                  <div class="ion-margin-bottom" *ngIf="!form.get('lastname').valid && form.get('lastname').touched">
-                    <ion-label class="validator-error">
-                      Merci d'indiquer votre nom
-                    </ion-label>
-                  </div>
-                </ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col>
-                  <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
-                    <ion-input type="text" label="Numéro de téléphone" labelPlacement="floating" formControlName="phone"></ion-input>
-                  </ion-item>
-                  <div class="ion-margin-bottom" *ngIf="!form.get('phone').valid && form.get('phone').touched">
-                    <ion-label class="validator-error">
-                      {{regexErrors['phone']}}
-                    </ion-label>
-                  </div>
-                </ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col>
-                  <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
-                    <ion-input type="email" label="Adresse e-mail" labelPlacement="floating" formControlName="email"></ion-input>
-                  </ion-item>
-                  <div class="ion-margin-bottom" *ngIf="!form.get('email').valid && form.get('email').touched">
-                    <ion-label class="validator-error">
-                      {{regexErrors['email']}}
-                    </ion-label>
-                  </div>
-                </ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col>
-                  <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
-                    <ion-input type="password" label="Mot de passe" labelPlacement="floating" formControlName="password"></ion-input>
-                  </ion-item>
-                  <div class="ion-margin-bottom" *ngIf="!form.get('password').valid && form.get('password').touched">
-                    <ion-label class="validator-error">
-                      {{regexErrors['password']}}
-                    </ion-label>
-                  </div>
-                </ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col>
-                  <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
-                    <ion-toggle (ionChange)="onAlreadyClientChange()" labelPlacement="start" mode="ios">Déja client ?</ion-toggle>
-                  </ion-item>
-                </ion-col>
-              </ion-row>
-              <ion-row class="ion-align-items-center">
-                <ion-col size="auto">
-                  <ion-back-button type="button" text="Login" defaultHref="/auth"></ion-back-button>
-                </ion-col>
-                <ion-col class="ion-text-right">
-                  <ion-button type="submit" color="primary" shape="round" [disabled]="!form.valid">
-                    Créer mon compte
-                  </ion-button>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+
+    <div>
+      <div class="logo-container">
+        <img class="header-logo" src="https://h24-public-website.s3.eu-west-3.amazonaws.com/assets/logo-noir-sur-fond-blanc.jpeg" alt="H24 Transports">
+      </div>
+      <h1 class="ion-text-nowrap">
+        Créer un compte
+      </h1>
+    </div>
+
+    <div class="container">
+      <div class="user-name">
+        <div>
+          <ion-input type="text" label="Nom" labelPlacement="floating" fill="outline" shape="round"
+            formControlName="lastname"></ion-input>
+          <div *ngIf="!form.get('lastname').valid && form.get('lastname').touched">
+            <ion-label class="validator-error">
+              Merci d'indiquer votre nom
+            </ion-label>
+          </div>
+        </div>
+        <span>&nbsp; &nbsp;</span>
+        <div>
+          <ion-input type="text" label="Prénom" labelPlacement="floating" fill="outline" shape="round"
+            formControlName="firstname"></ion-input>
+          <div *ngIf="!form.get('firstname').valid && form.get('firstname').touched">
+            <ion-label class="validator-error">
+              Merci d'indiquer votre prenom
+            </ion-label>
+          </div>
+        </div>
+      </div>
+      <div>
+        <ion-input type="text" label="Numéro de téléphone" fill="outline" shape="round" labelPlacement="floating" formControlName="phone"></ion-input>
+        <div *ngIf="!form.get('phone').valid && form.get('phone').touched">
+          <ion-label class="validator-error">
+            {{regexErrors['phone']}}
+          </ion-label>
+        </div>
+      </div>
+      <div>
+        <ion-input type="email" label="Adresse e-mail" labelPlacement="floating" fill="outline" shape="round" formControlName="email"></ion-input>
+        <div *ngIf="!form.get('email').valid && form.get('email').touched">
+          <ion-label class="validator-error">
+            {{regexErrors['email']}}
+          </ion-label>
+        </div>
+      </div>
+      <div>
+        <ion-input type="password" label="Mot de passe" labelPlacement="floating" fill="outline" shape="round" formControlName="password"></ion-input>
+        <div *ngIf="!form.get('password').valid && form.get('password').touched">
+          <ion-label class="validator-error">
+            {{regexErrors['password']}}
+          </ion-label>
+        </div>
+        <div class="password-infos">
+          Votre mot de passe:
+          <ul>
+            <li>doit contenir 8 caractères minimum</li>
+            <li>Une lettre majuscule, une minuscule, un chiffre
+            <li>Un caractère spécial <br> (@ $ ! % * ? &)</li>
+          </ul>
+        </div>
+      </div>
+     <div class="is-client">
+        <div>Déja client ?</div>
+        <ion-radio-group value="start" (ionChange)="onAlreadyClientChange ($event)">
+          <ion-radio value="oui" labelPlacement="start">Oui</ion-radio>
+          &nbsp; 
+          <ion-radio value="non" labelPlacement="start">Non</ion-radio>
+        </ion-radio-group>
+      </div>
+      <br>
+      <ion-button type="submit" color="primary" shape="round" [disabled]="!form.valid">
+        Créer un compte
+      </ion-button>
+    </div>
   </form>
 </ion-content>
+
+<ion-toolbar>
+  <div>
+    Déjà un compte ? <span class="login" routerLink="/auth">Connexion</span>
+  </div>
+</ion-toolbar>

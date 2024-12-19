@@ -1,0 +1,185 @@
+<ion-content [fullscreen]="true">
+  <div [formGroup]="mainForm" (ngSubmit)="onSubmit()">
+    <ion-icon name="close-outline" class="close-button" (click)="closeModal ()"></ion-icon>
+    <div *ngIf="enableOrigin">
+      <h3>Ajouter un enlèvement</h3>
+      <div [ngTemplateOutlet]="delivery" [ngTemplateOutletContext]="{ type: 'origin', form: originForm, address: origin, errors: originErrors }"></div>
+    </div>
+    <br>
+    <div *ngIf="enableDestination">
+      <h3>Ajouter une livraison</h3>
+      <div [ngTemplateOutlet]="delivery" [ngTemplateOutletContext]="{ type: 'destination', form: destinationForm, address: destination, errors: destinationErrors }"></div>
+    </div>
+
+    <div [formGroup]="otherForm" *ngIf="origin">
+      <h3>Ajouter une marchandise</h3>
+
+      <div>
+        <div class="merchandises">
+          <div class="merchandise" *ngFor="let merchandise of merchandises" (click)="toggleMerchandise(merchandise)">
+            <ion-icon name="radio-button-on-outline" class="checkbox" *ngIf="merchandisesSelected[merchandise]"></ion-icon>
+            <ion-icon name="radio-button-off-outline" class="checkbox" *ngIf="!merchandisesSelected[merchandise]"></ion-icon>
+            <div class="title">{{ merchandise }}</div>
+            <img src="{{ merchandisesUrl }}{{ merchandiseIcon[merchandise] }}.png">
+          </div>
+        </div>
+      </div>
+
+      <ion-input #merchandisesOther
+        label="Autres marchandises"
+        label-placement="floating"
+        fill="outline"
+        shape="round"
+        placeholder="Rajouter une marchandise manuellement">
+      </ion-input>
+
+    </div>
+    <br>
+    <h3>Ajouter une pièce jointe</h3>
+    <i>Taille du fichier : 10Mo max .jpeg, .png, .pdf</i>
+    <div class="attachment" [class.selected]="!!fileToUpload" (click)="askFileToUpload ()">
+      <ion-icon name="download-outline"></ion-icon>
+      <div *ngIf="!!fileToUpload">{{ fileToUpload.name }}</div>
+      
+      <div *ngIf="!fileToUpload">
+        Joindre un fichier à la demande 
+      </div>
+
+      <input id="file-upload" class="ion-hide" type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xslx" (change)="onUploadFile($event)" />
+    </div>
+    <br>
+    <ion-button (click)="onSubmit()">Valider la demande</ion-button>
+
+    <!-- Delivery template -->
+    <ng-template #delivery let-type="type" let-address="address" let-form="form" let-errors="errors">
+      <div [formGroup]="form">
+        <div class="trash" (click)="deleteAddress (type)" *ngIf="address">
+          <ion-icon name="trash-outline"></ion-icon>
+        </div>  
+        <fieldset class="custom-control address" (click)="setAddress (type)">
+            <legend>Addresse d'enlèvement</legend>
+            <div *ngIf="!address">Sélectionner</div>
+            <div class="title" *ngIf="address">{{ address.name }}</div>
+            <div *ngIf="address">{{ address.address }} {{ address.city }} {{ address.postcode }}</div>
+        </fieldset>
+      </div>
+
+      <div>
+        <div class="trash">
+          <ion-icon name="trash-outline"></ion-icon>
+        </div>  
+        <fieldset class="custom-control contact" (click)="setContact ()">
+          <legend>Contact</legend>
+          <div *ngIf="!contact">Sélectionner</div>
+          <div *ngIf="contact"></div>
+        </fieldset>
+      </div>
+
+      <ion-input
+        label="Référence"
+        label-placement="floating"
+        fill="outline"
+        shape="round"
+        placeholder="Référence" 
+        [formControl]="form.get('reference')">
+      </ion-input>
+
+      <div *ngIf="address">
+        <h3>Date de l'enlèvement demandée</h3>
+
+        <div class="slot">
+          <div class="custom-control day" [class.error]="errors['day']" id="{{ type }}_day_select">
+            <span *ngIf="!form.value.day">Selectionner</span>
+            <span *ngIf="form.value.day">{{ formatDay(form.value.day) }}</span>
+          </div>
+          <div class="error" *ngIf="errors['day']">Veuiller saisir une date</div>
+
+          <div class="time">
+            <label>Entre</label>
+            <div class="custom-control" [class.error]="errors['time_start']" id="{{ type }}_time_start_select">
+              <span *ngIf="!form.value.time_start">Selectionner</span>
+              <span *ngIf="form.value.time_start">{{ form.value.time_start }}</span>
+            </div> &nbsp; &nbsp;
+            <!-- TODO: minTime >  originTimeStart -->
+            <label>Et</label>
+            <div class="custom-control"  [class.error]="errors['time_end']" id="{{ type }}_time_end_select">
+              <span *ngIf="!form.value.time_end">Selectionner</span>
+              <span *ngIf="form.value.time_end">{{ form.value.time_end }}</span>
+            </div>
+          </div>
+          <div class="error" *ngIf="errors['time_start']">Veuiller saisir un horaire</div>
+
+          <div class="ion-hide">
+            <ion-datetime-button datetime="{{ type }}_day"></ion-datetime-button>
+            <label>Entre</label> <ion-datetime-button datetime="{{ type }}_time_start"></ion-datetime-button> &nbsp; &nbsp;
+            <!-- TODO: minTime >  originTimeStart -->
+            <label>Et</label> <ion-datetime-button datetime="{{ type }}_time_end"></ion-datetime-button>
+          </div>
+
+          <ion-modal [keepContentsMounted]="true" trigger="{{ type }}_day_select" #dayInput>
+            <ng-template>
+              <ion-datetime 
+                id="{{ type }}_day" 
+                presentation="date"
+                [formatOptions]="{ date: { weekday: 'long', month: 'long', day: '2-digit' }}"
+                (ionChange)="setDay(form, $event, dayInput)"
+                [min]="getDateTimeMin(type)"
+                [max]="getDateTimeMax(type)">
+              </ion-datetime>
+            </ng-template>
+          </ion-modal>
+
+          <!-- TODO: Does not works -->
+          <ion-modal [keepContentsMounted]="true" trigger="{{ type }}_time_start_select">
+            <ng-template>
+              <ion-datetime 
+                id="{{ type }}_time_start" 
+                presentation="time"
+                (ionChange)="setSlot(form, 'time_start', $event)"
+                minuteValues="0,5,10,15,20,25,30,35,40,45,50,55"
+                [min]="getDateTimeMin(type)"
+                [max]="getDateTimeMax(type)">
+              </ion-datetime>
+            </ng-template>
+          </ion-modal>
+
+          <ion-modal [keepContentsMounted]="true" trigger="{{ type }}_time_end_select">
+            <ng-template>
+              <ion-datetime 
+                id="{{ type }}_time_end" 
+                presentation="time"
+                (ionChange)="setSlot(form, 'time_end', $event)"
+                minuteValues="0,5,10,15,20,25,30,35,40,45,50,55"
+                [min]="getDateTimeMin(type)"
+                [max]="getDateTimeMax(type)">
+              </ion-datetime>
+            </ng-template>
+          </ion-modal>
+        </div>
+
+        <h3>Options</h3>
+
+        <h4>Demander un manutentionnaire en plus</h4>
+
+        <div class="custom-control handlers">
+          <ion-icon name="trash-outline" (click)="resetHandlers (form)"></ion-icon>
+          <div>{{ form.value.handlers }}</div>
+          <ion-icon name="add-outline" (click)="addHandlers (form)"></ion-icon>
+        </div>
+
+        <div class="handler">
+          <!-- TODO: manutentionnaires -->
+        </div>
+
+        <ion-input
+          label="Instructions à l'enlèvement"
+          label-placement="floating"
+          fill="outline"
+          shape="round"
+          placeholder="Entrez les instructions à l'enlèvement"
+          [formControl]="form.get('instructions')">
+        </ion-input>
+      </div>
+    </ng-template>
+  </div>
+</ion-content>

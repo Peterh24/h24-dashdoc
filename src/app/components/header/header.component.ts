@@ -11,7 +11,8 @@ import { CompanyService } from 'src/app/services/company.service';
 export class HeaderComponent  implements OnInit {
   @Input() defaultHref: string;
   @Input() slot: string = 'start';
-
+  @Input() title: string;
+  
   constructor(
     private authService: AuthService,
     public companyService: CompanyService,

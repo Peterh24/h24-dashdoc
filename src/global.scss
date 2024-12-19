@@ -123,3 +123,58 @@ h2 {
 		transform: rotate(720deg);
 	}
 }
+
+:root {
+  /** Alerts **/
+  .alert-info {
+    background-color: #C6D9FE;
+    color: #1455D9;
+  }
+
+  .alert-success {
+    background-color: #BDFBD0;
+    color: #00BA51
+  }
+
+  .alert-warning {
+    background-color: #FFEBC7;
+    color: #EBA21B;
+  }
+
+  .alert-error {
+    background-color: #FEDACF;
+    color: #E54A1B;
+  }
+
+  .alert-info, .alert-success, .alert-warning, .alert-error {
+    & {
+      border-radius: 15px;
+      margin-top: 15px;
+      margin-bottom: 15px;
+      padding: 15px;
+    }
+
+    & .title {
+      font-weight: bold;
+    }
+  }
+
+  /** Inputs **/
+  .input-fill-outline.input-shape-round {
+    --border-radius: 15px;
+  }
+
+  /** Buttons **/
+  ion-button {
+    --border-radius: 15px;
+    --padding-top: 10px;
+    --padding-bottom: 10px;
+  }
+
+  @media (min-width: 768px) {
+    ion-app {
+      max-width: 600px;
+      margin: auto;
+    }
+  }
+}

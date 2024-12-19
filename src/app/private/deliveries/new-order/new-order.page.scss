@@ -1,0 +1,50 @@
+ion-content {
+    --padding-start: 20px;
+    --padding-end: 20px;
+    height: 100%;
+}
+
+.container {
+    height: 100%;
+}
+
+.cards {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.card {
+    position: relative;
+    flex-basis: 33%;
+    border: 1px black;
+    border-radius: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    background-color: black;
+}
+
+.card img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    -webkit-mask-image: -webkit-gradient(linear, left 0%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)))
+}
+
+.card .title {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    color: white;
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: 12pt;
+}
+
+ion-button {
+    display: block;
+}

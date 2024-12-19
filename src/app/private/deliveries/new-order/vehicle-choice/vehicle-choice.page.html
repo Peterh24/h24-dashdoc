@@ -1,0 +1,94 @@
+<app-header *ngIf="!isModal" [defaultHref]="'/private/tabs/home'"></app-header>
+
+<ion-header *ngIf="isModal" >
+  <ion-toolbar>
+    <ion-title>
+      <h2>Changer de Vehicule</h2>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="medium" (click)="cancel()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="currentVehicle">
+  <!-- TODO: <app-progress-bar [current]="0" [next]="0.20" ></app-progress-bar> -->
+
+  <ion-grid class="page-grid">
+    <ion-row>
+      <ion-col>
+        <h2>Sélection du vehicule {{isModal}}</h2>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="swiper-wrap">
+        <ion-buttons class="ion-justify-content-between">
+          <ion-button (click)="goPrev()" color="tertiary" [disabled]="currentIndex === 0">
+            <ion-icon slot="icon-only" name="arrow-back-circle"></ion-icon>
+          </ion-button>
+          <ion-button (click)="goNext()" color="tertiary " [disabled]="currentIndex === vehicles.length -1">
+            <ion-icon slot="icon-only" name="arrow-forward-circle"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+        <swiper-container *ngIf="vehicles" #swiper [slidesPerView]="1" (slidechange)="onSlideChange($event)">
+          <swiper-slide *ngFor="let vehicle of vehicles">
+            <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/cars/' + vehicle.licensePlate + '.gif'"></ion-img>
+          </swiper-slide>
+        </swiper-container>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <div class="vehicles-list">
+          <ion-img class="vehicle"
+            [class.selected]="currentIndex === index"
+            src="assets/trucks/{{ vehicle.licensePlate }}.png"
+            (click)="onSwitchVehicle (vehicle)"
+            *ngFor="let vehicle of vehicles; let index = index">
+          </ion-img>
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <h3>Utilitaire : {{currentVehicle.type}} {{currentVehicle.hayon ? 'avec Hayon' : ''}}</h3>
+      </ion-col>
+    </ion-row>
+    <ion-row class="description">
+      <ion-col>
+        <span>Longueur du véhicule</span>
+        {{currentVehicle.length}} mètres
+      </ion-col>
+      <ion-col>
+        <span>Hauteur du véhicule</span>
+        {{currentVehicle.heightCar}} mètres
+    
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="description">
+      <ion-col>
+            <span>Longeur utile</span>
+        {{currentVehicle.depth}} mètres
+      </ion-col>
+      <ion-col>
+        <span>Hauteur utile</span>
+        {{currentVehicle.heightChest}} mètres
+      </ion-col>
+    </ion-row>
+    <ion-row class="description">
+      <ion-col>
+        <span>Charge utile</span>
+        {{currentVehicle.payload}} kg
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom" (click)="onVehicleSelected(currentVehicle.licensePlate)">
+    <ion-button>
+      A partir de {{currentVehicle.price}} €
+      <ion-icon name="arrow-forward" class="ion-margin-start"></ion-icon>
+    </ion-button>
+  </ion-fab>
+</ion-content>

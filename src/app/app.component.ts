@@ -28,8 +28,6 @@ export class AppComponent {
     await this.storage.create();
     await SplashScreen.hide();
 
-    this.removeAllDeliveredNotifications ();
-
     App.addListener ('backButton', data => {
       this.modalCtrl.getTop().then ((modal) => {
         if (modal) {
@@ -42,16 +40,8 @@ export class AppComponent {
       });
     });
    
-    // TODO: enlever la notofication quand l'utlisateur visite la 
-    // page concernée
     App.addListener ('pause', () => {
-      this.removeAllDeliveredNotifications ();
-    });
-  }
 
-  removeAllDeliveredNotifications () {
-    if (!this.platform.is('desktop') && !this.platform.is ('mobileweb')) {
-      PushNotifications.removeAllDeliveredNotifications ();
-    }
+    });
   }
 }

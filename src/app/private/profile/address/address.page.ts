@@ -19,6 +19,12 @@ export class AddressPage implements OnInit {
   searchAddress: string;
   jsonData: any;
   startIndex: number = 0;
+
+  currentFolder: string;
+  folders: string[] = [];
+  addressFolder: any;
+  selectedAddress: any = {};
+
   @ViewChild("searchbarElem", { read: ElementRef }) private searchbarElem: ElementRef;
   constructor(
     private addressService: AddressService,
@@ -44,11 +50,41 @@ export class AddressPage implements OnInit {
     })
 
     this.isLoading = true;
+    this.selectedAddress = {};
+    this.currentFolder = 'root';
+
     this.addressService.fetchAddress().subscribe((address) => {
-      this.address = address;
-      this.jsonData = address;
       this.isLoading = false;
+      this.loadAddress (address);
     });
+  }
+
+  loadAddress (address: any) {
+    this.address = address;
+    this.jsonData = address;
+    this.folders = ["Mes loueurs", "Mes studios",  "Mes favorites"];
+    this.folders.sort ((a,b) => a.localeCompare (b));
+
+    this.addressFolder = {};
+    
+    // TODO pour tester
+    this.address.forEach ((a: any, index, arr: any[]) => {
+      if (index > 5) {
+        a.folder = this.folders[index % 2];
+      } else {
+        a.folder = 'root';
+      }
+
+      if (!this.addressFolder[a.folder]) {
+        this.addressFolder[a.folder] = [];
+      }
+
+      this.addressFolder[a.folder].push (a);
+    });
+
+    this.selectFolder ('root');
+
+    console.log (this.address, this.addressFolder);
   }
 
   getCountry(countryCode: string): string {
@@ -57,7 +93,7 @@ export class AddressPage implements OnInit {
 
   setFilteredItems(searchTerm: string) {
     if (searchTerm.trim() === '') {
-      this.jsonData = this.address
+      this.selectFolder (this.currentFolder);
     } else {
       this.jsonData = this.address.filter((item) => {
         return item.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -82,7 +118,9 @@ export class AddressPage implements OnInit {
           loadingElement.dismiss();
           this.isLoading = false;
           this.jsonData = addresses;
-          slidingElement.close();
+          if (slidingElement) {
+            slidingElement.close();
+          }
         });
       });
     } else {
@@ -94,5 +132,80 @@ export class AddressPage implements OnInit {
         alertElement.present()
       })
     }
+  }
+
+  toggleSelectedAddress (address: any, event: any) {
+    event.preventDefault ();
+    event.stopPropagation ();
+    if (this.selectedAddress[address.pk]) {
+      delete this.selectedAddress[address.pk];
+    } else {
+      this.selectedAddress[address.pk] = address;
+    }
+  }
+
+  haveSelectedAddress () {
+    return Object.keys (this.selectedAddress).length > 0;
+  }
+
+  createFolder (modal: any, name: any) {
+    this.folders.push (name);
+    this.folders.sort ((a,b) => a.localeCompare (b));
+    modal.dismiss ();
+  }
+
+  showMoveToFolderModal () {
+    document.getElementById ("move-to-folder")?.click ();
+  }
+
+  selectFolder (folder: string) {
+    if (this.currentFolder === folder) {
+      this.currentFolder = 'root';
+    } else {
+      this.currentFolder = folder;
+    }
+
+    this.jsonData = this.address.filter ((address: any) => address.folder === this.currentFolder);
+    this.jsonData.sort ((a: any, b: any) => a.name.localeCompare (b.name));
+
+    if (this.searchbarElem?.nativeElement) {
+      this.searchbarElem.nativeElement.value = '';
+    }
+  }
+
+  addressFolderItems (folder: string) {
+    if (this.addressFolder[folder]) {
+      return this.addressFolder[folder].length;
+    } else {
+      return 0;
+    }
+  }
+
+  moveToFolder (modal: any, folder: string) {
+    Object.values(this.selectedAddress).forEach ((address: any) => {
+      if (!this.addressFolder[folder]) {
+        this.addressFolder[folder] = [];
+      }
+
+      const addressFolder = address.folder || 'root';
+      if (this.addressFolder[addressFolder]) {
+        this.addressFolder[addressFolder] = this.addressFolder[addressFolder].filter ((a: any) => address.pk != a.pk);
+      }
+
+      address.folder = folder;
+      this.addressFolder[folder].push (address);
+    });
+
+    this.selectedAddress = {};
+
+    modal.dismiss ();
+
+    this.selectFolder (this.currentFolder);
+
+    console.log (9, this.addressFolder);
+  }
+
+  formatPhone (phone: string) {
+    return phone.replace (/^\+33/, '0').replace (/\s+/, '').replace (/(\d\d)/g, "$1 ");
   }
 }

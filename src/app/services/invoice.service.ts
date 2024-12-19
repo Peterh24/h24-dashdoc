@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Storage } from '@ionic/storage-angular';
 import { BehaviorSubject, Observable, from, map, switchMap, tap } from 'rxjs';
 import { Customer, Invoice, Item } from '../private/profile/invoice/invoice.model';
+import { API_URL } from './constants';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,7 @@ export class InvoiceService {
   fetchInvoices(): Observable<Invoice[]> {
     return from(this.storage.get('DASHDOC_COMPANY')).pipe(
       switchMap(companyPk => {
-        return this.http.get(`https://api.h24transports.com/api/invoices/${companyPk}/`).pipe(
+        return this.http.get(`${API_URL}invoices/${companyPk}/`).pipe(
           map((resData: any) => {
             const invoices: Invoice[] = [];
             resData.invoices.forEach((jsonData: any) => {

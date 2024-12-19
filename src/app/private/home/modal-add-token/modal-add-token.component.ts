@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
+/**
+ * @deprecated TODO
+ */
+
 @Component({
   selector: 'app-modal-add-token',
   templateUrl: './modal-add-token.component.html',

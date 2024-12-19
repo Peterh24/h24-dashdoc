@@ -1,62 +1,52 @@
-<div class="logo-container ion-padding-bottom">
-  <img class="header-logo" src="https://h24-public-website.s3.eu-west-3.amazonaws.com/assets/logo-noir-sur-fond-blanc.jpeg" alt="H24 Transports">
-</div>
-
-<ion-content class="ion-padding" scrollY="false">
+<ion-content class="ion-padding">
   <form [formGroup]="form">
-    <ion-grid class="page-grid">
-      <ion-row class="page-content ion-align-items-center">
-        <ion-col>
-            <ion-grid class="ion-no-padding">
-              <ion-row>
-                <ion-col>
-                  <ion-list>
-                    <ion-item class="ion-margin-bottom ion-no-padding" lines="full">
-                      <ion-icon name="mail" size="small" class="ion-margin-end" color="primary"></ion-icon>
-                      <ion-input type="email" label="Adresse e-mail" labelPlacement="floating" formControlName="email"></ion-input>
-                    </ion-item>
-                    <div  class="ion-margin-bottom" *ngIf="!form.get('email').valid && form.get('email').touched">
-                      <ion-label color="danger">
-                        {{regexErrors['email']}}
-                      </ion-label>
-                    </div>
-                    <ion-item lines="full" class="ion-no-padding ion-margin-bottom">
-                      <ion-icon name="lock-closed" size="small" class="ion-margin-end" color="primary"></ion-icon>
-                      <ion-input type="password" label="Mot de passe" labelPlacement="floating" formControlName="password"></ion-input>
-                    </ion-item>
-                    <div class="ion-margin-bottom" *ngIf="!form.get('password').valid && form.get('password').touched">
-                      <ion-label color="danger">
-                        Merci de renseigner votre mot de passe
-                      </ion-label>
-                    </div>
-                    <ion-item lines="none" class="ion-no-padding">
-                      <ion-toggle (ionChange)="onRememberChange()" [checked]="isRemember" slot="start" color="primary" labelPlacement="end" mode="ios">Se souvenir de moi</ion-toggle>
-                    </ion-item>
-                  </ion-list>
-                </ion-col>
-              </ion-row>
-              <ion-row class="ion-justify-content-between">
-                <ion-col>
-                  <ion-button [routerLink]="['/forgot-password']" type="button" class="btn-forgot ion-no-padding" color="primary" fill="clear">Mot de passe oublié ?</ion-button>
-                </ion-col>
-                <ion-col class="ion-text-right">
-                    <ion-button (click)="onSubmit()" color="primary" shape="round" [disabled]="!form.valid">
-                      Connexion
-                    </ion-button>
-                </ion-col>
-              </ion-row>
-              <ion-row class="ion-margin-top">
-                <ion-col class="ion-text-center">
-                  <label>
-                    <ion-text>Vous n’êtes pas encore inscrit ?</ion-text>
-                    <div class="separator"></div>
-                    <ion-button [routerLink]="['/sign-up']" type="button" class="btn-forgot" shape="round" color="primary" fill="outline">Demandez votre accès</ion-button>
-                  </label>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+    <div>
+      <div class="logo-container">
+        <img class="header-logo" src="https://h24-public-website.s3.eu-west-3.amazonaws.com/assets/logo-noir-sur-fond-blanc.jpeg" alt="H24 Transports">
+      </div>
+      <h1 class="ion-text-nowrap">
+        Le transport <br>
+        fiable et efficace
+      </h1>
+    </div>
+
+    <div>
+      <ion-input
+        label="Adresse email"
+        type="email"
+        autocomplete="email"
+        label-placement="floating"
+        fill="outline"
+        shape="round"
+        placeholder="Adresse email"
+        errorText="{{ regexErrors['email'] }}"
+        formControlName="email">
+      </ion-input>
+
+      <ion-input
+        label="Mot de passe"
+        type="password"
+        label-placement="floating"
+        fill="outline"
+        shape="round"
+        placeholder="Mot de passe"
+        errorText="Merci d'indiquer un mot de passe valide"
+        formControlName="password">
+      </ion-input>
+
+      <div class="ion-text-end">
+        <ion-button [routerLink]="['/forgot-password']" type="button" class="btn-forgot ion-no-padding ion-no-margin" color="primary" fill="clear">Mot de passe oublié ?</ion-button>
+      </div>
+
+      <div class="buttons">
+        <ion-button (click)="onSubmit()" color="primary" shape="round" [disabled]="!form.valid">
+          Connexion
+        </ion-button>
+
+        <ion-button routerLink="/sign-up" shape="round" fill="outline">
+          Créer un compte
+        </ion-button>
+      </div>
+    </div>
   </form>
 </ion-content>

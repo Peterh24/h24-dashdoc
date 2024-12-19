@@ -22,7 +22,7 @@ export class PrivatePage {
   userHasChooseCompany: boolean;
   constructor(
     private platform: Platform,
-    private authService: AuthService,
+    public authService: AuthService,
     private router: Router,
     private companyService: CompanyService
   ) { }

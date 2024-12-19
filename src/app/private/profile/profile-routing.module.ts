@@ -6,8 +6,7 @@ import { ProfilePage } from './profile.page';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'details',
-    pathMatch: 'full'
+    component: ProfilePage
   },
   {
     path: 'details',
@@ -24,6 +23,10 @@ const routes: Routes = [
   {
     path: 'invoice',
     loadChildren: () => import('./invoice/invoice.module').then( m => m.InvoicePageModule)
+  },
+  {
+    path: 'notifications',
+    loadChildren: () => import('./notifications/notifications.module').then( m => m.NotificationsPageModule)
   }
 ];
 

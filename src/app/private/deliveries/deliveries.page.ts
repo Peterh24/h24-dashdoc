@@ -5,6 +5,7 @@ import { IonInfiniteScroll, IonItemSliding, IonSegment, LoadingController } from
 import { Router } from '@angular/router';
 import { StatusService } from 'src/app/utils/services/status.service';
 import { take } from 'rxjs';
+import { TransportService } from 'src/app/services/transport.service';
 
 @Component({
   selector: 'app-deliveries',
@@ -24,6 +25,7 @@ export class DeliveriesPage {
   @ViewChild('filter') filter: IonSegment;
   constructor(
     public deliveriesService: DeliveriesService,
+    public transportService: TransportService,
     private router: Router,
     private statusService: StatusService,
     private loadingController: LoadingController,
@@ -126,4 +128,9 @@ export class DeliveriesPage {
     }, 2000);
   }
 
+
+  editTransport (transport: any) {
+    this.transportService.loadTransport (transport);
+    this.router.navigateByUrl ('/private/tabs/transports/new-order/summary');
+  }
 }

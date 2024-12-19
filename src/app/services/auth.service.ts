@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Storage } from '@ionic/storage-angular';
 import { API_URL, DASHDOC_COMPANY, FIREBASE_TOKEN_KEY, JWT_KEY, USER_STORAGE_KEY } from './constants';
-import { BehaviorSubject, take, map, catchError, tap } from 'rxjs';
+import { BehaviorSubject, take, map, catchError, tap, mergeMap } from 'rxjs';
 import jwt_decode from 'jwt-decode';
 import { Router } from '@angular/router';
 import { ActionPerformed, PushNotifications, PushNotificationSchema, Token } from '@capacitor/push-notifications';
@@ -24,6 +24,10 @@ export class AuthService {
   currentUser: any;
   currentUserDetail: any;
   userInfo: any;
+  notifications: any[] = [ // TODO: delete this
+    { title: 'Notification 1', body: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, fugit dolorum sint non recusandae magnam! Sequi hic cum magni quidem?'}
+  ];
+
   constructor(
     private http: HttpClient,
     private storage: Storage,
@@ -80,6 +84,18 @@ export class AuthService {
 
   resetPasswordRequest (email: string) {
     return this.http.post(`${API_URL}../password/reset/request`, { email }).pipe(
+    );
+  }
+
+  changePassword (password: string, newpassword: string) {
+    return this.http.post(`${API_URL}login`, { username: this.currentUser.username, password }).pipe(
+      mergeMap ((res) => {
+        const headers = new HttpHeaders()
+          .set ('Content-Type', 'application/merge-patch+json');
+
+        return this.http.patch(`${API_URL}app_users/${this.currentUser.id}`, { password: newpassword }, { headers }).pipe (
+        );
+      })
     );
   }
 
@@ -149,6 +165,14 @@ export class AuthService {
     }
   }
 
+  updateFirebasePushNotifications () {
+    if (this.supportsFirebaseNotifications ()) {
+      PushNotifications.getDeliveredNotifications ().then (d => {
+        this.notifications = d.notifications;
+      });
+    }
+  }
+
   registerFirebasePushNotifications () {
     if (!this.supportsFirebaseNotifications()) {
       return;
@@ -201,12 +225,22 @@ export class AuthService {
     PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
       // TODO: show notification to user
       console.log('Push received', notification);
+      this.updateFirebasePushNotifications ();
     });
 
     // Method called when tapping on a notification
     PushNotifications.addListener('pushNotificationActionPerformed', (notification: ActionPerformed) => {
       console.log('Push action performed', notification);
+      this.updateFirebasePushNotifications ();
     });
+  }
+
+  resetFirebasePushNotifications () {
+    this.notifications = [];
+
+    if (this.supportsFirebaseNotifications ()) {
+      PushNotifications.removeAllDeliveredNotifications ();
+    }
   }
 
   // excecute la fonction callback quand le timer est dépassé

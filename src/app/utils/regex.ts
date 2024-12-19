@@ -19,9 +19,11 @@ export const passwordValidator = (): ValidatorFn => {
           return null;
       }
 
-      const valid = value.match (/^[\w.:!$=#&@+-]{8,}$/) && 
-        value.match (/[a-zA-Z]/) && 
-        value.match (/[0-9]/);
+      const valid = value.match (/^[\w@$!%*?&]{8,}$/) && 
+        value.match (/[a-z]/) &&
+        value.match (/[A-Z]/) &&
+        value.match (/[0-9]/) &&
+        value.match (/[@$!%*?&]/);
 
       return valid ? null : { password: true };
   }

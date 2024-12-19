@@ -23,6 +23,9 @@ export class DetailsPage {
     email: ['', [Validators.required, Validators.pattern(this.regex.email)]],
 
   });
+  section: string;
+  title: string;
+  success: boolean;
 
   constructor(
     private http: HttpClient,
@@ -35,6 +38,8 @@ export class DetailsPage {
 
   ionViewWillEnter() {
     const currentUser = this.authService.currentUser;
+    this.section = undefined;
+    this.success = undefined;
 
     if(!currentUser){
       this.router.navigateByUrl('/private/tabs/home');
@@ -50,7 +55,20 @@ export class DetailsPage {
     }
   }
 
+  showSection (section: string) {
+    this.section = section;
 
+    switch (this.section) {
+      case 'user-infos':
+        this.title = 'Informations personnelles';
+        break;
+      case 'notifications':
+        this.title = 'Notifications';
+        break;
+      default:
+        this.title = null;
+    }
+  }
 
   async onSubmit(){
     const { firstname, lastname, phone, email } = this.form.getRawValue();
@@ -65,6 +83,7 @@ export class DetailsPage {
     this.authService.update(firstname, lastname, phone, email).subscribe({
       next: (res) => {
         loading.dismiss();
+        this.success = true;
       },
       error: async (error) => {
         console.log('error: ', error);
