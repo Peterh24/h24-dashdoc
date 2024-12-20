@@ -56,7 +56,9 @@ export class HomePage implements OnDestroy {
         this.loadedCompanies = companies;
 
         this.storage.get(DASHDOC_COMPANY).then(async (company) => {
-          this.onchooseCompany(company)
+          if (company) {
+            this.onchooseCompany(company);
+          }
         });
       })
 
@@ -157,7 +159,7 @@ export class HomePage implements OnDestroy {
 
   async onchooseCompany(event: any) {
     const currentCompany = event && event.detail ? event.detail.value || event : event;
-  
+
     await this.storage.get(DASHDOC_COMPANY).then(async (company) => {
       if (company !== currentCompany) {
         this.deliveriesService.resetDeliveries();
