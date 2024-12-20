@@ -47,12 +47,17 @@ export class HomePage implements OnDestroy {
   ionViewWillEnter(){
     this.currentUser = this.authService.currentUser;
     this.authService.loadCurrentUserDetail(this.currentUser.id).subscribe((user:any) => {
-      this.firstname = user.firstname;
+      this.firstname = user.firstname[0].toUpperCase() + user.firstname.slice(1).toLowerCase();
+
       this.lastname = user.lastname
       this.companyService.fetchCompanies();
       
       this.companyService.companies.subscribe((companies) => {
         this.loadedCompanies = companies;
+
+        this.storage.get(DASHDOC_COMPANY).then(async (company) => {
+          this.onchooseCompany(company)
+        });
       })
 
       this.storage.get(DASHDOC_COMPANY).then((company) => {

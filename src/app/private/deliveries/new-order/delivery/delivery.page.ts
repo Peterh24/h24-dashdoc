@@ -146,8 +146,10 @@ export class DeliveryPage implements OnInit {
     setSlot (start_day, 'time_start');
     setSlot (start_day, 'time_end');
 
+    // TODO: remove that (not required ?)
     form.patchValue (values);
-
+    form.updateValueAndValidity ();
+    
     Object.keys (values).forEach ((control) => {
       if (values[control]) {
         form.controls[control].setValue (values[control]);

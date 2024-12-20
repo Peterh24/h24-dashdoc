@@ -8,7 +8,7 @@
     </div>
     -->
 
-    <div class="title"><span>Bonjour</span> <br> {{firstname}},</div>
+    <div class="title"><span class="bonjour">Bonjour</span> <br> <span class="name">{{firstname}},</span></div>
     <br>
     <ion-text>
       Avant de commencer, veuillez selectionner le donneur d'ordres: 
@@ -22,7 +22,6 @@
       okText="Valider"
       cancelText="Annuler"
       label-placement="floating"
-      class="ion-no-margin ion-no-padding"
       (ionChange)="onchooseCompany($event)"
       [(ngModel)]="selectedCompanyId">
       <ion-select-option *ngFor="let company of loadedCompanies" [value]="company.pk">{{company.name}}</ion-select-option>

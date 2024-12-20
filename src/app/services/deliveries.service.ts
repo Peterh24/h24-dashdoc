@@ -31,11 +31,11 @@ export class DeliveriesService {
     this.filtreSubject.next(valeur);
   }
   
-  fetchDeliveries() {
+  fetchDeliveries(status: string = null) {
     if (this.isLastPageReached) {
       return EMPTY; 
     }
-    this.url = this.next ? this.next : `${DASHDOC_API_URL}transports/`;
+    this.url = this.next ? this.next : `${DASHDOC_API_URL}transports/` + (status ? '?status__in=' + status : '');
     return this.http.get(this.url).pipe(
       tap((resData: any) => {
         this.next = resData.next;
@@ -62,7 +62,9 @@ export class DeliveriesService {
 
           return new Delivery(
             data.uid,
+            data.created,
             data.deliveries[0].shipper_reference,
+            data.status,
             data.global_status,
             data.pricing_total_price,
             data.quotation_total_price,

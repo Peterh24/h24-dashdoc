@@ -32,7 +32,7 @@
 </ion-content>
 
 <ion-toolbar>
-  <ion-button fill="outline" id="save-draft">Enregistrer dans les brouillons</ion-button>
+  <ion-button fill="outline" id="save-draft" *ngIf="!transport.draftName">Enregistrer dans les brouillons</ion-button>
   <ion-button id="submit-order">Nommer votre demande</ion-button>
 </ion-toolbar>
 
@@ -78,7 +78,7 @@
   </ng-template>
 </ion-modal>
 
-<ion-modal trigger="save-draft" #saveDraftModal>
+<ion-modal trigger="save-draft" *ngIf="!transport.draftName" #saveDraftModal>
   <ng-template>
     <div class="wrapper">
       <ion-icon name="close-outline" class="ion-float-right" (click)="saveDraftModal.dismiss ()"></ion-icon>

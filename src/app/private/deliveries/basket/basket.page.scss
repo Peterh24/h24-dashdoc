@@ -1,0 +1,94 @@
+.tabs {
+    & {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 2px solid #d9d9d9;
+    }
+
+    .tab {
+        flex-basis: 50%;
+        text-align: center;
+        padding: 30px 20px 10px 20px;
+        font-family: sans-serif;
+    }
+
+    .tab.active {
+        border-bottom: 2px solid #070707;
+        font-weight: bold;
+    }
+
+    .tab > span {
+        position: relative;
+    }
+
+    ion-badge {
+        position: absolute;
+        top: -15px;
+        right: -30px;
+        min-width: 0;
+    }    
+}
+
+ion-accordion-group {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+ion-accordion {
+    & {
+        border: 1px solid lightgray;
+        border-radius: 15px;
+        padding: 10px 20px 10px 10px;
+        margin-top: 20px;
+    }
+
+    ion-icon {
+        padding-right: 20px;
+    }
+}
+
+ion-button {
+    display: block;
+}
+
+.content {
+    & {
+        display: flex;
+        font-size: 10pt;
+    }
+
+    & > div {
+        flex-basis: 50%;
+    }
+
+    .title {
+        color: #9c9c9c;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}
+
+.address .name {
+    font-weight: bold;
+    font-family: sans-serif;
+}
+
+ion-modal .buttons ion-button {
+    display: flex;
+    justify-content: space-between;
+}
+
+.h24loader {
+    filter: invert(100%);
+    position: relative;
+    background-size: 3rem;
+    width: 5rem;
+    height: 5rem;
+    margin-top: 1.5rem;
+    transform: translateX(0);
+    &::before, &::after {
+        border-right: 2px solid #fff;
+        border-top: 2px solid #fff;
+    }
+}
+  

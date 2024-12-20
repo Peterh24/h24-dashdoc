@@ -1,0 +1,12 @@
+<app-header [defaultHref]="'/private'" title="Notifications"></app-header>
+
+<ion-content [fullscreen]="true">
+  <div class="alert-warning" *ngFor="let notification of authService.notifications">
+    <div class="title">
+      {{ notification.title }}
+    </div>
+    <div class="body">
+      {{ notification.body }}
+    </div>
+  </div>
+</ion-content>

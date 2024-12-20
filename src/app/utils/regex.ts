@@ -8,7 +8,7 @@ export const regex = {
 export const regexErrors = {
   email: 'Merci d\'indiquer un email valide',
   phone: 'Merci d\'indiquer un numéro de téléphone valide',
-  password: 'Au moins une lettre, un chiffre, au moins 8 caractères',
+  password: 'Au moins 8 caractères, une majuscule, une minuscule, un chiffre et 1 symbole (@ $ ! % * ? &)',
 }
 
 export const passwordValidator = (): ValidatorFn => {

@@ -156,7 +156,7 @@ export class DeliveriesPage implements OnInit {
     if (!origins?.length) {
       return null;
     }
-    return new Date(Math.max (...origins.map ((o) => new Date(o?.origin?.slots?.[0]?.start).valueOf ()))).toISOString () || null;
+    return new Date(Math.max (...origins.filter ((o) => o?.origin?.slots?.[0]?.start).map ((o) => new Date(o?.origin?.slots?.[0]?.start).valueOf ()))).toISOString () || null;
   }
 
   getDestinationsMinSlot (destinations: any[]) {
@@ -164,7 +164,7 @@ export class DeliveriesPage implements OnInit {
       return null;
     }
 
-    return new Date(Math.min (...destinations.map ((d) => new Date(d?.destination?.slots?.[0]?.start).valueOf ()))).toISOString () || null;
+    return new Date(Math.min (...destinations.filter ((d) => d?.destination?.slots?.[0]?.start).map ((d) => new Date(d?.destination?.slots?.[0]?.start).valueOf ()))).toISOString () || null;
   }
 
   synchronize () {

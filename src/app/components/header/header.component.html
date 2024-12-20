@@ -4,7 +4,7 @@
       <ion-back-button [defaultHref]="defaultHref" text=""></ion-back-button>
     </ion-buttons>
     <ion-title [class.active]="companyService.isCompanySwitch">
-      {{title || (getcompanyName() | async)}}
+      {{title || (getcompanyName() | async) || 'H24 Transports'}}
     </ion-title>
     <ion-buttons slot="end">
       <ion-button type="button" (click)="callTo()">

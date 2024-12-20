@@ -17,8 +17,12 @@ ion-content {
   font-size: 22pt;
   font-weight: 500;
 
-  span {
+  .bonjour {
     color: var(--ion-color-medium);
+  }
+
+  .name:first-letter {
+    text-transform: uppercase;
   }
 }
 
@@ -32,8 +36,10 @@ ion-button {
   margin-bottom: 15px;
 }
 
-ion-select {
-  border: 1px solid black;
-  border-radius: 15px;
-  padding-left: 20px;
+ion-select, ion-select-option, ion-item {
+  & {
+    border: 1px solid black;
+    border-radius: 15px;
+    padding-left: 20px;
+  }
 }

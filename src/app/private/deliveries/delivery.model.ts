@@ -1,7 +1,9 @@
 export class Delivery {
   constructor(
     public uid: string,
+    public created: string,
     public shipper_reference: string,
+    public status: string,
     public global_status: string,
     public pricing_total_price: number,
     public quotation_total_price: number,

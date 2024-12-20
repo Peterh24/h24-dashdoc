@@ -1,0 +1,65 @@
+.steps-container {
+    & {
+        width: 300px;
+        border: 1px solid;
+        border-radius: 15px;
+        padding: 50px 30px 80px 30px;
+        background-color: black;
+        color: white;
+        font-size: 11pt;
+    }
+
+    & > div {
+        position: relative;
+        border-top: 2px dotted #22C452;
+    }
+
+    .steps {
+        position: absolute;
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        transform: translate(0, -12px);
+    }
+
+    .step {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: center;
+    }
+
+    .label {
+        margin-top: 10px;
+        text-align: center;
+        font-family: sans-serif;
+    }
+
+    .bullet {
+        margin: 0;
+        padding: 0;
+        border: 1px solid black;
+        width: 20px;
+        height: 20px;
+        border-radius: 15px;
+        background-color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .bullet > div {
+        margin: 0;
+        padding: 0;
+        border-radius: 15px;
+        background-color: black;
+        width: 15px;
+        height: 15px;
+    }
+
+    .bullet.active {
+        & > div {
+            background-color: #22C452;
+        }
+    }
+}

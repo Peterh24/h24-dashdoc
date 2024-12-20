@@ -66,8 +66,10 @@ export class AuthService {
     }
   }
 
-  register(firstname: string, lastname: string, phone: string, email: string, password: string, isClient:boolean) {
-    return this.http.post(`${API_URL}app_users`, { firstname, lastname, phone, email, password, isClient }).pipe(
+  register(firstname: string, lastname: string, phone: string, email: string, password: string, isClient:boolean, company: string = null) {
+    const companies = company ? [ company ] : null;
+
+    return this.http.post(`${API_URL}app_users`, { firstname, lastname, phone, email, password, isClient, company: companies }).pipe(
       map((res) => {
 
       })

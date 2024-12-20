@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { StorageService } from '../utils/services/storage.service';
-import { regex, regexErrors } from '../utils/regex';
+import { passwordValidator, regex, regexErrors } from '../utils/regex';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController, NavController } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
@@ -18,7 +18,7 @@ export class AuthPage {
 
   form = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.pattern(this.regex.email)]],
-    password: ['', [Validators.required]]
+    password: ['', [Validators.required, passwordValidator ()]]
   });
   emailRemember: string;
   isRemember: boolean = false;

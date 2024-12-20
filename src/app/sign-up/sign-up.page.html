@@ -13,64 +13,35 @@
     <div class="container">
       <div class="user-name">
         <div>
-          <ion-input type="text" label="Nom" labelPlacement="floating" fill="outline" shape="round"
+          <ion-input type="text" label="Nom" labelPlacement="floating" fill="outline" shape="round" errorText="Merci d'indiquer votre nom"
             formControlName="lastname"></ion-input>
-          <div *ngIf="!form.get('lastname').valid && form.get('lastname').touched">
-            <ion-label class="validator-error">
-              Merci d'indiquer votre nom
-            </ion-label>
-          </div>
         </div>
         <span>&nbsp; &nbsp;</span>
         <div>
-          <ion-input type="text" label="Prénom" labelPlacement="floating" fill="outline" shape="round"
+          <ion-input type="text" label="Prénom" labelPlacement="floating" fill="outline" shape="round" 
             formControlName="firstname"></ion-input>
-          <div *ngIf="!form.get('firstname').valid && form.get('firstname').touched">
-            <ion-label class="validator-error">
-              Merci d'indiquer votre prenom
-            </ion-label>
-          </div>
         </div>
       </div>
       <div>
-        <ion-input type="text" label="Numéro de téléphone" fill="outline" shape="round" labelPlacement="floating" formControlName="phone"></ion-input>
-        <div *ngIf="!form.get('phone').valid && form.get('phone').touched">
-          <ion-label class="validator-error">
-            {{regexErrors['phone']}}
-          </ion-label>
-        </div>
+        <ion-input type="text" label="Numéro de téléphone" fill="outline" shape="round" labelPlacement="floating" [errorText]="regexErrors['phone']" formControlName="phone"></ion-input>
       </div>
       <div>
-        <ion-input type="email" label="Adresse e-mail" labelPlacement="floating" fill="outline" shape="round" formControlName="email"></ion-input>
-        <div *ngIf="!form.get('email').valid && form.get('email').touched">
-          <ion-label class="validator-error">
-            {{regexErrors['email']}}
-          </ion-label>
-        </div>
+        <ion-input type="email" label="Adresse e-mail" labelPlacement="floating" fill="outline" shape="round" [errorText]="regexErrors['email']" formControlName="email"></ion-input>
       </div>
       <div>
-        <ion-input type="password" label="Mot de passe" labelPlacement="floating" fill="outline" shape="round" formControlName="password"></ion-input>
-        <div *ngIf="!form.get('password').valid && form.get('password').touched">
-          <ion-label class="validator-error">
-            {{regexErrors['password']}}
-          </ion-label>
-        </div>
-        <div class="password-infos">
-          Votre mot de passe:
-          <ul>
-            <li>doit contenir 8 caractères minimum</li>
-            <li>Une lettre majuscule, une minuscule, un chiffre
-            <li>Un caractère spécial <br> (@ $ ! % * ? &)</li>
-          </ul>
-        </div>
+        <ion-input type="password" label="Mot de passe" labelPlacement="floating" fill="outline" shape="round" [errorText]="regexErrors['password']" formControlName="password"></ion-input>
       </div>
      <div class="is-client">
         <div>Déja client ?</div>
-        <ion-radio-group value="start" (ionChange)="onAlreadyClientChange ($event)">
-          <ion-radio value="oui" labelPlacement="start">Oui</ion-radio>
+        <ion-radio-group value="start" (ionChange)="onAlreadyClientChange ($event)" formControlName="isClient" [value]="isClient">
+          <ion-radio [value]="true" labelPlacement="start">Oui</ion-radio>
           &nbsp; 
-          <ion-radio value="non" labelPlacement="start">Non</ion-radio>
+          <ion-radio [value]="false" labelPlacement="start">Non</ion-radio>
         </ion-radio-group>
+      </div>
+      <br>
+      <div *ngIf="isClient">
+        <ion-input label="Société" labelPlacement="floating" fill="outline" shape="round" errorText="Veuillez saisir le nom de la société" formControlName="company"></ion-input>
       </div>
       <br>
       <ion-button type="submit" color="primary" shape="round" [disabled]="!form.valid">

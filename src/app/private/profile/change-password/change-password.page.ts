@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AlertController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
-import { passwordValidator } from 'src/app/utils/regex';
+import { passwordValidator, regexErrors } from 'src/app/utils/regex';
 
 @Component({
   selector: 'app-change-password',
@@ -10,6 +10,8 @@ import { passwordValidator } from 'src/app/utils/regex';
   styleUrls: ['./change-password.page.scss'],
 })
 export class ChangePasswordPage implements OnInit {
+  regexErrors: any = regexErrors;
+
   form: FormGroup;
   success: boolean;
 

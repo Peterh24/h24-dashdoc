@@ -1,0 +1,109 @@
+<app-header [defaultHref]="'/private/tabs/home'" title="Transports"></app-header>
+
+<ion-content>
+  <div class="tabs">
+    <div class="tab" [class.active]="tab === 1" (click)="setTab(1)">
+      <span>
+        <ion-badge>1</ion-badge>
+        <span>En cours</span>
+      </span>
+    </div>
+    <div class="tab" [class.active]="tab === 2" (click)="setTab(2)">
+      <span>
+        <ion-badge>1</ion-badge>
+        <span>Historique</span>
+      </span>
+    </div>
+  </div>
+
+  <div *ngIf="tab === 1">
+    <ion-accordion-group value="aO" #accordionGroup>
+      <div *ngFor="let delivery of deliveries; let index = index">
+        <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ delivery, index }"></div>
+      </div>
+    </ion-accordion-group>
+
+    <ion-infinite-scroll #infiniteScroll threshold="0" (ionInfinite)="loadMoreDeliveries($event)" >
+      <ion-infinite-scroll-content loadingSpinner="none" *ngIf="!deliveriesService.isLastPageReached">
+          <div class="h24loader" ></div>
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </div>
+
+  <div *ngIf="tab === 2">
+  </div>
+</ion-content>
+
+<ng-template #deliveryTpl let-delivery="delivery" let-index="index">
+  <ion-accordion class="delivery" value="a{{ index }}">
+    <ion-item slot="header" color="light" lines="none">
+      <ion-chip slot="end" *ngIf="delivery.status && delivery.status !== 'invoice'">{{ statuses[delivery.status] || delivery.status }}</ion-chip>
+      <ion-chip slot="end" color="danger" *ngIf="delivery.status && delivery.status === 'invoice'">En attente</ion-chip>
+      <div>
+        {{ delivery?.shipper_reference || getDefaultDeliveryName (delivery) }}
+      </div>
+    </ion-item>
+    <div class="ion-padding" slot="content">
+      <div [ngTemplateOutlet]="statusTpl" [ngTemplateOutletContext]="{ status: 1 }"></div>
+      <br>
+      <div class="content">
+        <div>
+          <div>
+            <div class="title">Type de transport</div>
+            <div class="value">Audio visuel <!-- TODO {{ typeName[delivery.type] }} --></div>
+          </div>
+          <div>
+            <div class="title">Enlèvement</div>
+            <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getOrigin (delivery)?.address }"></div>
+          </div>
+          <div>
+            <div class="title">Marchandises</div>
+            <div class="value">{{ getAllPlannedLoads (delivery) }}</div>
+          </div>
+        </div>
+        <div>
+          <div>
+            <div class="title">Vehicule</div>
+            <div class="value">{{ delivery.requested_vehicle || 'Non déterminé' }}</div>
+          </div>
+          <div>
+            <div class="title">Livraison</div>
+            <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getDestination (delivery)?.address }"></div>
+          </div>
+          <div>
+            <div class="title">Contact</div>
+            <div class="value">Contact</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ion-accordion>
+</ng-template>
+
+<ng-template #addressTpl let-address="address">
+  <div class="address">
+    <div class="name">{{ address?.name }}</div>
+    <div class="city">{{ address?.address }} <br> {{ address?.postcode }} {{ address?.city }}</div>
+  </div>
+</ng-template>
+
+<ng-template #statusTpl let-status="status">
+  <div class="steps-container">
+    <div>
+        <div class="steps">
+            <div class="step">
+                <div class="bullet active"><div></div></div>
+                <div class="label">Traitée</div>
+            </div>
+            <div class="step">
+                <div class="bullet"><div></div></div>
+                <div class="label">En cours <br> de livraison</div>
+            </div>
+            <div class="step">
+                <div class="bullet"><div></div></div>
+                <div class="label">Livrée</div>
+            </div>
+        </div>
+    </div>
+  </div>
+</ng-template>

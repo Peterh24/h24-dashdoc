@@ -31,23 +31,35 @@ export class TransportService {
   isMultipoint = false;
   draftName: string;
 
-  constructor() { } 
+  constructor() { }
 
   getOrigins () {
     return this.deliveries?.filter ((d) => d?.origin);
   }
-  
+
   getDestinations () {
     return this.deliveries?.filter ((d) => d?.destination);
   }
 
+  getOrigin () {
+    return this.getOrigins()?.[0];
+  }
+
+  getDestination () {
+    return this.getDestinations ().pop ();
+  }
+
+  getAllPlannedLoads () {
+    return [...new Set(this.deliveries.map ((d) => d.planned_loads).map ((l) => l.description)) ];
+  }
+
   sortDeliveries () {
     if (this.isMultipoint || this.getOrigins().length > 1) {
-      this.deliveries = this.deliveries.sort ((a, b) => 
+      this.deliveries = this.deliveries.sort ((a, b) =>
         new Date(a.origin?.slots?.[0]?.start).valueOf () - new Date(b.origin?.slots?.[0]?.start).valueOf ()
       )
     } else {
-      this.deliveries = this.deliveries.sort ((a, b) => 
+      this.deliveries = this.deliveries.sort ((a, b) =>
         new Date(a.destination?.slots?.[0]?.start).valueOf () - new Date(b.destination?.slots?.[0]?.start).valueOf ()
       )
     }
@@ -62,7 +74,7 @@ export class TransportService {
     this.trailers = [];
     this.vehicle = {};
   }
-  
+
   loadTransport (transport: any) {
     this.resetTransport ();
 
@@ -75,8 +87,8 @@ export class TransportService {
   }
 
   loadDeliveries (deliveriesJson: any) {
-    let sameAddress = (a: any, b: any) => 
-        a.address?.address == b.address?.address && 
+    let sameAddress = (a: any, b: any) =>
+        a.address?.address == b.address?.address &&
         a.address?.postcode == b.address?.postcode;
 
     for (let i = 0; i < deliveriesJson.length; i++) {

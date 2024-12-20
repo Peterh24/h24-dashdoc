@@ -171,6 +171,25 @@ h2 {
     --padding-bottom: 10px;
   }
 
+  ion-modal.custom {
+    & {
+        --width: fit-content;
+        --min-width: 250px;
+        --height: fit-content;
+        --border-radius: 6px;
+        --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+    }
+
+    .wrapper {
+        padding: 15px;
+    }
+
+    .title {
+        font-weight: bold;
+        font-family: sans-serif;
+    }
+  }
+
   @media (min-width: 768px) {
     ion-app {
       max-width: 600px;
