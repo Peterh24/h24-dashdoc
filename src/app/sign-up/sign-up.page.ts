@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { AlertController, IonInput, LoadingController } from '@ionic/angular';
 import { passwordValidator, phoneValidator, regex, regexErrors } from '../utils/regex';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
@@ -34,6 +34,10 @@ export class SignUpPage implements OnInit {
   ) { }
 
   ngOnInit() {
+  }
+
+  toggleShowPassword (input: IonInput) {
+    input.type = input.type === 'text' ? 'password' : 'text';
   }
 
   async onSubmit() {

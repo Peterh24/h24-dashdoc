@@ -29,7 +29,9 @@
         <ion-input type="email" label="Adresse e-mail" labelPlacement="floating" fill="outline" shape="round" [errorText]="regexErrors['email']" formControlName="email"></ion-input>
       </div>
       <div>
-        <ion-input type="password" label="Mot de passe" labelPlacement="floating" fill="outline" shape="round" [errorText]="regexErrors['password']" formControlName="password"></ion-input>
+        <ion-input type="password" label="Mot de passe" labelPlacement="floating" fill="outline" shape="round" [errorText]="regexErrors['password']" formControlName="password" #password>
+          <!-- <ion-icon name="eye-outline" slot="end" (click)="toggleShowPassword (password)"></ion-icon> -->
+        </ion-input>
       </div>
      <div class="is-client">
         <div>Déja client ?</div>

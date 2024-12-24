@@ -40,6 +40,8 @@ export class EditAddressPage implements OnInit {
               return;
             }
 
+            this.countries = this.countriesService.countries;
+
             this.form = new FormGroup({
               name: new FormControl(this.address.name, {
                 updateOn: 'blur',

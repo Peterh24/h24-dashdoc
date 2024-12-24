@@ -54,12 +54,13 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
   }
 
   ionViewWillEnter () {
-    this.loadDeliveries ();
     this.loadDrafts ();
+    this.setTab (1);
   }
 
   setTab (tab: number) {
     this.tab = tab;
+    this.loadDeliveries ();
   }
 
   async loadDeliveries () {
@@ -72,7 +73,10 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     await loading.present();
     this.deliveriesService.resetDeliveries();
 
-    this.deliveriesService.fetchDeliveries('created,invoiced').subscribe({
+//    const status = this.tab === 1 ? 'sent_to_trucker,on_loading_site,loading_complete,on_unloading_site,unloading_complete' : 'invoiced,paid,cancelled,done';
+    const status: any = null;
+
+    this.deliveriesService.fetchDeliveries(status).subscribe({
       next: (deliveries) => {
         this.deliveries = deliveries;
         loading.dismiss();

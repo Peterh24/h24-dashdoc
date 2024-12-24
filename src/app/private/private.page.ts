@@ -24,7 +24,7 @@ export class PrivatePage {
     private platform: Platform,
     public authService: AuthService,
     private router: Router,
-    private companyService: CompanyService
+    public companyService: CompanyService
   ) { }
 
   ionViewWillEnter() {

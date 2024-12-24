@@ -76,7 +76,7 @@
                   </div>
                   <div class="accordion-row-price" *ngIf="item.pricing_total_price">
                     <ion-label color="secondary">
-                      {{item.pricing_total_price | priceFormat }} € HT <span *ngIf="item.carbon_footprint">- co2: {{ item.carbon_footprint?.toFixed (2) }}Kg</span>
+                      {{item.pricing_total_price | priceFormat }} € HT <span style="font-weight: normal" *ngIf="item.carbon_footprint">- CO₂: {{ item.carbon_footprint?.toFixed (2) }}Kg</span>
                     </ion-label>
                   </div>
                 </div>
@@ -103,7 +103,7 @@
         </ion-accordion-group>
 
         <ion-infinite-scroll #infiniteScroll threshold="0" (ionInfinite)="loadMoreData($event)" >
-          <ion-infinite-scroll-content loadingSpinner="none" *ngIf="!deliveriesService.isLastPageReached && filter.value === 'all'">
+          <ion-infinite-scroll-content loadingSpinner="none" *ngIf="jsonData?.length && !deliveriesService.isLastPageReached && filter.value === 'all'">
               <div class="h24loader" ></div>
           </ion-infinite-scroll-content>
         </ion-infinite-scroll>

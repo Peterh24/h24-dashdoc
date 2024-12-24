@@ -16,7 +16,6 @@ ion-button {
 
 .delivery {
     margin-top: 15px;
-    margin-bottom: 15px;
     margin-right: 35px;
     padding: 15px;
     border: solid black 1px;
@@ -52,4 +51,12 @@ div:has(> .trash) {
 
 .trash ion-icon {
     font-size: 25px;
+}
+
+.error {
+    position: relative;
+    top: calc(100% + 1lh);
+    color: red;
+    margin-left: 10px;
+    margin-top: 5px;
 }

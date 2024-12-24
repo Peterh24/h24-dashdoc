@@ -35,6 +35,7 @@ export class BasketPage implements OnInit, AfterViewInit {
   };
 
   @ViewChild('accordionGroup') accordionGroup: IonAccordionGroup;
+  @ViewChild('accordionDraftGroup') accordionDraftGroup: IonAccordionGroup;
 
   constructor(
     public deliveriesService: DeliveriesService,
@@ -72,7 +73,7 @@ export class BasketPage implements OnInit, AfterViewInit {
     await loading.present();
     this.deliveriesService.resetDeliveries();
 
-    this.deliveriesService.fetchDeliveries('created,invoiced').subscribe({
+    this.deliveriesService.fetchDeliveries('created,updated,confirmed,declined,verified').subscribe({
       next: (deliveries) => {
         this.deliveries = deliveries;
         loading.dismiss();
@@ -119,7 +120,7 @@ export class BasketPage implements OnInit, AfterViewInit {
     const merchandises: any = {};
 
     delivery.deliveries.map ((d: any) => d.loads).forEach ((loads: any) => {
-      loads.forEach ((load: any) => { 
+      loads?.forEach ((load: any) => { 
         merchandises[load.description] = true;
       })
     });
@@ -127,15 +128,22 @@ export class BasketPage implements OnInit, AfterViewInit {
     return Object.keys (merchandises).sort ((a, b) => a.localeCompare (b)).join (',');
   }
 
+  onDraftDeleteRequest () {
+    document.getElementById ("draft-delete").click ();
+  }
+
   onDraftDelete (draftName: string, modal: any) {
     modal.dismiss ();
-
+    const index = this.accordionDraftGroup?.value;
+    if (index) {
+      const draftName = this.draftsName[parseInt(new String(index).substring (1))];
     this.storage.get (TRANSPORTS_DRAFTS_KEY).then ((drafts) => {
       if (drafts) {
         delete drafts[draftName];
       }
       this.storage.set (TRANSPORTS_DRAFTS_KEY, drafts).then (() => this.loadDrafts ());
     });
+    }
   }
 
   gotoDraft (draftName: string) {

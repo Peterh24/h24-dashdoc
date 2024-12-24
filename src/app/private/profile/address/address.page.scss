@@ -110,6 +110,7 @@ ion-modal {
     border-radius: 15px;
     display: flex;
     align-items: center;
+    cursor: pointer;
   }
 
   &.selected {
@@ -118,5 +119,21 @@ ion-modal {
 
   ion-icon {
     font-size: 18pt;
+  }
+}
+
+.close-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.toast-success {
+  & {
+    background-color: #00BA51;
+  }
+
+  ion-icon {
+    color: green;
   }
 }

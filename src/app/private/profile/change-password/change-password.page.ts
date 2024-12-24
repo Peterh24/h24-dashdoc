@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { AlertController } from '@ionic/angular';
+import { AlertController, IonInput } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 import { passwordValidator, regexErrors } from 'src/app/utils/regex';
 
@@ -37,6 +37,10 @@ export class ChangePasswordPage implements OnInit {
 
   ionViewWillEnter() {
     this.success = undefined;
+  }
+
+  toggleShowPassword (input: IonInput) {
+    input.type = input.type === 'text' ? 'password' : 'text';
   }
 
   async onSubmit() {

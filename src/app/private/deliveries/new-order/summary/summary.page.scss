@@ -54,7 +54,13 @@ ion-modal {
         font-weight: bold;
         font-family: sans-serif;
     }
+
+    .merchandises {
+        white-space: nowrap;
+        word-break: break-all;
+    }
 }
+
 .type {
     & {
         position: relative;

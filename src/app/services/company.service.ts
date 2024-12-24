@@ -12,6 +12,7 @@ export class CompanyService {
   private _companies = new BehaviorSubject<Array<Company>>([]);
   private _companyName = new BehaviorSubject<string>('');
   private _userHasChooseCompany = new BehaviorSubject<boolean>(false);
+  public companyStatusBadge: number;
   isCompanySwitch: boolean = false;
 
   get userHasChooseCompany() {
@@ -60,6 +61,14 @@ export class CompanyService {
       map(companies => {
         return {...companies.find(company => company.pk === pk)}
       }))
+  }
+
+  getCompanyStatus () {
+    this.http.get(`${DASHDOC_API_URL}transports/?status__in=created,updated,confirmed,declined,verified`).pipe(take(1)).subscribe({
+      next: ((res:any) => {
+        this.companyStatusBadge = res.results.length;
+      })
+    });
   }
 
   addCompany(token:number) {

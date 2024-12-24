@@ -1,10 +1,10 @@
 <app-header [defaultHref]="'/private/tabs/transports/new-order/vehicle-choice'" title="Créer une commande"></app-header>
 
-<ion-content [fullscreen]="true" scrollY="true">
+<ion-content>
   <!-- TODO <app-progress-bar [current]="0.5" [next]="0.7" ></app-progress-bar> -->
 
   <div *ngIf="transport.isMultipoint">
-    <h3>Transport multipoints</h3>
+    <h3>Enlèvement / Livraison</h3>
 
     <div *ngFor="let delivery of transport.deliveries; let index = index" (click)="addDelivery (delivery)">
       <div class="trash" (click)="deleteDelivery ('origin', delivery)">
@@ -16,8 +16,10 @@
         <hr>
         <div [ngTemplateOutlet]="address" [ngTemplateOutletContext]="{ address: delivery.destination?.address }"></div>
       </div>
+      <div class="error" *ngIf="isMultipointDeliveryInvalid (index)">L'horaire d'enlèvement n'est pas valide</div>
     </div>
-    <ion-button fill="outline" (click)="addDelivery ()"><ion-icon name="add-outline"></ion-icon> &nbsp; Ajouter un enlèvement / livraison</ion-button>
+    <br>
+    <ion-button fill="outline" (click)="addDelivery ()"><ion-icon name="add-outline"></ion-icon> &nbsp; Ajouter une adresse d'enlèvement / livraison</ion-button>
   </div>
 
   <div *ngIf="!transport.isMultipoint">
@@ -32,6 +34,7 @@
           <div [ngTemplateOutlet]="address" [ngTemplateOutletContext]="{ address: delivery.origin?.address }"></div>
       </div>
     </div>
+    <br>
     <ion-button fill="outline" (click)="addDelivery (null, 'origin')" [disabled]="addOriginDisabled ()"><ion-icon name="add-outline"></ion-icon> &nbsp; Ajouter une addresse d'enlèvement</ion-button>
     <br>
     <br>
@@ -46,6 +49,7 @@
         <div [ngTemplateOutlet]="address" [ngTemplateOutletContext]="{ address: delivery.destination?.address }"></div>
       </div>
     </div>
+    <br>
     <ion-button fill="outline" (click)="addDelivery (null, 'destination')" [disabled]="addDestinationDisabled ()"><ion-icon name="add-outline"></ion-icon> &nbsp; Ajouter une addresse de livraison</ion-button>
   </div>
   <br>

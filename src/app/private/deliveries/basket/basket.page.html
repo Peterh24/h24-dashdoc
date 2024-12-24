@@ -4,14 +4,14 @@
   <div class="tabs">
     <div class="tab" [class.active]="tab === 1" (click)="setTab(1)">
       <span>
-        <ion-badge>1</ion-badge>
+        <ion-badge color="danger" *ngIf="deliveries?.length">{{ deliveries.length}}</ion-badge>
         <span>En attente</span>
       </span>
     </div>
     <div class="tab" [class.active]="tab === 2" (click)="setTab(2)">
       <span>
-        <ion-badge>1</ion-badge>
-        <span>Historique</span>
+        <ion-badge  color="warning" *ngIf="draftsName?.length">{{ draftsName.length }}</ion-badge>
+        <span>Brouillons</span>
       </span>
     </div>
   </div>
@@ -24,19 +24,20 @@
     </ion-accordion-group>
 
     <ion-infinite-scroll #infiniteScroll threshold="0" (ionInfinite)="loadMoreDeliveries($event)" >
-      <ion-infinite-scroll-content loadingSpinner="none" *ngIf="!deliveriesService.isLastPageReached">
+      <ion-infinite-scroll-content loadingSpinner="none" *ngIf="deliveries?.length && !deliveriesService.isLastPageReached">
           <div class="h24loader" ></div>
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
   </div>
 
   <div *ngIf="tab === 2">
-    <ion-accordion-group>
-      <div *ngFor="let draft of draftsName">
-        <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ delivery: drafts[draft], draftname: draft,draft: true }"></div>
+    <ion-accordion-group #accordionDraftGroup>
+      <div *ngFor="let draft of draftsName; let index = index">
+        <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ delivery: drafts[draft], draftname: draft, draft: true, index }"></div>
       </div>
     </ion-accordion-group>  
   </div>
+  <ion-button fill="outline" id="draft-delete" class="ion-hide">Supprimer ma demande</ion-button>
 </ion-content>
 
 <ng-template #deliveryTpl let-delivery="delivery" let-draft="draft" let-draftname="draftname" let-index="index">
@@ -46,7 +47,7 @@
       <ion-chip slot="end" color="danger" *ngIf="delivery.status && delivery.status === 'invoice'">En attente</ion-chip>
       <ion-chip slot="end" color="warning" *ngIf="draftname">Brouillon</ion-chip>
       <div>
-        {{ delivery?.shipper_reference || getDefaultDeliveryName (delivery) }}
+        {{ draftname || delivery?.shipper_reference || getDefaultDeliveryName (delivery) }}
       </div>
     </ion-item>
     <div class="ion-padding" slot="content">
@@ -81,26 +82,27 @@
         </div>
       </div>
       <br>
-      <ion-button *ngIf="!draft">Paiement</ion-button>
+      <ion-button routerLink="/private/tabs/transports/checkout-delivery" [queryParams]="{ transport: delivery.uid }" *ngIf="!draft">Paiement</ion-button>
       <ion-button fill="outline" (click)="gotoDraft (draftname)" *ngIf="draft">Reprendre ma demande</ion-button>
-      <ion-button fill="outline" id="draft-delete" *ngIf="draft">Supprimer ma demande</ion-button>
+      <ion-button fill="outline" (click)="onDraftDeleteRequest ()" *ngIf="draft">Supprimer ma demande</ion-button>
     </div>
 
-    <ion-modal class="custom" trigger="draft-delete" #draftDeleteModal *ngIf="draft">
-      <ng-template>
-        <div class="wrapper">
-          <ion-icon name="close-outline" class="ion-float-right" (click)="draftDeleteModal.dismiss ()"></ion-icon>
-          <div class="title">Etes vous sûr de vouloir <br> supprimer votre demande</div>
-          <br>
-          <div class="buttons">
-            <ion-button (click)="draftDeleteModal.dismiss ()">Non</ion-button>
-            <ion-button fill="outline" (click)="onDraftDelete (draftname, draftDeleteModal)">Oui</ion-button>
-          </div>
-        </div>
-      </ng-template>
-    </ion-modal>
   </ion-accordion>
 </ng-template>
+
+<ion-modal class="custom" trigger="draft-delete" #draftDeleteModal>
+  <ng-template>
+    <div class="wrapper">
+      <ion-icon name="close-outline" class="ion-float-right" (click)="draftDeleteModal.dismiss ()"></ion-icon>
+      <div class="title">Etes vous sûr de vouloir <br> supprimer votre demande</div>
+      <br>
+      <div class="buttons">
+        <ion-button (click)="draftDeleteModal.dismiss ()">Non</ion-button>
+        <ion-button fill="outline" (click)="onDraftDelete (null, draftDeleteModal)">Oui</ion-button>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>
 
 <ng-template #addressTpl let-address="address">
   <div class="address">

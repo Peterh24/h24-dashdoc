@@ -25,7 +25,7 @@
         </div>
       </div>
 
-      <ion-input #merchandisesOther
+      <ion-input #merchandisesCustom
         label="Autres marchandises"
         label-placement="floating"
         fill="outline"
@@ -57,21 +57,26 @@
           <ion-icon name="trash-outline"></ion-icon>
         </div>  
         <fieldset class="custom-control address" (click)="setAddress (type)">
-            <legend>Addresse d'enlèvement</legend>
+            <legend *ngIf="type === 'origin'">Addresse d'enlèvement</legend>
+            <legend *ngIf="type === 'destination'">Addresse de la livraison</legend>
             <div *ngIf="!address">Sélectionner</div>
             <div class="title" *ngIf="address">{{ address.name }}</div>
             <div *ngIf="address">{{ address.address }} {{ address.city }} {{ address.postcode }}</div>
         </fieldset>
+        <div class="error" *ngIf="errors['address']">Veuiller saisir une addresse</div>
       </div>
 
-      <div>
+      <div *ngFor="let contact of contacts">
         <div class="trash">
           <ion-icon name="trash-outline"></ion-icon>
         </div>  
         <fieldset class="custom-control contact" (click)="setContact ()">
           <legend>Contact</legend>
-          <div *ngIf="!contact">Sélectionner</div>
-          <div *ngIf="contact"></div>
+          <div *ngIf="false && !contact">Sélectionner</div>
+          <div>
+            {{ contact?.contact?.first_name }} 
+            {{ contact?.contact?.last_name }}
+          </div>
         </fieldset>
       </div>
 
@@ -85,7 +90,8 @@
       </ion-input>
 
       <div *ngIf="address">
-        <h3>Date de l'enlèvement demandée</h3>
+        <h3 *ngIf="type === 'origin'">Date de l'enlèvement demandée</h3>
+        <h3 *ngIf="type === 'destination'">Date de la livraison demandée</h3>
 
         <div class="slot">
           <div class="custom-control day" [class.error]="errors['day']" id="{{ type }}_day_select">
@@ -167,16 +173,12 @@
           <ion-icon name="add-outline" (click)="addHandlers (form)"></ion-icon>
         </div>
 
-        <div class="handler">
-          <!-- TODO: manutentionnaires -->
-        </div>
-
         <ion-input
-          label="Instructions à l'enlèvement"
+          [label]="type === 'origin' ? 'Instructions à l\'enlèvement' : 'Instructions à la livraison'"
           label-placement="floating"
           fill="outline"
           shape="round"
-          placeholder="Entrez les instructions à l'enlèvement"
+          placeholder="{{ type === 'origin' ? 'Instructions à l\'enlèvement' : 'Instructions à la livraison' }}"
           [formControl]="form.get('instructions')">
         </ion-input>
       </div>

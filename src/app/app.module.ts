@@ -30,13 +30,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
     if (!req.headers?.get ("Authorization")) {
       if (req.url.includes('api.dashdoc.eu')) {
-        if (!currentUrl.includes('/private/tabs/home') && tokens.tokenObs) {
-          req = req.clone({
-            setHeaders: {
-              Authorization: `Token ${tokens.tokenObs}`
-            }
-          });
-        }
+        req = req.clone({
+          setHeaders: {
+            Authorization: `Token ${tokens.tokenObs}`
+          }
+        });
       } else if (tokens.h24token && req.url.includes('api.h24transports.com') || isDevMode() && req.url.includes('localhost')) {
         req = req.clone({
           setHeaders: {

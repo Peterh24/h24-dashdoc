@@ -1,6 +1,8 @@
 <app-header [defaultHref]="'/private/tabs/profile'" title="Mes adresses"></app-header>
 
 <ion-content>
+  <ion-icon name="close-outline" class="close-button" (click)="closeModal ()" *ngIf="isModal"></ion-icon>
+
   <ion-grid class="page-grid ion-no-padding">
     <ion-row *ngIf="!isLoading && address.length > 0" class="searchbar">
       <ion-col>
@@ -43,6 +45,7 @@
 
     <ion-row *ngIf="!isLoading && address.length > 0">
       <ion-col>
+        <br>
         <ion-accordion-group>
           <ion-item-sliding #slidingAddress *ngFor="let item of jsonData">
             <ion-item-options side="start" (click)="onEdit(item.pk, slidingAddress)">
@@ -54,12 +57,12 @@
           <ion-accordion  [value]="item.pk">
 
               <ion-item slot="header" class="ion-align-items-start">
-                <ion-label>
+                <ion-label (click)="selectAddress (item, $event)">
                   <ion-chip class="ion-float-right" *ngIf="item.is_destination">Livraison</ion-chip>
                   <ion-chip class="ion-float-right" *ngIf="item.is_origin">Enlèvement</ion-chip>
                    <h3>
-                    <ion-icon name="stop-outline" (click)="toggleSelectedAddress (item, $event)" *ngIf="!selectedAddress[item.pk]"></ion-icon> 
-                    <ion-icon name="checkbox-outline" (click)="toggleSelectedAddress (item, $event)" *ngIf="selectedAddress[item.pk]"></ion-icon> &nbsp; 
+                    <ion-icon name="stop-outline" (click)="toggleSelectedAddress (item, $event)" *ngIf="!isModal && !selectedAddress[item.pk]"></ion-icon> 
+                    <ion-icon name="checkbox-outline" (click)="toggleSelectedAddress (item, $event)" *ngIf="!isModal && selectedAddress[item.pk]"></ion-icon> &nbsp; 
                     &nbsp; 
                     {{item.name}}
                   </h3>
@@ -121,6 +124,11 @@
     <div class="wrapper">
       <ion-icon name="close-outline" class="ion-float-right" (click)="moveToFolderModal.dismiss ()"></ion-icon>
       <div class="title">Déplacer les adresses selectionnées dans un dossier</div>
+
+      <div class="folder" (click)="moveToFolder (moveToFolderModal, null)">
+        <ion-icon name="folder-outline"></ion-icon> &nbsp; &nbsp; 
+        Racine
+      </div>
 
       <div class="folder" (click)="moveToFolder (moveToFolderModal, folder)" *ngFor="let folder of folders">
         <ion-icon name="folder-outline"></ion-icon> &nbsp; &nbsp; 

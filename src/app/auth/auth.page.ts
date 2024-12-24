@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { StorageService } from '../utils/services/storage.service';
 import { passwordValidator, regex, regexErrors } from '../utils/regex';
 import { Router } from '@angular/router';
-import { AlertController, LoadingController, NavController } from '@ionic/angular';
+import { AlertController, IonInput, LoadingController, NavController } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
 import { Storage } from '@ionic/storage-angular';
 
@@ -58,6 +58,10 @@ export class AuthPage {
 
   onRememberChange(){
     this.isRemember = !this.isRemember;
+  }
+
+  toggleShowPassword (input: IonInput) {
+    input.type = input.type === 'text' ? 'password' : 'text';
   }
 
   async onSubmit() {

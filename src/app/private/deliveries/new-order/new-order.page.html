@@ -5,16 +5,18 @@
   <div class="container">
     <div class="cards">
       <h3>Choisissez votre type de transport</h3>
-      <ion-button size="small" fill="outline" *ngFor="let draft of draftsName" (click)="loadDraft (draft)">{{ draft }} (brouillon)</ion-button>
+      <ion-button size="small" fill="outline" *ngFor="let draft of draftsName" (click)="loadDraft (draft)">
+        Charger ma demande '{{ draft }}'
+      </ion-button>
       <div class="card" (click)="setTransportType ('audiovisual')">
         <img src="assets/order-type/audiovisual.jpeg">
         <div class="title">Audiovisuel</div>
       </div>
-      <div class="card" (click)="setTransportType ('charter')">
+      <div class="card disabled" (click)="setTransportType ('charter')">
         <img src="assets/order-type/charter.jpeg">
         <div class="title">Affrètement</div>
       </div>
-      <div class="card" (click)="setTransportType ('air')">
+      <div class="card disabled" (click)="setTransportType ('air')">
         <img src="assets/order-type/air.jpeg">
         <div class="title">Aeriens</div>
       </div>

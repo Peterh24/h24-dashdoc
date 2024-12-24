@@ -54,12 +54,6 @@ export class HomePage implements OnDestroy {
       
       this.companyService.companies.subscribe((companies) => {
         this.loadedCompanies = companies;
-
-        this.storage.get(DASHDOC_COMPANY).then(async (company) => {
-          if (company) {
-            this.onchooseCompany(company);
-          }
-        });
       })
 
       this.storage.get(DASHDOC_COMPANY).then((company) => {
@@ -177,7 +171,7 @@ export class HomePage implements OnDestroy {
           loading.dismiss();
           if (company && company.token) {
             this.companyService.setCompanyName(company.name);
-            this.storage.set(USER_STORAGE_KEY, company.token);
+            this.storage.set(USER_STORAGE_KEY, company.token).then (() => this.companyService.getCompanyStatus () );
             this.storage.set(DASHDOC_COMPANY, currentCompany);
             this.isCompanySelected = true;
             this.companyService.isCompanySwitch = false;
@@ -189,6 +183,7 @@ export class HomePage implements OnDestroy {
           this.companyService.setCompanyName(company.name);
           this.isCompanySelected = true;
           this.companyService.isCompanySwitch = false;
+          this.companyService.getCompanyStatus ();
         });
       }
     });

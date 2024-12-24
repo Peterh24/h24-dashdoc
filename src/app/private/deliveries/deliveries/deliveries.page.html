@@ -4,13 +4,13 @@
   <div class="tabs">
     <div class="tab" [class.active]="tab === 1" (click)="setTab(1)">
       <span>
-        <ion-badge>1</ion-badge>
+        <ion-badge *ngIf="deliveries?.length">{{ deliveries.length }}</ion-badge>
         <span>En cours</span>
       </span>
     </div>
     <div class="tab" [class.active]="tab === 2" (click)="setTab(2)">
       <span>
-        <ion-badge>1</ion-badge>
+        <ion-badge *ngIf="false">1</ion-badge>
         <span>Historique</span>
       </span>
     </div>
@@ -24,7 +24,7 @@
     </ion-accordion-group>
 
     <ion-infinite-scroll #infiniteScroll threshold="0" (ionInfinite)="loadMoreDeliveries($event)" >
-      <ion-infinite-scroll-content loadingSpinner="none" *ngIf="!deliveriesService.isLastPageReached">
+      <ion-infinite-scroll-content loadingSpinner="none" *ngIf="deliveries?.length && !deliveriesService.isLastPageReached">
           <div class="h24loader" ></div>
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>

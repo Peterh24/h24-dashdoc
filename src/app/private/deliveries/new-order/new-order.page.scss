@@ -23,6 +23,7 @@ ion-content {
     margin-bottom: 10px;
     overflow: hidden;
     background-color: black;
+    cursor: pointer;
 }
 
 .card img {
@@ -40,6 +41,11 @@ ion-content {
     color: white;
     font-family: sans-serif;
     font-weight: bold;
+}
+
+.card.disabled {
+    background-color: grey;
+    opacity: 85%;
 }
 
 h3 {

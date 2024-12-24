@@ -32,12 +32,10 @@ export class DeliveriesPage implements OnInit {
     }
 
     this.isMultipointAuto = this.transport.isMultipoint === null;
-    
     this.synchronize ();
     
     window.addEventListener('popstate', (event) => {
       if (this.isModalOpen) {
-        console.log (999);
         event.preventDefault ();
         event.stopPropagation ();
         event.stopImmediatePropagation ();
@@ -121,11 +119,16 @@ export class DeliveriesPage implements OnInit {
 
         this.transport.deliveries = origins;
       }
+
+      if (origins > 2 && destinations <= 1 || origins <= 1 && destinations > 2) {
+        this.transport.isMultipoint = false;
+        this.isMultipointAuto = false;
+      }
     }
 
     this.synchronize ();
 
-    console.log (5, this.origins, this.destinations, data);
+    console.log ('add', this.origins, this.destinations, data);
   }
 
   deleteDelivery (type: string, delivery: any) {
@@ -156,22 +159,39 @@ export class DeliveriesPage implements OnInit {
     if (!origins?.length) {
       return null;
     }
-    return new Date(Math.max (...origins.filter ((o) => o?.origin?.slots?.[0]?.start).map ((o) => new Date(o?.origin?.slots?.[0]?.start).valueOf ()))).toISOString () || null;
+    const dates = origins.filter ((o) => o?.origin?.slots?.[0]?.start)?.map ((o) => new Date(o?.origin?.slots?.[0]?.start).valueOf ());
+    const max = Math.max (...dates);
+    return isFinite (max) ? new Date(max).toISOString () : null;
   }
 
   getDestinationsMinSlot (destinations: any[]) {
-    if (!destinations.length) {
+    if (!destinations?.length) {
       return null;
     }
-
-    return new Date(Math.min (...destinations.filter ((d) => d?.destination?.slots?.[0]?.start).map ((d) => new Date(d?.destination?.slots?.[0]?.start).valueOf ()))).toISOString () || null;
+    const dates = destinations.filter ((d) => d?.destination?.slots?.[0]?.start)?.map ((d) => new Date(d?.destination?.slots?.[0]?.start).valueOf ());
+    const min = Math.min (...dates);
+    return isFinite(min) ? new Date(min).toISOString () : null
   }
 
   synchronize () {
     this.transport.sortDeliveries ();
 
     this.origins = this.transport.getOrigins ();
-    this.destinations = this.transport.getDestinations ();  
+    this.destinations = this.transport.getDestinations ();
+  }
+
+  isMultipointDeliveryInvalid (index: number) {
+    if (this.transport.isMultipoint) {
+      const delivery = this.transport.deliveries[index];
+      if (index > 0) {
+        const previousDelivery = this.transport.deliveries[index -1];
+        
+        return new Date (delivery.origin?.slots?.[0]?.start) < 
+          new Date (previousDelivery.destination?.slots?.[0]?.start);
+      }
+    }
+
+    return false;
   }
 
   onSubmit () {

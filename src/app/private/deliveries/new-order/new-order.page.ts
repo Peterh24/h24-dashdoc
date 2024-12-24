@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
+import { AuthService } from 'src/app/services/auth.service';
 import { TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { TransportService } from 'src/app/services/transport.service';
 
@@ -15,6 +16,7 @@ export class NewOrderPage implements OnInit {
 
   constructor(
     private transportService: TransportService,
+    private authService: AuthService,
     private router: Router,
     private storage: Storage,
   ) { }
@@ -30,7 +32,11 @@ export class NewOrderPage implements OnInit {
         this.drafts = drafts;
         this.draftsName = Object.keys (drafts);
       }
-    })
+    });
+
+    this.authService.loadCurrentUserDetail (this.authService.currentUser.id).subscribe ({
+      next: (res) => { }
+    });
   }
 
   setTransportType (type: string) {
@@ -38,8 +44,10 @@ export class NewOrderPage implements OnInit {
       this.transportService.resetTransport ();
     }
 
-    this.transportService.type = type;
-    this.router.navigateByUrl ('/private/tabs/transports/new-order/vehicle-choice');
+    if (type == 'audiovisual') {
+      this.transportService.type = type;
+     this.router.navigateByUrl ('/private/tabs/transports/new-order/vehicle-choice');
+    }
   }
 
   loadDraft (name: string) {

@@ -1,8 +1,10 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
 import { AuthService } from 'src/app/services/auth.service';
-import { DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
+import { DASHDOC_API_URL, DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { TransportService } from 'src/app/services/transport.service';
 import { VehiclesService } from 'src/app/services/vehicles.service';
 
@@ -53,23 +55,21 @@ export class SummaryPage implements OnInit {
     private vehicles: VehiclesService,
     private router: Router,
     private storage: Storage,
+    private http: HttpClient,
+    private alertController: AlertController,
   ) { }
 
   ngOnInit() {
-    this.transport.type = 'audiovisual';
-    this.vehicles.fetchVehicles ().subscribe ({
-      next: (vehicles) => {
-        console.log (11, vehicles);
-        this.vehicle = vehicles[0];
-//        this.loadTest ();
-      }
-    })
   }
 
   ionViewWillEnter () {
     if (!this.transport.type) {
       this.router.navigateByUrl ('/private/tabs/transports/new-order');  
     }
+
+    this.authService.loadCurrentUserDetail (this.authService.currentUser.id).subscribe ({
+      next: (res) => { }
+    });
   }
 
   getMerchandises (merchandises: any) {
@@ -113,6 +113,31 @@ export class SummaryPage implements OnInit {
   async onSubmit () {
     const transport = await this.buildTransport ();
 
+    return;
+
+    this.http.post(`${DASHDOC_API_URL}transports/`, transport).subscribe({
+      next: async res => {
+        // On renouvelle le token firebase pour éviter qu'il n'expire bientot
+        this.authService.resetFirebasePushNotificationToken ();
+
+        const confirm = await this.alertController.create({
+          header: 'Bravo, votre course a été enregistrée',
+          message: 'Votre course a été validée et nous est parvenue, en cas de besoin d\'informations complementaires, nous vous contacterons sur le numero de téléphone présent dans votre profil.',
+          buttons: ['Compris'],
+        });
+
+        await confirm.present();
+        this.router.navigateByUrl('/private/tabs/transports/deliveries');
+      },
+      error: async (error) => {
+        const alert = await this.alertController.create({
+          header: "Echec de la requête: " + error.error.message,
+          buttons: ['Compris'],
+        });
+  
+        await alert.present();    
+      }
+    });
   }
 
   async buildTransport () {
@@ -140,10 +165,10 @@ export class SummaryPage implements OnInit {
   }
 
   buildDeliveries () {
-    const deliveries: any[] = [];
+    let deliveries: any[] = [];
 
     if (this.transport.isMultipoint) {
-
+      deliveries = this.transport.deliveries;
     } else {
       const origins = this.transport.getOrigins ();
       const destinations = this.transport.getDestinations ();
@@ -178,10 +203,10 @@ export class SummaryPage implements OnInit {
             company : {
               pk: this.company
             },
-            first_name: this.authService.userInfo.firstname,
-            last_name: this.authService.userInfo.lastname,
-            email: this.authService.userInfo.email,
-            phone_number: this.authService.userInfo.phone
+            first_name: this.authService.currentUserDetail?.firstname,
+            last_name: this.authService.currentUserDetail?.lastname,
+            email: this.authService.currentUserDetail?.email,
+            phone_number: this.authService.currentUserDetail?.phone
           }
         }
       ]
@@ -205,11 +230,16 @@ export class SummaryPage implements OnInit {
           segments.push (segment);
         }
 
-        segments.push ({...d});
+        const segment = {...d};
+        delete segment.segments;
+        delete segment.planned_loads;
+        delete segment.tracking_contacts;
+        segments.push (segment);
       })
     } else {
       if (this.transport.getDestinations ().length > 1) {
         // Single origin
+        segments.push (deliveries[0]);
         deliveries.forEach ((d, index) => {
           if (index > 0) {
             const segment = {
@@ -232,6 +262,7 @@ export class SummaryPage implements OnInit {
             segments.push (segment);
           }
         });
+        segments.push (deliveries[deliveries.length - 1]);
       }
     }
 
@@ -267,79 +298,5 @@ export class SummaryPage implements OnInit {
 
       this.storage.set (TRANSPORTS_DRAFTS_KEY, drafts);
     }
-  }
-
-  // TODO delete 
-  loadTest () {
-    this.transport.deliveries = [
-      {
-          "origin": {
-              "address": {
-                  "pk": 67797860,
-                  "name": "Enlèvement 1",
-                  "address": "25 rue de paris",
-                  "city": "Paris",
-                  "postcode": "75001",
-                  "country": "FR",
-                  "latitude": null,
-                  "longitude": null
-              },
-              "instructions": "enlèvement 1",
-              "slots": [
-                  {
-                      "start": "2024-10-04T10:23",
-                      "end": "2024-10-04T10:23"
-                  }
-              ]
-          },
-          "planned_loads": [
-              {
-                  "id": "camera",
-                  "description": "Caméra",
-                  "quantity": 2,
-                  "category": "bulk",
-                  "complementary_information": ""
-              }
-          ],
-          "destination": {
-              "address": {
-                  "pk": 67798196,
-                  "name": "Livraison 1",
-                  "address": "2 rue de lièvre",
-                  "city": "Paris",
-                  "postcode": "75005",
-                  "country": "FR",
-                  "latitude": 48.8797891,
-                  "longitude": 2.3289635
-              },
-              "instructions": "livraison1",
-              "slots": [
-                  {
-                      "start": "2024-10-11T00:00",
-                      "end": "2024-10-11T00:00"
-                  }
-              ]
-          },
-          "shipper_reference": "reference",
-          "shipper_address": {
-              "company": {
-                  "pk": 2054747
-              }
-          },
-          "tracking_contacts": [
-              {
-                  "contact": {
-                      "company": {
-                          "pk": 2054747
-                      },
-                      "first_name": "David",
-                      "last_name": "Ramboz",
-                      "email": "david.ramboz@gmail.com",
-                      "phone_number": "string"
-                  }
-              }
-          ]
-      }
-    ] 
   }
 }

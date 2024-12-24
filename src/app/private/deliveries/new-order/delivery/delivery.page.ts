@@ -1,8 +1,11 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { IonInput, ModalController } from '@ionic/angular';
-import { AddressPage } from '../address/address.page';
 import { TransportService } from 'src/app/services/transport.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { AddressPage } from 'src/app/private/profile/address/address.page';
+import { Storage } from '@ionic/storage-angular';
+import { DASHDOC_COMPANY } from 'src/app/services/constants';
 
 @Component({
 selector: 'app-delivery',
@@ -20,7 +23,8 @@ export class DeliveryPage implements OnInit {
   enableOrigin: boolean;
   enableDestination: boolean;
 
-  contact: any;
+  company: any;
+  contacts: any[];
   merchandisesUrl = 'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/';
   merchandiseIcon: any = {
     'Caméra': 'camera',
@@ -45,11 +49,13 @@ export class DeliveryPage implements OnInit {
   destinationErrors: any = {};
   hasErrors: boolean;
 
-  @ViewChild('merchandisesOther') merchandiseOther: IonInput;
+  @ViewChild('merchandisesCustom') merchandisesCustom: IonInput;
 
   constructor(
     public transport: TransportService,
-    private modalController: ModalController
+    public authService: AuthService,
+    private modalController: ModalController,
+    private storage: Storage,
   ) { }
 
   ngOnInit () {
@@ -83,38 +89,58 @@ export class DeliveryPage implements OnInit {
 
   ionViewWillEnter() {
     console.log (1, this.delivery, this.deliveryType);
-    console.log (2, this.originMaxSlot, this.destinationMinSlot);
 
     this.originErrors = {};
     this.destinationErrors = {};
     this.hasErrors = false;
 
+    this.contacts = [{
+      contact: {
+        company: {
+          pk: this.company,
+        },
+        first_name: this.authService.currentUserDetail.firstname,
+        last_name: this.authService.currentUserDetail.lastname,
+        email: this.authService.currentUserDetail.email,
+        phone_number: this.authService.currentUserDetail.phone
+      }
+    }];
+
     if (this.delivery) {
       this.origin = this.delivery.origin?.address;
       this.destination = this.delivery.destination?.address;
+      if (this.delivery.tracking_contacts?.email) {
+        this.contacts = this.delivery.tracking_contacts;
+      }
 
       this.enableOrigin = !!this.origin;
       this.enableDestination = !!this.destination;
 
-      this.delivery.planned_loads?.forEach ((load: any) => {
+      this.delivery.planned_loads?.filter ((l: any) => l.id != 'custom').forEach ((load: any) => {
         this.merchandisesSelected[load.description] = true;
       });
 
-      setTimeout (() => {
-        if (this.merchandiseOther) {
-          this.merchandiseOther.value = this.delivery.planned_loads_other;
-        }
-      }, 200);
+      const customLoad = this.delivery.planned_loads.find ((d: any) => d.id == 'custom');
+
+      if (customLoad) {
+        setTimeout (() => {
+          if (this.merchandisesCustom) {
+            this.merchandisesCustom.value = customLoad?.description;
+          }
+        }, 200);
+      }
 
       const origin = this.loadDelivery(this.originForm, this.delivery.origin);
       const destination = this.loadDelivery(this.destinationForm, this.delivery.destination);
 
-      console.log ('edit', origin, destination);
+      console.log ('edit', this.delivery);
 
       this.fileToUpload = this.delivery.file;
     } else {
       this.updateEnabled ();
     }
+
+    this.storage.get(DASHDOC_COMPANY).then (pk => { this.company = pk });
   }
 
   loadDelivery (form: FormGroup, delivery: any) {
@@ -133,9 +159,10 @@ export class DeliveryPage implements OnInit {
       time_end: end_time,
       instructions: delivery?.instructions,
       reference: delivery?.reference,
-      handlers: delivery?.handlers,
+      handlers: delivery?.handlers || 0,
     };
     
+
     const setSlot = (day: string, control: string) => {
       if (day && values[control]) {
         values[control] = values[control];
@@ -160,7 +187,10 @@ export class DeliveryPage implements OnInit {
   }
 
   updateEnabled () {
-    if (this.transport.isMultipoint) {
+    if (this.delivery) {
+      this.enableOrigin = !!this.origin;
+      this.enableDestination = !!this.destination;
+    } else if (this.transport.isMultipoint || this.deliveryType === null) {
       this.enableOrigin = this.enableDestination = true;
     } else {
       const origins = this.transport.getOrigins ().length;
@@ -196,11 +226,10 @@ export class DeliveryPage implements OnInit {
   }
 
   async setAddress (type: string) {
-    console.log (999);
-
     const modal = await this.modalController.create({
       component: AddressPage,
       componentProps: {
+        isModal: true,
         type
       },
       cssClass: 'address-modal',
@@ -257,7 +286,7 @@ export class DeliveryPage implements OnInit {
       return this.originMaxSlot;
     }
 
-    return '1900-01-01T00:00:00';
+    return new Date ().toISOString ().split (/T/)[0];
   }
 
   getDateTimeMax (type: string) {
@@ -311,6 +340,24 @@ export class DeliveryPage implements OnInit {
           this.originErrors[control] = true;
         }
       })
+    } 
+    
+    if (this.transport.isMultipoint) {
+      if (!this.origin) {
+        this.originErrors['address'] = true;
+      }
+
+      if (!this.destination) {
+        this.destinationErrors['address'] = true;
+      }
+    } else {
+      if (this.deliveryType === 'origin' && !this.origin) {
+        this.originErrors['address'] = true;
+      }
+
+      if (this.deliveryType === 'destination' && !this.destination) {
+        this.destinationErrors['address'] = true;
+      }
     }
 
     if (this.destination) {
@@ -341,7 +388,7 @@ export class DeliveryPage implements OnInit {
   }
   
   onSubmit () {
-    let origin, destination, planned_loads;
+    let origin, destination, planned_loads: any;
 
     if (!this.validateForm ()) {
       return;
@@ -355,31 +402,41 @@ export class DeliveryPage implements OnInit {
         description: name,
         category: 'bulk'
       }));
+
+      if (this.merchandisesCustom?.value) {
+        planned_loads.push({
+          id: 'custom',
+          description: this.merchandisesCustom.value
+        });
+      }
     }
 
     if (this.destination) {
       destination = this.buildDelivery (this.destinationForm.value, this.destination);
     }
 
-    console.log (2, { origin, destination, planned_loads });
-
     if (this.delivery) {
-      this.delivery.origin = origin;
-      this.delivery.destination = destination;
-      this.delivery.planned_loads = planned_loads;
-      if (this.merchandiseOther?.value) {
-        this.delivery.planned_loads_other = this.merchandiseOther.value;
+      if (this.delivery.origin) {
+        this.delivery.origin = this.buildDelivery (this.originForm.value, this.origin);
       }
+      if (this.delivery.destination) {
+        this.delivery.destination = this.buildDelivery (this.destinationForm.value, this.destination);
+      }
+      this.delivery.planned_loads = planned_loads || [];
+      this.delivery.tracking_contacts = this.contacts;
+
       if (this.fileToUpload) {
         this.delivery.file = this.fileToUpload;
       }
     }
 
+    console.log ('submit', { origin, destination, planned_loads });
+
     this.modalController.dismiss ({ 
       origin,
       destination,
       planned_loads,
-      planned_loads_other: this.merchandiseOther?.value,
+      tracking_contacts: this.contacts,
       file: this.fileToUpload 
     });
   }
@@ -403,7 +460,7 @@ export class DeliveryPage implements OnInit {
       instructions: values.instructions,
       reference: values.reference,
       slots: slots,
-      handlers: values.handlers,
+      handlers: values.handlers || 0,
     };
   }
 

@@ -48,7 +48,7 @@ export class NewAddressPage implements OnInit {
           updateOn: 'blur',
           validators: [Validators.required]
         }),
-        country: new FormControl(null, {
+        country: new FormControl("FR", {
           validators: [Validators.required]
         }),
         instructions: new FormControl(null, {

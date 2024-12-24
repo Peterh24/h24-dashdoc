@@ -2,7 +2,7 @@
 
 <ion-content>
   <h2>Récapitulatif</h2>
-  <h3>Type de transport <ion-icon class="edit-button" name="create-outline" (click)="editSection ('type')"></ion-icon></h3>
+  <h3>Type de transport <ion-icon class="edit-button" name="create-outline" (click)="editSection ('type')" *ngIf="false"></ion-icon></h3>
 
   <div class="type">
     <img src="assets/order-type/{{ transport.type }}.jpeg">
@@ -10,21 +10,21 @@
   </div>
 
   <h3>Type de véhicule <ion-icon class="edit-button" name="create-outline" (click)="editSection ('vehicle')"></ion-icon></h3>
-  <div class="vehicle" *ngIf="vehicle">
-    <img src="assets/trucks/{{ vehicle.licensePlate }}.png">
+  <div class="vehicle">
+    <img src="assets/trucks/{{ transport.vehicle }}.png">
   </div>
 
   <h2>Enlèvements <ion-icon class="edit-button" name="create-outline" (click)="editSection ('origins')"></ion-icon></h2>
   <ion-accordion-group>
     <div *ngFor="let delivery of transport.getOrigins ()">
-      <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'origin', delivery: delivery.origin, address: delivery.origin?.address, loads: delivery.planned_loads, loads_other: delivery.planned_loads_other, file: delivery.file }"></div>
+      <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'origin', delivery: delivery.origin, address: delivery.origin?.address, loads: delivery.planned_loads, file: delivery.file }"></div>
     </div>
   </ion-accordion-group>
   <br>
   <h2>Livraisons<ion-icon class="edit-button" name="create-outline" (click)="editSection ('destinations')"></ion-icon></h2>
   <ion-accordion-group>
     <div *ngFor="let delivery of transport.getDestinations ()">
-      <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'destination', delivery: delivery.destination, address: delivery.destination?.address, loads: delivery.planned_loads, loads_other: delivery.planned_loads_other, file: delivery.file }"></div>
+      <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'destination', delivery: delivery.destination, address: delivery.destination?.address, loads: delivery.planned_loads, file: delivery.file }"></div>
     </div>
   </ion-accordion-group>
 
@@ -32,11 +32,11 @@
 </ion-content>
 
 <ion-toolbar>
-  <ion-button fill="outline" id="save-draft" *ngIf="!transport.draftName">Enregistrer dans les brouillons</ion-button>
+  <ion-button fill="outline" id="save-draft">Enregistrer dans les brouillons</ion-button>
   <ion-button id="submit-order">Nommer votre demande</ion-button>
 </ion-toolbar>
 
-<ng-template #deliveryTpl let-type="type" let-delivery="delivery" let-address="address" let-loads="loads" let-loadsother="loads_other" let-file="file">
+<ng-template #deliveryTpl let-type="type" let-delivery="delivery" let-address="address" let-loads="loads" let-file="file">
   <ion-accordion class="delivery">
     <ion-item slot="header" color="light" lines="none">
       <div>
@@ -50,9 +50,7 @@
       <div class="contact" *ngIf="delivery.contact"><b>Contact: </b>{{ delivery.contact }}</div>
 
       <div class="instructions" *ngIf="delivery.instructions"><b>Instructions: </b>{{ delivery.instructions }}</div>
-      <div class="merchandises" *ngIf="delivery.planned_loads"><b>Marchandises: </b>{{ getMerchandises (loads) }} 
-        <span *ngIf="loadsother">{{ loadsother }}</span>
-      </div>
+      <div class="merchandises" *ngIf="type === 'origin' && loads"><b>Marchandises: </b>{{ getMerchandises (loads) }} </div>
       <div class="attachments" *ngIf="delivery.file?.name"><b>Pièce jointe: </b>{{ delivery.file.name }} </div>
     </div>
   </ion-accordion>
@@ -78,7 +76,7 @@
   </ng-template>
 </ion-modal>
 
-<ion-modal trigger="save-draft" *ngIf="!transport.draftName" #saveDraftModal>
+<ion-modal trigger="save-draft" #saveDraftModal>
   <ng-template>
     <div class="wrapper">
       <ion-icon name="close-outline" class="ion-float-right" (click)="saveDraftModal.dismiss ()"></ion-icon>
@@ -90,7 +88,8 @@
         fill="outline"
         shape="round"
         autofocus="true"
-        placeholder="Titre de la demande">
+        placeholder="Titre de la demande"
+        [value]="transport.draftName">
       </ion-input>
       <br>
       <ion-button (click)="onSetDraftName (draftName.value, saveDraftModal)">Valider</ion-button>
