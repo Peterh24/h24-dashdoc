@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonAccordionGroup, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
-import { TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
+import { DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { TransportService } from 'src/app/services/transport.service';
 
@@ -93,9 +93,11 @@ export class BasketPage implements OnInit, AfterViewInit {
   }
 
   loadDrafts () {
-    this.storage.get (TRANSPORTS_DRAFTS_KEY).then ((drafts) => {
-      this.drafts = drafts;
-      this.draftsName = Object.keys (drafts);
+    this.storage.get(DASHDOC_COMPANY).then ((pk) => {
+      this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
+        this.drafts = drafts;
+        this.draftsName = Object.keys (drafts);
+      });
     });
   }
 
@@ -135,14 +137,17 @@ export class BasketPage implements OnInit, AfterViewInit {
   onDraftDelete (draftName: string, modal: any) {
     modal.dismiss ();
     const index = this.accordionDraftGroup?.value;
+    
     if (index) {
       const draftName = this.draftsName[parseInt(new String(index).substring (1))];
-    this.storage.get (TRANSPORTS_DRAFTS_KEY).then ((drafts) => {
-      if (drafts) {
-        delete drafts[draftName];
-      }
-      this.storage.set (TRANSPORTS_DRAFTS_KEY, drafts).then (() => this.loadDrafts ());
-    });
+      this.storage.get(DASHDOC_COMPANY).then ((pk) => {
+        this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
+          if (drafts) {
+            delete drafts[draftName];
+          }
+          this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${pk}`, drafts).then (() => this.loadDrafts ());
+        })
+      });
     }
   }
 

@@ -70,6 +70,8 @@ export class SummaryPage implements OnInit {
     this.authService.loadCurrentUserDetail (this.authService.currentUser.id).subscribe ({
       next: (res) => { }
     });
+
+    console.log ('summary', this.transport);
   }
 
   getMerchandises (merchandises: any) {
@@ -176,15 +178,15 @@ export class SummaryPage implements OnInit {
       if (destinations.length > 1) {
         destinations.forEach ((d) => {
           deliveries.push ({
-            ...d,
-            origin: {...origins[0].origin},
+            ...origins[0],
+            ...d
           })
         });
       } else {
         origins.forEach ((o) => {
           deliveries.push ({
-            ...o,
-            destination: {...destinations[0].destination}
+            ...destinations[0],
+            ...o
           })
         });
       }
@@ -197,19 +199,6 @@ export class SummaryPage implements OnInit {
           pk: this.company
         },
       };
-      delivery.tracking_contacts = [
-        {
-          contact: {
-            company : {
-              pk: this.company
-            },
-            first_name: this.authService.currentUserDetail?.firstname,
-            last_name: this.authService.currentUserDetail?.lastname,
-            email: this.authService.currentUserDetail?.email,
-            phone_number: this.authService.currentUserDetail?.phone
-          }
-        }
-      ]
     });
 
     return deliveries;
@@ -239,7 +228,11 @@ export class SummaryPage implements OnInit {
     } else {
       if (this.transport.getDestinations ().length > 1) {
         // Single origin
-        segments.push (deliveries[0]);
+        const segment = { ...deliveries[0] };
+        delete segment.segments;
+        delete segment.planned_loads;
+        delete segment.tracking_contacts;
+        segments.push (segment);
         deliveries.forEach ((d, index) => {
           if (index > 0) {
             const segment = {
@@ -262,7 +255,11 @@ export class SummaryPage implements OnInit {
             segments.push (segment);
           }
         });
-        segments.push (deliveries[deliveries.length - 1]);
+        const segment = { ...deliveries[deliveries.length - 1] };
+        delete segment.segments;
+        delete segment.planned_loads;
+        delete segment.tracking_contacts;
+        segments.push (segment);
       }
     }
 
@@ -274,10 +271,12 @@ export class SummaryPage implements OnInit {
       modal.dismiss ();
 
       if (this.transport.draftName) {
-        this.storage.get (TRANSPORTS_DRAFTS_KEY).then ((drafts) => {
-          delete drafts[this.transport.draftName];
-          this.transport.draftName = null;
-          this.storage.set (TRANSPORTS_DRAFTS_KEY, drafts); 
+        this.storage.get(DASHDOC_COMPANY).then ((pk) => {
+          this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
+            delete drafts[this.transport.draftName];
+            this.transport.draftName = null;
+            this.storage.set (TRANSPORTS_DRAFTS_KEY, drafts); 
+          });
         });
       }
 
@@ -294,9 +293,15 @@ export class SummaryPage implements OnInit {
 
       let drafts: any = await this.storage.get (TRANSPORTS_DRAFTS_KEY) || {};
 
-      drafts[name] = transport;
-
-      this.storage.set (TRANSPORTS_DRAFTS_KEY, drafts);
+      this.storage.get(DASHDOC_COMPANY).then ((pk) => {
+        this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
+          if (!drafts) {
+            drafts = {};
+          }
+          drafts[name] = transport;
+          this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${pk}`, drafts);
+        })
+      });
     }
   }
 }

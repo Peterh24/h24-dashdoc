@@ -50,7 +50,7 @@
       <div class="contact" *ngIf="delivery.contact"><b>Contact: </b>{{ delivery.contact }}</div>
 
       <div class="instructions" *ngIf="delivery.instructions"><b>Instructions: </b>{{ delivery.instructions }}</div>
-      <div class="merchandises" *ngIf="type === 'origin' && loads"><b>Marchandises: </b>{{ getMerchandises (loads) }} </div>
+      <div class="merchandises" *ngIf="type === 'origin' && loads?.length"><b>Marchandises: </b>{{ getMerchandises (loads) }} </div>
       <div class="attachments" *ngIf="delivery.file?.name"><b>Pièce jointe: </b>{{ delivery.file.name }} </div>
     </div>
   </ion-accordion>

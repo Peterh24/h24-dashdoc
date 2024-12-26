@@ -27,6 +27,10 @@ const routes: Routes = [
   {
     path: 'notifications',
     loadChildren: () => import('./notifications/notifications.module').then( m => m.NotificationsPageModule)
+  },
+  {
+    path: 'contacts',
+    loadChildren: () => import('./contacts/contacts.module').then( m => m.ContactsPageModule)
   }
 ];
 

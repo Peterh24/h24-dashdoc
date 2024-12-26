@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AlertController, IonInput, LoadingController } from '@ionic/angular';
+import { AlertController, IonInput, LoadingController, ToastController } from '@ionic/angular';
 import { passwordValidator, phoneValidator, regex, regexErrors } from '../utils/regex';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
@@ -29,6 +29,7 @@ export class SignUpPage implements OnInit {
     private loadingController: LoadingController,
     private authService: AuthService,
     private alertController: AlertController,
+    private toastController: ToastController,
     private formBuilder: FormBuilder,
     private router: Router
   ) { }
@@ -50,9 +51,20 @@ export class SignUpPage implements OnInit {
     });
     await loading.present();
     this.authService.register(firstname, lastname, phone, email, password, isClient, company).subscribe({
-      next: (res) => {
+      next: async (res) => {
         loading.dismiss();
+
         this.router.navigateByUrl ('/auth');
+
+        const toast = await this.toastController.create({
+          message: 'Votre demande d\'inscription à été envoyée',
+          duration: 5000,
+          position: 'bottom',
+          icon: 'checkbox-outline',
+          cssClass: 'toast-success'
+        });
+    
+        await toast.present();
       },
       error: async (error) => {
         loading.dismiss();

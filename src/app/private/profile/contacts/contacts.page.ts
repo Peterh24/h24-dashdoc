@@ -1,11 +1,12 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AddressService } from 'src/app/services/address.service';
-import { Address } from './address.model';
 import { AlertController, IonItemSliding, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
-import { ADDRESS_FOLDER_KEY, DASHDOC_API_URL, DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
+import { CONTACT_FOLDER_KEY, DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
+import { Contact } from './contact.model';
+import { ContactsService } from 'src/app/services/contacts.service';
 
 const DEFAULT_FOLDERS = [
   "Mes loueurs",
@@ -14,28 +15,28 @@ const DEFAULT_FOLDERS = [
 ];
 
 @Component({
-  selector: 'app-address',
-  templateUrl: './address.page.html',
-  styleUrls: ['./address.page.scss'],
+  selector: 'app-contacts',
+  templateUrl: './contacts.page.html',
+  styleUrls: ['./contacts.page.scss'],
 })
-export class AddressPage implements OnInit {
+export class ContactsPage implements OnInit {
   @Input() isModal: boolean;
 
   private addressSub: Subscription;
-  address: Array<Address> = [];
+  contacts: Array<Contact> = [];
   isLoading: boolean = false;
-  searchAddress: string;
+  searchContact: string;
   jsonData: any;
   startIndex: number = 0;
 
   currentFolder: string;
   folders: any[] = [];
-  addressFolder: any;
-  selectedAddress: any = {};
+  contactFolder: any;
+  selectedContacts: any = {};
 
   @ViewChild("searchbarElem", { read: ElementRef }) private searchbarElem: ElementRef;
   constructor(
-    private addressService: AddressService,
+    private contactService: ContactsService,
     private router: Router,
     private loadingController: LoadingController,
     private alertController: AlertController,
@@ -52,33 +53,34 @@ export class AddressPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.addressService.resetAddresses();
-    this.address = [];
+    this.contacts = [];
     this.jsonData = [];
-    this.addressFolder = {};
+    this.contactFolder = {};
     this.storage.get(USER_STORAGE_KEY).then(token => {
 
     })
 
     this.isLoading = true;
-    this.selectedAddress = {};
+    this.selectedContacts = {};
     this.currentFolder = null;
 
     // TODO: verifier si les adresses sont déjà chargées
-    this.addressService.fetchAddress().subscribe({
-      next: (address) => {
+    this.contactService.fetchContacts().subscribe({
+      next: (contacts) => {
         this.isLoading = false;
 
+        
         this.storage.get(DASHDOC_COMPANY).then ((pk) => {
-          this.storage.get (`${ADDRESS_FOLDER_KEY}_${pk}`).then ((addressFolder) => {
-            if (addressFolder == null) {
+          this.storage.get (`${CONTACT_FOLDER_KEY}_${pk}`).then ((contactFolder) => {
+            /*
+            if (contactFolder == null) {
               this.folders = DEFAULT_FOLDERS;
             } else {
-              this.addressFolder = addressFolder;
-              this.folders = [...new Set (Object.values(addressFolder))];
+              this.contactFolder = contactFolder;
+              this.folders = [...new Set (Object.values(contactFolder))];
             }
-
-            this.loadAddress (address);
+            */
+            this.loadContacts (contacts);
           })
         });
       },
@@ -88,15 +90,19 @@ export class AddressPage implements OnInit {
     });
   }
 
-  loadAddress (address: any[]) {
-    this.address = address;
-    this.jsonData = address;
+  loadContacts (contacts: any[]) {
+    this.contacts = contacts;
+    this.jsonData = contacts;
 
+    /*
     DEFAULT_FOLDERS.forEach ((folder) => {
       if (!this.folders.find ((f) => f == folder)) {
         this.folders.push (folder);
       }
     })
+      */
+    
+    this.folders = [...new Set (contacts.map ((contact) => contact?.companyName))];
     this.folders.sort ((a,b) => a.localeCompare (b));
 
     this.selectFolder (null);
@@ -110,63 +116,32 @@ export class AddressPage implements OnInit {
     if (searchTerm.trim() === '') {
       this.selectFolder (this.currentFolder);
     } else {
-      this.jsonData = this.address.filter((item) => {
-        return item.name.toLowerCase().includes(searchTerm.toLowerCase());
+      this.jsonData = this.contacts.filter((item) => {
+        return `${item.firstName} ${item.lastName}`.toLowerCase().includes(searchTerm.toLowerCase());
       });
     }
   }
 
-  onEdit(adressId: number, slidingItem: IonItemSliding){
+  onEdit(contactId: number, slidingItem: IonItemSliding){
     slidingItem.close();
-    this.router.navigate(['/private/tabs/profile/address/edit-address', adressId]);
+    this.router.navigate(['/private/tabs/profile/contacts/edit-contact', contactId]);
   }
 
-  onRemoveAddress(addressPk: number, slidingElement: IonItemSliding, isOrigin:boolean): void {
-    if (!isOrigin) {
-      this.alertController.create({
-        header: 'Suppression de l\'adresse',
-        message: 'Voulez vous supprimer l\'adresse de la société',
-        buttons: ['OK']
-      }).then(alertElement => {
-        this.loadingController.create({
-          message: '<div class="h24loader"></div>',
-          mode: "ios"
-        }).then(loadingElement => {
-          loadingElement.present();
-          this.addressService.removeAddress(addressPk).subscribe((addresses) => {
-            this.isLoading = true;
-            loadingElement.dismiss();
-            this.isLoading = false;
-            this.jsonData = addresses;
-            if (slidingElement) {
-              slidingElement.close();
-            }
-          });
-        });
-      });
-    } else {
-      this.alertController.create({
-        header: 'Suppression de l\'adresse',
-        message: 'Vous ne pouvez pas supprimer l\'adresse d\'origine de la société',
-        buttons: ['OK']
-      }).then(alertElement => {
-        alertElement.present()
-      })
-    }
+  onRemoveContact(contactPk: number, slidingElement: IonItemSliding): void {
   }
 
-  toggleSelectedAddress (address: any, event: any) {
+  toggleSelectedContact (contact: any, event: any) {
     event.preventDefault ();
     event.stopPropagation ();
-    if (this.selectedAddress[address.pk]) {
-      delete this.selectedAddress[address.pk];
+    if (this.selectedContacts[contact.pk]) {
+      delete this.selectedContacts[contact.pk];
     } else {
-      this.selectedAddress[address.pk] = address;
+      this.selectedContacts[contact.pk] = contact;
     }
   }
 
-  haveSelectedAddress () {
-    return Object.keys (this.selectedAddress).length > 0;
+  haveSelectedContacts () {
+    return Object.keys (this.selectedContacts).length > 0;
   }
 
   createFolder (modal: any, name: any) {
@@ -186,32 +161,32 @@ export class AddressPage implements OnInit {
       this.currentFolder = folder;
     }
 
-    this.jsonData = this.address.filter ((address: any) => this.addressFolder[address.pk] == this.currentFolder);
-    this.jsonData.sort ((a: any, b: any) => a.name.localeCompare (b.name));
+    this.jsonData = this.contacts.filter ((contact: any) => this.currentFolder == null || contact.companyName == this.currentFolder);
+    this.jsonData.sort ((a: any, b: any) => a.firstName?.localeCompare (b.firstName));
 
     if (this.searchbarElem?.nativeElement) {
       this.searchbarElem.nativeElement.value = '';
     }
   }
 
-  addressFolderItems (folder: string) {
-    return Object.values (this.addressFolder).filter ((f: any) => folder == f).length;
+  contactsFolderItems (folder: string) {
+    return Object.values (this.contactFolder).filter ((f: any) => folder == f).length;
   }
 
   async moveToFolder (modal: any, folder: string) {
-    Object.values(this.selectedAddress).forEach ((address: any) => {
+    Object.values(this.selectedContacts).forEach ((contact: any) => {
       if (folder == null) {
-        delete this.addressFolder[address.pk];
+        delete this.contactFolder[contact.pk];
       } else {
-        this.addressFolder[address.pk] = folder;
+        this.contactFolder[contact.pk] = folder;
       }
-
+      
       this.storage.get(DASHDOC_COMPANY).then ((pk) => {
-        this.storage.set (`${ADDRESS_FOLDER_KEY}_${pk}`, this.addressFolder);
+        this.storage.set (`${CONTACT_FOLDER_KEY}_${pk}`, this.contactFolder);
       });
     });
 
-    this.selectedAddress = {};
+    this.selectedContacts = {};
 
     modal.dismiss ();
 
@@ -232,12 +207,20 @@ export class AddressPage implements OnInit {
     return phone.replace (/^\+33/, '0').replace (/\s+/, '').replace (/(\d\d)/g, "$1 ");
   }
 
-  selectAddress (address: any, event: any) {
+  selectContact (contact: any, event: any) {
+    /*
     if (this.isModal) {
       event.preventDefault ();
       event.stopPropagation ();
       event.stopImmediatePropagation ();
-      this.modalController.dismiss (address);
+      this.modalController.dismiss (contact);
+    }
+    */
+  }
+
+  selectContacts () {
+    if (this.isModal) {
+      this.modalController.dismiss (Object.values (this.selectedContacts));
     }
   }
 

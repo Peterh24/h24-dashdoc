@@ -44,7 +44,7 @@
       </div>
     </ion-item>
     <div class="ion-padding" slot="content">
-      <div [ngTemplateOutlet]="statusTpl" [ngTemplateOutletContext]="{ status: 1 }"></div>
+      <div [ngTemplateOutlet]="statusTpl" [ngTemplateOutletContext]="{ status: getStatusIndex (delivery) }"></div>
       <br>
       <div class="content">
         <div>
@@ -92,15 +92,15 @@
     <div>
         <div class="steps">
             <div class="step">
-                <div class="bullet active"><div></div></div>
+                <div class="bullet" [class.active]="status >= 1"><div></div></div>
                 <div class="label">Traitée</div>
             </div>
             <div class="step">
-                <div class="bullet"><div></div></div>
+                <div class="bullet" [class.active]="status >= 2"><div></div></div>
                 <div class="label">En cours <br> de livraison</div>
             </div>
             <div class="step">
-                <div class="bullet"><div></div></div>
+                <div class="bullet" [class.active]="status >= 3"><div></div></div>
                 <div class="label">Livrée</div>
             </div>
         </div>

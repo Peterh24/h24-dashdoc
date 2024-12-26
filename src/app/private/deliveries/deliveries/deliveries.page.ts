@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonAccordionGroup, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
-import { TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
+import { DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { TransportService } from 'src/app/services/transport.service';
 
@@ -96,9 +96,16 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
   }
 
   loadDrafts () {
-    this.storage.get (TRANSPORTS_DRAFTS_KEY).then ((drafts) => {
-      this.drafts = drafts;
-      this.draftsName = Object.keys (drafts);
+    this.storage.get(DASHDOC_COMPANY).then ((pk) => {
+      this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
+        if (drafts) {
+          this.drafts = drafts;
+          this.draftsName = Object.keys (drafts);
+        } else {
+          drafts = {};
+          this.draftsName = [];
+        }
+      });
     });
   }
 
@@ -129,6 +136,33 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     });
 
     return Object.keys (merchandises).sort ((a, b) => a.localeCompare (b)).join (',');
+  }
+
+  getStatusIndex (delivery: any) {
+    if (!delivery.last_status_update) {
+      return 1;
+    }
+
+    switch (delivery.last_status_update) {
+      case 'created':
+      case 'updated':
+      case 'confirmed': {
+        return 1;
+      }
+      case 'trucker':
+      case 'on_loading_site':
+      case 'loading_complete':
+      case 'on_unloading_site':
+      case 'unloading_complete': {
+        return 2;
+      }
+      case 'invoiced':
+      case 'done': {
+        return 3;
+      }
+    }
+
+    return 1;
   }
 
   onDraftDelete (draftName: string, modal: any) {

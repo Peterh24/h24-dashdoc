@@ -21,7 +21,7 @@
       <ion-input type="text" label="Adresse" labelPlacement="floating" errorText="Merci d'indiquer l'adresse postale" formControlName="address"></ion-input>
       <ion-input type="text" label="Code postal" labelPlacement="floating" errorText="Merci d'indiquer le code postal" formControlName="postal"></ion-input>
       <ion-input type="text" label="Ville" labelPlacement="floating" errorText="Merci d'indiquer la ville" formControlName="city"></ion-input>
-      <ion-select mode="md" label="Pays" labelPlacement="floating" okText="Valider" cancelText="Annuler" errorText="Merci d'indiquer le pays" class="ion-no-margin ion-no-padding" value="FR" formControlName="country">
+      <ion-select mode="md" label="Pays" labelPlacement="floating" okText="Valider" cancelText="Annuler" errorText="Merci d'indiquer le pays" class="ion-no-margin ion-no-padding" formControlName="country">
         <ion-select-option *ngFor="let country of countries" [value]="country.key">{{country.value}}</ion-select-option>
       </ion-select>
       <ion-input type="text" label="Instructions" labelPlacement="floating" helperText="Indication supplementaire (Facultatif)" formControlName="instructions"></ion-input>

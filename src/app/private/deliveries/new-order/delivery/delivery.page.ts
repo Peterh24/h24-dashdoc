@@ -316,7 +316,11 @@ export class DeliveryPage implements OnInit {
   }
 
   toggleMerchandise (name: string) {
-    this.merchandisesSelected[name] = !this.merchandisesSelected[name];
+    if (this.merchandisesSelected[name]) {
+      delete this.merchandisesSelected[name];
+    } else {
+      this.merchandisesSelected[name] = true; 
+    }
   }
 
   askFileToUpload () {

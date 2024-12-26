@@ -16,6 +16,7 @@ export class ForgotPasswordPage implements OnInit {
   form: FormGroup;
   emailRemember: string;
   success: boolean;
+  isLoading: boolean;
 
   constructor(
     private authService: AuthService,
@@ -48,12 +49,15 @@ export class ForgotPasswordPage implements OnInit {
   }
 
   onSubmit() {
+    this.isLoading = true;
     this.authService.resetPasswordRequest (this.form.value.email).subscribe ({
       next: (res) => {
+        this.isLoading = false;
         this.success = true;
         this.form.controls['email'].setErrors(null);
       },
       error: async (error) => {
+        this.isLoading = false;
         this.success = false;
         this.form.controls['email'].setErrors({ 'incorrect': true });
 

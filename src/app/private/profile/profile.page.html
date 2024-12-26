@@ -33,6 +33,11 @@
       <ion-label>Mes adresses</ion-label>
     </ion-item>
 
+    <ion-item routerLink="/private/tabs/profile/contacts" [disabled]="!company">
+      <ion-icon name="people-outline" slot="start"></ion-icon> &nbsp; 
+      <ion-label>Mes contacts</ion-label>
+    </ion-item>
+
     <ion-item routerLink="/private/tabs/profile/invoice">
       <ion-icon name="logo-euro" slot="start"></ion-icon> &nbsp; 
       <ion-label>Mes factures</ion-label>
