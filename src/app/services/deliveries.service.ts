@@ -66,7 +66,6 @@ export class DeliveriesService {
             data.deliveries[0].shipper_reference,
             data.status,
             data.global_status,
-            data.status_updates?.[data.status_updates?.length - 1]?.category,
             data.pricing_total_price,
             data.quotation_total_price,
             deliveriesData,

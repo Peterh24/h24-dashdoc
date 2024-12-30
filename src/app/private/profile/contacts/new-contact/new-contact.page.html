@@ -1,0 +1,35 @@
+<app-header *ngIf="!isModal" [defaultHref]="'/private/tabs/profile/contacts'"></app-header>
+
+<ion-header *ngIf="isModal">
+  <ion-toolbar>
+    <ion-title>
+      <h2>Ajouter un contact</h2>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="medium" (click)="cancel()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <h2 *ngIf="!isModal">Ajouter un contact</h2>
+  <form [formGroup]="form">
+    <ion-list>
+      <ion-input type="text" label="Prénom" labelPlacement="floating" errorText="Merci d'indiquer un prénom" formControlName="first_name"></ion-input>
+      <ion-input type="text" label="Nom" labelPlacement="floating" errorText="Merci d'indiquer un nom" formControlName="last_name"></ion-input>
+      <ion-input type="text" label="Email" labelPlacement="floating" errorText="Merci d'indiquer un email" formControlName="email"></ion-input>
+      <ion-input type="text" label="Téléphone" labelPlacement="floating" errorText="Merci d'indiquer le téléphone" formControlName="phone_number"></ion-input>
+      <ion-select mode="md" label="Société" labelPlacement="floating" okText="Valider" cancelText="Annuler" errorText="Merci d'indiquer une société" class="ion-no-margin ion-no-padding" formControlName="company">
+        <ion-select-option *ngFor="let company of companies" [value]="company.pk">{{company.name}}</ion-select-option>
+      </ion-select>
+    </ion-list>
+    <div class="ion-text-right">
+      <ion-button type="submit" [disabled]="!form.valid" class="ion-margin-top ion-margin-bottom" (click)="onCreateOffer()">
+        <span *ngIf="!contact?.uid">Ajouter</span>
+        <span *ngIf="contact?.uid">Editer</span>
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

@@ -80,8 +80,13 @@ h4 {
     font-size: 25px;
 }
 
-div:has(> .trash) {
+.relative {
     position: relative;
+}
+
+ion-datetime {
+    border: 1px solid grey;
+    border-radius: 15px;
 }
 
 ion-datetime-button {
@@ -151,8 +156,8 @@ legend {
         border-radius: 15px;
         position: relative;
         margin: 2%;
-        padding-top: calc(1lh + 10px);
-        padding-bottom: calc(1lh + 10px);
+        padding-top: 20px;
+        padding-bottom: 20px;
     }
 
     .title {

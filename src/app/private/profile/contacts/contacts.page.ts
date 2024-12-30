@@ -102,7 +102,7 @@ export class ContactsPage implements OnInit {
     })
       */
     
-    this.folders = [...new Set (contacts.map ((contact) => contact?.companyName))];
+    this.folders = [...new Set (contacts.map ((contact) => contact?.company_name))];
     this.folders.sort ((a,b) => a.localeCompare (b));
 
     this.selectFolder (null);
@@ -117,26 +117,33 @@ export class ContactsPage implements OnInit {
       this.selectFolder (this.currentFolder);
     } else {
       this.jsonData = this.contacts.filter((item) => {
-        return `${item.firstName} ${item.lastName}`.toLowerCase().includes(searchTerm.toLowerCase());
+        return `${item.first_name} ${item.last_name}`.toLowerCase().includes(searchTerm.toLowerCase());
       });
     }
   }
 
   onEdit(contactId: number, slidingItem: IonItemSliding){
     slidingItem.close();
-    this.router.navigate(['/private/tabs/profile/contacts/edit-contact', contactId]);
+    this.router.navigate(['/private/tabs/profile/contacts/new-contact', contactId]);
   }
 
-  onRemoveContact(contactPk: number, slidingElement: IonItemSliding): void {
+  onRemoveContact(contactUid: string, slidingItem: IonItemSliding): void {
+    slidingItem.close();
+    this.contactService.removeContact (contactUid).subscribe ({
+      next: () => {
+        this.contacts = this.contacts.filter ((c) => c.uid != contactUid);
+        this.selectFolder (null);
+      }
+    });
   }
 
   toggleSelectedContact (contact: any, event: any) {
     event.preventDefault ();
     event.stopPropagation ();
-    if (this.selectedContacts[contact.pk]) {
-      delete this.selectedContacts[contact.pk];
+    if (this.selectedContacts[contact.uid]) {
+      delete this.selectedContacts[contact.uid];
     } else {
-      this.selectedContacts[contact.pk] = contact;
+      this.selectedContacts[contact.uid] = contact;
     }
   }
 
@@ -161,7 +168,7 @@ export class ContactsPage implements OnInit {
       this.currentFolder = folder;
     }
 
-    this.jsonData = this.contacts.filter ((contact: any) => this.currentFolder == null || contact.companyName == this.currentFolder);
+    this.jsonData = this.contacts.filter ((contact: any) => this.currentFolder == null || contact.company_name == this.currentFolder);
     this.jsonData.sort ((a: any, b: any) => a.firstName?.localeCompare (b.firstName));
 
     if (this.searchbarElem?.nativeElement) {
@@ -176,9 +183,9 @@ export class ContactsPage implements OnInit {
   async moveToFolder (modal: any, folder: string) {
     Object.values(this.selectedContacts).forEach ((contact: any) => {
       if (folder == null) {
-        delete this.contactFolder[contact.pk];
+        delete this.contactFolder[contact.uid];
       } else {
-        this.contactFolder[contact.pk] = folder;
+        this.contactFolder[contact.uid] = folder;
       }
       
       this.storage.get(DASHDOC_COMPANY).then ((pk) => {

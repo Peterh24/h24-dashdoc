@@ -12,10 +12,10 @@ export class UtilsService {
     if (array.length <= 0) {
       return false;
     }
-    const currentVal = array[0][propertyFirst][propertySecond][propertySecond];
+    const currentVal = array?.[0]?.[propertyFirst]?.[propertySecond]?.[propertySecond];
 
     for (let i = 1; i < array.length; i++) {
-      if (array[i][propertyFirst][propertySecond][propertySecond] !== currentVal) {
+      if (array?.[i]?.[propertyFirst]?.[propertySecond]?.[propertySecond] !== currentVal) {
         return false;
       }
     }

@@ -120,7 +120,7 @@ export class DeliveryPage implements OnInit {
         this.merchandisesSelected[load.description] = true;
       });
 
-      const customLoad = this.delivery.planned_loads.find ((d: any) => d.id == 'custom');
+      const customLoad = this.delivery.planned_loads?.find ((d: any) => d.id == 'custom');
 
       if (customLoad) {
         setTimeout (() => {

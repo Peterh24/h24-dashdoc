@@ -54,14 +54,14 @@ export class HomePage implements OnDestroy {
       
       this.companyService.companies.subscribe((companies) => {
         this.loadedCompanies = companies;
-      })
 
-      this.storage.get(DASHDOC_COMPANY).then((company) => {
-        if(company){
-          this.selectedCompanyId = company;
-          this.onchooseCompany(company)
-        } else {}
-
+        this.storage.get(DASHDOC_COMPANY).then((company) => {
+          if(company){
+            this.selectedCompanyId = company;
+            this.onchooseCompany(company)
+          } else {}
+  
+        })
       })
     })
 

@@ -49,11 +49,12 @@
     </div>
     <br>
     <ion-button (click)="onSubmit()">Valider la demande</ion-button>
-
+    <br>
+    
     <!-- Delivery template -->
     <ng-template #delivery let-type="type" let-address="address" let-form="form" let-errors="errors">
-      <div [formGroup]="form">
-        <div class="trash" (click)="deleteAddress (type)" *ngIf="address">
+      <div [formGroup]="form" class="relative">
+        <div class="trash" (click)="deleteAddress (type)" *ngIf="address && transport.isMultipoint">
           <ion-icon name="trash-outline"></ion-icon>
         </div>  
         <fieldset class="custom-control address" (click)="setAddress (type)">
@@ -66,8 +67,8 @@
         <div class="error" *ngIf="errors['address']">Veuiller saisir une addresse</div>
       </div>
 
-      <div *ngFor="let contact of contacts">
-        <div class="trash">
+      <div class="relative" *ngFor="let contact of contacts">
+        <div class="trash" *ngIf="false">
           <ion-icon name="trash-outline"></ion-icon>
         </div>  
         <fieldset class="custom-control contact" (click)="setContact ()">
@@ -143,8 +144,9 @@
                 presentation="time"
                 (ionChange)="setSlot(form, 'time_start', $event)"
                 minuteValues="0,5,10,15,20,25,30,35,40,45,50,55"
-                [min]="getDateTimeMin(type)"
-                [max]="getDateTimeMax(type)">
+                [showDefaultButtons]="true"
+                doneText="Ok"
+                cancelText="Annuler">
               </ion-datetime>
             </ng-template>
           </ion-modal>
@@ -156,8 +158,9 @@
                 presentation="time"
                 (ionChange)="setSlot(form, 'time_end', $event)"
                 minuteValues="0,5,10,15,20,25,30,35,40,45,50,55"
-                [min]="getDateTimeMin(type)"
-                [max]="getDateTimeMax(type)">
+                [showDefaultButtons]="true"
+                doneText="Ok"
+                cancelText="Annuler">
               </ion-datetime>
             </ng-template>
           </ion-modal>

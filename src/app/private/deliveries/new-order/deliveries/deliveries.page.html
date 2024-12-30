@@ -6,7 +6,7 @@
   <div *ngIf="transport.isMultipoint">
     <h3>Enlèvement / Livraison</h3>
 
-    <div *ngFor="let delivery of transport.deliveries; let index = index" (click)="addDelivery (delivery)">
+    <div class="relative" *ngFor="let delivery of transport.deliveries; let index = index" (click)="addDelivery (delivery)">
       <div class="trash" (click)="deleteDelivery ('origin', delivery)">
         <ion-icon name="trash-outline"></ion-icon>
       </div>
@@ -25,7 +25,7 @@
   <div *ngIf="!transport.isMultipoint">
     <h3>Enlèvements</h3>
 
-    <div *ngFor="let delivery of origins; let index = index" (click)="addDelivery (delivery)">
+    <div class="relative" *ngFor="let delivery of origins; let index = index" (click)="addDelivery (delivery)">
       <div class="trash" (click)="deleteDelivery ('origin', delivery)">
         <ion-icon name="trash-outline"></ion-icon>
       </div>
@@ -40,7 +40,7 @@
     <br>
     <h3>Livraisons</h3>
 
-    <div *ngFor="let delivery of destinations; let index = index" (click)="addDelivery (delivery)">
+    <div class="relative" *ngFor="let delivery of destinations; let index = index" (click)="addDelivery (delivery)">
       <div class="trash" (click)="deleteDelivery ('destination', delivery)">
         <ion-icon name="trash-outline"></ion-icon>
       </div>
@@ -54,6 +54,7 @@
   </div>
   <br>
   <ion-button (click)="onSubmit ()">Suivant &nbsp; <ion-icon name="chevron-forward-outline"></ion-icon></ion-button>
+  <br>
 </ion-content>
 
 <ng-template #address let-address="address">

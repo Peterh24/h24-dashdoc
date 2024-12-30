@@ -48,7 +48,7 @@
         <br>
         <ion-accordion-group>
           <ion-item-sliding #slidingContact *ngFor="let item of jsonData; let index = index">
-            <ion-item-options side="start" (click)="onEdit(item.pk, slidingContact)">
+            <ion-item-options side="start" (click)="onEdit(item.uid, slidingContact)">
               <ion-item-option color="success">
                 <ion-icon name="create" slot="icon-only"></ion-icon>
               </ion-item-option>
@@ -61,27 +61,27 @@
                   <ion-chip class="ion-float-right" *ngIf="item.is_destination">Livraison</ion-chip>
                   <ion-chip class="ion-float-right" *ngIf="item.is_origin">Enlèvement</ion-chip>
                    <h3>
-                    <ion-icon name="stop-outline" (click)="toggleSelectedContact (item, $event)" *ngIf="!selectedContacts[item.pk]"></ion-icon> 
-                    <ion-icon name="checkbox-outline" (click)="toggleSelectedContact (item, $event)" *ngIf="selectedContacts[item.pk]"></ion-icon> &nbsp; 
+                    <ion-icon name="stop-outline" (click)="toggleSelectedContact (item, $event)" *ngIf="!selectedContacts[item.uid]"></ion-icon> 
+                    <ion-icon name="checkbox-outline" (click)="toggleSelectedContact (item, $event)" *ngIf="selectedContacts[item.uid]"></ion-icon> &nbsp; 
                     &nbsp; 
-                    {{ item.firstName }} {{ item.lastName }}
+                    {{ item.first_name }} {{ item.last_name }}
                   </h3>
-                  <p><b>{{ item.companyName }}</b> - {{item.email}} {{item.phoneNumber}}</p>
+                  <p><b>{{ item.company_name }}</b> - {{item.email}}</p>
                 </ion-label>
               </ion-item>
               <div class="content ion-no-padding" slot="content">
                 <div *ngIf="item.company?.name">
-                  <ion-text>Contact: {{item.company.name}} 
+                  <ion-text>Contact: {{item.company_name}} 
                     <span *ngIf="item.company?.phone_number"> - <a href="tel:{{ item.company.phone_number }}">{{ formatPhone (item.company.phone_number) }}</a></span>
                   </ion-text>
                 </div>
-                <div class="delete" (click)="onRemoveContact(item.pk, null)">
+                <div class="delete" (click)="onRemoveContact(item.uid, null)">
                   Supprimer le contact
                 </div>
               </div>
 
           </ion-accordion>
-          <ion-item-options side="end" (click)="onRemoveContact(item.pk, slidingContact)">
+          <ion-item-options side="end" (click)="onRemoveContact(item.uid, slidingContact)">
             <ion-item-option color="danger">
               <ion-icon name="trash" slot="icon-only"></ion-icon>
             </ion-item-option>

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
@@ -35,7 +35,7 @@ export class SummaryPage implements OnInit {
     ],
     "segments": [
     ],
-    "instructions": "Notes exploitant",
+    "instructions": "Notes exploitant", // TODO
     "volume_display_unit": "m3",
     "business_privacy": false,
     "is_template": false,
@@ -114,10 +114,18 @@ export class SummaryPage implements OnInit {
 
   async onSubmit () {
     const transport = await this.buildTransport ();
+    let request;
 
-    return;
+    if (transport.uid) {
+      const headers = new HttpHeaders()
+        .set ('Content-Type', 'application/merge-patch+json');
 
-    this.http.post(`${DASHDOC_API_URL}transports/`, transport).subscribe({
+      request = this.http.patch(`${DASHDOC_API_URL}transports/${transport.uid}`, transport, { headers });
+    } else {
+      request = this.http.post(`${DASHDOC_API_URL}transports/`, transport);
+    }
+
+    request.subscribe({
       next: async res => {
         // On renouvelle le token firebase pour éviter qu'il n'expire bientot
         this.authService.resetFirebasePushNotificationToken ();
@@ -137,7 +145,7 @@ export class SummaryPage implements OnInit {
           buttons: ['Compris'],
         });
   
-        await alert.present();    
+        await alert.present();
       }
     });
   }
@@ -176,14 +184,18 @@ export class SummaryPage implements OnInit {
       const destinations = this.transport.getDestinations ();
 
       if (destinations.length > 1) {
+        // Single origin
         destinations.forEach ((d) => {
+          delete d.origin;
           deliveries.push ({
             ...origins[0],
             ...d
           })
         });
       } else {
+        // Single destination
         origins.forEach ((o) => {
+          delete o.destination;
           deliveries.push ({
             ...destinations[0],
             ...o
@@ -193,7 +205,7 @@ export class SummaryPage implements OnInit {
     }
 
     deliveries.forEach((delivery: any) => {
-      delivery.shipper_reference = this.shipperReference; // TODO
+      delivery.shipper_reference = this.shipperReference;
       delivery.shipper_address = {
         company: {
           pk: this.company
@@ -275,7 +287,7 @@ export class SummaryPage implements OnInit {
           this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
             delete drafts[this.transport.draftName];
             this.transport.draftName = null;
-            this.storage.set (TRANSPORTS_DRAFTS_KEY, drafts); 
+            this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${pk}`, drafts); 
           });
         });
       }
@@ -290,8 +302,6 @@ export class SummaryPage implements OnInit {
       modal.dismiss ();
 
       const transport = await this.buildTransport ();
-
-      let drafts: any = await this.storage.get (TRANSPORTS_DRAFTS_KEY) || {};
 
       this.storage.get(DASHDOC_COMPANY).then ((pk) => {
         this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {

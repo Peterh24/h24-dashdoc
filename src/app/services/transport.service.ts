@@ -17,6 +17,7 @@ interface Transport {
   providedIn: 'root'
 })
 export class TransportService {
+  uid: string;
   type: string;
   originNb:number = 0;
   vehicle: {};
@@ -79,6 +80,7 @@ export class TransportService {
   loadTransport (transport: any) {
     this.resetTransport ();
 
+    this.uid = transport.uid;
     this.type = 'audiovisual';
     this.vehicle = transport.requested_vehicle;
     this.deliveries = this.loadDeliveries (transport.deliveries);
@@ -87,9 +89,9 @@ export class TransportService {
     const origins = this.getOrigins ().length;
     const destinations = this.getDestinations ().length;
 
-    if (origins > 1 && origins > 1) {
+    if (origins > 1 && destinations > 1) {
       this.isMultipoint = true;
-    } else if (origins > 1 && destinations <= 1 || origins <= 1 && destinations > 1) {
+    } else {
       this.isMultipoint = false;
     }
 
@@ -132,7 +134,7 @@ export class TransportService {
 
     if (deliveryJson.origin) {
       origin = { 
-        address: this.loadAddress (deliveryJson.origin.address), 
+        address: this.loadAddress (deliveryJson.origin?.address), 
         instructions: deliveryJson.origin.instructions, 
         slots: deliveryJson.origin.slots,
         reference: deliveryJson.origin.reference,
@@ -142,7 +144,7 @@ export class TransportService {
 
     if (deliveryJson.destination) {
       destination = { 
-        address: this.loadAddress (deliveryJson.destination.address), 
+        address: this.loadAddress (deliveryJson.destination?.address), 
         instructions: deliveryJson.destination.instructions, 
         slots: deliveryJson.destination.slots,
         reference: deliveryJson.origin.reference,

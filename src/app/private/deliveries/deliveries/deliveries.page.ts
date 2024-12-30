@@ -139,11 +139,11 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
   }
 
   getStatusIndex (delivery: any) {
-    if (!delivery.last_status_update) {
+    if (!delivery.status) {
       return 1;
     }
 
-    switch (delivery.last_status_update) {
+    switch (delivery.status) {
       case 'created':
       case 'updated':
       case 'confirmed': {
@@ -168,11 +168,13 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
   onDraftDelete (draftName: string, modal: any) {
     modal.dismiss ();
 
-    this.storage.get (TRANSPORTS_DRAFTS_KEY).then ((drafts) => {
-      if (drafts) {
-        delete drafts[draftName];
-      }
-      this.storage.set (TRANSPORTS_DRAFTS_KEY, drafts).then (() => this.loadDrafts ());
+    this.storage.get(DASHDOC_COMPANY).then ((pk) => {
+      this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
+        if (drafts) {
+          delete drafts[draftName];
+        }
+        this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${pk}`, drafts).then (() => this.loadDrafts ());
+      })
     });
   }
 

@@ -35,6 +35,10 @@ ion-badge {
     min-width: 0;
 }
 
+.relative {
+    position: relative;
+}
+
 .trash {
     position: absolute;
     top: 0;
@@ -43,10 +47,6 @@ ion-badge {
     display: flex;
     justify-content: end;
     align-items: center;
-}
-
-div:has(> .trash) {
-    position: relative;
 }
 
 .trash ion-icon {

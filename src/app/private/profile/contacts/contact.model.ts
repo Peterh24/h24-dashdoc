@@ -1,13 +1,13 @@
 export class Contact {
 
     constructor(
-      public pk: number,
-      public firstName: string,
-      public lastName: string,
+      public uid: string,
+      public first_name: string,
+      public last_name: string,
       public email: string,
-      public phoneNumber: string,
-      public company: number,
-      public companyName: string
+      public phone_number: string,
+      public company: string,
+      public company_name: string
     ){}
   }
   

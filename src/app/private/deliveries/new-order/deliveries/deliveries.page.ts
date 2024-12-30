@@ -94,12 +94,9 @@ export class DeliveriesPage implements OnInit {
     } else {
       if (data.destination) {
         if (!this.transport.deliveries.find ((d) => d.destination?.address?.pk === data.destination?.address?.pk)) {
-          this.transport.deliveries.push ({ destination: data.destination });
+          this.transport.deliveries.push (data);
         }
-        delete data.destination;
-      }
-
-      if (data.origin) {
+      } else if (data.origin) {
         if (!this.transport.deliveries.find ((d) => d.origin?.address?.pk === data.origin?.address?.pk)) {
           this.transport.deliveries.push (data);
         }

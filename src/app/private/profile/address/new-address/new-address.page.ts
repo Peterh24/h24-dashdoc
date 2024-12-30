@@ -33,26 +33,21 @@ export class NewAddressPage implements OnInit {
     this.countries = this.countriesService.countries;
       this.form = new FormGroup({
         name: new FormControl(null, {
-          updateOn: 'blur',
           validators: [Validators.required]
         }),
         address: new FormControl(null, {
-          updateOn: 'blur',
           validators: [Validators.required]
         }),
         postal: new FormControl(null, {
-          updateOn: 'blur',
           validators: [Validators.required]
         }),
         city: new FormControl(null, {
-          updateOn: 'blur',
           validators: [Validators.required]
         }),
         country: new FormControl("FR", {
           validators: [Validators.required]
         }),
         instructions: new FormControl(null, {
-          updateOn: 'blur',
           validators: []
         })
       });
