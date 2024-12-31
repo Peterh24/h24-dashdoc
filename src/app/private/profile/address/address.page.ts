@@ -145,6 +145,16 @@ export class AddressPage implements OnInit {
       }
 
       this.selectFolder (null);
+
+      const toast = await this.toastController.create({
+        message: 'L\'adresses a bien été ajoutée',
+        duration: 3000,
+        position: 'bottom',
+        icon: 'checkbox-outline',
+        cssClass: 'toast-success'
+      });
+  
+      await toast.present();  
     }
   }
 
@@ -160,7 +170,7 @@ export class AddressPage implements OnInit {
           mode: "ios"
         }).then(loadingElement => {
           loadingElement.present();
-          this.addressService.removeAddress(addressPk).subscribe((addresses) => {
+          this.addressService.removeAddress(addressPk).subscribe(async (addresses) => {
             this.isLoading = true;
             loadingElement.dismiss();
             this.isLoading = false;
@@ -170,6 +180,16 @@ export class AddressPage implements OnInit {
               slidingElement.close();
             }
             this.selectFolder (null);
+
+            const toast = await this.toastController.create({
+              message: 'L\'adresses a bien été supprimée',
+              duration: 3000,
+              position: 'bottom',
+              icon: 'checkbox-outline',
+              cssClass: 'toast-success'
+            });
+        
+            await toast.present();        
           });
         });
       });

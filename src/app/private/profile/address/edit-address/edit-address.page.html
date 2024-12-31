@@ -1,7 +1,20 @@
-<app-header [defaultHref]="'/private/tabs/profile/details'"></app-header>
+<app-header [defaultHref]="'/private/tabs/profile/details'" *ngIf="!isModal"></app-header>
+
+<ion-header *ngIf="isModal">
+  <ion-toolbar>
+    <ion-title>
+      <h2>Editer une adresse</h2>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="medium" (click)="cancel()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 
 <ion-content>
-  <h2>Éditer l'adresse {{address?.name}}</h2>
+  <br>
   <form [formGroup]="form">
     <ion-input type="text" label="Nom de l'adresse" labelPlacement="floating" errorText="Merci d'indiquer un nom" formControlName="name"></ion-input>
     <ion-input type="text" label="Adresse" labelPlacement="floating" errorText="Merci d'indiquer l'adresse postale" formControlName="address"></ion-input>

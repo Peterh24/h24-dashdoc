@@ -190,6 +190,16 @@ h2 {
     }
   }
 
+  ion-toast.success::part(container) {
+    & {
+      background-color: #00BA51;
+    }
+  
+    ion-icon {
+      color: green;
+    }
+  }
+
   @media (min-width: 768px) {
     ion-app {
       max-width: 600px;

@@ -3,8 +3,8 @@
 <ion-header *ngIf="isModal">
   <ion-toolbar>
     <ion-title>
-      <h2 *ngIf="!contact?.uid">Ajouter un contact</h2>
-      <h2 *ngIf="contact?.uid">Editer un contact</h2>
+      <h2 *ngIf="!contact?.uid">Ajouter un membre</h2>
+      <h2 *ngIf="contact?.uid">Editer un membre</h2>
     </ion-title>
     <ion-buttons slot="end">
       <ion-button color="medium" (click)="cancel()">
@@ -15,7 +15,7 @@
 </ion-header>
 
 <ion-content>
-  <h2 *ngIf="!isModal">Ajouter un contact</h2>
+  <h2 *ngIf="!isModal">Ajouter un membre</h2>
   <form [formGroup]="form">
     <ion-list>
       <ion-input type="text" label="Prénom" labelPlacement="floating" errorText="Merci d'indiquer un prénom" formControlName="first_name"></ion-input>

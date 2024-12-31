@@ -46,13 +46,19 @@ export class ProfilePage implements OnInit {
     if(!currentUser){
       this.router.navigateByUrl('/private/tabs/home');
     } else {
-      this.http.get(`${API_URL}app_users/${currentUser.id}`).pipe(take(1)).subscribe((res:any) => {
-        this.form.patchValue({
-          firstname: res.firstname,
-          lastname: res.lastname,
-          phone: res.phone,
-          email: res.email,
-        })
+      this.http.get(`${API_URL}app_users/${currentUser.id}`).pipe(take(1)).subscribe({
+        next: (res:any) => {
+          this.success = true;
+          this.form.patchValue({
+            firstname: res.firstname,
+            lastname: res.lastname,
+            phone: res.phone,
+            email: res.email,
+          })
+        },
+        error: (err) => {
+          this.success = false;
+        }
       })
     }
   }

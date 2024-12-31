@@ -9,6 +9,10 @@
     </div>
   </div>
 
+  <div class="alert-error" *ngIf="success === false">
+    Les informations du profile ne sont pas disponibles
+  </div>
+
   <ion-list lines="none">
     <ion-item routerLink="/private/tabs/profile/details">
       <ion-icon name="person-circle-outline" slot="start"></ion-icon> &nbsp; 

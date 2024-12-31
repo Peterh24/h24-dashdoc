@@ -92,4 +92,8 @@ export class EditAddressPage implements OnInit {
 
   }
 
+  cancel() {
+    this.modalController.dismiss();
+  }
+
 }

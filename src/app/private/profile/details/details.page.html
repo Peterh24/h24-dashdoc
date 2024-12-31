@@ -47,10 +47,10 @@
     </ion-list>
 
     <div class="alert-success" *ngIf="success">
-      Vos informations ont été enregistrées avec succès
+      <ion-icon name="checkbox-outline"></ion-icon> &nbsp; Vos informations ont été enregistrées avec succès
     </div>
 
-    <ion-button type="submit" class="submit" [disabled]="!form.valid || !form.dirty">
+    <ion-button type="submit" class="submit" [disabled]="success === true || !form.valid || !form.dirty">
       Enregistrer les informations
     </ion-button>
   </form>

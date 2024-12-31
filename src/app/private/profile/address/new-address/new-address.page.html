@@ -15,6 +15,7 @@
 
 <ion-content>
   <h2 *ngIf="!isModal">Ajouter une adresse</h2>
+  <br>
   <form [formGroup]="form">
     <ion-list>
       <ion-input type="text" label="Nom de l'adresse" labelPlacement="floating" errorText="Merci d'indiquer un nom" formControlName="name"></ion-input>

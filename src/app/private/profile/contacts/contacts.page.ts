@@ -145,17 +145,54 @@ export class ContactsPage implements OnInit {
       }
 
       this.selectFolder (null);
+
+      const toast = await this.toastController.create({
+        message: 'Le contact a bien été ajouté',
+        duration: 3000,
+        position: 'bottom',
+        icon: 'checkbox-outline',
+        cssClass: 'success'
+      });
+  
+      await toast.present();  
     }
   }
 
-  onRemoveContact(contactUid: string, slidingItem: IonItemSliding = null): void {
-    slidingItem.close();
-    this.contactService.removeContact (contactUid).subscribe ({
-      next: () => {
-        this.contacts = this.contacts.filter ((c) => c.uid != contactUid);
-        this.selectFolder (null);
-      }
+  async onRemoveContact(contactUid: string, slidingItem: IonItemSliding = null) {
+    if (slidingItem) {
+      slidingItem.close();
+    }
+    const alert = await this.alertController.create({
+      header: 'Suppression du contact',
+      message: 'Voulez vous supprimer le contact de la société',
+      buttons: [
+        {
+          text: 'Annuler'
+        },
+        {
+          text: 'OK',
+          handler: () => {
+            this.contactService.removeContact (contactUid).subscribe ({
+              next: async () => {
+                this.contacts = this.contacts.filter ((c) => c.uid != contactUid);
+                this.selectFolder (null);
+                
+                const toast = await this.toastController.create({
+                  message: 'Le contact a bien été supprimé',
+                  duration: 3000,
+                  position: 'bottom',
+                  icon: 'checkbox-outline',
+                  cssClass: 'success'
+                });
+            
+                await toast.present();      
+              }
+            });        
+          }
+        }]
     });
+
+    await alert.present ();
   }
 
   toggleSelectedContact (contact: any, event: any) {
