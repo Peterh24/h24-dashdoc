@@ -5,7 +5,7 @@ import { TransportService } from 'src/app/services/transport.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { AddressPage } from 'src/app/private/profile/address/address.page';
 import { Storage } from '@ionic/storage-angular';
-import { DASHDOC_COMPANY } from 'src/app/services/constants';
+import { DASHDOC_COMPANY, FILE_UPLOAD_MAX_SIZE } from 'src/app/services/constants';
 
 @Component({
 selector: 'app-delivery',
@@ -39,6 +39,7 @@ export class DeliveryPage implements OnInit {
   merchandisesSelected: any = {};
 
   fileToUpload: any;
+  fileToUploadError: string;
 
   mainForm: FormGroup;
   originForm: FormGroup;
@@ -88,8 +89,6 @@ export class DeliveryPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    console.log (1, this.delivery, this.deliveryType);
-
     this.originErrors = {};
     this.destinationErrors = {};
     this.hasErrors = false;
@@ -245,9 +244,6 @@ export class DeliveryPage implements OnInit {
     }
 
     this.updateEnabled ();
-
-    console.log (type, data);
-
   }
 
   deleteAddress (type: string) {
@@ -298,7 +294,6 @@ export class DeliveryPage implements OnInit {
   }
 
   setSlot (form: FormGroup, name: string, event: any) {
-    console.log (2, event.target?.value);
     if (event.target?.value) {
       const datetime = event.target.value.split (/T/);
       form.controls[name].setValue (datetime[1].substr (0, 5));
@@ -372,9 +367,14 @@ export class DeliveryPage implements OnInit {
       })
     }
 
-    this.hasErrors = Object.keys (this.originErrors).length > 0 || Object.keys (this.destinationErrors).length > 0;
+    this.fileToUploadError = null;
+    if (this.fileToUpload && this.fileToUpload.size > FILE_UPLOAD_MAX_SIZE) {
+      this.fileToUploadError = 'Fichier non valide';
+    }
 
-    console.log (this.hasErrors, this.originErrors, this.destinationErrors);
+    this.hasErrors = Object.keys (this.originErrors).length > 0 || 
+      Object.keys (this.destinationErrors).length > 0 ||
+      this.fileToUploadError != null;
     
     return !this.hasErrors;
   }
@@ -404,14 +404,17 @@ export class DeliveryPage implements OnInit {
       planned_loads =  Object.keys (this.merchandisesSelected).map ((name) => ({
         id: this.merchandiseIcon[name],
         description: name,
-        category: 'bulk'
+        category: 'bulk',
+        quantity: 1
       }));
 
       if (this.merchandisesCustom?.value) {
         planned_loads.push({
           id: 'custom',
-          description: this.merchandisesCustom.value
-        });
+          description: this.merchandisesCustom.value,
+          category: 'bulk',
+          quantity: 1
+          });
       }
     }
 

@@ -13,6 +13,7 @@ import { phoneValidator, regex } from 'src/app/utils/regex';
 })
 export class NewContactPage implements OnInit {
 
+  @Input()contactId: string;
   @Input()isModal: boolean;
   form: FormGroup;
   contact: Contact;
@@ -27,46 +28,46 @@ export class NewContactPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.contactsService.fetchContactsCompanies().subscribe({
+      next: (companies) => {
+        this.companies = companies;
+      }});
+
+    this.form = new FormGroup({
+      first_name: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+      last_name: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+      email: new FormControl(null, {
+        validators: [Validators.required, Validators.pattern(regex.email)
+        ]
+      }),
+      phone_number: new FormControl(null, {
+        validators: [Validators.required, phoneValidator ()]
+      }),
+      company: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+    });
+
     this.route.paramMap.subscribe(
       paramMap => {
-        const contactId = paramMap.get ('contactId');
+        const contactId = paramMap.get ('contactId') || this.contactId;
         if (contactId) {
-          this.contactsService.fetchContact (contactId).subscribe ({
+          this.contactsService.getContact (contactId).subscribe ({
             next: (contact) => {
-              console.log (8, contact);
               this.contact = contact,
               this.form.patchValue (contact);
               this.form.updateValueAndValidity ();
             }
           })
         }
-
-        this.contactsService.fetchContactsCompanies().subscribe({
-          next: (companies) => {
-            this.companies = companies;
-          }});
-    
-        this.form = new FormGroup({
-          first_name: new FormControl(null, {
-            validators: [Validators.required]
-          }),
-          last_name: new FormControl(null, {
-            validators: [Validators.required]
-          }),
-          email: new FormControl(null, {
-            validators: [Validators.required, Validators.pattern(regex.email)
-            ]
-          }),
-          phone_number: new FormControl(null, {
-            validators: [Validators.required, phoneValidator ()]
-          }),
-          company: new FormControl(null, {
-            validators: [Validators.required]
-          }),
-        });
-      });
+     });
   }
 
+  // TODO: fonctionalité envoyer une invitation
   async onCreateOffer(){
     if(!this.form.valid) {
       return;
@@ -78,7 +79,6 @@ export class NewContactPage implements OnInit {
 
       let request, company: any;
       company = this.companies.find ((c) => c.pk == this.form.value.company);
-      console.log (this.form.value, company, this.companies);
 
       if (this.contact?.uid) {
         request = this.contactsService.updateContact(this.contact.uid, this.form.value.first_name, this.form.value.last_name, this.form.value.email, this.form.value.phone_number, company.pk, company.name);
@@ -86,19 +86,21 @@ export class NewContactPage implements OnInit {
         request = this.contactsService.addContact(this.form.value.first_name, this.form.value.last_name, this.form.value.email, this.form.value.phone_number, company.pk, company.name);
       }
 
-      request.subscribe(() => {
+      request.subscribe((res) => {
         loadingElement.dismiss();
         if(!this.isModal) {
           this.router.navigate(['/private/tabs/profile/contacts']);
           return;
         } else {
-          this.modalController.dismiss();
+          this.modalController.dismiss(res);
         }
       });
     });
   }
 
   cancel() {
-    this.modalController.dismiss();
+    if (this.isModal) {
+      this.modalController.dismiss();
+    }
   }
 }

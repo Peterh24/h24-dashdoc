@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
 import { AuthService } from 'src/app/services/auth.service';
-import { DASHDOC_API_URL, DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
+import { API_URL, DASHDOC_API_URL, DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { TransportService } from 'src/app/services/transport.service';
 import { VehiclesService } from 'src/app/services/vehicles.service';
 
@@ -125,6 +125,14 @@ export class SummaryPage implements OnInit {
       request = this.http.post(`${DASHDOC_API_URL}transports/`, transport);
     }
 
+    // TODO
+    request = this.http.post (`${API_URL}../transports/new`, transport);
+
+    // TODO: gestion de l'upload des fichiers
+    transport?.deliveries?.forEach ((delivery: any) => {
+      delete delivery.file;
+    });
+
     request.subscribe({
       next: async res => {
         // On renouvelle le token firebase pour éviter qu'il n'expire bientot
@@ -137,7 +145,7 @@ export class SummaryPage implements OnInit {
         });
 
         await confirm.present();
-        this.router.navigateByUrl('/private/tabs/transports/deliveries');
+        this.router.navigateByUrl('/private/tabs/transports/basket');
       },
       error: async (error) => {
         const alert = await this.alertController.create({
@@ -278,11 +286,11 @@ export class SummaryPage implements OnInit {
     return segments;
   }
 
-  onSetOrderName (name: any, modal: any) {
+  onSetOrderName (name: any, deleteDraft: boolean, modal: any) {
     if (name) {
       modal.dismiss ();
 
-      if (this.transport.draftName) {
+      if (this.transport.draftName && deleteDraft) {
         this.storage.get(DASHDOC_COMPANY).then ((pk) => {
           this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
             delete drafts[this.transport.draftName];

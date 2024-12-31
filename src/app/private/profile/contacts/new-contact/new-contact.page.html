@@ -3,7 +3,8 @@
 <ion-header *ngIf="isModal">
   <ion-toolbar>
     <ion-title>
-      <h2>Ajouter un contact</h2>
+      <h2 *ngIf="!contact?.uid">Ajouter un contact</h2>
+      <h2 *ngIf="contact?.uid">Editer un contact</h2>
     </ion-title>
     <ion-buttons slot="end">
       <ion-button color="medium" (click)="cancel()">

@@ -44,9 +44,9 @@
       <div class="city">{{ address.city }} ({{ address.postcode }})</div>
       </div>
     </ion-item>
-    <div class="ion-padding" slot="content">
+    <div class="ion-padding details" slot="content">
       <div class="date" [innerHTML]="formatSlot(delivery.slots?.[0])"></div>
-      <div class="address"><b>Adresse: </b>{{  address.address }}</div>
+      <div class="address"><b>Adresse: </b>{{  address.address }} {{ address.city }} {{ address.postcode }}</div>
       <div class="contact" *ngIf="delivery.contact"><b>Contact: </b>{{ delivery.contact }}</div>
 
       <div class="instructions" *ngIf="delivery.instructions"><b>Instructions: </b>{{ delivery.instructions }}</div>
@@ -71,7 +71,11 @@
         placeholder="Titre de la demande">
       </ion-input>
       <br>
-      <ion-button (click)="onSetOrderName (orderName.value, orderNameModal)">Valider ma demande</ion-button>
+      <div class="ion-text-center" [class.ion-hide]="!transport.draftName">
+        <ion-checkbox labelPlacement="end" checked="true" #deleteDraft>Supprimer le brouillon</ion-checkbox>
+      </div>
+      <br>
+      <ion-button (click)="onSetOrderName (orderName.value, deleteDraft?.value, orderNameModal)">Valider ma demande</ion-button>
     </div>
   </ng-template>
 </ion-modal>

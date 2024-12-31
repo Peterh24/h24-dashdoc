@@ -1,8 +1,8 @@
-<app-header [defaultHref]="'/private/tabs/profile'" title="Mes adresses"></app-header>
+<app-header [defaultHref]="'/private/tabs/profile'" title="Mes adresses" *ngIf="!isModal"></app-header>
 
 <ion-content>
-  <ion-icon name="close-outline" class="close-button" (click)="closeModal ()" *ngIf="isModal"></ion-icon>
-
+  <ion-icon name="close-outline" class="close-button ion-float-right" (click)="closeModal ()" *ngIf="isModal"></ion-icon>
+  <br>
   <ion-grid class="page-grid ion-no-padding">
     <ion-row *ngIf="!isLoading && address.length > 0" class="searchbar">
       <ion-col>
@@ -12,7 +12,7 @@
 
     <ion-row>
       <ion-col>
-        <ion-button shape="round" routerLink="/private/tabs/profile/address/new-address"><ion-icon name="location-outline"></ion-icon> &nbsp; Ajouter une adresse</ion-button>
+        <ion-button shape="round" (click)="onAddAddress ()"><ion-icon name="location-outline"></ion-icon> &nbsp; Ajouter une adresse</ion-button>
         <ion-button shape="round" fill="outline" id="create-folder"><ion-icon name="folder-outline"></ion-icon> &nbsp; Créer un dossier</ion-button>
         <ion-button class="ion-hide" id="move-to-folder"></ion-button>
       </ion-col>
@@ -48,7 +48,7 @@
         <br>
         <ion-accordion-group>
           <ion-item-sliding #slidingAddress *ngFor="let item of jsonData">
-            <ion-item-options side="start" (click)="onEdit(item.pk, slidingAddress)">
+            <ion-item-options side="start" (click)="onAddAddress(item.pk, slidingAddress)">
               <ion-item-option color="success">
                 <ion-icon name="create" slot="icon-only"></ion-icon>
               </ion-item-option>
@@ -58,31 +58,38 @@
 
               <ion-item slot="header" class="ion-align-items-start">
                 <ion-label (click)="selectAddress (item, $event)">
+                  <!--
                   <ion-chip class="ion-float-right" *ngIf="item.is_destination">Livraison</ion-chip>
                   <ion-chip class="ion-float-right" *ngIf="item.is_origin">Enlèvement</ion-chip>
+                  -->
                    <h3>
-                    <ion-icon name="stop-outline" (click)="toggleSelectedAddress (item, $event)" *ngIf="!isModal && !selectedAddress[item.pk]"></ion-icon> 
-                    <ion-icon name="checkbox-outline" (click)="toggleSelectedAddress (item, $event)" *ngIf="!isModal && selectedAddress[item.pk]"></ion-icon> &nbsp; 
-                    &nbsp; 
+                    <span *ngIf="!isModal">
+                      <ion-icon name="stop-outline" (click)="toggleSelectedAddress (item, $event)" *ngIf="!selectedAddress[item.pk]"></ion-icon> 
+                      <ion-icon name="checkbox-outline" (click)="toggleSelectedAddress (item, $event)" *ngIf="selectedAddress[item.pk]"></ion-icon> &nbsp; 
+                      &nbsp; 
+                    </span>
                     {{item.name}}
                   </h3>
                   <p>{{item.address}} {{item.postcode}} {{item.city}} {{getCountry(item.country)}}</p>
                 </ion-label>
               </ion-item>
               <div class="content ion-no-padding" slot="content">
-                <div *ngIf="item.company?.name">
-                  <ion-text>Contact: {{item.company.name}} 
-                    <span *ngIf="item.company?.phone_number"> - <a href="tel:{{ item.company.phone_number }}">{{ formatPhone (item.company.phone_number) }}</a></span>
-                  </ion-text>
+                <div>
+                  <div *ngIf="item.company?.name">
+                    <ion-text>Contact: {{item.company.name}} 
+                      <span *ngIf="item.company?.phone_number"> - <a href="tel:{{ item.company.phone_number }}">{{ formatPhone (item.company.phone_number) }}</a></span>
+                    </ion-text>
+                  </div>
+                  <div *ngIf="item.instructions">
+                    <ion-text>Instuctions: {{item.instructions}}</ion-text>
+                  </div>
+                  <div *ngIf="!item.instructions">
+                    <ion-text>Pas d'instructions particulières</ion-text>
+                  </div>
                 </div>
-                <div *ngIf="item.instructions">
-                  <ion-text>Instuctions: {{item.instructions}}</ion-text>
-                </div>
-                <div *ngIf="!item.instructions">
-                  <ion-text>Pas d'instructions particulières</ion-text>
-                </div>
-                <div class="delete" (click)="onRemoveAddress(item.pk, null, item.is_origin)">
-                  Supprimer l'adresse
+                <div>
+                  <ion-icon name="create-outline" (click)="onAddAddress (item.pk)"></ion-icon>
+                  <ion-icon name="trash-outline" (click)="onRemoveAddress (item.pk, null, item.is_origin)"></ion-icon>
                 </div>
               </div>
 

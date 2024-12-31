@@ -7,6 +7,7 @@ import { Storage } from '@ionic/storage-angular';
 import { CONTACT_FOLDER_KEY, DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
 import { Contact } from './contact.model';
 import { ContactsService } from 'src/app/services/contacts.service';
+import { NewContactPage } from './new-contact/new-contact.page';
 
 const DEFAULT_FOLDERS = [
   "Mes loueurs",
@@ -122,12 +123,32 @@ export class ContactsPage implements OnInit {
     }
   }
 
-  onEdit(contactId: number, slidingItem: IonItemSliding){
-    slidingItem.close();
-    this.router.navigate(['/private/tabs/profile/contacts/new-contact', contactId]);
+  async onAddContact (contactId: string = null, slidingItem: IonItemSliding = null) {
+    const modal = await this.modalController.create({
+      component: NewContactPage,
+      componentProps: {
+        isModal: true,
+        contactId: contactId
+      },
+      cssClass: 'contact-modal',
+    });
+
+    modal.present();
+    const { data } = await modal.onWillDismiss();
+
+    if (data) {
+      if (contactId) {
+        const contactIndex = this.contacts.findIndex ((a) => a.uid == contactId);
+        this.contacts[contactIndex] = data;
+      } else {
+        this.contacts.push (data);
+      }
+
+      this.selectFolder (null);
+    }
   }
 
-  onRemoveContact(contactUid: string, slidingItem: IonItemSliding): void {
+  onRemoveContact(contactUid: string, slidingItem: IonItemSliding = null): void {
     slidingItem.close();
     this.contactService.removeContact (contactUid).subscribe ({
       next: () => {
@@ -169,7 +190,7 @@ export class ContactsPage implements OnInit {
     }
 
     this.jsonData = this.contacts.filter ((contact: any) => this.currentFolder == null || contact.company_name == this.currentFolder);
-    this.jsonData.sort ((a: any, b: any) => a.firstName?.localeCompare (b.firstName));
+    this.jsonData.sort ((a: any, b: any) => a.first_name?.localeCompare (b.first_name));
 
     if (this.searchbarElem?.nativeElement) {
       this.searchbarElem.nativeElement.value = '';

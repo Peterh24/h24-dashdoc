@@ -6,6 +6,8 @@ import { AlertController, IonItemSliding, LoadingController, ModalController, To
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
 import { ADDRESS_FOLDER_KEY, DASHDOC_API_URL, DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
+import { NewAddressPage } from './new-address/new-address.page';
+import { EditAddressPage } from './edit-address/edit-address.page';
 
 const DEFAULT_FOLDERS = [
   "Mes loueurs",
@@ -52,7 +54,6 @@ export class AddressPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.addressService.resetAddresses();
     this.address = [];
     this.jsonData = [];
     this.addressFolder = {};
@@ -74,6 +75,12 @@ export class AddressPage implements OnInit {
             if (addressFolder == null) {
               this.folders = DEFAULT_FOLDERS;
             } else {
+              // on efface le dossier des adresses supprimées
+              Object.keys (addressFolder).forEach ((pk) => {
+                if (!address.find ((a) => a.pk == parseInt(pk))) {
+                  delete addressFolder[pk];
+                }
+              });
               this.addressFolder = addressFolder;
               this.folders = [...new Set (Object.values(addressFolder))];
             }
@@ -116,12 +123,32 @@ export class AddressPage implements OnInit {
     }
   }
 
-  onEdit(adressId: number, slidingItem: IonItemSliding){
-    slidingItem.close();
-    this.router.navigate(['/private/tabs/profile/address/edit-address', adressId]);
+  async onAddAddress (addressPk: number = null, slidingItem: IonItemSliding = null) {
+    const modal = await this.modalController.create({
+      component: addressPk ? EditAddressPage : NewAddressPage,
+      componentProps: {
+        isModal: true,
+        addressPk: addressPk
+      },
+      cssClass: 'address-modal',
+    });
+
+    modal.present();
+    const { data } = await modal.onWillDismiss();
+
+    if (data) {
+      if (addressPk) {
+        const addressIndex = this.address.findIndex ((a) => a.pk == addressPk);
+        this.address[addressIndex] = data;
+      } else {
+        this.address.push (data);
+      }
+
+      this.selectFolder (null);
+    }
   }
 
-  onRemoveAddress(addressPk: number, slidingElement: IonItemSliding, isOrigin:boolean): void {
+  onRemoveAddress(addressPk: number, slidingElement: IonItemSliding = null, isOrigin:boolean = false): void {
     if (!isOrigin) {
       this.alertController.create({
         header: 'Suppression de l\'adresse',
@@ -138,9 +165,11 @@ export class AddressPage implements OnInit {
             loadingElement.dismiss();
             this.isLoading = false;
             this.jsonData = addresses;
+            this.address = addresses;
             if (slidingElement) {
               slidingElement.close();
             }
+            this.selectFolder (null);
           });
         });
       });

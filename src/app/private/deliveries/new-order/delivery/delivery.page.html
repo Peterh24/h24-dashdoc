@@ -40,7 +40,8 @@
     <div class="attachment" [class.selected]="!!fileToUpload" (click)="askFileToUpload ()">
       <ion-icon name="download-outline"></ion-icon>
       <div *ngIf="!!fileToUpload">{{ fileToUpload.name }}</div>
-      
+      <div class="error" *ngIf="fileToUploadError">{{ fileToUploadError }}</div>
+
       <div *ngIf="!fileToUpload">
         Joindre un fichier à la demande 
       </div>

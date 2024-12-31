@@ -12,7 +12,7 @@
 
     <ion-row>
       <ion-col>
-        <ion-button shape="round" routerLink="/private/tabs/profile/contacts/new-contact"><ion-icon name="location-outline"></ion-icon> &nbsp; Ajouter un contact</ion-button>
+        <ion-button shape="round" (click)="onAddContact ()"><ion-icon name="location-outline"></ion-icon> &nbsp; Ajouter un contact</ion-button>
         <!-- <ion-button shape="round" fill="outline" id="create-folder"><ion-icon name="folder-outline"></ion-icon> &nbsp; Créer un dossier</ion-button> -->
         <ion-button class="ion-hide" id="move-to-folder"></ion-button>
       </ion-col>
@@ -48,7 +48,7 @@
         <br>
         <ion-accordion-group>
           <ion-item-sliding #slidingContact *ngFor="let item of jsonData; let index = index">
-            <ion-item-options side="start" (click)="onEdit(item.uid, slidingContact)">
+            <ion-item-options side="start" (click)="onAddContact(item.uid, slidingContact)">
               <ion-item-option color="success">
                 <ion-icon name="create" slot="icon-only"></ion-icon>
               </ion-item-option>
@@ -61,22 +61,24 @@
                   <ion-chip class="ion-float-right" *ngIf="item.is_destination">Livraison</ion-chip>
                   <ion-chip class="ion-float-right" *ngIf="item.is_origin">Enlèvement</ion-chip>
                    <h3>
-                    <ion-icon name="stop-outline" (click)="toggleSelectedContact (item, $event)" *ngIf="!selectedContacts[item.uid]"></ion-icon> 
-                    <ion-icon name="checkbox-outline" (click)="toggleSelectedContact (item, $event)" *ngIf="selectedContacts[item.uid]"></ion-icon> &nbsp; 
-                    &nbsp; 
+                    <span class="ion-hide">
+                      <ion-icon name="stop-outline" (click)="toggleSelectedContact (item, $event)" *ngIf="!selectedContacts[item.uid]"></ion-icon> 
+                      <ion-icon name="checkbox-outline" (click)="toggleSelectedContact (item, $event)" *ngIf="selectedContacts[item.uid]"></ion-icon> &nbsp; 
+                      &nbsp; 
+                    </span>
                     {{ item.first_name }} {{ item.last_name }}
                   </h3>
-                  <p><b>{{ item.company_name }}</b> - {{item.email}}</p>
+                  <p><b>{{ item.company_name }}</b></p>
                 </ion-label>
               </ion-item>
               <div class="content ion-no-padding" slot="content">
-                <div *ngIf="item.company?.name">
-                  <ion-text>Contact: {{item.company_name}} 
-                    <span *ngIf="item.company?.phone_number"> - <a href="tel:{{ item.company.phone_number }}">{{ formatPhone (item.company.phone_number) }}</a></span>
-                  </ion-text>
+                <div>
+                  <div *ngIf="item?.email">Email: <a href="tel:{{ item.email }}">{{ item.email }}</a></div>
+                  <div *ngIf="item?.phone_number">Téléphone: <a href="tel:{{ item.phone_number }}">{{ formatPhone (item.phone_number) }}</a></div>
                 </div>
-                <div class="delete" (click)="onRemoveContact(item.uid, null)">
-                  Supprimer le contact
+                <div>
+                  <ion-icon name="create-outline" (click)="onAddContact (item.uid)"></ion-icon>
+                  <ion-icon name="trash-outline" (click)="onRemoveContact (item.uid)"></ion-icon>
                 </div>
               </div>
 
@@ -134,7 +136,7 @@
   </ng-template>
 </ion-modal>
 
-<ion-toolbar *ngIf="haveSelectedContacts ()">
+<ion-toolbar *ngIf="false && haveSelectedContacts ()">
   <!-- <ion-button shape="round" (click)="showMoveToFolderModal ()"><ion-icon name="folder-outline"></ion-icon> &nbsp; Déplacer dans un dossier</ion-button> -->
   <ion-button shape="round" (click)="selectContacts ()" *ngIf="isModal && haveSelectedContacts ()"><ion-icon name="checkmark-outline"></ion-icon> &nbsp; Selectionner les contacts</ion-button> 
 </ion-toolbar>

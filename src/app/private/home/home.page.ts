@@ -13,6 +13,7 @@ import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { TransportService } from 'src/app/services/transport.service';
 import { Router } from '@angular/router';
 import { AddressService } from 'src/app/services/address.service';
+import { ContactsService } from 'src/app/services/contacts.service';
 
 
 @Component({
@@ -36,6 +37,7 @@ export class HomePage implements OnDestroy {
     public companyService: CompanyService,
     private authService: AuthService,
     private addressService: AddressService,
+    private contactService: ContactsService,
     private modalCtrl: ModalController,
     private alertController: AlertController,
     private loadingController: LoadingController,
@@ -175,7 +177,8 @@ export class HomePage implements OnDestroy {
             this.storage.set(DASHDOC_COMPANY, currentCompany);
             this.isCompanySelected = true;
             this.companyService.isCompanySwitch = false;
-            this.addressService.resetAddresses();
+            this.addressService.resetAddresses ();
+            this.contactService.resetContacts ();
           }
         });
       } else {

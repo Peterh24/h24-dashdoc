@@ -46,8 +46,8 @@ ion-modal {
 }
 
 .delivery {
-    & {
-        line-height: 2lh;
+    .details > div {
+        margin-bottom: 15px;
     }
 
     .name {

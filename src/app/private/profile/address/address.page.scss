@@ -30,6 +30,14 @@ ion-accordion {
       margin-left: 15px;
       margin-right: 15px;
       padding-top: 10px;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    ion-icon {
+      font-size: 18pt;
+      margin-left: 15px;
     }
     ion-text {
       flex: 1;

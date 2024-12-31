@@ -61,14 +61,14 @@ export class NewAddressPage implements OnInit {
       message: '<div class="h24loader"></div>',
     }).then(loadingElement => {
       loadingElement.present();
-      this.addressService.addAdress(this.form.value.name, this.form.value.address, this.form.value.city, this.form.value.postal, this.form.value.country, this.form.value.instructions).subscribe(() => {
+      this.addressService.addAdress(this.form.value.name, this.form.value.address, this.form.value.city, this.form.value.postal, this.form.value.country, this.form.value.instructions || '').subscribe((res) => {
         loadingElement.dismiss();
         this.form.reset;
         if(!this.isModal) {
           this.router.navigate(['/private/tabs/profile/address']);
           return;
         } else {
-          this.modalController.dismiss();
+          this.modalController.dismiss(res);
         }
       });
     });

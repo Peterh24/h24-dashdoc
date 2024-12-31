@@ -34,17 +34,12 @@ export class ContactsService {
     );
   }
 
-  fetchContact (uid: string) {
-    return this.http.get(`${DASHDOC_API_URL}contacts/${uid}`).pipe(
-      map ((contact: any) => new Contact (
-        contact.uid,
-        contact.first_name,
-        contact.last_name,
-        contact.email,
-        contact.phone_number,
-        contact.company?.pk,
-        contact.company?.name
-      )),
+  getContact(id: any) {
+    return this.contacts.pipe(
+      take(1),
+      map(address => {
+        return address.find(a => a.uid === id);
+      })
     );
   }
 
@@ -72,7 +67,7 @@ export class ContactsService {
         const newContact = new Contact (resData.uid, first_name, last_name, email, phone_number, company, company_name );
         const updatedContacts = [...this.contacts.value, newContact];
         this.contacts.next(updatedContacts);
-        return updatedContacts;
+        return newContact;
       })
     );
   }
@@ -90,7 +85,7 @@ export class ContactsService {
         const updatedContacts = [...this.contacts.value ];
         updatedContacts[updatedContactIndex] = updatedContact;
         this.contacts.next(updatedContacts);
-        return updatedContacts;
+        return updatedContact;
       })
     );
   }
@@ -103,7 +98,7 @@ export class ContactsService {
       map((resData: any) => {
         const updatedContacts = this.contacts.value.filter ((contact) => contact.uid != uid);
         this.contacts.next(updatedContacts);
-        return updatedContacts;
+        return true;
       })
     );
   }
