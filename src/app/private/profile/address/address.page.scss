@@ -148,12 +148,6 @@ ion-modal {
   right: 20px;
 }
 
-.toast-success {
-  & {
-    background-color: #00BA51;
-  }
-
-  ion-icon {
-    color: green;
-  }
+ion-item-option {
+  margin-bottom: 15px;
 }

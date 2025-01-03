@@ -1,7 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { InvoiceService } from 'src/app/services/invoice.service';
 import { Invoice } from './invoice.model';
-import { IonInfiniteScroll, IonSegment } from '@ionic/angular';
+import { IonAccordionGroup, IonInfiniteScroll, IonSegment } from '@ionic/angular';
 import { StatusService } from 'src/app/utils/services/status.service';
 import { CountriesService } from 'src/app/utils/services/countries.service';
 import { Browser } from '@capacitor/browser';
@@ -15,11 +15,15 @@ export class InvoicePage implements OnInit {
   invoices: Array<Invoice> = [];
   startIndex: number = 0;
   jsonData: any;
+  searchInvoice: string;
   noFilter: boolean;
   isLoading: boolean = false;
   hasError: boolean = false;
   @ViewChild('infiniteScroll') infiniteScroll: IonInfiniteScroll;
   @ViewChild('filter') filter: IonSegment;
+  @ViewChild("searchbarElem", { read: ElementRef }) private searchbarElem: ElementRef;
+  @ViewChild('accordionGroup') accordionGroup: IonAccordionGroup;
+
   constructor(
     private invoiceService: InvoiceService,
     private statusService: StatusService,
@@ -40,6 +44,11 @@ export class InvoicePage implements OnInit {
       console.log("invoices: ", invoices);
       this.jsonData = this.invoices.slice(0, 10);
       this.isLoading = false;
+      setTimeout (() => {
+        if (this.accordionGroup) {
+          this.accordionGroup.value = this.jsonData?.[0].id;
+        }
+      }, 200);
     }, (error) => {
       this.isLoading = false;
       this.hasError = true;
@@ -67,7 +76,7 @@ export class InvoicePage implements OnInit {
 
   filterChanged(status: any) {
     this.startIndex = 0;
-    const statusValue = status.detail.value;
+    const statusValue = status.detail?.value || 'all';
     let filteredDeliveries: Array<Invoice>;
 
     if (this.infiniteScroll) {
@@ -85,6 +94,21 @@ export class InvoicePage implements OnInit {
     this.noFilter = filteredDeliveries.length === 0;
   }
 
+
+  setFilteredItems(searchTerm: string) {
+    if (searchTerm.trim() === '') {
+      this.filterChanged ('all');
+    } else {
+      const term = searchTerm.toLocaleLowerCase ();
+
+      this.jsonData = this.invoices.filter((item: any) => {
+        return item.invoice_number?.toLowerCase().includes(term) ||
+          ['address', 'postal_code', 'city']
+            .filter ((field) => item?.customer?.[field]?.toLowerCase ().includes(term)).length;
+      });
+      this.noFilter = this.jsonData.length === 0;
+    }
+  }
 
   onDownload(pdf: string) {
     Browser.open({ url: pdf});

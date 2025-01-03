@@ -4,6 +4,20 @@ ion-segment-button {
   --indicator-color : var(--ion-color-primary)!important;
 }
 
+ion-accordion-group {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+ion-accordion {
+  & {
+      border: 1px solid lightgray;
+      border-radius: 15px;
+      padding: 10px 20px 10px 10px;
+      margin-top: 20px;
+  }
+}
+
 .accordion-header {
   width: 100%;
   padding: 10px 0;
@@ -35,4 +49,36 @@ ion-segment-button {
   span {
     font-weight: 700;
   }
+}
+
+ion-button {
+  display: block;
+  margin-bottom: 8px;
+}
+
+ion-searchbar {
+  --border-radius: 15px;
+  min-height: 0 !important;
+  margin-top: 20px;
+} 
+
+ion-item-option {
+  margin-top: 20px;
+}
+
+hr {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  border-top: 1px solid lightgray;
+}
+
+.a-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 6px;
+  border: 1px solid black;
+  border-radius: 15px;
+  text-decoration: none;
 }

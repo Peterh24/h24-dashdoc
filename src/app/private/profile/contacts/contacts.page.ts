@@ -164,7 +164,7 @@ export class ContactsPage implements OnInit {
     }
     const alert = await this.alertController.create({
       header: 'Suppression du contact',
-      message: 'Voulez vous supprimer le contact de la société',
+      message: 'Voulez vous supprimer le contact de la société ?',
       buttons: [
         {
           text: 'Annuler'
@@ -210,8 +210,10 @@ export class ContactsPage implements OnInit {
   }
 
   createFolder (modal: any, name: any) {
-    this.folders.push (name);
-    this.folders.sort ((a,b) => a.localeCompare (b));
+    if (name) {
+      this.folders.push (name);
+      this.folders.sort ((a,b) => a.localeCompare (b));
+    }
     modal.dismiss ();
   }
 
@@ -259,10 +261,10 @@ export class ContactsPage implements OnInit {
 
     const toast = await this.toastController.create({
       message: 'Les adresses ont bien été déplacée dans le dossier ' + folder,
-      duration: 1500,
+      duration: 3000,
       position: 'bottom',
       icon: 'checkbox-outline',
-      cssClass: 'toast-success'
+      cssClass: 'success'
     });
 
     await toast.present();

@@ -200,6 +200,10 @@ h2 {
     }
   }
 
+  .pointer {
+    cursor: pointer;
+  }
+  
   @media (min-width: 768px) {
     ion-app {
       max-width: 600px;

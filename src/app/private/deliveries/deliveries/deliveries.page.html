@@ -4,7 +4,7 @@
   <div class="tabs">
     <div class="tab" [class.active]="tab === 1" (click)="setTab(1)">
       <span>
-        <ion-badge *ngIf="deliveries?.length">{{ deliveries.length }}</ion-badge>
+        <ion-badge *ngIf="deliveries1">{{ deliveries1 }}</ion-badge>
         <span>En cours</span>
       </span>
     </div>
@@ -16,7 +16,7 @@
     </div>
   </div>
 
-  <div *ngIf="tab === 1">
+  <div *ngIf="tab === 1 || tab === 2">
     <ion-accordion-group value="aO" #accordionGroup>
       <div *ngFor="let delivery of deliveries; let index = index">
         <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ delivery, index }"></div>
@@ -76,6 +76,8 @@
           </div>
         </div>
       </div>
+      <br>
+      <ion-button fill="outline" routerLink="/private/tabs/transports/detail-delivery/{{ delivery.uid }}"><ion-icon name="add-outline"></ion-icon> &nbsp; Détails</ion-button>
     </div>
   </ion-accordion>
 </ng-template>

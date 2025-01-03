@@ -14,6 +14,7 @@ import { TransportService } from 'src/app/services/transport.service';
 export class DeliveriesPage implements OnInit, AfterViewInit {
   tab: number = 1;
   deliveries: any[] = [];
+  deliveries1: number;
   drafts: any;
   draftsName: string[];
 
@@ -74,11 +75,14 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     this.deliveriesService.resetDeliveries();
 
 //    const status = this.tab === 1 ? 'sent_to_trucker,on_loading_site,loading_complete,on_unloading_site,unloading_complete' : 'invoiced,paid,cancelled,done';
-    const status: any = null;
+    const status: any = this.tab === 1 ? 'created,updated,confirmed,declined,verified,trucker,on_loading_site,loading_complete,on_unloading_site,unloading_complete' : null;
 
     this.deliveriesService.fetchDeliveries(status).subscribe({
       next: (deliveries) => {
         this.deliveries = deliveries;
+        if (this.tab === 1) {
+          this.deliveries1 = deliveries.length;
+        }
         loading.dismiss();
       },
       error: (error) => {
@@ -139,6 +143,22 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
   }
 
   getStatusIndex (delivery: any) {
+    const statuses = delivery.statuses;
+
+    if (statuses.done) {
+      return 3;
+    } else if (statuses.trucker ||
+        statuses.on_loading_site ||
+        statuses.loading_complete ||
+        statuses.on_unloading_site ||
+        statuses.unloading_complete) {
+          return 2;
+    } else {
+      return 1;
+    }
+  }
+
+  getStatusIndex0 (delivery: any) {
     if (!delivery.status) {
       return 1;
     }

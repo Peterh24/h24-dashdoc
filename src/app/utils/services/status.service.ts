@@ -11,10 +11,10 @@ export class StatusService {
       {key: 'done', value:'Terminé'},
       {key: 'declined', value: 'Annulé'},
       {key: 'accepted', value: 'Validé'},
-      {key: 'ongoing', value: 'En cours'},
+      {key: 'ongoing', value: 'Non payée'},
       {key: 'other', value: 'Autre'},
-      {key: 'paid', value: 'Réglée'},
-      {key: 'upcoming', value: 'En cours'},
+      {key: 'paid', value: 'Payée'},
+      {key: 'upcoming', value: 'Non payée'},
       {key: 'cancelled', value: 'Annulée'},
       {key: 'ordered', value: 'En Attente'}
     ]

@@ -48,8 +48,8 @@
         <br>
         <ion-accordion-group>
           <ion-item-sliding #slidingContact *ngFor="let item of jsonData; let index = index">
-            <ion-item-options side="start" (click)="onAddContact(item.uid, slidingContact)">
-              <ion-item-option color="success">
+            <ion-item-options side="start">
+              <ion-item-option color="success" (click)="onAddContact(item.uid, slidingContact)">
                 <ion-icon name="create" slot="icon-only"></ion-icon>
               </ion-item-option>
             </ion-item-options>
@@ -77,14 +77,14 @@
                   <div *ngIf="item?.phone_number">Téléphone: <a href="tel:{{ item.phone_number }}">{{ formatPhone (item.phone_number) }}</a></div>
                 </div>
                 <div class="ion-text-nowrap">
-                  <ion-icon name="create-outline" (click)="onAddContact (item.uid)"></ion-icon>
-                  <ion-icon name="trash-outline" (click)="onRemoveContact (item.uid)"></ion-icon>
+                  <ion-icon class="pointer" name="create-outline" (click)="onAddContact (item.uid)"></ion-icon>
+                  <ion-icon class="pointer" name="trash-outline" (click)="onRemoveContact (item.uid)"></ion-icon>
                 </div>
               </div>
 
           </ion-accordion>
-          <ion-item-options side="end" (click)="onRemoveContact(item.uid, slidingContact)">
-            <ion-item-option color="danger">
+          <ion-item-options side="end">
+            <ion-item-option color="danger" (click)="onRemoveContact(item.uid, slidingContact)">
               <ion-icon name="trash" slot="icon-only"></ion-icon>
             </ion-item-option>
           </ion-item-options>

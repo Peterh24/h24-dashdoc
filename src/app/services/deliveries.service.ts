@@ -59,6 +59,15 @@ export class DeliveriesService {
 
           const licensePlate = data.segments[0].trailers[0] ? data.segments[0].trailers[0].license_plate : '';
 
+          const statuses: any = {};
+          data.status_updates?.forEach ((status: any) => {
+            statuses[status.category] = {
+              status: status.category,
+              created: status.created,
+              latitude: status.latitude,
+              longitude: status.longitude,
+            }
+          });
 
           return new Delivery(
             data.uid,
@@ -66,6 +75,7 @@ export class DeliveriesService {
             data.deliveries[0].shipper_reference,
             data.status,
             data.global_status,
+            statuses,
             data.pricing_total_price,
             data.quotation_total_price,
             deliveriesData,

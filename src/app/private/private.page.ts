@@ -6,7 +6,7 @@ import { DashdocService } from '../services/dashdoc.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subscription, firstValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { DASHDOC_API_URL, USER_STORAGE_KEY } from '../services/constants';
+import { DASHDOC_API_URL, DASHDOC_COMPANY, USER_STORAGE_KEY } from '../services/constants';
 import { CompanyService } from '../services/company.service';
 
 @Component({
@@ -23,8 +23,9 @@ export class PrivatePage {
   constructor(
     private platform: Platform,
     public authService: AuthService,
+    public companyService: CompanyService,
     private router: Router,
-    public companyService: CompanyService
+    private storage: Storage,
   ) { }
 
   ionViewWillEnter() {
@@ -45,6 +46,12 @@ export class PrivatePage {
         //this.router.navigateByUrl('/private/tabs/home');
       }
 
+    });
+
+    this.storage.get(DASHDOC_COMPANY).then((company) => {
+      if(company){
+        this.userHasChooseCompany = true;
+      }
     });
   }
 

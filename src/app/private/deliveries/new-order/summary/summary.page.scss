@@ -26,6 +26,10 @@ ion-button {
     display: block;
 }
 
+ion-badge {
+    min-width: 0;
+}
+
 ion-modal {
     & {
         --width: fit-content;
@@ -49,6 +53,18 @@ ion-modal {
     .details > div {
         margin-bottom: 15px;
     }
+
+    .header {
+        & {
+            display: flex;
+            justify-content: start;
+            align-items: center;
+        }
+
+        ion-badge {
+            margin-right: 20px;
+        }
+    }   
 
     .name {
         font-weight: bold;
