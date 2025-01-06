@@ -205,7 +205,12 @@ h2 {
   }
   
   @media (min-width: 768px) {
+    body {
+      background-color: black;
+    }
+
     ion-app {
+      background-color: white;
       max-width: 600px;
       margin: auto;
     }

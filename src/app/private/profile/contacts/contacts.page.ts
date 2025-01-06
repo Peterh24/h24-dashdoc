@@ -287,7 +287,21 @@ export class ContactsPage implements OnInit {
 
   selectContacts () {
     if (this.isModal) {
-      this.modalController.dismiss (Object.values (this.selectedContacts));
+      const contacts = Object.values (this.selectedContacts).map ((c: any) => (
+        { 
+          contact: {
+            company: {
+              pk: c.company
+            },
+            first_name: c.first_name,
+            last_name: c.last_name,
+            email: c.email,
+            phone_nunmber: c.phone_number
+          }
+        }
+      ));
+
+      this.modalController.dismiss (contacts);
     }
   }
 

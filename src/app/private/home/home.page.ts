@@ -54,7 +54,7 @@ export class HomePage implements OnDestroy {
       this.lastname = user.lastname
       this.companyService.fetchCompanies();
       
-      this.companyService.companies.subscribe((companies) => {
+      this.companyService.companies.subscribe((companies) => { // TODO: take(1)
         this.loadedCompanies = companies;
 
         this.storage.get(DASHDOC_COMPANY).then((company) => {

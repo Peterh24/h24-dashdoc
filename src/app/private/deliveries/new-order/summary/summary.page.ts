@@ -74,6 +74,10 @@ export class SummaryPage implements OnInit {
     console.log ('summary', this.transport);
   }
 
+  getContacts (contacts: any[]) {
+    return contacts?.map ((c) => c.contact.first_name + " " + c.contact.last_name).join (", ");
+  }
+
   getMerchandises (merchandises: any) {
     if (!merchandises) {
       return '';

@@ -7,6 +7,7 @@ import jwt_decode from 'jwt-decode';
 import { Router } from '@angular/router';
 import { ActionPerformed, PushNotifications, PushNotificationSchema, Token } from '@capacitor/push-notifications';
 import { NavController, Platform } from '@ionic/angular';
+import { UtilsService } from '../utils/services/utils.service';
 
 export interface UserData {
   token: string;
@@ -33,7 +34,8 @@ export class AuthService {
     private storage: Storage,
     private router: Router,
     private navCtrl: NavController,
-    private platform: Platform
+    private platform: Platform,
+    private utils: UtilsService
   ) {
     this.loadUser();
     this.initializeFirebasePushNotifications ();
@@ -128,7 +130,7 @@ export class AuthService {
         this.currentUserDetail = userDetail;
 
         // On renouvelle le token firebase tous les mois
-        this.anacron('FIREBASE', 30 * 24 * 86400, () => {
+        this.utils.anacron('FIREBASE', 30 * 24 * 86400, () => {
           this.resetFirebasePushNotificationToken ();
         });
       }));
@@ -242,18 +244,6 @@ export class AuthService {
 
     if (this.supportsFirebaseNotifications ()) {
       PushNotifications.removeAllDeliveredNotifications ();
-    }
-  }
-
-  // excecute la fonction callback quand le timer est dépassé
-  async anacron (type: string, seconds: number, callback: Function) {
-    const key = 'ANACRON_' + type;
-    const lastRun = await this.storage.get (key);
-
-    if (lastRun == null || new Date().valueOf() - lastRun > seconds * 1000) {
-      this.storage.set (key, new Date().valueOf()).then ((value) => {
-        callback ();
-      })
     }
   }
 }

@@ -6,6 +6,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { AddressPage } from 'src/app/private/profile/address/address.page';
 import { Storage } from '@ionic/storage-angular';
 import { DASHDOC_COMPANY, FILE_UPLOAD_MAX_SIZE } from 'src/app/services/constants';
+import { ContactsPage } from 'src/app/private/profile/contacts/contacts.page';
 
 @Component({
 selector: 'app-delivery',
@@ -25,6 +26,7 @@ export class DeliveryPage implements OnInit {
 
   company: any;
   contacts: any[];
+  defaultContact: any;
   merchandisesUrl = 'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/';
   merchandiseIcon: any = {
     'Caméra': 'camera',
@@ -93,24 +95,10 @@ export class DeliveryPage implements OnInit {
     this.destinationErrors = {};
     this.hasErrors = false;
 
-    this.contacts = [{
-      contact: {
-        company: {
-          pk: this.company,
-        },
-        first_name: this.authService.currentUserDetail.firstname,
-        last_name: this.authService.currentUserDetail.lastname,
-        email: this.authService.currentUserDetail.email,
-        phone_number: this.authService.currentUserDetail.phone
-      }
-    }];
-
     if (this.delivery) {
       this.origin = this.delivery.origin?.address;
       this.destination = this.delivery.destination?.address;
-      if (this.delivery.tracking_contacts?.email) {
-        this.contacts = this.delivery.tracking_contacts;
-      }
+      this.contacts = this.delivery.tracking_contacts;
 
       this.enableOrigin = !!this.origin;
       this.enableDestination = !!this.destination;
@@ -139,7 +127,25 @@ export class DeliveryPage implements OnInit {
       this.updateEnabled ();
     }
 
-    this.storage.get(DASHDOC_COMPANY).then (pk => { this.company = pk });
+    this.storage.get(DASHDOC_COMPANY).then (pk => { 
+      this.company = pk;
+      
+      this.defaultContact = {
+        contact: {
+          company: {
+            pk: this.company,
+          },
+          first_name: this.authService.currentUserDetail.firstname,
+          last_name: this.authService.currentUserDetail.lastname,
+          email: this.authService.currentUserDetail.email,
+          phone_number: this.authService.currentUserDetail.phone
+        }
+      };
+
+      if (!this.contacts?.length) {
+        this.contacts = [this.defaultContact];
+      }
+    });
   }
 
   loadDelivery (form: FormGroup, delivery: any) {
@@ -237,13 +243,15 @@ export class DeliveryPage implements OnInit {
     modal.present();
     const { data } = await modal.onWillDismiss();
 
-    if (type === 'origin') {
-      this.origin = data;
-    } else {
-      this.destination = data;
-    }
+    if (data) {
+      if (type === 'origin') {
+        this.origin = data;
+      } else {
+        this.destination = data;
+      }
 
-    this.updateEnabled ();
+      this.updateEnabled ();
+    }
   }
 
   deleteAddress (type: string) {
@@ -258,7 +266,28 @@ export class DeliveryPage implements OnInit {
     this.updateEnabled ();
   }
 
-  async setContact () {
+  async setContacts () {
+    const modal = await this.modalController.create({
+      component: ContactsPage,
+      componentProps: {
+        isModal: true,
+      },
+      cssClass: 'contacts-modal',
+    });
+
+    modal.present();
+    const { data } = await modal.onWillDismiss();
+
+    if (data) {
+      this.contacts = data;
+      if (!this.contacts.find (c => c.contact.email === this.defaultContact.contact.email )) {
+        this.contacts.push (this.defaultContact);
+      }
+
+      this.contacts = this.contacts.sort ((a, b) => a.contact.first_name.localeCompare (b.contact.first_name));
+
+      this.updateEnabled ();
+    }
   }
 
   formatDay (day: string) {

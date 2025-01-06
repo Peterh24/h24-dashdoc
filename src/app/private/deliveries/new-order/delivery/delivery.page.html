@@ -70,18 +70,23 @@
         <div class="error" *ngIf="errors['address']">Veuiller saisir une addresse</div>
       </div>
 
-      <div class="relative" *ngFor="let contact of contacts">
+      <div class="relative">
         <!--
         <div class="trash" *ngIf="false">
           <ion-icon name="trash-outline"></ion-icon>
         </div>
         -->
-        <fieldset class="custom-control contact" (click)="setContact ()">
-          <legend>Contact</legend>
-          <div *ngIf="false && !contact">Sélectionner</div>
-          <div>
-            {{ contact?.contact?.first_name }} 
-            {{ contact?.contact?.last_name }}
+        <fieldset class="custom-control contact" (click)="setContacts ()">
+          <legend>Contact(s)</legend>
+          <div *ngFor="let contact of contacts; let index = index">
+            <hr *ngIf="index > 0">
+            <div class="title">
+              {{ contact?.contact?.first_name }} 
+              {{ contact?.contact?.last_name }}
+            </div>
+            <div>
+              {{ contact.contact.email }}
+            </div>
           </div>
         </fieldset>
       </div>

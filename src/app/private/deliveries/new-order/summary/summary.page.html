@@ -17,14 +17,14 @@
   <h2>Enlèvements <ion-icon class="edit-button" name="create-outline" (click)="editSection ('origins')"></ion-icon></h2>
   <ion-accordion-group>
     <div *ngFor="let delivery of transport.getOrigins (); let index = index">
-      <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'origin', delivery: delivery.origin, address: delivery.origin?.address, loads: delivery.planned_loads, file: delivery.file, index }"></div>
+      <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'origin', delivery: delivery.origin, address: delivery.origin?.address, loads: delivery.planned_loads, contacts: delivery.tracking_contacts, file: delivery.file, index }"></div>
     </div>
   </ion-accordion-group>
   <br>
   <h2>Livraisons<ion-icon class="edit-button" name="create-outline" (click)="editSection ('destinations')"></ion-icon></h2>
   <ion-accordion-group>
     <div *ngFor="let delivery of transport.getDestinations (); let index = index">
-      <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'destination', delivery: delivery.destination, address: delivery.destination?.address, loads: delivery.planned_loads, file: delivery.file, index }"></div>
+      <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'destination', delivery: delivery.destination, address: delivery.destination?.address, loads: delivery.planned_loads, contacts: delivery.tracking_contacts, file: delivery.file, index }"></div>
     </div>
   </ion-accordion-group>
 
@@ -36,7 +36,7 @@
   <ion-button id="submit-order">Nommer votre demande</ion-button>
 </ion-toolbar>
 
-<ng-template #deliveryTpl let-type="type" let-delivery="delivery" let-address="address" let-loads="loads" let-file="file" let-index="index">
+<ng-template #deliveryTpl let-type="type" let-delivery="delivery" let-address="address" let-loads="loads" let-contacts="contacts" let-file="file" let-index="index">
   <ion-accordion class="delivery">
     <ion-item slot="header" color="light" lines="none">
       <div class="header">
@@ -52,6 +52,7 @@
       <div class="address"><b>Adresse: </b>{{  address.address }} {{ address.city }} {{ address.postcode }}</div>
       <div class="contact" *ngIf="delivery.contact"><b>Contact: </b>{{ delivery.contact }}</div>
 
+      <div class="contacts" *ngIf="type === 'origin'"><b>Contacts: </b>{{ getContacts(contacts) }}</div>
       <div class="instructions" *ngIf="delivery.instructions"><b>Instructions: </b>{{ delivery.instructions }}</div>
       <div class="merchandises" *ngIf="type === 'origin' && loads?.length"><b>Marchandises: </b>{{ getMerchandises (loads) }} </div>
       <div class="attachments" *ngIf="delivery.file?.name"><b>Pièce jointe: </b>{{ delivery.file.name }} </div>

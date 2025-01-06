@@ -95,8 +95,8 @@ export class BasketPage implements OnInit, AfterViewInit {
   loadDrafts () {
     this.storage.get(DASHDOC_COMPANY).then ((pk) => {
       this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
-        this.drafts = drafts;
-        this.draftsName = Object.keys (drafts);
+        this.drafts = drafts || [];
+        this.draftsName = Object.keys (this.drafts);
       });
     });
   }
