@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { ActionPerformed, PushNotifications, PushNotificationSchema, Token } from '@capacitor/push-notifications';
 import { NavController, Platform } from '@ionic/angular';
 import { UtilsService } from '../utils/services/utils.service';
+import { DashdocToken } from '../private/models/dashdoc-token.model';
 
 export interface UserData {
   token: string;
@@ -151,8 +152,9 @@ export class AuthService {
     this.router.navigate(['/'], { replaceUrl: true });
   }
 
+  // TODO: créee notification.service.ts
   supportsFirebaseNotifications () {
-    return !this.platform.is('desktop') && !this.platform.is ('mobileweb');
+    return this.platform.is('capacitor');
   }
 
   removeAllDeliveredNotifications (){

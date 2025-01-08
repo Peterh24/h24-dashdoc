@@ -16,7 +16,7 @@
 
       <div>
         <div class="merchandises">
-          <div class="merchandise" *ngFor="let merchandise of merchandises" (click)="toggleMerchandise(merchandise)">
+          <div class="merchandise pointer" *ngFor="let merchandise of merchandises" (click)="toggleMerchandise(merchandise)">
             <ion-icon name="radio-button-on-outline" class="checkbox" *ngIf="merchandisesSelected[merchandise]"></ion-icon>
             <ion-icon name="radio-button-off-outline" class="checkbox" *ngIf="!merchandisesSelected[merchandise]"></ion-icon>
             <div class="title">{{ merchandise }}</div>

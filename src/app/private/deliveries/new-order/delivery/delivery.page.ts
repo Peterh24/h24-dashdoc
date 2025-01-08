@@ -8,6 +8,8 @@ import { Storage } from '@ionic/storage-angular';
 import { DASHDOC_COMPANY, FILE_UPLOAD_MAX_SIZE } from 'src/app/services/constants';
 import { ContactsPage } from 'src/app/private/profile/contacts/contacts.page';
 
+ // TODO gestion des manutentionnaires
+ 
 @Component({
 selector: 'app-delivery',
 templateUrl: './delivery.page.html',
@@ -63,20 +65,20 @@ export class DeliveryPage implements OnInit {
 
   ngOnInit () {
     this.originForm = new FormGroup({
-      reference: new FormControl(null, { validators: [] }),
+      reference: new FormControl('', { validators: [] }),
       day: new FormControl(null, { validators: [Validators.required] }),
       time_start: new FormControl(null, { validators: [] }),
       time_end: new FormControl(null, { validators: [] }),
-      instructions: new FormControl(null, { validators: [] }),
+      instructions: new FormControl('', { validators: [] }),
       loads: new FormControl(null, { validators: [] }),
       handlers: new FormControl(0, { validators: [] }),
     });
     this.destinationForm = new FormGroup({
-      reference: new FormControl(null, { validators: [] }),
+      reference: new FormControl('', { validators: [] }),
       day: new FormControl(null, { validators: [] }),
       time_start: new FormControl(null, { validators: [] }),
       time_end: new FormControl(null, { validators: [] }),
-      instructions: new FormControl(null, { validators: [] }),
+      instructions: new FormControl('', { validators: [] }),
       loads: new FormControl(null, { validators: [] }),
       handlers: new FormControl(0, { validators: [] }),
     });
@@ -485,8 +487,8 @@ export class DeliveryPage implements OnInit {
 
       slots.push (
           {
-            start: values.time_start ? day + 'T' + values.time_start?.substr(0, 5) : null,
-            end: values.time_end ? day + 'T' + values.time_end?.substr(0, 5) : null,
+            start: day + 'T' + values.time_start?.substr(0, 5),
+            end: values.time_end ? day + 'T' + values.time_end?.substr(0, 5) : day + 'T' + values.time_start?.substr(0, 5),
           }
       );
     }

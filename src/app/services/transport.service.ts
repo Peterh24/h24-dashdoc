@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UtilsService } from '../utils/services/utils.service';
+import { ApiTransportService } from './api-transport.service';
 
 interface Transport {
   segments: Array<
@@ -133,22 +134,30 @@ export class TransportService {
     let planned_loads = null;
 
     if (deliveryJson.origin) {
+      let handlers = deliveryJson.origin?.handlers;
+      if (ApiTransportService.isDashdoc) {
+        handlers = deliveryJson.action || '0';
+      }
       origin = { 
         address: this.loadAddress (deliveryJson.origin?.address), 
         instructions: deliveryJson.origin.instructions, 
         slots: deliveryJson.origin.slots,
         reference: deliveryJson.origin.reference,
-        handlers: deliveryJson.origin.handlers
+        handlers: handlers
       }
     }
 
     if (deliveryJson.destination) {
+      let handlers = deliveryJson.destiation?.handlers;
+      if (ApiTransportService.isDashdoc) {
+        handlers = deliveryJson.action || '0';
+      }
       destination = { 
         address: this.loadAddress (deliveryJson.destination?.address), 
         instructions: deliveryJson.destination.instructions, 
         slots: deliveryJson.destination.slots,
-        reference: deliveryJson.origin.reference,
-        handlers: deliveryJson.origin.handlers
+        reference: deliveryJson.destination.reference,
+        handlers: handlers
       }
     }
 

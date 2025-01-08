@@ -130,6 +130,17 @@ export class BasketPage implements OnInit, AfterViewInit {
     return Object.keys (merchandises).sort ((a, b) => a.localeCompare (b)).join (',');
   }
 
+  getContacts (delivery: any) {
+    const contacts: any = {};
+
+    delivery.deliveries?.map((c: any)=> c.tracking_contacts).flat().forEach ((contact: any) => {
+      contacts[contact.contact.email] = contact;
+    });
+
+    return Object.values(contacts).map ((c: any) => c?.contact?.first_name + " " + c?.contact?.last_name)
+      .join (", ");
+  }
+
   onDraftDeleteRequest () {
     document.getElementById ("draft-delete").click ();
   }

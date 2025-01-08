@@ -58,10 +58,7 @@ export class ContactsService {
 
   addContact(first_name: string, last_name: string, email: string, phone_number: string, company: string, company_name: string) {
     const dataApi = { first_name, last_name, email, phone_number, company: { pk: company } }
-    return this.http.post(
-      `${DASHDOC_API_URL}contacts/`,
-      dataApi
-    ).pipe(
+    return this.http.post(`${DASHDOC_API_URL}contacts/`, dataApi).pipe(
       take(1),
       map((resData: any) => {
         const newContact = new Contact (resData.uid, first_name, last_name, email, phone_number, company, company_name );
@@ -74,10 +71,7 @@ export class ContactsService {
 
   updateContact(uid: string, first_name: string, last_name: string, email: string, phone_number: string, company: string, company_name: string) {
     const dataApi = { first_name, last_name, email, phone_number, company: { pk: company } }
-    return this.http.patch(
-      `${DASHDOC_API_URL}contacts/${uid}/`,
-      dataApi
-    ).pipe(
+    return this.http.patch(`${DASHDOC_API_URL}contacts/${uid}/`, dataApi).pipe(
       take(1),
       map((resData: any) => {
         const updatedContactIndex = this.contacts.value.findIndex (c => c.uid === uid);
@@ -91,9 +85,7 @@ export class ContactsService {
   }
 
   removeContact(uid: string) {
-    return this.http.delete(
-      `${DASHDOC_API_URL}contacts/${uid}/`
-    ).pipe(
+    return this.http.delete(`${DASHDOC_API_URL}contacts/${uid}/`).pipe(
       take(1),
       map((resData: any) => {
         const updatedContacts = this.contacts.value.filter ((contact) => contact.uid != uid);

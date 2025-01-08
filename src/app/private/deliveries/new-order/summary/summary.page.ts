@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
+import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { API_URL, DASHDOC_API_URL, DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { TransportService } from 'src/app/services/transport.service';
@@ -83,7 +84,7 @@ export class SummaryPage implements OnInit {
       return '';
     }
 
-    return merchandises.map ((m: any) => m.description).sort ((a:string, b:string) => a.localeCompare (b)).join (',');
+    return merchandises.map ((m: any) => m.description).sort ((a:string, b:string) => a.localeCompare (b)).join (', ');
   }
 
   formatSlot (slot: any) {
@@ -116,9 +117,13 @@ export class SummaryPage implements OnInit {
     }
   }
 
-  async onSubmit () {
+  async onSubmit (deleteDraft = false) {
     const transport = await this.buildTransport ();
     let request;
+
+    if (ApiTransportService.isDashdoc) {
+      this.toDashdocTransport (transport);
+    }
 
     if (transport.uid) {
       const headers = new HttpHeaders()
@@ -130,7 +135,7 @@ export class SummaryPage implements OnInit {
     }
 
     // TODO
-    request = this.http.post (`${API_URL}../transports/new`, transport);
+    //    request = this.http.post (`${API_URL}../transports/new`, transport);
 
     // TODO: gestion de l'upload des fichiers
     transport?.deliveries?.forEach ((delivery: any) => {
@@ -142,6 +147,16 @@ export class SummaryPage implements OnInit {
         // On renouvelle le token firebase pour éviter qu'il n'expire bientot
         this.authService.resetFirebasePushNotificationToken ();
 
+        if (this.transport.draftName && deleteDraft) {
+          this.storage.get(DASHDOC_COMPANY).then ((pk) => {
+            this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
+              delete drafts[this.transport.draftName];
+              this.transport.draftName = null;
+              this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${pk}`, drafts); 
+            });
+          });
+        }
+  
         const confirm = await this.alertController.create({
           header: 'Bravo, votre course a été enregistrée',
           message: 'Votre course a été validée et nous est parvenue, en cas de besoin d\'informations complementaires, nous vous contacterons sur le numero de téléphone présent dans votre profil.',
@@ -163,7 +178,7 @@ export class SummaryPage implements OnInit {
   }
 
   async buildTransport () {
-    if (!this.transport.trailers) {
+    if (!this.transport.trailers?.length) {
       this.transport.trailers.push({
         "licensePlate": this.transport.vehicle
       });
@@ -184,6 +199,19 @@ export class SummaryPage implements OnInit {
     console.log(dataToApi);
 
     return dataToApi;
+  }
+
+  toDashdocTransport (transport: any) {
+    transport?.deliveries?.forEach ((delivery: any) => {
+      if (delivery.origin) {
+        delivery.origin.action = String(delivery.origin.handlers || 0);
+        delete delivery.origin.handlers;
+      }
+      if (delivery.destination) {
+        delivery.destination.action = String(delivery.destination.handlers || 0);
+        delete delivery.destination.handlers;
+      }
+    })
   }
 
   buildDeliveries () {
@@ -287,25 +315,17 @@ export class SummaryPage implements OnInit {
       }
     }
 
+    segments.forEach ((segment) => segment.trailer = this.transport.trailers);
+
     return segments;
   }
 
-  onSetOrderName (name: any, deleteDraft: boolean, modal: any) {
+  onSetOrderName (name: any, deleteDraft: string, modal: any) {
     if (name) {
       modal.dismiss ();
 
-      if (this.transport.draftName && deleteDraft) {
-        this.storage.get(DASHDOC_COMPANY).then ((pk) => {
-          this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
-            delete drafts[this.transport.draftName];
-            this.transport.draftName = null;
-            this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${pk}`, drafts); 
-          });
-        });
-      }
-
       this.shipperReference = name;
-      this.onSubmit ();
+      this.onSubmit (false); // TODO
     }
   }
 

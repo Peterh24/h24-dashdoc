@@ -92,7 +92,7 @@
                   <p>
                     <ion-button size="small" routerLink="/private/tabs/transports/detail-delivery/{{ item.uid }}"><ion-icon name="eye-outline"></ion-icon> &nbsp; Détails</ion-button>
                     <ion-button size="small" (click)="editTransport (item)"><ion-icon name="create-outline"></ion-icon> &nbsp; Editer</ion-button>
-                    <ion-button size="small" routerLink="/private/tabs/transports/checkout-delivery" [queryParams]="{ transport: item.uid }" *ngIf="true || item.pricing_total_price"><ion-icon name="logo-euro"></ion-icon> &nbsp; Payer</ion-button>
+                    <ion-button size="small" routerLink="/private/tabs/transports/checkout-delivery" [queryParams]="{ transport: item.uid }" *ngIf="item.pricing_total_price"><ion-icon name="logo-euro"></ion-icon> &nbsp; Payer</ion-button>
                   </p>
                 </ion-label>
               </ion-item>

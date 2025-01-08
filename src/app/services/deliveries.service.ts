@@ -45,8 +45,8 @@ export class DeliveriesService {
         this.next = resData.next;
         const deliveries: Array<Delivery> = data.results.map((data:any)=> {
           const deliveriesData = data.deliveries.map((delivery: any)=> {
-            const { uid, origin, destination, loads } = delivery;
-            return { uid, origin, destination, loads };
+            const { uid, origin, destination, loads, tracking_contacts } = delivery;
+            return { uid, origin, destination, loads, tracking_contacts };
           }).sort((delivery1: Deliveries, delivery2: Deliveries) => {
             const dateDiff = compareAsc(new Date(delivery1.origin.real_start), new Date(delivery2.origin.real_start));
             if(dateDiff != 0) {

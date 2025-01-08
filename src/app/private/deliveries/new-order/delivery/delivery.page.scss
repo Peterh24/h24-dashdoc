@@ -57,7 +57,7 @@ hr {
     font-family: sans-serif;
 }
 
-.address:active {
+.address:active, .contact:active {
     & {
         background-color: black;
         color: white;

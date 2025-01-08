@@ -2,13 +2,13 @@
 
 <ion-content>
   <div class="tabs">
-    <div class="tab" [class.active]="tab === 1" (click)="setTab(1)">
+    <div class="tab pointer" [class.active]="tab === 1" (click)="setTab(1)">
       <span>
         <ion-badge *ngIf="deliveries1">{{ deliveries1 }}</ion-badge>
         <span>En cours</span>
       </span>
     </div>
-    <div class="tab" [class.active]="tab === 2" (click)="setTab(2)">
+    <div class="tab pointer" [class.active]="tab === 2" (click)="setTab(2)">
       <span>
         <ion-badge *ngIf="false">1</ion-badge>
         <span>Historique</span>
