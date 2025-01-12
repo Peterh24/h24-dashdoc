@@ -1,7 +1,7 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { AlertController, IonSelect, LoadingController, ModalController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
-import { Subscription, catchError, of, take, throwError } from 'rxjs';
+import { Subscription, catchError, take } from 'rxjs';
 import { ModalAddTokenComponent } from './modal-add-token/modal-add-token.component';
 import { Company } from '../models/company.model';
 import { CompanyService } from 'src/app/services/company.service';
@@ -45,11 +45,11 @@ export class HomePage implements OnDestroy {
     public deliveriesService: DeliveriesService,
     private transportService: TransportService
   ) { }
-
+  
   ionViewWillEnter(){
     this.currentUser = this.authService.currentUser;
-    this.authService.loadCurrentUserDetail(this.currentUser?.id).subscribe((user:any) => {
-      this.firstname = user.firstname[0].toUpperCase() + user.firstname.slice(1).toLowerCase();
+    this.authService.loadCurrentUserDetail(this.currentUser?.id).pipe(take(1)).subscribe((user:any) => {
+      this.firstname = user.firstname?.[0]?.toUpperCase() + user.firstname?.slice(1)?.toLowerCase();
 
       this.lastname = user.lastname
       this.companyService.fetchCompanies();

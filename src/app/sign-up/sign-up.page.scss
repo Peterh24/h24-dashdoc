@@ -4,7 +4,7 @@ ion-content {
 }
 
 .header-logo {
-  width: 32px;
+  width: 36px;
   padding-top: 20px;
 }
 
@@ -52,12 +52,16 @@ ion-content {
 
 h1 {
   margin-top: 8px;
+  font-size: 32px;
+  font-weight: 700;
 }
 
 ion-toolbar {
   div {
     text-align: center;
     padding-bottom: 20px;
+    font-size: 16px;
+    font-weight: 400;
   }
 
   .login {

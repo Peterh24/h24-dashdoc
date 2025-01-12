@@ -6,3 +6,12 @@ ion-content {
 ion-button {
     display: block;
 }
+
+ion-input, ion-select {
+    margin-top: 25px;
+}
+  
+.container {
+    padding: 20px;
+    overflow-y: scroll;
+}

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Storage } from '@ionic/storage-angular';
 import { API_URL, DASHDOC_COMPANY, FIREBASE_TOKEN_KEY, JWT_KEY, USER_STORAGE_KEY } from './constants';
-import { BehaviorSubject, take, map, catchError, tap, mergeMap } from 'rxjs';
+import { BehaviorSubject, take, map, catchError, tap, mergeMap, of } from 'rxjs';
 import jwt_decode from 'jwt-decode';
 import { Router } from '@angular/router';
 import { ActionPerformed, PushNotifications, PushNotificationSchema, Token } from '@capacitor/push-notifications';

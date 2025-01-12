@@ -13,16 +13,20 @@ ion-content {
 }
 
 .title {
-  margin-top: 100px;
+  margin-top: 20px;
   font-size: 22pt;
   font-weight: 500;
 
   .bonjour {
-    color: var(--ion-color-medium);
+    color: #9C9C9C;
+    font-size: 32px;
+    font-weight: 600;
   }
 
   .name:first-letter {
     text-transform: uppercase;
+    font-weight: 32px;
+    font-weight: 600;
   }
 }
 
@@ -30,16 +34,13 @@ ion-content {
   text-align: center;
 }
 
+.intro {
+  font-size: 16px;
+  font-weight: 400;
+}
+
 ion-button {
   display: block;
   margin-top: 15px;
   margin-bottom: 15px;
-}
-
-ion-select, ion-select-option, ion-item {
-  & {
-    border: 1px solid black;
-    border-radius: 15px;
-    padding-left: 20px;
-  }
 }

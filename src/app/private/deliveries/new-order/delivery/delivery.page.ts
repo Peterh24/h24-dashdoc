@@ -166,7 +166,7 @@ export class DeliveryPage implements OnInit {
       time_end: end_time,
       instructions: delivery?.instructions,
       reference: delivery?.reference,
-      handlers: delivery?.handlers || 0,
+      handlers: parseInt(delivery?.handlers) || 0,
     };
     
 

@@ -1,7 +1,7 @@
 ion-content  {
-  --padding-top: 30px;
-  --padding-start: 30px;
-  --padding-end: 30px;
+  --padding-top: 15px;
+  --padding-start: 15px;
+  --padding-end: 15px;
 }
 
 .user-header {
@@ -26,7 +26,20 @@ ion-button.submit {
   margin-top: 30px;
 }
 
+ion-item {
+  height: 76px;
+  margin-top: 10px;
+}
+
 .alert-success {
-  display: flex;
-  align-items: center;
+  & {
+    display: flex;
+    align-items: center;
+    margin-left: 15px;
+    margin-right: 15px;
+  }
+
+  ion-icon {
+    margin-right: 15px;
+  }
 }

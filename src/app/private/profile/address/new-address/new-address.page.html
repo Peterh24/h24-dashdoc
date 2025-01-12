@@ -1,31 +1,20 @@
 <app-header *ngIf="!isModal" [defaultHref]="'/private/tabs/profile/details'"></app-header>
 
-<ion-header *ngIf="isModal">
-  <ion-toolbar>
-    <ion-title>
-      <h2>Ajouter une adresse</h2>
-    </ion-title>
-    <ion-buttons slot="end">
-      <ion-button color="medium" (click)="cancel()">
-        <ion-icon slot="icon-only" name="close"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-  <h2 *ngIf="!isModal">Ajouter une adresse</h2>
+<div class="container">
+  <ion-icon name="close-outline" class="ion-float-right" (click)="cancel()"></ion-icon>
+  <div class="title">Ajouter une adresse</div>
   <br>
   <form [formGroup]="form">
     <ion-list>
-      <ion-input type="text" label="Nom de l'adresse" labelPlacement="floating" errorText="Merci d'indiquer un nom" formControlName="name"></ion-input>
-      <ion-input type="text" label="Adresse" labelPlacement="floating" errorText="Merci d'indiquer l'adresse postale" formControlName="address"></ion-input>
-      <ion-input type="text" label="Code postal" labelPlacement="floating" errorText="Merci d'indiquer le code postal" formControlName="postal"></ion-input>
-      <ion-input type="text" label="Ville" labelPlacement="floating" errorText="Merci d'indiquer la ville" formControlName="city"></ion-input>
-      <ion-select mode="md" label="Pays" labelPlacement="floating" okText="Valider" cancelText="Annuler" errorText="Merci d'indiquer le pays" class="ion-no-margin ion-no-padding" formControlName="country">
+      <ion-input type="text" label="Nom de l'adresse" labelPlacement="floating" fill="outline" shape="round" errorText="Merci d'indiquer un nom" formControlName="name"></ion-input>
+      <ion-input type="text" label="Adresse" labelPlacement="floating" fill="outline" shape="round" errorText="Merci d'indiquer l'adresse postale" formControlName="address"></ion-input>
+      <ion-input type="text" label="Code postal" labelPlacement="floating" fill="outline" shape="round" errorText="Merci d'indiquer le code postal" formControlName="postal"></ion-input>
+      <ion-input type="text" label="Ville" labelPlacement="floating" fill="outline" shape="round" errorText="Merci d'indiquer la ville" formControlName="city"></ion-input>
+      <ion-select mode="md" label="Pays" labelPlacement="floating" interface="popover" okText="Valider" cancelText="Annuler" errorText="Merci d'indiquer le pays" class="ion-no-margin ion-no-padding" formControlName="country">
         <ion-select-option *ngFor="let country of countries" [value]="country.key">{{country.value}}</ion-select-option>
       </ion-select>
-      <ion-input type="text" label="Instructions" labelPlacement="floating" helperText="Indication supplementaire (Facultatif)" formControlName="instructions"></ion-input>
+      <ion-input type="text" label="Instructions" labelPlacement="floating" fill="outline" shape="round" helperText="Indication supplementaire (Facultatif)" formControlName="instructions"></ion-input>
+      <br>
     </ion-list>
     <div class="ion-text-right">
       <ion-button type="submit" [disabled]="!form.valid" class="ion-margin-top ion-margin-bottom" (click)="onCreateOffer()">
@@ -33,4 +22,4 @@
       </ion-button>
     </div>
   </form>
-</ion-content>
+</div>

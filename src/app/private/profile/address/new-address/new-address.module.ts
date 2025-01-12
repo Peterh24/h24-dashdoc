@@ -17,6 +17,7 @@ import { HeaderModule } from 'src/app/components';
     NewAddressPageRoutingModule,
     HeaderModule
   ],
+  exports: [NewAddressPage],
   declarations: [NewAddressPage]
 })
 export class NewAddressPageModule {}

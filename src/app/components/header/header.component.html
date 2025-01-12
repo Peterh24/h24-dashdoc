@@ -1,20 +1,22 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons [slot]="slot" *ngIf="defaultHref">
-      <ion-back-button [defaultHref]="defaultHref" text=""></ion-back-button>
+      <ion-back-button [defaultHref]="defaultHref" text="" icon="chevron-left"></ion-back-button>
     </ion-buttons>
     <ion-title [class.active]="companyService.isCompanySwitch">
       {{title || (getcompanyName() | async) || 'H24 Transports'}}
     </ion-title>
     <ion-buttons slot="end">
-      <ion-button type="button" (click)="callTo()">
+      <ion-button class="call" type="button" (click)="callTo()">
         <ion-icon name="call" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
+    <!--
     <ion-buttons slot="end" (click)="signOut()">
       <ion-button type="button">
         <ion-icon name="power" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
+    -->
   </ion-toolbar>
 </ion-header>

@@ -8,6 +8,7 @@ import { AddressPageRoutingModule } from './address-routing.module';
 
 import { AddressPage } from './address.page';
 import { HeaderModule } from 'src/app/components';
+import { NewAddressPageModule } from './new-address/new-address.module';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { HeaderModule } from 'src/app/components';
     FormsModule,
     IonicModule,
     AddressPageRoutingModule,
-    HeaderModule
+    HeaderModule,
+    NewAddressPageModule
   ],
   declarations: [AddressPage]
 })

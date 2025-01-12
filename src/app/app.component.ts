@@ -4,7 +4,6 @@ import * as CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { register } from 'swiper/element/bundle';
 import { ModalController, NavController, Platform } from '@ionic/angular';
-import { PushNotifications } from '@capacitor/push-notifications';
 import { App } from '@capacitor/app';
 import { addIcons } from 'ionicons';
 
@@ -19,7 +18,7 @@ export class AppComponent {
     private navCtrl: NavController,
     private storage: Storage, 
     private platform: Platform,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
   ) {
     this.init();
   }
@@ -61,6 +60,7 @@ export class AppComponent {
       'checkbox-outline': 'assets/lucide/square-check-big.svg',
       'checkmark-outline': 'assets/lucide/check.svg',
       'chevron-forward-outline': 'assets/lucide/chevron-right.svg',
+      'chevron-left': 'assets/lucide/chevron-left.svg',
       'close': 'assets/lucide/x.svg',
       'close-outline': 'assets/lucide/x.svg',
 //      'create-outline': 'assets/lucide/pencil.svg',
@@ -73,14 +73,14 @@ export class AppComponent {
       'folder-outline': 'assets/lucide/folder.svg',
       'home': 'assets/lucide/house.svg',
       'information-circle': 'assets/lucide/info.svg',
-      'key-outline': 'assets/lucide/key.svg',
+      'key-outline': 'assets/lucide/key-round.svg',
       'location': 'assets/lucide/map-pin.svg',
       'location-outline': 'assets/lucide/map-pin.svg',
-      'logo-euro': 'assets/lucide/euro.svg',
+      'logo-euro': 'assets/lucide/receipt-text.svg',
       'notifications-outline': 'assets/lucide/bell.svg',
       'person-circle': 'assets/lucide/circle-user-round.svg',
       'person-circle-outline': 'assets/lucide/circle-user-round.svg',
-      'people-outline': 'assets/lucide/users.svg',
+      'people-outline': 'assets/lucide/send.svg',
       'person-outline': 'assets/lucide/user.svg',
       'power': 'assets/lucide/power.svg',
       'radio-button-off-outline': 'assets/lucide/circle.svg',

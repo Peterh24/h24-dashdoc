@@ -29,7 +29,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const currentUrl = platform.url();
 
     if (!req.headers?.get ("Authorization")) {
-      if (req.url.includes('api.dashdoc.eu')) {
+      if (req.url.includes('api.dashdoc.eu') && tokens.tokenObs) {
         req = req.clone({
           setHeaders: {
             Authorization: `Token ${tokens.tokenObs}`
@@ -51,7 +51,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             error: (error) => {
               if (error.status === 401) {
                 // if token expired, remove token from application and redirect to home
-                authService.signOut()
+                authService.signOut();
                 router.navigate(['/'], { replaceUrl: true });
               }
             }

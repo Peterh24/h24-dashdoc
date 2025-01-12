@@ -30,10 +30,12 @@ export class AddressPage implements OnInit {
   jsonData: any;
   startIndex: number = 0;
 
-  currentFolder: string;
+  currentFolder: any;
+  currentFolderName: string;
   folders: any[] = [];
   addressFolder: any;
   selectedAddress: any = {};
+  renameFolderName: string;
 
   @ViewChild("searchbarElem", { read: ElementRef }) private searchbarElem: ElementRef;
   constructor(
@@ -63,7 +65,7 @@ export class AddressPage implements OnInit {
 
     this.isLoading = true;
     this.selectedAddress = {};
-    this.currentFolder = null;
+    this.currentFolderName = null;
 
     // TODO: verifier si les adresses sont déjà chargées
     this.addressService.fetchAddress().subscribe({
@@ -99,11 +101,18 @@ export class AddressPage implements OnInit {
     this.address = address;
     this.jsonData = address;
 
+    /*
     DEFAULT_FOLDERS.forEach ((folder) => {
       if (!this.folders.find ((f) => f == folder)) {
         this.folders.push (folder);
       }
     })
+    */
+
+    if (this.folders?.length == 0) {
+      this.folders = DEFAULT_FOLDERS;
+    }
+
     this.folders.sort ((a,b) => a.localeCompare (b));
 
     this.selectFolder (null);
@@ -115,7 +124,7 @@ export class AddressPage implements OnInit {
 
   setFilteredItems(searchTerm: string) {
     if (searchTerm.trim() === '') {
-      this.selectFolder (this.currentFolder);
+      this.selectFolder (this.currentFolderName);
     } else {
       const term = searchTerm.toLocaleLowerCase ();
       
@@ -126,14 +135,14 @@ export class AddressPage implements OnInit {
     }
   }
 
-  async onAddAddress (addressPk: number = null, slidingItem: IonItemSliding = null) {
+  async onAddAddress (addressPk: number = null, folder: string = null, slidingItem: IonItemSliding = null) {
     const modal = await this.modalController.create({
       component: addressPk ? EditAddressPage : NewAddressPage,
       componentProps: {
         isModal: true,
         addressPk: addressPk
       },
-      cssClass: 'address-modal',
+      cssClass: 'custom',
     });
 
     modal.present();
@@ -147,10 +156,19 @@ export class AddressPage implements OnInit {
         this.address.push (data);
       }
 
+      if (folder) {
+        this.addressFolder[data.pk] = folder;
+        this.selectedAddress = {};
+        this.selectedAddress[data.pk] = data;
+        this.moveToFolder (folder, null, false);
+      }
+
+      this.openFolder (this.currentFolderName);
+
       this.selectFolder (null);
 
       const toast = await this.toastController.create({
-        message: 'L\'adresses a bien été ajoutée',
+        message: 'L\'adresses a bien été ajoutée à votre liste d\'adresses',
         duration: 3000,
         position: 'bottom',
         icon: 'checkbox-outline',
@@ -162,7 +180,7 @@ export class AddressPage implements OnInit {
   }
 
   onRemoveAddress(addressPk: number, slidingElement: IonItemSliding = null, isOrigin:boolean = false): void {
-    if (!isOrigin) {
+    if (!isOrigin) { // TODO !
       this.alertController.create({
         header: 'Suppression de l\'adresse',
         message: 'Voulez vous supprimer l\'adresse de la société',
@@ -221,7 +239,7 @@ export class AddressPage implements OnInit {
     return Object.keys (this.selectedAddress).length > 0;
   }
 
-  createFolder (modal: any, name: any) {
+  createFolder (name: any, modal: any) {
     if (name) {
       this.folders.push (name);
       this.folders.sort ((a,b) => a.localeCompare (b));
@@ -229,18 +247,98 @@ export class AddressPage implements OnInit {
     modal.dismiss ();
   }
 
+  async deleteFolder (folder: string, event: any) {
+    event.preventDefault ();
+    event.stopPropagation ();
+    event.stopImmediatePropagation ();
+
+    const alert = await this.alertController.create({
+      header: `Suppression du dossier`,
+      message: `Voulez vous supprimer le dossier ${folder}`,
+      buttons: [
+        {
+          text: 'OK',
+          handler: () => {
+            this.storage.get(DASHDOC_COMPANY).then ((pk) => {
+              for (var address in this.addressFolder) {
+                if (this.addressFolder[address] == folder) {
+                  delete this.addressFolder[address];
+                }
+              }
+        
+              this.folders = this.folders.filter ((f) => f !== folder);
+
+              this.storage.set (`${ADDRESS_FOLDER_KEY}_${pk}`, this.addressFolder);
+        
+              this.selectFolder (null);
+            });
+          }
+        }
+      ]
+    });
+
+    await alert.present ();
+  }
+
+  renameFolder (newFolderName: any, modal: any) {
+    this.storage.get(DASHDOC_COMPANY).then ((pk) => {
+      for (var address in this.addressFolder) {
+        if (this.addressFolder[address] == this.renameFolderName) {
+          this.addressFolder[address] = newFolderName;
+        }
+      }
+
+      this.storage.set (`${ADDRESS_FOLDER_KEY}_${pk}`, this.addressFolder);
+
+      this.folders = this.folders.map ((folder) => folder == this.renameFolderName ? newFolderName : folder);
+      this.folders.sort ((a,b) => a.localeCompare (b));
+
+      this.selectFolder (null);
+
+      if (modal) {
+        modal.dismiss ();
+      }
+    });
+  }
+
+  setRenameFolderName (folderName: string, event: any = null) {
+    if (event) {
+      event.preventDefault ();
+      event.stopPropagation ();
+      event.stopImmediatePropagation ();
+    }
+
+    this.renameFolderName = folderName;
+  }
+
   showMoveToFolderModal () {
     document.getElementById ("move-to-folder")?.click ();
   }
 
-  selectFolder (folder: string) {
-    if (this.currentFolder === folder) {
-      this.currentFolder = null;
+  openFolder (folder: string) {
+    if (folder) {
+      this.currentFolderName = folder;
+      this.currentFolder = this.address.filter ((address: any) => this.addressFolder[address.pk] == this.currentFolderName);
+      this.currentFolder.sort ((a: any, b: any) => a.name.localeCompare (b.name));
     } else {
-      this.currentFolder = folder;
+      this.currentFolderName = null;
+      this.currentFolder = null;
     }
 
-    this.jsonData = this.address.filter ((address: any) => this.addressFolder[address.pk] == this.currentFolder);
+    if (this.searchbarElem?.nativeElement) {
+      this.searchbarElem.nativeElement.value = '';
+    }
+  }
+
+  selectFolder (folder: string) {
+    /* Liste les adresses pas dans une modale
+    if (this.currentFolderName === folder) {
+      folder = null;
+    }
+    this.currentFolderName = folder;
+    */
+
+    this.jsonData = this.address.filter ((address: any) => this.addressFolder[address.pk] == folder);
     this.jsonData.sort ((a: any, b: any) => a.name.localeCompare (b.name));
 
     if (this.searchbarElem?.nativeElement) {
@@ -248,11 +346,19 @@ export class AddressPage implements OnInit {
     }
   }
 
+  onFolderClick (folder: string, modal: any = null) {
+    if (modal) {
+      this.moveToFolder (folder, modal);
+    } else {
+      this.openFolder (folder);
+    }
+  }
+
   addressFolderItems (folder: string) {
     return Object.values (this.addressFolder).filter ((f: any) => folder == f).length;
   }
 
-  async moveToFolder (modal: any, folder: string) {
+  async moveToFolder (folder: string, modal: any = null, notify: boolean = true) {
     Object.values(this.selectedAddress).forEach ((address: any) => {
       if (folder == null) {
         delete this.addressFolder[address.pk];
@@ -267,19 +373,23 @@ export class AddressPage implements OnInit {
 
     this.selectedAddress = {};
 
-    modal.dismiss ();
+    if (modal) {
+      modal.dismiss ();
+    }
 
-    this.selectFolder (this.currentFolder);
+    this.selectFolder (this.currentFolderName);
 
-    const toast = await this.toastController.create({
-      message: 'Les adresses ont bien été déplacée dans le dossier ' + folder,
-      duration: 3000,
-      position: 'bottom',
-      icon: 'checkbox-outline',
-      cssClass: 'success'
-    });
+    if (notify) {
+      const toast = await this.toastController.create({
+        message: 'Les adresses ont bien été déplacée dans le dossier ' + folder,
+        duration: 3000,
+        position: 'bottom',
+        icon: 'checkbox-outline',
+        cssClass: 'success'
+      });
 
-    await toast.present();
+      await toast.present();
+    }
   }
 
   formatPhone (phone: string) {

@@ -101,6 +101,18 @@ export class TransportService {
     console.log ('load', transport, this);
   }
 
+  fromDashdocTransport (transport: any) {
+    transport?.deliveries?.forEach ((delivery: any) => {
+      if (delivery.origin) {
+        delivery.origin.handlers = parseInt(delivery.origin.action || 0);
+      }
+
+      if (delivery.destination) {
+        delivery.destination.handlers = parseInt(delivery.destination.action || 0);
+      }
+    });
+  }
+
   loadDeliveries (deliveriesJson: any) {
     const deliveries: any[] = deliveriesJson.map ((d: any) => this.loadDelivery (d));
 
@@ -134,30 +146,22 @@ export class TransportService {
     let planned_loads = null;
 
     if (deliveryJson.origin) {
-      let handlers = deliveryJson.origin?.handlers;
-      if (ApiTransportService.isDashdoc) {
-        handlers = deliveryJson.action || '0';
-      }
       origin = { 
         address: this.loadAddress (deliveryJson.origin?.address), 
         instructions: deliveryJson.origin.instructions, 
         slots: deliveryJson.origin.slots,
         reference: deliveryJson.origin.reference,
-        handlers: handlers
+        handlers: deliveryJson.origin?.handlers
       }
     }
 
     if (deliveryJson.destination) {
-      let handlers = deliveryJson.destiation?.handlers;
-      if (ApiTransportService.isDashdoc) {
-        handlers = deliveryJson.action || '0';
-      }
       destination = { 
         address: this.loadAddress (deliveryJson.destination?.address), 
         instructions: deliveryJson.destination.instructions, 
         slots: deliveryJson.destination.slots,
         reference: deliveryJson.destination.reference,
-        handlers: handlers
+        handlers: deliveryJson.destination?.handlers
       }
     }
 
