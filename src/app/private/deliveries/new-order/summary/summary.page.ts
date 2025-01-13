@@ -58,6 +58,7 @@ export class SummaryPage implements OnInit {
     private storage: Storage,
     private http: HttpClient,
     private alertController: AlertController,
+    private apiTransport: ApiTransportService
   ) { }
 
   ngOnInit() {
@@ -121,17 +122,10 @@ export class SummaryPage implements OnInit {
     const transport = await this.buildTransport ();
     let request;
 
-    if (ApiTransportService.isDashdoc) {
-      this.toDashdocTransport (transport);
-    }
-
     if (transport.uid) {
-      const headers = new HttpHeaders()
-        .set ('Content-Type', 'application/merge-patch+json');
-
-      request = this.http.patch(`${DASHDOC_API_URL}transports/${transport.uid}`, transport, { headers });
+      request = this.apiTransport.updateTransport (transport);
     } else {
-      request = this.http.post(`${DASHDOC_API_URL}transports/`, transport);
+      request = this.apiTransport.createTransport (transport);
     }
 
     // TODO
@@ -199,19 +193,6 @@ export class SummaryPage implements OnInit {
     console.log(dataToApi);
 
     return dataToApi;
-  }
-
-  toDashdocTransport (transport: any) {
-    transport?.deliveries?.forEach ((delivery: any) => {
-      if (delivery.origin) {
-        delivery.origin.action = String(delivery.origin.handlers || 0);
-        delete delivery.origin.handlers;
-      }
-      if (delivery.destination) {
-        delivery.destination.action = String(delivery.destination.handlers || 0);
-        delete delivery.destination.handlers;
-      }
-    })
   }
 
   buildDeliveries () {

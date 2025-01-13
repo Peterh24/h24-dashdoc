@@ -101,18 +101,6 @@ export class TransportService {
     console.log ('load', transport, this);
   }
 
-  fromDashdocTransport (transport: any) {
-    transport?.deliveries?.forEach ((delivery: any) => {
-      if (delivery.origin) {
-        delivery.origin.handlers = parseInt(delivery.origin.action || 0);
-      }
-
-      if (delivery.destination) {
-        delivery.destination.handlers = parseInt(delivery.destination.action || 0);
-      }
-    });
-  }
-
   loadDeliveries (deliveriesJson: any) {
     const deliveries: any[] = deliveriesJson.map ((d: any) => this.loadDelivery (d));
 

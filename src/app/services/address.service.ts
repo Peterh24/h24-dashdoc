@@ -6,6 +6,7 @@ import { Storage } from '@ionic/storage-angular';
 import { DASHDOC_API_URL } from './constants';
 import { Request } from '../private/models/request.model';
 import { LoadingController } from '@ionic/angular';
+import { ApiTransportService } from './api-transport.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,19 +21,11 @@ export class AddressService {
   constructor(
     private http: HttpClient,
     private storage: Storage,
+    private apiTransport: ApiTransportService
   ) { }
 
   fetchAddress() {
-    return this.http.get(`${DASHDOC_API_URL}addresses/`).pipe(
-      expand((resData: Request) => {
-        if (resData.next !== null) {
-          return this.http.get(resData.next);
-        } else {
-          return EMPTY;
-        }
-      }),
-      map((resData: Request) => resData.results),
-      reduce((address: Address[], results: Address[]) => address.concat(results), []),
+    return this.apiTransport.getAddresses ().pipe (
       tap((address: Address[]) => {
         this._address.next(address);
       })
@@ -63,10 +56,7 @@ export class AddressService {
           is_destination: true
       };
 
-        return this.http.post(
-          `${DASHDOC_API_URL}addresses/`,
-          newAddress
-        ).pipe(
+        return this.apiTransport.createAddress(newAddress).pipe(
           take(1),
           switchMap((resData: any) => {
             const updatedAddresses = [...this._address.value, resData];
@@ -95,10 +85,7 @@ export class AddressService {
           country,
           instructions
         );
-        return this.http.patch(
-          `${DASHDOC_API_URL}addresses/${addressId}`,
-          {...updatedAddress[updatedAddressIndex]}
-        );
+        return this.apiTransport.updateAddress (addressId, {...updatedAddress[updatedAddressIndex]});
       }),
       tap(() => {
         this._address.next(updatedAddress)
@@ -107,7 +94,7 @@ export class AddressService {
   }
 
   removeAddress(addressId: number) {
-    return this.http.delete(`${DASHDOC_API_URL}addresses/${addressId}/`).pipe(
+    return this.apiTransport.deleteAddress(addressId).pipe(
       switchMap(() => {
         return this.address.pipe(
           take(1),

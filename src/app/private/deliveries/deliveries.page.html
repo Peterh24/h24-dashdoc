@@ -103,11 +103,11 @@
         </ion-accordion-group>
 
         <ion-infinite-scroll #infiniteScroll threshold="0" (ionInfinite)="loadMoreData($event)" >
-          <ion-infinite-scroll-content loadingSpinner="none" *ngIf="jsonData?.length && !deliveriesService.isLastPageReached && filter.value === 'all'">
+          <ion-infinite-scroll-content loadingSpinner="none" *ngIf="jsonData?.length && !apiTransport.isTransportLastPageReached && filter.value === 'all'">
               <div class="h24loader" ></div>
           </ion-infinite-scroll-content>
         </ion-infinite-scroll>
-        <p class="endOfList" *ngIf="deliveriesService.isLastPageReached && filter.value === 'all'">Il n'y a plus rien à afficher.</p>
+        <p class="endOfList" *ngIf="apiTransport.isTransportLastPageReached && filter.value === 'all'">Il n'y a plus rien à afficher.</p>
       </ion-col>
     </ion-row>
 

@@ -7,15 +7,13 @@ import { API_URL, DASHDOC_API_URL } from './constants';
 import { Request } from '../private/models/request.model';
 import { compareAsc, format, parseISO } from 'date-fns';
 import { CountriesService } from '../utils/services/countries.service';
+import { ApiTransportService } from './api-transport.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DeliveriesService {
   private _deliveries = new BehaviorSubject<Array<Delivery>>([]);
-  private next:string = null;
-  private url:string = null;
-  isLastPageReached = false;
   private filtreSubject = new BehaviorSubject<string>('all');
   filtre$ = this.filtreSubject.asObservable();
   get deliveries() {
@@ -24,7 +22,8 @@ export class DeliveriesService {
   constructor(
     private http: HttpClient,
     private storage: Storage,
-    private countriesService: CountriesService
+    private countriesService: CountriesService,
+    private apiTransport: ApiTransportService
   ) { }
 
   setFiltre(valeur: string) {
@@ -32,69 +31,7 @@ export class DeliveriesService {
   }
   
   fetchDeliveries(status: string = null) {
-    if (this.isLastPageReached) {
-      return EMPTY; 
-    }
-    this.url = this.next ? this.next : `${DASHDOC_API_URL}transports/` + (status ? '?status__in=' + status : '');
-    return this.http.get(this.url).pipe(
-      tap((resData: any) => {
-        this.next = resData.next;
-      }),
-      map((resData: Request) => {
-        const data = resData;
-        this.next = resData.next;
-        const deliveries: Array<Delivery> = data.results.map((data:any)=> {
-          const deliveriesData = data.deliveries.map((delivery: any)=> {
-            const { uid, origin, destination, loads, tracking_contacts } = delivery;
-            return { uid, origin, destination, loads, tracking_contacts };
-          }).sort((delivery1: Deliveries, delivery2: Deliveries) => {
-            const dateDiff = compareAsc(new Date(delivery1.origin.real_start), new Date(delivery2.origin.real_start));
-            if(dateDiff != 0) {
-              return dateDiff;
-            }
-            return compareAsc(new Date(delivery1.destination.real_end), new Date(delivery2.destination.real_end));
-          })
-          
-
-
-          const licensePlate = data.segments[0].trailers[0] ? data.segments[0].trailers[0].license_plate : '';
-
-          const statuses: any = {};
-          data.status_updates?.forEach ((status: any) => {
-            statuses[status.category] = {
-              status: status.category,
-              created: status.created,
-              latitude: status.latitude,
-              longitude: status.longitude,
-            }
-          });
-
-          return new Delivery(
-            data.uid,
-            data.created,
-            data.deliveries[0].shipper_reference,
-            data.status,
-            data.global_status,
-            statuses,
-            data.pricing_total_price,
-            data.quotation_total_price,
-            deliveriesData,
-            data.messages,
-            data.documents,
-            licensePlate,
-            data.requested_vehicle, 
-            data.carbon_footprint
-          )
-        });
-
-              // Mettez à jour l'état de la pagination
-      if (resData.next === null) {
-        this.isLastPageReached = true;
-      }
-        
-        return deliveries;
-      }),
-      reduce((deliveries: Delivery[], results: Delivery[]) => deliveries.concat(results), []),
+    return this.apiTransport.getTransports (status).pipe(
       tap((deliveries: Delivery[]) => {
         this._deliveries.next([...this._deliveries.value, ...deliveries]);
       })
@@ -148,8 +85,7 @@ export class DeliveriesService {
 
   resetDeliveries() {
     this._deliveries.next([]);
-    this.next = null;
-    this.isLastPageReached = false;
+    this.apiTransport.resetTransports ();
   }
 
   getMoneticoPaymentRequest (params: any) {

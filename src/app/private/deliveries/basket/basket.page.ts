@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonAccordionGroup, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
+import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { TransportService } from 'src/app/services/transport.service';
@@ -40,6 +41,7 @@ export class BasketPage implements OnInit, AfterViewInit {
   constructor(
     public deliveriesService: DeliveriesService,
     public transportService: TransportService,
+    public apiTransport: ApiTransportService,
     private router: Router,
     private loadingController: LoadingController,
     private storage: Storage,

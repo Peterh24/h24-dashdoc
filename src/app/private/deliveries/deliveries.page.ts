@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { StatusService } from 'src/app/utils/services/status.service';
 import { take } from 'rxjs';
 import { TransportService } from 'src/app/services/transport.service';
+import { ApiTransportService } from 'src/app/services/api-transport.service';
 
 @Component({
   selector: 'app-deliveries',
@@ -26,6 +27,7 @@ export class DeliveriesPage {
   constructor(
     public deliveriesService: DeliveriesService,
     public transportService: TransportService,
+    public apiTransport: ApiTransportService,
     private router: Router,
     private statusService: StatusService,
     private loadingController: LoadingController,

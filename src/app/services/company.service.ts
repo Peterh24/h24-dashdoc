@@ -4,6 +4,7 @@ import { Company } from '../private/models/company.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DASHDOC_API_URL } from './constants';
 import { DashdocService } from './dashdoc.service';
+import { ApiTransportService } from './api-transport.service';
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +29,7 @@ export class CompanyService {
   constructor(
     private http: HttpClient,
     private dashdocService: DashdocService,
+    private apiTransport: ApiTransportService
   ) { }
 
   fetchCompanies() {
@@ -37,7 +39,7 @@ export class CompanyService {
           return;
         }
 
-        tokens.forEach(token => {
+        tokens.forEach(token => { // TODO
           const tokenCurrent = token.token;
           const headers = new HttpHeaders().set('Authorization', `Token ${tokenCurrent}`);
           
@@ -64,23 +66,11 @@ export class CompanyService {
   }
 
   getCompanyStatus () {
-    this.http.get(`${DASHDOC_API_URL}transports/?status__in=created,updated,confirmed,declined,verified`).pipe(take(1)).subscribe({
+    this.apiTransport.getCompanyStatus().pipe(take(1)).subscribe({
       next: ((res:any) => {
         this.companyStatusBadge = res.results.length;
       })
     });
-  }
-
-  addCompany(token:number) {
-    const headers = new HttpHeaders().set('Authorization', `Token ${token}`);
-    this.http.get(`${DASHDOC_API_URL}addresses/`, { headers }).pipe(take(1)).subscribe(((res:any) => {
-      if(res.results !== undefined ){
-        const newCompany = { ...res.results[0].created_by, token: token };
-        if (!this._companies.getValue().includes(newCompany)) {
-          this._companies.next([...this._companies.getValue(), newCompany]);
-        }
-      }
-    }))
   }
 
   setCompanyName(name: string) {
