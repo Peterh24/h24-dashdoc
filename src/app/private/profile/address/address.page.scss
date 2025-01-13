@@ -94,6 +94,17 @@ ion-accordion {
   }
 }
 
+ion-modal {
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  ion-button {
+    flex-grow: 1;
+  }
+}
+
 ion-button {
   display: block;
   margin: 10px;

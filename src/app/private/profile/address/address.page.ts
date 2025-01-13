@@ -37,6 +37,8 @@ export class AddressPage implements OnInit {
   selectedAddress: any = {};
   renameFolderName: string;
 
+  deleteAddress: any;
+
   @ViewChild("searchbarElem", { read: ElementRef }) private searchbarElem: ElementRef;
   constructor(
     private addressService: AddressService,
@@ -179,50 +181,36 @@ export class AddressPage implements OnInit {
     }
   }
 
-  onRemoveAddress(addressPk: number, slidingElement: IonItemSliding = null, isOrigin:boolean = false): void {
-    if (!isOrigin) { // TODO !
-      this.alertController.create({
-        header: 'Suppression de l\'adresse',
-        message: 'Voulez vous supprimer l\'adresse de la société',
-        buttons: ['OK']
-      }).then(alertElement => {
-        this.loadingController.create({
-          message: '<div class="h24loader"></div>',
-          mode: "ios"
-        }).then(loadingElement => {
-          loadingElement.present();
-          this.addressService.removeAddress(addressPk).subscribe(async (addresses) => {
-            this.isLoading = true;
-            loadingElement.dismiss();
-            this.isLoading = false;
-            this.jsonData = addresses;
-            this.address = addresses;
-            if (slidingElement) {
-              slidingElement.close();
-            }
-            this.selectFolder (null);
+  setDeleteAddress (address: any, slidingItem: IonItemSliding = null) {
+    this.deleteAddress = address;
 
-            const toast = await this.toastController.create({
-              message: 'L\'adresses a bien été supprimée',
-              duration: 3000,
-              position: 'bottom',
-              icon: 'checkbox-outline',
-              cssClass: 'success'
-            });
-        
-            await toast.present();        
-          });
-        });
-      });
-    } else {
-      this.alertController.create({
-        header: 'Suppression de l\'adresse',
-        message: 'Vous ne pouvez pas supprimer l\'adresse d\'origine de la société',
-        buttons: ['OK']
-      }).then(alertElement => {
-        alertElement.present()
-      })
+    if (slidingItem) {
+      slidingItem.close();
     }
+  }
+
+  onRemoveAddress(addressPk: number, slidingItem: IonItemSliding = null, isOrigin:boolean = false): void {
+    this.setDeleteAddress (null);
+
+    if (slidingItem) {
+      slidingItem.close();
+    }
+
+    this.addressService.removeAddress(addressPk).subscribe(async (addresses) => {
+      this.jsonData = addresses;
+      this.address = addresses;
+      this.selectFolder (null);
+
+      const toast = await this.toastController.create({
+        message: 'L\'adresses a bien été supprimée',
+        duration: 3000,
+        position: 'bottom',
+        icon: 'checkbox-outline',
+        cssClass: 'success'
+      });
+
+      await toast.present();
+    });
   }
 
   toggleSelectedAddress (address: any, event: any) {

@@ -39,7 +39,7 @@ export class ContactsService {
   }
 
   addContact(first_name: string, last_name: string, email: string, phone_number: string, company: string, company_name: string) {
-    const contact = { first_name, last_name, email, phone_number, company: { pk: company } } // TODO
+    const contact = { first_name, last_name, email, phone_number, company: { pk: company }, company_name } // TODO
     return this.apiTransport.createContact(contact).pipe(
       take(1),
       tap((newContact: Contact) => {
@@ -50,7 +50,7 @@ export class ContactsService {
   }
 
   updateContact(uid: string, first_name: string, last_name: string, email: string, phone_number: string, company: string, company_name: string) {
-    const contact = { first_name, last_name, email, phone_number, company: { pk: company } } // TODO
+    const contact = { first_name, last_name, email, phone_number, company: { pk: company }, company_name } // TODO
     return this.apiTransport.updateContact(uid, contact).pipe(
       take(1),
       tap((updatedContact: Contact) => {

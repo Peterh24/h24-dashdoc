@@ -35,6 +35,8 @@ export class ContactsPage implements OnInit {
   contactFolder: any;
   selectedContacts: any = {};
 
+  deleteContact: any;
+
   @ViewChild("searchbarElem", { read: ElementRef }) private searchbarElem: ElementRef;
   constructor(
     private contactService: ContactsService,
@@ -130,7 +132,7 @@ export class ContactsPage implements OnInit {
         isModal: true,
         contactId: contactId
       },
-      cssClass: 'contact-modal',
+      cssClass: 'custom',
     });
 
     modal.present();
@@ -158,41 +160,37 @@ export class ContactsPage implements OnInit {
     }
   }
 
-  async onRemoveContact(contactUid: string, slidingItem: IonItemSliding = null) {
+  setDeleteContact (contact: any, slidingItem: IonItemSliding = null) {
+    this.deleteContact = contact;
+
     if (slidingItem) {
       slidingItem.close();
     }
-    const alert = await this.alertController.create({
-      header: 'Suppression du contact',
-      message: 'Voulez vous supprimer le contact de la société ?',
-      buttons: [
-        {
-          text: 'Annuler'
-        },
-        {
-          text: 'OK',
-          handler: () => {
-            this.contactService.removeContact (contactUid).subscribe ({
-              next: async () => {
-                this.contacts = this.contacts.filter ((c) => c.uid != contactUid);
-                this.selectFolder (null);
-                
-                const toast = await this.toastController.create({
-                  message: 'Le contact a bien été supprimé',
-                  duration: 3000,
-                  position: 'bottom',
-                  icon: 'checkbox-outline',
-                  cssClass: 'success'
-                });
-            
-                await toast.present();      
-              }
-            });        
-          }
-        }]
-    });
+  }
 
-    await alert.present ();
+  async onRemoveContact(contactUid: string, slidingItem: IonItemSliding = null) {
+    this.setDeleteContact (null);
+
+    if (slidingItem) {
+      slidingItem.close();
+    }
+
+    this.contactService.removeContact (contactUid).subscribe ({
+      next: async () => {
+        this.contacts = this.contacts.filter ((c) => c.uid != contactUid);
+        this.selectFolder (null);
+        
+        const toast = await this.toastController.create({
+          message: 'Le contact a bien été supprimé',
+          duration: 3000,
+          position: 'bottom',
+          icon: 'checkbox-outline',
+          cssClass: 'success'
+        });
+    
+        await toast.present();      
+      }
+    });
   }
 
   toggleSelectedContact (contact: any, event: any) {
