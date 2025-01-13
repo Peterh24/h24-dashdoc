@@ -14,6 +14,7 @@ import { TransportService } from 'src/app/services/transport.service';
 import { Router } from '@angular/router';
 import { AddressService } from 'src/app/services/address.service';
 import { ContactsService } from 'src/app/services/contacts.service';
+import { NotificationsService } from 'src/app/services/notifications.service';
 
 
 @Component({
@@ -33,17 +34,15 @@ export class HomePage implements OnDestroy {
   @ViewChild('companyChoose', { static: false }) companyChoose: IonSelect;
   constructor(
     private storage: Storage,
-    private http: HttpClient,
     public companyService: CompanyService,
     private authService: AuthService,
     private addressService: AddressService,
     private contactService: ContactsService,
-    private modalCtrl: ModalController,
-    private alertController: AlertController,
     private loadingController: LoadingController,
     private router: Router,
     public deliveriesService: DeliveriesService,
-    private transportService: TransportService
+    private transportService: TransportService,
+    private notifications: NotificationsService
   ) { }
   
   ionViewWillEnter(){
@@ -67,7 +66,7 @@ export class HomePage implements OnDestroy {
       })
     })
 
-    this.authService.updateFirebasePushNotifications ();
+    this.notifications.update ();
   }
 
   async onchooseCompany(event: any) {

@@ -14,7 +14,7 @@
       <ion-icon name="location"></ion-icon>
     </ion-tab-button>
     <ion-tab-button [routerLink]="['/private/tabs/profile']">
-      <ion-badge color="danger" *ngIf="authService.notifications.length">{{ authService.notifications.length }}</ion-badge>
+      <ion-badge color="danger" *ngIf="notifications.notifications.length">{{ notifications.notifications.length }}</ion-badge>
       <ion-label>Profil</ion-label>
       <ion-icon name="person-circle"></ion-icon>
     </ion-tab-button>

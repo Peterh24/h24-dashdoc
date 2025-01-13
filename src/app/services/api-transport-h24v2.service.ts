@@ -1,17 +1,17 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { Storage } from "@ionic/storage-angular";
-import { API_URL, DASHDOC_API_URL } from "./constants";
-import { EMPTY, expand, map, mergeMap, reduce, tap } from "rxjs";
+import { API_URL, API_URL_V2, DASHDOC_API_URL } from "./constants";
+import { EMPTY, expand, map, reduce, tap } from "rxjs";
 import { Address } from "../private/profile/address/address.model";
 import { Request } from "../private/models/request.model";
 import { Deliveries, Delivery } from "../private/deliveries/delivery.model";
 import { compareAsc } from "date-fns";
 import { Contact } from "../private/profile/contacts/contact.model";
 
-export class ApiTransportDashdoc {
-    static model: string = 'dashdoc';
-    static isDashdocModel: boolean = true;
+export class ApiTransportH24v2 {
+    static model: string = 'h24';
+    static isDashdocModel: boolean = false;
 
     apiUrl: string;
 
@@ -19,39 +19,11 @@ export class ApiTransportDashdoc {
     http = inject (HttpClient);
 
     constructor() {
-        this.apiUrl = DASHDOC_API_URL;
-    }
-
-    loginUser (username: string, password: string) {
-        return this.http.post(`${API_URL}login`, { username, password });
-    }
-
-    createUser (user: any) {
-        return this.http.post(`${API_URL}app_users`, user);
-    }
-
-    updateUser (userId: number, user: any) {
-        return this.http.put(`${API_URL}app_users/${userId}`, user);
+        this.apiUrl = API_URL_V2;
     }
 
     getUserInfos (userId: number) {
-        return this.http.get(`${API_URL}app_users/${userId}`);
-    }
-
-    changeUserPassword (userId: number, username: string, password: string, newpassword: string) {
-        return this.http.post(`${API_URL}login`, { username: username, password }).pipe(
-          mergeMap ((res) => {
-            const headers = new HttpHeaders()
-              .set ('Content-Type', 'application/merge-patch+json');
-    
-            return this.http.patch(`${API_URL}app_users/${userId}`, { password: newpassword }, { headers }).pipe (
-            );
-          })
-        );
-    }
-    
-    resetUserPasswordRequest (email: string) {
-        return this.http.post(`${API_URL}../password/reset/request`, { email });
+      return this.http.get(`${this.apiUrl}app_users/${userId}`);
     }
 
     /* Companies */

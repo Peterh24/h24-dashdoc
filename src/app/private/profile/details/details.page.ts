@@ -44,7 +44,7 @@ export class DetailsPage {
     if(!currentUser){
       this.router.navigateByUrl('/private/tabs/home');
     } else {
-      this.http.get(`${API_URL}app_users/${currentUser.id}`).pipe(take(1)).subscribe((res:any) => {
+      this.authService.loadCurrentUserDetail(currentUser.id).pipe(take(1)).subscribe((res:any) => {
         this.form.patchValue({
           firstname: res.firstname,
           lastname: res.lastname,

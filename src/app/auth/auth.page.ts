@@ -16,9 +16,9 @@ export class AuthPage {
   private regex: any = regex;
   regexErrors: any = regexErrors;
 
-  form = this.formBuilder.nonNullable.group({
-    email: ['', [Validators.required, Validators.pattern(this.regex.email)]],
-    password: ['', [Validators.required, passwordValidator ()]]
+  form = this.formBuilder.nonNullable.group({ // TODO
+    email: ['', [Validators.required ]], //, Validators.pattern(this.regex.email)]],
+    password: ['', [Validators.required]] //, passwordValidator ()]]
   });
   emailRemember: string;
   isRemember: boolean = false;

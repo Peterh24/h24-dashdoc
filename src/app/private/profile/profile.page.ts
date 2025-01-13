@@ -6,6 +6,7 @@ import { Storage } from '@ionic/storage-angular';
 import { take } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { API_URL, DASHDOC_COMPANY } from 'src/app/services/constants';
+import { NotificationsService } from 'src/app/services/notifications.service';
 import { phoneValidator, regex } from 'src/app/utils/regex';
 
 @Component({
@@ -30,6 +31,7 @@ export class ProfilePage implements OnInit {
     private http: HttpClient,
     private formBuilder: FormBuilder,
     public authService: AuthService,
+    public notifications: NotificationsService,
     private router: Router
   ) { }
 
@@ -46,7 +48,7 @@ export class ProfilePage implements OnInit {
     if(!currentUser){
       this.router.navigateByUrl('/private/tabs/home');
     } else {
-      this.http.get(`${API_URL}app_users/${currentUser.id}`).pipe(take(1)).subscribe({
+      this.authService.loadCurrentUserDetail(currentUser.id).pipe(take(1)).subscribe({
         next: (res:any) => {
           this.success = true;
           this.form.patchValue({

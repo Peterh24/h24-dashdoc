@@ -6,6 +6,7 @@ import { Storage } from '@ionic/storage-angular';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { API_URL, DASHDOC_API_URL, DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
+import { NotificationsService } from 'src/app/services/notifications.service';
 import { TransportService } from 'src/app/services/transport.service';
 import { VehiclesService } from 'src/app/services/vehicles.service';
 
@@ -53,6 +54,7 @@ export class SummaryPage implements OnInit {
   constructor(
     public transport: TransportService,
     private authService: AuthService,
+    private notifications: NotificationsService,
     private vehicles: VehiclesService,
     private router: Router,
     private storage: Storage,
@@ -139,7 +141,7 @@ export class SummaryPage implements OnInit {
     request.subscribe({
       next: async res => {
         // On renouvelle le token firebase pour éviter qu'il n'expire bientot
-        this.authService.resetFirebasePushNotificationToken ();
+        this.notifications.resetToken ();
 
         if (this.transport.draftName && deleteDraft) {
           this.storage.get(DASHDOC_COMPANY).then ((pk) => {

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
+import { NotificationsService } from 'src/app/services/notifications.service';
 
 // TODO!
 @Component({
@@ -10,7 +11,7 @@ import { AuthService } from 'src/app/services/auth.service';
 export class NotificationsPage implements OnInit {
 
   constructor(
-    public authService: AuthService
+    public notifications: NotificationsService
   ) { 
   }
 
@@ -18,6 +19,6 @@ export class NotificationsPage implements OnInit {
   }
 
   ionViewDidLeave () {
-    this.authService.resetFirebasePushNotifications ();
+    this.notifications.reset ();
   }
 }

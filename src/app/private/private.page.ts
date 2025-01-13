@@ -8,6 +8,7 @@ import { Subscription, firstValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { DASHDOC_API_URL, DASHDOC_COMPANY, USER_STORAGE_KEY } from '../services/constants';
 import { CompanyService } from '../services/company.service';
+import { NotificationsService } from '../services/notifications.service';
 
 @Component({
   selector: 'app-private',
@@ -24,6 +25,7 @@ export class PrivatePage {
     private platform: Platform,
     public authService: AuthService,
     public companyService: CompanyService,
+    public notifications: NotificationsService,
     private router: Router,
     private storage: Storage,
   ) { }
