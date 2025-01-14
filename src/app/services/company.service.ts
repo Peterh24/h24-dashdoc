@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, take } from 'rxjs';
+import { BehaviorSubject, map, take, tap } from 'rxjs';
 import { Company } from '../private/models/company.model';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { DASHDOC_API_URL } from './constants';
-import { DashdocService } from './dashdoc.service';
 import { ApiTransportService } from './api-transport.service';
+import { AuthService } from './auth.service';
+import { DashdocToken } from '../private/models/dashdoc-token.model';
 
 @Injectable({
   providedIn: 'root'
@@ -27,34 +26,18 @@ export class CompanyService {
     return this._companyName.asObservable();
   }
   constructor(
-    private http: HttpClient,
-    private dashdocService: DashdocService,
-    private apiTransport: ApiTransportService
+    private apiTransport: ApiTransportService,
+    private authService: AuthService
   ) { }
 
-  fetchCompanies() {
-    this.dashdocService.fetchTokens().pipe(take(1)).subscribe((tokens) => {
-      this.dashdocService.tokens.pipe(take(1)).subscribe(async tokens => {
-        if (this._companies.getValue().length > 0) {
-          return;
-        }
-
-        tokens.forEach(token => { // TODO
-          const tokenCurrent = token.token;
-          const headers = new HttpHeaders().set('Authorization', `Token ${tokenCurrent}`);
-          
-          this.http.get(`${DASHDOC_API_URL}addresses/`, { headers }).pipe(take(1)).subscribe(((res:any) => {
-            
-            if(res.results !== undefined ){
-              const newCompany = { ...res.results[0].created_by, token: token.token };
-              if (!this._companies.getValue().includes(newCompany)) {
-                this._companies.next([...this._companies.getValue(), newCompany]);
-              }
-            }
-          }));
-        });
-      })
+  fetchCompanies () {
+    const tokens = this.authService.currentUserDetail?.appDashdocTokens?.map((token: any) => {
+      return new DashdocToken (token['@id'], token.token);
     });
+
+    return this.apiTransport.getCompanies (tokens || []).pipe(
+      tap ((allCompanies: any) => this._companies.next (allCompanies))
+    )
   }
 
   getCompany(pk: number) {
@@ -68,7 +51,7 @@ export class CompanyService {
   getCompanyStatus () {
     this.apiTransport.getCompanyStatus().pipe(take(1)).subscribe({
       next: ((res:any) => {
-        this.companyStatusBadge = res.results.length;
+        this.companyStatusBadge = res.results?.length;
       })
     });
   }

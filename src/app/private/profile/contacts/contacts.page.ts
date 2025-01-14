@@ -29,6 +29,7 @@ export class ContactsPage implements OnInit {
   searchContact: string;
   jsonData: any;
   startIndex: number = 0;
+  subscription: Subscription;
 
   currentFolder: string;
   folders: any[] = [];
@@ -68,7 +69,7 @@ export class ContactsPage implements OnInit {
     this.currentFolder = null;
 
     // TODO: verifier si les adresses sont déjà chargées
-    this.contactService.fetchContacts().subscribe({
+    this.subscription = this.contactService.fetchContacts().subscribe({
       next: (contacts) => {
         this.isLoading = false;
 
@@ -91,6 +92,18 @@ export class ContactsPage implements OnInit {
         this.isLoading = false;
       }
     });
+
+    this.subscription.add(() => {
+      this.subscription = null;
+      this.isLoading = false;
+    })
+  }
+
+  ionViewWillLeave () {
+    if (this.subscription) {
+      this.subscription.unsubscribe ();
+      this.subscription = null;
+    }
   }
 
   loadContacts (contacts: any[]) {

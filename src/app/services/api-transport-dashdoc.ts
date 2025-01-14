@@ -1,13 +1,14 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { Storage } from "@ionic/storage-angular";
-import { API_URL, DASHDOC_API_URL } from "./constants";
-import { EMPTY, expand, map, mergeMap, reduce, tap } from "rxjs";
+import { API_URL, COMPANIES_KEY, DASHDOC_API_URL } from "./constants";
+import { defaultIfEmpty, EMPTY, expand, forkJoin, from, map, mergeMap, reduce, tap } from "rxjs";
 import { Address } from "../private/profile/address/address.model";
 import { Request } from "../private/models/request.model";
 import { Deliveries, Delivery } from "../private/deliveries/delivery.model";
 import { compareAsc } from "date-fns";
 import { Contact } from "../private/profile/contacts/contact.model";
+import { AuthService } from "./auth.service";
 
 export class ApiTransportDashdoc {
     static model: string = 'dashdoc';
@@ -55,6 +56,32 @@ export class ApiTransportDashdoc {
     }
 
     /* Companies */
+    getCompanies (tokens: any) { // TODO à tester
+        return forkJoin([from(this.storage.get (COMPANIES_KEY)), from(this.storage.get (COMPANIES_KEY)).pipe (
+          mergeMap ((companies) => forkJoin(
+            tokens
+              ?.filter ((token: any) => !companies?.find ((company: any) => company.token === token.token))
+              ?.map ((token: any) =>
+                this.http.get(`${DASHDOC_API_URL}addresses/`, {
+                  headers:  new HttpHeaders().set('Authorization', `Token ${token.token}`)
+                }).pipe (
+                  map ((res: any) => ({ ...res.results[0].created_by, token: token.token }))
+                )
+              )
+          )),
+          defaultIfEmpty ([]),
+        )]).pipe (
+          map((res: any) => (res[0] /* old */ || []).concat (res[1] /* new */ || [])),
+          tap((allCompanies: any) => {
+            this.storage.set (COMPANIES_KEY, allCompanies);
+          })
+        )
+    }
+
+    chooseCompany (companyId: number) {
+        return EMPTY
+    }
+
     getCompanyStatus () {
         return this.http.get(`${this.apiUrl}transports/?status__in=created,updated,confirmed,declined,verified`);
     }

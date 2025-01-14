@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { Storage } from "@ionic/storage-angular";
-import { API_URL, API_URL_V2, DASHDOC_API_URL } from "./constants";
-import { EMPTY, expand, map, reduce, tap } from "rxjs";
+import { API_URL, API_URL_V2, DASHDOC_API_URL, DASHDOC_COMPANY } from "./constants";
+import { EMPTY, expand, map, mergeMap, of, reduce, tap } from "rxjs";
 import { Address } from "../private/profile/address/address.model";
 import { Request } from "../private/models/request.model";
 import { Deliveries, Delivery } from "../private/deliveries/delivery.model";
@@ -14,92 +14,158 @@ export class ApiTransportH24v2 {
     static isDashdocModel: boolean = false;
 
     apiUrl: string;
+    companyId: number;
 
     storage = inject (Storage);
     http = inject (HttpClient);
 
     constructor() {
         this.apiUrl = API_URL_V2;
+        this.storage.get(DASHDOC_COMPANY).then((company) => {
+            this.companyId = parseInt(company);
+        });
+    }
+
+    loginUser (username: string, password: string) {
+        return this.http.post(`${API_URL}login`, { email: username, password });
+    }
+
+    createUser (user: any) {
+        return this.http.post(`${API_URL}app_users`, user);
+    }
+
+    updateUser (userId: number, user: any) {
+        return this.http.put(`${API_URL}app_users/${userId}`, user);
     }
 
     getUserInfos (userId: number) {
-      return this.http.get(`${this.apiUrl}app_users/${userId}`);
+        return this.http.get(`${this.apiUrl}user/${userId}`).pipe (
+            map ((user: any) => ({ 
+                firstname: user.first_name,
+                lastname: user.last_name,
+                email: user.email,
+                phone: user.phone_number,
+                tokens: []
+             }))
+        );
+    }
+
+    changeUserPassword (userId: number, username: string, password: string, newpassword: string) {
+        return this.http.post(`${API_URL}login`, { username: username, password }).pipe(
+          mergeMap ((res) => {
+            const headers = new HttpHeaders()
+              .set ('Content-Type', 'application/merge-patch+json');
+
+            return this.http.patch(`${API_URL}app_users/${userId}`, { password: newpassword }, { headers }).pipe (
+            );
+          })
+        );
+    }
+
+    resetUserPasswordRequest (email: string) {
+        return this.http.post(`${API_URL}../password/reset/request`, { email });
     }
 
     /* Companies */
+    getCompanies (tokens: any) {
+//        return of([{pk: 1, name: 'Société test'}]);
+        return this.http.get(`${this.apiUrl}company`).pipe (
+            tap ((companies: any) => {
+                companies?.forEach ((company: any) => {
+                    company.pk = company.id
+                })
+            })
+        );
+    }
+
+    chooseCompany (companyId: number) {
+        this.companyId = companyId;
+        return this.http.post(`${this.apiUrl}company/switch-company`, {
+            companyId
+        });
+    }
+
     getCompanyStatus () {
         return this.http.get(`${this.apiUrl}transports/?status__in=created,updated,confirmed,declined,verified`);
     }
     
     /* Contacts */
     getContacts () {
-        return this.http.get(`${this.apiUrl}contacts/`).pipe(
-            expand ((res: any) => res.next ? this.http.get (res.next) : EMPTY),
-            reduce ((acc: any, res: any) => acc.concat (res.results),  []),
+        return this.http.get(`${this.apiUrl}contacts`).pipe(
+            expand ((res: any) => res.page < res.total ? this.http.get (`${this.apiUrl}contacts?page=${res.page + 1}`) : EMPTY),
+            reduce ((acc: any, res: any) => acc.concat (res.items),  []),
             map ((acc: any) => acc.map ((contact: any, index: number) => new Contact (
-              contact.uid,
+              contact.id,
               contact.first_name,
-              contact.last_name,
+              contact.lastname, // TODO
               contact.email,
               contact.phone_number,
-              contact.company?.pk,
+              contact.company?.id,
               contact.company?.name
             ))));
     }
 
     createContact (contact: any) {
-        return this.http.post(`${this.apiUrl}contacts/`, contact).pipe(
-            map ((res: any) => new Contact (res.uid, contact.first_name, contact.last_name, contact.email, contact.phone_number, contact.company?.pk, contact.company_name))
+        contact.company = contact.company?.pk;
+        contact.lastname = contact.last_name; // TODO
+        return this.http.post(`${this.apiUrl}contacts`, contact).pipe(
+            map ((res: any) => new Contact (res.id, contact.first_name, contact.last_name, contact.email, contact.phone_number, contact.company?.id, contact.company_name))
         );
     }
 
     updateContact (uid: string, contact: any) {
-        return this.http.patch(`${this.apiUrl}contacts/${uid}/`, contact).pipe(
+        return this.http.patch(`${this.apiUrl}contacts/${uid}`, contact).pipe(
             map ((res: any) => new Contact (uid, contact.first_name, contact.last_name, contact.email, contact.phone_number, contact.company?.pk, contact.company_name))
         )
     }
 
     deleteContact (uid: string) {
-        return this.http.delete(`${this.apiUrl}contacts/${uid}/`);
+        return this.http.delete(`${this.apiUrl}contacts/${uid}`);
     }
 
     getContactsCompanies () {
-        return this.http.get(`${this.apiUrl}companies/`).pipe(
-          expand ((res: any) => res.next ? this.http.get (res.next) : EMPTY),
-          reduce ((acc: any, res: any) => acc.concat (res.results),  []),
-          map ((acc: any) => acc.map ((company: any) => (
-            {
-              pk: company.pk,
-              name: company.name,
-            }
-          )))
-        );
+        return this.getCompanies ([]);
     }
 
     /* Addresses */
     getAddresses () {
-        return this.http.get(`${this.apiUrl}addresses/`).pipe(
-            expand((resData: Request) => {
-              if (resData.next !== null) {
-                return this.http.get(resData.next);
+        return this.http.get(`${this.apiUrl}address`).pipe(
+            expand((res: any) => {
+              // TODO: tester multipage
+              if (res.page < res.total) {
+                return this.http.get(`${this.apiUrl}address?page=${res.page + 1}`);
               } else {
                 return EMPTY;
               }
             }),
-            map((resData: Request) => resData.results),
-            reduce((address: Address[], results: Address[]) => address.concat(results), []))
+            reduce ((acc: any, res: any) => acc.concat (res.items),  []),
+            tap((res: any) => {
+                res?.forEach ((address: any) => {
+                    address.pk = address.id
+                })
+            })
+        )
     }
 
     createAddress (address: any) {
-        return this.http.post(`${this.apiUrl}addresses/`, address)
+        // TODO
+        address.is_demo = false;
+        address.is_default = false;
+        address.company = this.companyId;
+        address.address_type = 'office';
+        return this.http.post(`${this.apiUrl}address`, address).pipe (
+            tap ((address: any) => {
+                address.pk = address.id
+            })
+        )
     }
 
     updateAddress (addressId: any, address: any) {
-        return this.http.patch(`${this.apiUrl}addresses/${addressId}`, address);
+        return this.http.patch(`${this.apiUrl}address/${addressId}`, address);
     }
 
     deleteAddress (addressId: any) {
-        return this.http.delete(`${this.apiUrl}addresses/${addressId}/`);
+        return this.http.delete(`${this.apiUrl}address/${addressId}`);
     }
 
     /* Transports */ 

@@ -29,7 +29,7 @@ export class NewContactPage implements OnInit {
 
   ngOnInit() {
     this.contactsService.fetchContactsCompanies().subscribe({
-      next: (companies) => {
+      next: (companies: any) => {
         this.companies = companies;
       }});
 

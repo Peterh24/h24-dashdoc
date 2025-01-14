@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonAccordionGroup, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
+import { Subscription } from 'rxjs';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
@@ -18,6 +19,7 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
   deliveries1: number;
   drafts: any;
   draftsName: string[];
+  subscription: Subscription;
 
   @ViewChild('accordionGroup') accordionGroup: IonAccordionGroup;
 
@@ -61,6 +63,13 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     this.setTab (1);
   }
 
+  ionViewWillLeave () {
+    if (this.subscription) {
+      this.subscription.unsubscribe ();
+      this.subscription = null;
+    }
+  }
+
   setTab (tab: number) {
     this.tab = tab;
     this.loadDeliveries ();
@@ -79,19 +88,22 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
 //    const status = this.tab === 1 ? 'sent_to_trucker,on_loading_site,loading_complete,on_unloading_site,unloading_complete' : 'invoiced,paid,cancelled,done';
     const status: any = this.tab === 1 ? 'created,updated,confirmed,declined,verified,trucker,on_loading_site,loading_complete,on_unloading_site,unloading_complete' : null;
 
-    this.deliveriesService.fetchDeliveries(status).subscribe({
+    this.subscription = this.deliveriesService.fetchDeliveries(status).subscribe({
       next: (deliveries) => {
         this.deliveries = deliveries;
         if (this.tab === 1) {
           this.deliveries1 = deliveries.length;
         }
-        loading.dismiss();
       },
       error: (error) => {
         this.deliveries = [];
-        loading.dismiss ();
       }
     });
+
+    this.subscription.add(() => {
+      this.subscription = null;
+      loading.dismiss ();
+    })
   }
 
   loadMoreDeliveries(event: any) {

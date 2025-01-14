@@ -18,7 +18,7 @@ export class DashdocService {
 
 
   fetchTokens(): Observable<void> {
-    const tokens = this.authService.currentUserDetail.appDashdocTokens.map((token: any) => {
+    const tokens = this.authService.currentUserDetail?.appDashdocTokens?.map((token: any) => {
       return new DashdocToken(token['@id'], token.token);
     });
     this._tokens.next(tokens);

@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonAccordionGroup, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
+import { Subscription } from 'rxjs';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
@@ -17,6 +18,7 @@ export class BasketPage implements OnInit, AfterViewInit {
   deliveries: any[] = [];
   drafts: any;
   draftsName: string[];
+  subscription: Subscription;
 
   typeName: any = {
     audiovisual: 'Audio visuel',
@@ -61,6 +63,13 @@ export class BasketPage implements OnInit, AfterViewInit {
     this.loadDrafts ();
   }
 
+  ionViewWillLeave () {
+    if (this.subscription) {
+      this.subscription.unsubscribe ();
+      this.subscription = null;
+    }
+  }
+
   setTab (tab: number) {
     this.tab = tab;
   }
@@ -75,16 +84,19 @@ export class BasketPage implements OnInit, AfterViewInit {
     await loading.present();
     this.deliveriesService.resetDeliveries();
 
-    this.deliveriesService.fetchDeliveries('created,updated,confirmed,declined,verified').subscribe({
+    this.subscription = this.deliveriesService.fetchDeliveries('created,updated,confirmed,declined,verified').subscribe({
       next: (deliveries) => {
         this.deliveries = deliveries;
-        loading.dismiss();
       },
       error: (error) => {
         this.deliveries = [];
-        loading.dismiss ();
-      }
+      },
     });
+
+    this.subscription.add(() => {
+      this.subscription = null;
+      loading.dismiss ();
+    })
   }
 
   loadMoreDeliveries(event: any) {

@@ -29,6 +29,7 @@ export class AddressPage implements OnInit {
   searchAddress: string;
   jsonData: any;
   startIndex: number = 0;
+  subscription: Subscription;
 
   currentFolder: any;
   currentFolderName: string;
@@ -70,7 +71,7 @@ export class AddressPage implements OnInit {
     this.currentFolderName = null;
 
     // TODO: verifier si les adresses sont déjà chargées
-    this.addressService.fetchAddress().subscribe({
+    this.subscription = this.addressService.fetchAddress().subscribe({
       next: (address) => {
         this.isLoading = false;
 
@@ -97,6 +98,18 @@ export class AddressPage implements OnInit {
         this.isLoading = false;
       }
     });
+
+    this.subscription.add(() => {
+      this.subscription = null;
+      this.isLoading = false;
+    })
+  }
+
+  ionViewWillLeave () {
+    if (this.subscription) {
+      this.subscription.unsubscribe ();
+      this.subscription = null;
+    }
   }
 
   loadAddress (address: any[]) {

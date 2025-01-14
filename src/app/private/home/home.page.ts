@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 import { AddressService } from 'src/app/services/address.service';
 import { ContactsService } from 'src/app/services/contacts.service';
 import { NotificationsService } from 'src/app/services/notifications.service';
+import { ApiTransportService } from 'src/app/services/api-transport.service';
 
 
 @Component({
@@ -35,6 +36,7 @@ export class HomePage implements OnDestroy {
   constructor(
     private storage: Storage,
     public companyService: CompanyService,
+    private apiTransport: ApiTransportService,
     private authService: AuthService,
     private addressService: AddressService,
     private contactService: ContactsService,
@@ -50,10 +52,8 @@ export class HomePage implements OnDestroy {
     this.authService.loadCurrentUserDetail(this.currentUser?.id).pipe(take(1)).subscribe((user:any) => {
       this.firstname = user.firstname?.[0]?.toUpperCase() + user.firstname?.slice(1)?.toLowerCase();
 
-      this.lastname = user.lastname
-      this.companyService.fetchCompanies();
-      
-      this.companyService.companies.subscribe((companies) => { // TODO: take(1)
+      this.lastname = user.lastname;
+      this.companyService.fetchCompanies().pipe(take(1)).subscribe((companies) => {
         this.loadedCompanies = companies;
 
         this.storage.get(DASHDOC_COMPANY).then((company) => {
@@ -87,9 +87,10 @@ export class HomePage implements OnDestroy {
   
         this.currentCompany = this.companyService.getCompany(currentCompany).subscribe((company) => {
           loading.dismiss();
-          if (company && company.token) {
+          this.apiTransport.chooseCompany (currentCompany).subscribe ();
+          if (company) {
             this.companyService.setCompanyName(company.name);
-            this.storage.set(USER_STORAGE_KEY, company.token).then (() => this.companyService.getCompanyStatus () );
+            this.storage.set(USER_STORAGE_KEY, company.token || company.pk).then (() => this.companyService.getCompanyStatus () );
             this.storage.set(DASHDOC_COMPANY, currentCompany);
             this.isCompanySelected = true;
             this.companyService.isCompanySwitch = false;
@@ -98,6 +99,7 @@ export class HomePage implements OnDestroy {
           }
         });
       } else {
+        this.apiTransport.chooseCompany (currentCompany).subscribe ();
         this.currentCompany = this.companyService.getCompany(currentCompany).subscribe((company) => {
           this.companyService.setCompanyName(company.name);
           this.isCompanySelected = true;
