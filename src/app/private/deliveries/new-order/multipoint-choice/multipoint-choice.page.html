@@ -5,13 +5,12 @@
     <h3>Choisissez votre type de transport</h3>
     <br>
     <h4>Plusieurs enlèvement(s) pour une livraison ou inverssement</h4>
-    <ion-img src="assets/multipoint-disabled.png"></ion-img>
-    <ion-button (click)="setMultipoint (false)">Selectionner</ion-button>
+    <ion-img src="assets/multipoint-disabled.png" (click)="setMultipoint (false)"></ion-img>
     <h4>Un ou plusieurs enlèvement(s) pour une ou plusieurs livraison(s)</h4>
-    <ion-img src="assets/multipoint-enabled.png"></ion-img>
-    <ion-button (click)="setMultipoint (true)">Selectionner</ion-button>
-    <hr>
+    <ion-img src="assets/multipoint-enabled.png" (click)="setMultipoint (true)"></ion-img>
+    <!--
     <h4>Auto detection transport multipoint</h4>
     <ion-button (click)="setMultipoint (null)">Selectionner</ion-button>
+    -->
   </div>
 </ion-content>

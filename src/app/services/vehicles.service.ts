@@ -4,6 +4,7 @@ import { Vehicle } from '../private/deliveries/vehicle.model';
 import { API_URL } from './constants';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
+import { ApiTransportService } from './api-transport.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,15 +18,16 @@ export class VehiclesService {
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private apiTransport: ApiTransportService
   ) { }
 
   fetchVehicles() {
-    return this.http.get(`${API_URL}vehicles`).pipe(
+    return this.apiTransport.getVehicles().pipe(
       take(1),
       map((res: any) => res['hydra:member']),
       tap((data: Vehicle[]) => {
-        this.authService.SetUserInfo();
+//        this.authService.SetUserInfo(); // TODO @deprecated
         this._vehicles.next(data);
       })
     );

@@ -176,7 +176,7 @@ export class TransportService {
       return null;
     }
 
-    const { company, first_name, last_name, email, phone_number } = contactJson.contact;
-    return { contact: { company: { pk: company?.pk }, first_name, last_name, email, phone_number } };
+    const { id, company, first_name, last_name, email, phone_number } = contactJson.contact;
+    return { contact: { company: { pk: company?.pk }, id, first_name, last_name, email, phone_number } };
   }
 }

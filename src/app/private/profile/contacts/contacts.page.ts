@@ -304,6 +304,7 @@ export class ContactsPage implements OnInit {
             company: {
               pk: c.company
             },
+            id: c.uid,
             first_name: c.first_name,
             last_name: c.last_name,
             email: c.email,

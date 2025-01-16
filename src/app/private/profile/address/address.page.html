@@ -2,6 +2,7 @@
 
 <ion-content>
   <ion-icon name="close-outline" class="close-button ion-float-right" (click)="closeModal ()" *ngIf="isModal"></ion-icon>
+  <div class="title" *ngIf="isModal">Mes adresses</div>
   <ion-grid class="page-grid ion-no-padding">
     <ion-row *ngIf="!isLoading && address.length > 0" class="searchbar">
       <ion-col>

@@ -157,6 +157,11 @@ export class ApiTransportDashdoc {
         return this.http.delete(`${this.apiUrl}addresses/${addressId}/`);
     }
 
+    /* Vehicles */
+    getVehicles () {
+        return this.http.get(`${API_URL}vehicles`);
+    }
+
     /* Transports */ 
     isTransportLastPageReached = false;
     nextTransportPage: string;

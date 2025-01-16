@@ -136,6 +136,14 @@ ion-datetime-button {
     label {
         padding-right: 10px;
     }
+
+    input {
+        flex-grow: 1;
+        padding: 10px;
+        border-radius: 15px;
+        border: 1px solid lightgray;
+        text-align: center;
+    }
 }
 
 .error {

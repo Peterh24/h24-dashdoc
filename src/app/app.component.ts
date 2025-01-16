@@ -51,8 +51,8 @@ export class AppComponent {
     addIcons ({
       'add': 'assets/lucide/plus.svg',
       'add-outline': 'assets/lucide/plus.svg',
-      'arrow-forward': 'assets/lucide/arrow-right.svg',
-      'arrow-forward-outline': 'assets/lucide/arrow-right.svg',
+      'arrow-forward': 'assets/lucide/chevron-right.svg',
+      'arrow-forward-outline': 'assets/lucide/chevron-right.svg',
       'ban-outline': 'assets/lucide/ban.svg',
       'calendar': 'assets/lucide/calendar.svg',
       'call': 'assets/lucide/headset.svg',

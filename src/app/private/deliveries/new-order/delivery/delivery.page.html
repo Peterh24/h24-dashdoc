@@ -78,6 +78,7 @@
         -->
         <fieldset class="custom-control contact" (click)="setContacts ()">
           <legend>Contact(s)</legend>
+          <div *ngIf="!contacts?.length">Ajouter un contact</div>
           <div *ngFor="let contact of contacts; let index = index">
             <hr *ngIf="index > 0">
             <div class="title">
@@ -89,6 +90,7 @@
             </div>
           </div>
         </fieldset>
+        <div class="error" *ngIf="contactsError">Veuiller saisir un ou plusieurs contacts</div>
       </div>
 
       <ion-input
@@ -113,24 +115,15 @@
 
           <div class="time">
             <label>Entre</label>
-            <div class="custom-control" [class.error]="errors['time_start']" id="{{ type }}_time_start_select">
-              <span *ngIf="!form.value.time_start">Selectionner</span>
-              <span *ngIf="form.value.time_start">{{ form.value.time_start }}</span>
-            </div> &nbsp; &nbsp;
+            <input type="time" [formControl]="form.get('time_start')">
             <!-- TODO: minTime >  originTimeStart -->
-            <label>Et</label>
-            <div class="custom-control"  [class.error]="errors['time_end']" id="{{ type }}_time_end_select">
-              <span *ngIf="!form.value.time_end">Selectionner</span>
-              <span *ngIf="form.value.time_end">{{ form.value.time_end }}</span>
-            </div>
+            <label>&nbsp; Et</label>
+            <input type="time" [formControl]="form.get('time_end')">
           </div>
           <div class="error" *ngIf="errors['time_start']">Veuiller saisir un horaire</div>
 
           <div class="ion-hide">
             <ion-datetime-button datetime="{{ type }}_day"></ion-datetime-button>
-            <label>Entre</label> <ion-datetime-button datetime="{{ type }}_time_start"></ion-datetime-button> &nbsp; &nbsp;
-            <!-- TODO: minTime >  originTimeStart -->
-            <label>Et</label> <ion-datetime-button datetime="{{ type }}_time_end"></ion-datetime-button>
           </div>
 
           <ion-modal [keepContentsMounted]="true" trigger="{{ type }}_day_select" #dayInput>
@@ -142,35 +135,6 @@
                 (ionChange)="setDay(form, $event, dayInput)"
                 [min]="getDateTimeMin(type)"
                 [max]="getDateTimeMax(type)">
-              </ion-datetime>
-            </ng-template>
-          </ion-modal>
-
-          <!-- TODO: Does not works -->
-          <ion-modal [keepContentsMounted]="true" trigger="{{ type }}_time_start_select">
-            <ng-template>
-              <ion-datetime 
-                id="{{ type }}_time_start" 
-                presentation="time"
-                (ionChange)="setSlot(form, 'time_start', $event)"
-                minuteValues="0,5,10,15,20,25,30,35,40,45,50,55"
-                [showDefaultButtons]="true"
-                doneText="Ok"
-                cancelText="Annuler">
-              </ion-datetime>
-            </ng-template>
-          </ion-modal>
-
-          <ion-modal [keepContentsMounted]="true" trigger="{{ type }}_time_end_select">
-            <ng-template>
-              <ion-datetime 
-                id="{{ type }}_time_end" 
-                presentation="time"
-                (ionChange)="setSlot(form, 'time_end', $event)"
-                minuteValues="0,5,10,15,20,25,30,35,40,45,50,55"
-                [showDefaultButtons]="true"
-                doneText="Ok"
-                cancelText="Annuler">
               </ion-datetime>
             </ng-template>
           </ion-modal>

@@ -1,7 +1,7 @@
 export class Contact {
 
     constructor(
-      public uid: string,
+      public uid: string, // TODO: rename to id
       public first_name: string,
       public last_name: string,
       public email: string,

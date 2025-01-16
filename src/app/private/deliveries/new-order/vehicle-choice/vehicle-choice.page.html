@@ -23,7 +23,7 @@
       </ion-col>
     </ion-row>
     <ion-row>
-      <ion-col class="swiper-wrap">
+      <ion-col class="swiper-wrap" (click)="onVehicleSelected(currentVehicle.licensePlate)">
         <ion-buttons class="ion-justify-content-between">
           <ion-button (click)="goPrev()" color="tertiary" [disabled]="currentIndex === 0">
             <ion-icon slot="icon-only" name="arrow-back-circle"></ion-icon>

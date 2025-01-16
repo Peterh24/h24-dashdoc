@@ -7,6 +7,7 @@ import { AddressPage } from 'src/app/private/profile/address/address.page';
 import { Storage } from '@ionic/storage-angular';
 import { DASHDOC_COMPANY, FILE_UPLOAD_MAX_SIZE } from 'src/app/services/constants';
 import { ContactsPage } from 'src/app/private/profile/contacts/contacts.page';
+import { ApiTransportService } from 'src/app/services/api-transport.service';
 
  // TODO gestion des manutentionnaires
  
@@ -28,6 +29,7 @@ export class DeliveryPage implements OnInit {
 
   company: any;
   contacts: any[];
+  contactsError: string;
   defaultContact: any;
   merchandisesUrl = 'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/';
   merchandiseIcon: any = {
@@ -131,21 +133,24 @@ export class DeliveryPage implements OnInit {
 
     this.storage.get(DASHDOC_COMPANY).then (pk => { 
       this.company = pk;
-      
-      this.defaultContact = {
-        contact: {
-          company: {
-            pk: this.company,
-          },
-          first_name: this.authService.currentUserDetail.firstname,
-          last_name: this.authService.currentUserDetail.lastname,
-          email: this.authService.currentUserDetail.email,
-          phone_number: this.authService.currentUserDetail.phone
-        }
-      };
 
-      if (!this.contacts?.length) {
-        this.contacts = [this.defaultContact];
+      if (ApiTransportService.isDashdocModel) {
+        this.defaultContact = {
+          contact: {
+            company: {
+              pk: this.company,
+            },
+            id: this.authService.currentUserDetail.id,
+            first_name: this.authService.currentUserDetail.firstname,
+            last_name: this.authService.currentUserDetail.lastname,
+            email: this.authService.currentUserDetail.email,
+            phone_number: this.authService.currentUserDetail.phone
+          }
+        };
+
+        if (!this.contacts?.length) {
+          this.contacts = [this.defaultContact];
+        }
       }
     });
   }
@@ -282,7 +287,7 @@ export class DeliveryPage implements OnInit {
 
     if (data) {
       this.contacts = data;
-      if (!this.contacts.find (c => c.contact.email === this.defaultContact.contact.email )) {
+      if (ApiTransportService.isDashdocModel && !this.contacts.find (c => c.contact.email === this.defaultContact.contact.email )) {
         this.contacts.push (this.defaultContact);
       }
 
@@ -398,6 +403,8 @@ export class DeliveryPage implements OnInit {
       })
     }
 
+    this.contactsError = this.contacts?.length ? null: 'error';
+
     this.fileToUploadError = null;
     if (this.fileToUpload && this.fileToUpload.size > FILE_UPLOAD_MAX_SIZE) {
       this.fileToUploadError = 'Fichier non valide';
@@ -435,7 +442,7 @@ export class DeliveryPage implements OnInit {
       planned_loads =  Object.keys (this.merchandisesSelected).map ((name) => ({
         id: this.merchandiseIcon[name],
         description: name,
-        category: 'bulk',
+        category: 'vrac',
         quantity: 1
       }));
 
@@ -443,7 +450,7 @@ export class DeliveryPage implements OnInit {
         planned_loads.push({
           id: 'custom',
           description: this.merchandisesCustom.value,
-          category: 'bulk',
+          category: 'vrac',
           quantity: 1
           });
       }
