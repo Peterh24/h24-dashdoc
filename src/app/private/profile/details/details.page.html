@@ -40,7 +40,8 @@
           label-placement="floating"
           placeholder="Email"
           errorText="Merci d'indiquer votre email"
-          formControlName="email">
+          [value]="form.value.email"
+          [disabled]="true"> <!-- formControlName="email" -->
         </ion-input>
       </ion-item>
 

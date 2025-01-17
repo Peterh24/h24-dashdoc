@@ -70,6 +70,7 @@ export class AppComponent {
       'enter-outline': 'assets/lucide/log-in.svg',
       'exit-outline': 'assets/lucide/log-out.svg',
       'eye-outline': 'assets/lucide/eye.svg',
+      'eye-closed': 'assets/lucide/eye-closed.svg',
       'folder-outline': 'assets/lucide/folder.svg',
       'home': 'assets/lucide/house.svg',
       'information-circle': 'assets/lucide/info.svg',

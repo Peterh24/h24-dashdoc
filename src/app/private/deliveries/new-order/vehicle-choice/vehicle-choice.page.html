@@ -51,43 +51,21 @@
         </div>
       </ion-col>
     </ion-row>
-    <ion-row>
-      <ion-col>
-        <h3>Utilitaire : {{currentVehicle.type}} {{currentVehicle.hayon ? 'avec Hayon' : ''}}</h3>
-      </ion-col>
-    </ion-row>
     <ion-row class="description">
       <ion-col>
-        <span>Longueur du véhicule</span>
-        {{currentVehicle.length}} mètres
-      </ion-col>
-      <ion-col>
-        <span>Hauteur du véhicule</span>
-        {{currentVehicle.heightCar}} mètres
-    
-      </ion-col>
-    </ion-row>
-
-    <ion-row class="description">
-      <ion-col>
-            <span>Longeur utile</span>
-        {{currentVehicle.depth}} mètres
-      </ion-col>
-      <ion-col>
-        <span>Hauteur utile</span>
-        {{currentVehicle.heightChest}} mètres
-      </ion-col>
-    </ion-row>
-    <ion-row class="description">
-      <ion-col>
-        <span>Charge utile</span>
-        {{currentVehicle.payload}} kg
+        <br>
+        <div class="ion-float-right price-from">A partir de: &nbsp; <br> <span class="price">{{currentVehicle.price}} €</span></div>
+        <div class="title">Man {{currentVehicle.type}} {{currentVehicle.hayon ? 'avec Hayon' : ''}}</div>
+        <span>Longueur: </span> {{currentVehicle.length}} mètres<br>
+        <span>Coffre: </span> {{currentVehicle.heightChest}} mètres<br>
+        <span>Hauteur: </span> {{currentVehicle.heightCar}} mètres <br>
+        <span>Charge utile: </span> {{currentVehicle.payload}} kg<br>
       </ion-col>
     </ion-row>
   </ion-grid>
   <ion-fab slot="fixed" horizontal="end" vertical="bottom" (click)="onVehicleSelected(currentVehicle.licensePlate)">
-    <ion-button>
-      A partir de {{currentVehicle.price}} €
+    <ion-button class="next-page">
+      Suivant
       <ion-icon name="arrow-forward" class="ion-margin-start"></ion-icon>
     </ion-button>
   </ion-fab>

@@ -2,6 +2,8 @@
 
 <ion-content>
   <ion-icon name="close-outline" class="close-button ion-float-right" (click)="closeModal ()" *ngIf="isModal"></ion-icon>
+  <div class="title" *ngIf="isModal">Mes contacts</div>
+
   <ion-grid class="page-grid ion-no-padding">
     <ion-row *ngIf="!isLoading && contacts.length > 0" class="searchbar">
       <ion-col>

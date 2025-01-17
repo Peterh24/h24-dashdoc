@@ -32,17 +32,20 @@ export class DeliveryPage implements OnInit {
   contactsError: string;
   defaultContact: any;
   merchandisesUrl = 'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/';
-  merchandiseIcon: any = {
+  merchandiseId: any = {
     'Caméra': 'camera',
     'Lumières': 'light',
     'Photographie': 'photo',
     'Régie': 'management',
     'Vêtements': 'clothe',
     'Machinerie': 'machinery',
-    'Mobilier / Décor': 'furniture'
+    'Mobilier / Décor': 'furniture',
+    'Autres' : 'other'
   };
-  merchandises = Object.keys (this.merchandiseIcon).sort ((a,b) => a.localeCompare(b));
+  merchandises = Object.keys (this.merchandiseId).sort ((a,b) => a.localeCompare(b));
+  merchandiseForm: FormGroup;
   merchandisesSelected: any = {};
+  merchandiseEdit: string;
 
   fileToUpload: any;
   fileToUploadError: string;
@@ -55,8 +58,6 @@ export class DeliveryPage implements OnInit {
   originErrors: any = {};
   destinationErrors: any = {};
   hasErrors: boolean;
-
-  @ViewChild('merchandisesCustom') merchandisesCustom: IonInput;
 
   constructor(
     public transport: TransportService,
@@ -84,20 +85,34 @@ export class DeliveryPage implements OnInit {
       loads: new FormControl(null, { validators: [] }),
       handlers: new FormControl(0, { validators: [] }),
     });
+    this.merchandiseForm = new FormGroup({
+      id: new FormControl('', { validators: [] }),
+      description: new FormControl('', { validators: [] }),
+      category: new FormControl('', { validators: [] }),
+      complementary_information: new FormControl('', { validators: [] }),
+      quantity: new FormControl('', { validators: [] }),
+      weight: new FormControl('', { validators: [] }),
+      volume: new FormControl('', { validators: [] }),
+      linear_meters: new FormControl('', { validators: [] })
+    });
     this.otherForm = new FormGroup({
       loads: new FormControl(null, { validators: [] }),
     })
     this.mainForm = new FormGroup({
       origin: this.originForm,
       destination: this.destinationForm,
-      other: this.otherForm
+      other: this.otherForm,
+      merchandise: this.merchandiseForm
     });
   }
 
   ionViewWillEnter() {
     this.originErrors = {};
     this.destinationErrors = {};
+    this.contactsError = null;
     this.hasErrors = false;
+
+    this.merchandises.push (this.merchandises.shift());
 
     if (this.delivery) {
       this.origin = this.delivery.origin?.address;
@@ -107,19 +122,9 @@ export class DeliveryPage implements OnInit {
       this.enableOrigin = !!this.origin;
       this.enableDestination = !!this.destination;
 
-      this.delivery.planned_loads?.filter ((l: any) => l.id != 'custom').forEach ((load: any) => {
-        this.merchandisesSelected[load.description] = true;
+      this.delivery.planned_loads?.forEach ((load: any) => {
+        this.merchandisesSelected[load.id] = load;
       });
-
-      const customLoad = this.delivery.planned_loads?.find ((d: any) => d.id == 'custom');
-
-      if (customLoad) {
-        setTimeout (() => {
-          if (this.merchandisesCustom) {
-            this.merchandisesCustom.value = customLoad?.description;
-          }
-        }, 200);
-      }
 
       const origin = this.loadDelivery(this.originForm, this.delivery.origin);
       const destination = this.loadDelivery(this.destinationForm, this.delivery.destination);
@@ -234,7 +239,7 @@ export class DeliveryPage implements OnInit {
   }
 
   getMerchandiseUrl (name: string) {
-    return this.merchandisesUrl + this.merchandiseIcon[name] + '.png';
+    return this.merchandisesUrl + this.merchandiseId[name] + '.png';
   }
 
   async setAddress (type: string) {
@@ -338,6 +343,18 @@ export class DeliveryPage implements OnInit {
     this.validateForm ();
   }
 
+  setAskHandlers (event: any, form: FormGroup) {
+    if (event.detail.checked) {
+      form.controls['handlers'].setValue (1);
+    } else {
+      form.controls['handlers'].setValue (0);
+    }
+  }
+
+  setAskSecureGuarding (event: any, form: FormGroup) {
+    // TODO
+  }
+
   addHandlers (form: FormGroup) {
     form.controls['handlers'].setValue (form.value.handlers + 1);
   }
@@ -346,12 +363,48 @@ export class DeliveryPage implements OnInit {
     form.controls['handlers'].setValue (0);
   }
 
-  toggleMerchandise (name: string) {
-    if (this.merchandisesSelected[name]) {
-      delete this.merchandisesSelected[name];
-    } else {
-      this.merchandisesSelected[name] = true; 
+  getSelectedMerchandises (): any[] {
+    return this.merchandisesSelected ? Object.values (this.merchandisesSelected) : [];
+  }
+
+  setMerchandiseEdit (description: string) {
+    if (description === null) {
+      this.merchandiseEdit = null;
+      return;
     }
+
+    const id = this.merchandiseId[description];
+
+    const form = this.merchandiseForm;
+    const merchandise = this.merchandisesSelected[id] || { id, description, category: 'vrac' };
+    this.merchandiseEdit = id;
+
+    Object.keys (form.controls).forEach ((control) => {
+      if (merchandise[control]) {
+        form.controls[control].setValue (merchandise[control]);
+      } else {
+        form.controls[control].setValue (null);
+      }
+    });
+  }
+
+  // TODO gestion des pièces jointes
+  setMerchandise (modal: any = null) {
+    if (modal) {
+      modal.dismiss ();
+    }
+
+    const merchandise = this.merchandiseForm.value;
+    merchandise.id = this.merchandiseEdit;
+    this.merchandisesSelected[merchandise.id] = merchandise;
+  }
+
+  deleteMerchandise (id: any = null, modal: any = null) {
+    if (modal) {
+      modal.dismiss ();
+    }
+
+    delete this.merchandisesSelected[id];
   }
 
   askFileToUpload () {
@@ -439,21 +492,7 @@ export class DeliveryPage implements OnInit {
     if (this.origin) {
       origin = this.buildDelivery (this.originForm.value, this.origin);
 
-      planned_loads =  Object.keys (this.merchandisesSelected).map ((name) => ({
-        id: this.merchandiseIcon[name],
-        description: name,
-        category: 'vrac',
-        quantity: 1
-      }));
-
-      if (this.merchandisesCustom?.value) {
-        planned_loads.push({
-          id: 'custom',
-          description: this.merchandisesCustom.value,
-          category: 'vrac',
-          quantity: 1
-          });
-      }
+      planned_loads =  Object.values (this.merchandisesSelected);
     }
 
     if (this.destination) {

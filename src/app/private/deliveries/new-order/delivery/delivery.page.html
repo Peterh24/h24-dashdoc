@@ -15,24 +15,25 @@
       <h3>Ajouter une marchandise</h3>
 
       <div>
-        <div class="merchandises">
-          <div class="merchandise pointer" *ngFor="let merchandise of merchandises" (click)="toggleMerchandise(merchandise)">
-            <ion-icon name="radio-button-on-outline" class="checkbox" *ngIf="merchandisesSelected[merchandise]"></ion-icon>
-            <ion-icon name="radio-button-off-outline" class="checkbox" *ngIf="!merchandisesSelected[merchandise]"></ion-icon>
-            <div class="title">{{ merchandise }}</div>
-            <img src="{{ merchandisesUrl }}{{ merchandiseIcon[merchandise] }}.png">
-          </div>
+        <div class="selected-merchandise" *ngFor="let merchandise of getSelectedMerchandises();">
+          <span>{{ merchandise.description }}</span>
+          <div class="icons">
+            <ion-icon class="pointer" name="create-outline" (click)="setMerchandiseEdit(merchandise.description)"></ion-icon> &nbsp; &nbsp;
+            <ion-icon class="pointer" name="trash-outline" (click)="deleteMerchandise (merchandise.id)"></ion-icon>
+          </div>  
         </div>
       </div>
 
-      <ion-input #merchandisesCustom
-        label="Autres marchandises"
-        label-placement="floating"
-        fill="outline"
-        shape="round"
-        placeholder="Rajouter une marchandise manuellement">
-      </ion-input>
-
+      <div>
+        <div class="merchandises">
+          <div class="merchandise pointer" *ngFor="let merchandise of merchandises" (click)="setMerchandiseEdit(merchandise)">
+            <ion-icon name="radio-button-on-outline" class="checkbox" *ngIf="merchandisesSelected[merchandiseId[merchandise]]"></ion-icon>
+            <ion-icon name="radio-button-off-outline" class="checkbox" *ngIf="!merchandisesSelected[merchandiseId[merchandise]]"></ion-icon>
+            <div class="title">{{ merchandise }}</div>
+            <img src="{{ merchandisesUrl }}{{ merchandiseId[merchandise] }}.png">
+          </div>
+        </div>
+      </div>
     </div>
     <br>
     <h3>Ajouter une pièce jointe</h3>
@@ -142,13 +143,14 @@
 
         <h3>Options</h3>
 
-        <h4>Demander un manutentionnaire en plus</h4>
-
-        <div class="custom-control handlers">
+        <ion-toggle labelPlacement="end" (ionChange)="setAskHandlers($event, form)" [checked]="form.value.handlers > 0">Demander un manutentionnaire en plus</ion-toggle><br>
+        <div class="custom-control handlers" *ngIf="form.value.handlers > 0">
           <ion-icon name="trash-outline" (click)="resetHandlers (form)"></ion-icon>
           <div>{{ form.value.handlers }}</div>
           <ion-icon name="add-outline" (click)="addHandlers (form)"></ion-icon>
         </div>
+
+        <ion-toggle labelPlacement="end" (ionChange)="setAskSecureGuarding($event, form)" [checked]="false">Option de gardiennage sécurisé</ion-toggle><br>
 
         <ion-input
           [label]="type === 'origin' ? 'Instructions à l\'enlèvement' : 'Instructions à la livraison'"
@@ -162,3 +164,79 @@
     </ng-template>
   </div>
 </ion-content>
+
+<ion-modal id="merchandise-modal" class="custom" [isOpen]="!!merchandiseEdit" (willDismiss)="setMerchandiseEdit(null)" #merchandiseModal>
+  <ng-template>
+    <div class="wrapper" [formGroup]="merchandiseForm" *ngIf="merchandiseForm">
+      <ion-icon name="close-outline" class="ion-float-right" (click)="setMerchandiseEdit (null)"></ion-icon>
+      <div class="title">Ajouter une marchandise</div>
+
+      <ion-select label="Type de marchandise *" labelPlacement="floating" formControlName="id">
+        <ion-select-option *ngFor="let merchandise of merchandises" [value]="merchandiseId[merchandise]">{{merchandise}}</ion-select-option>
+      </ion-select>
+  
+      <ion-input
+        label="Nature de la marchandise *"
+        label-placement="floating"
+        fill="outline"
+        shape="round"
+        autofocus="true"
+        placeholder="Nature de la marchandise"
+        formControlName="category">
+      </ion-input>
+
+      <ion-input
+        label="Informations complementaires"
+        label-placement="floating"
+        fill="outline"
+        shape="round"
+        autofocus="true"
+        placeholder="Informations complementaires"
+        formControlName="complementary_information">
+      </ion-input>
+
+      <ion-input
+        label="Quantité"
+        label-placement="floating"
+        fill="outline"
+        shape="round"
+        autofocus="true"
+        placeholder="Quantité"
+        formControlName="quantity">
+      </ion-input>
+
+      <ion-input
+        label="Poids total (kg)"
+        label-placement="floating"
+        fill="outline"
+        shape="round"
+        autofocus="true"
+        placeholder="Poids total (kg)"
+        formControlName="weight">
+      </ion-input>
+
+      <ion-input
+        label="Volume total (m3)"
+        label-placement="floating"
+        fill="outline"
+        shape="round"
+        autofocus="true"
+        placeholder="Volume total (m3)"
+        formControlName="volume">
+      </ion-input>
+
+      <ion-input
+        label="Mètres linéaires"
+        label-placement="floating"
+        fill="outline"
+        shape="round"
+        autofocus="true"
+        placeholder="Mètres linéaires"
+        formControlName="linear_meters">
+      </ion-input>
+      <br>
+      <ion-button (click)="deleteMerchandise(merchandiseForm.value.id, merchandiseModal)" fill="outline">Supprimer</ion-button>
+      <ion-button (click)="setMerchandise(merchandiseModal)">Valider</ion-button>
+    </div>
+  </ng-template>
+</ion-modal>

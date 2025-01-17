@@ -65,4 +65,7 @@ export class ProfilePage implements OnInit {
     }
   }
 
+  signout () {
+    this.authService.signOut ();
+  }
 }

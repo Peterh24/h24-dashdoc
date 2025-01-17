@@ -47,5 +47,22 @@
       <ion-label>Mes factures</ion-label>
     </ion-item>
 
+    <ion-item class="signout" id="signout">
+      <ion-label>Se déconnecter</ion-label>
+    </ion-item>
   </ion-list>
 </ion-content>
+
+<ion-modal id="signout-modal" class="custom" #signoutModal trigger="signout">
+  <ng-template>
+    <div class="wrapper">
+      <ion-icon name="close-outline" class="ion-float-right" (click)="signoutModal.dismiss ()"></ion-icon>
+      <div class="title">Êtes-vous sur de vouloir vous déconnecter ?</div>
+
+      <div class="buttons">
+        <ion-button (click)="signoutModal.dismiss ()">Non</ion-button> &nbsp;
+        <ion-button fill="outline" (click)="signout ()">Oui</ion-button>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>

@@ -164,12 +164,13 @@ h2 {
     --border-radius: 15px;
   }
 
-  ion-input, ion-select {
+  ion-input {
     height: 60px;
   }
 
   ion-select {
     & {
+      height: 50px;
       border: 1px solid lightgray;
       border-radius: 15px;
       padding-left: 20px;

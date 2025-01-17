@@ -29,6 +29,12 @@ ion-content {
     margin-top: 10px;
 }
 
+.signout {
+    color: #F93939;
+    font-weight: 500;
+    font-size: 16px;
+}
+
 ion-item {
     height: 50px;
     margin-top: 10px;
@@ -36,4 +42,15 @@ ion-item {
 
 ion-badge {
     min-width: 15pt;
+}
+
+ion-modal {
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    ion-button {
+      flex-grow: 1;
+    }
 }

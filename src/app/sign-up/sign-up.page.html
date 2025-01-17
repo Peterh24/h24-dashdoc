@@ -30,7 +30,7 @@
       </div>
       <div>
         <ion-input type="password" label="Mot de passe" labelPlacement="floating" fill="outline" shape="round" [errorText]="regexErrors['password']" formControlName="password" #password>
-          <!-- <ion-icon name="eye-outline" slot="end" (click)="toggleShowPassword (password)"></ion-icon> -->
+          <ion-icon name="eye-closed" slot="end" (click)="toggleShowPassword (password)"></ion-icon>
         </ion-input>
       </div>
      <div class="is-client">

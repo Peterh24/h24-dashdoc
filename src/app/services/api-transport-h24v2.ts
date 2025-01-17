@@ -35,7 +35,11 @@ export class ApiTransportH24v2 {
     }
 
     updateUser (userId: number, user: any) {
-        return this.http.put(`${API_URL}app_users/${userId}`, user);
+        return this.http.patch(`${this.apiUrl}user/${userId}`, { 
+            first_name: user.firstname,
+            last_name: user.lastname,
+            phone_number: user.phone
+        });
     }
 
     getUserInfos (userId: number) {
@@ -52,12 +56,12 @@ export class ApiTransportH24v2 {
     }
 
     changeUserPassword (userId: number, username: string, password: string, newpassword: string) {
-        return this.http.post(`${API_URL}login`, { username: username, password }).pipe(
+        return this.loginUser (username, password).pipe(
           mergeMap ((res) => {
             const headers = new HttpHeaders()
               .set ('Content-Type', 'application/merge-patch+json');
-
-            return this.http.patch(`${API_URL}app_users/${userId}`, { password: newpassword }, { headers }).pipe (
+// TODO change end point
+            return this.http.patch(`${API_URL}app_users/${userId}`, { password: newpassword, old_password: password }, { headers }).pipe (
             );
           })
         );
@@ -295,7 +299,7 @@ export class ApiTransportH24v2 {
 
         transport.creation_method = "api";
         transport.shipper_reference = deliveries?.[0]?.shipper_reference;
-        transport.carrier = 3; // TODO
+        transport.carrier = 2; // TODO! ne pas mettre en dur
         transport.company = this.companyId;
         transport.shipper_address = this.companyId; // TODO
         transport.requested_vehicle = 'VAN'; // TODO
