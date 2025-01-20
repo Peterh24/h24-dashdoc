@@ -25,7 +25,6 @@ export class VehiclesService {
   fetchVehicles() {
     return this.apiTransport.getVehicles().pipe(
       take(1),
-      map((res: any) => res['hydra:member']),
       tap((data: Vehicle[]) => {
 //        this.authService.SetUserInfo(); // TODO @deprecated
         this._vehicles.next(data);

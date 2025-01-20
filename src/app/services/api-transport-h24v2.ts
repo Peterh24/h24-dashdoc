@@ -8,6 +8,7 @@ import { Request } from "../private/models/request.model";
 import { Deliveries, Delivery } from "../private/deliveries/delivery.model";
 import { compareAsc } from "date-fns";
 import { Contact } from "../private/profile/contacts/contact.model";
+import { UtilsService } from "../utils/services/utils.service";
 
 export class ApiTransportH24v2 {
     static model: string = 'h24';
@@ -18,6 +19,7 @@ export class ApiTransportH24v2 {
 
     storage = inject (Storage);
     http = inject (HttpClient);
+    utilsService = inject(UtilsService);
 
     constructor() {
         this.apiUrl = API_URL_V2;
@@ -56,15 +58,7 @@ export class ApiTransportH24v2 {
     }
 
     changeUserPassword (userId: number, username: string, password: string, newpassword: string) {
-        return this.loginUser (username, password).pipe(
-          mergeMap ((res) => {
-            const headers = new HttpHeaders()
-              .set ('Content-Type', 'application/merge-patch+json');
-// TODO change end point
-            return this.http.patch(`${API_URL}app_users/${userId}`, { password: newpassword, old_password: password }, { headers }).pipe (
-            );
-          })
-        );
+        return this.http.post(`${this.apiUrl}user/reset-password`, { new_password: newpassword, old_password: password });
     }
 
     resetUserPasswordRequest (email: string) {
@@ -106,16 +100,21 @@ export class ApiTransportH24v2 {
               contact.email,
               contact.phone_number,
               contact.company?.id,
-              contact.company?.name
+              contact.company?.name,
+              contact.has_pending_invite,
             ))));
     }
 
     createContact (contact: any) {
         contact.company = contact.company?.pk;
-        contact.lastname = contact.last_name; // TODO
         return this.http.post(`${this.apiUrl}contacts`, contact).pipe(
             map ((res: any) => new Contact (res.id, contact.first_name, contact.last_name, contact.email, contact.phone_number, contact.company?.id, contact.company_name))
         );
+    }
+
+    // TODO
+    inviteUser (contact: Contact) {
+        return this.http.post (`${this.apiUrl}user/invite`, { name: contact.last_name, email: contact.email, company: contact.company, phone: contact.phone_number })
     }
 
     updateContact (uid: string, contact: any) {
@@ -157,7 +156,7 @@ export class ApiTransportH24v2 {
         address.is_demo = false;
         address.is_default = false;
         address.company = this.companyId;
-        address.address_type = 'office';
+        address.address_type = 'default';
         return this.http.post(`${this.apiUrl}address`, address).pipe (
             tap ((address: any) => {
                 address.pk = address.id
@@ -176,6 +175,7 @@ export class ApiTransportH24v2 {
     /* Vehicles */
     getVehicles () {
         // TODO
+        /*
         return of({
             "@context":"\/api\/contexts\/Vehicle",
             "@id":"\/api\/vehicles",
@@ -190,8 +190,15 @@ export class ApiTransportH24v2 {
                     "licensePlate":"20M3HAYON","hayon":true
                 }]
             });
-
-        return this.http.get(`${API_URL}vehicles`);
+*/
+        return this.http.get(`${this.apiUrl}vehicles`).pipe (
+            map ((res: any) => (res.items)),
+            tap((vehicles: any) => {
+                vehicles.forEach ((vehicle: any) => {
+                    vehicle.licensePlate = vehicle.license_plate
+                })
+            }),
+        );
     }
 
     /* Transports */ 
@@ -243,13 +250,7 @@ export class ApiTransportH24v2 {
         const deliveriesData = data.deliveries.map((delivery: any) => {
             const { uid, origin, destination, loads, tracking_contacts } = delivery;
             return { uid, origin, destination, loads, tracking_contacts };
-        }).sort((delivery1: Deliveries, delivery2: Deliveries) => { // TODO
-            const dateDiff = compareAsc(new Date(delivery1.origin.real_start), new Date(delivery2.origin.real_start));
-            if(dateDiff != 0) {
-                return dateDiff;
-            }
-            return compareAsc(new Date(delivery1.destination.real_end), new Date(delivery2.destination.real_end));
-        })
+        });
 
         const licensePlate = data.segments[0].trailers[0] ? data.segments[0].trailers[0].license_plate : '';
 
@@ -272,7 +273,7 @@ export class ApiTransportH24v2 {
             statuses,
             data.pricing_total_price,
             data.quotation_total_price,
-            deliveriesData,
+            this.sortDeliveries(deliveriesData),
             data.messages,
             data.documents,
             licensePlate,
@@ -281,6 +282,21 @@ export class ApiTransportH24v2 {
         )
     }
 
+    sortDeliveries (deliveries: any) {
+        const isSingleOrigin = this.utilsService.areAllValuesIdentical(deliveries, 'origin', 'address');
+        const isSingleDestination = this.utilsService.areAllValuesIdentical(deliveries, 'destination', 'address');
+    
+        if (!isSingleOrigin && !isSingleDestination || !isSingleOrigin) {
+          return deliveries.sort ((a: any, b: any) =>
+            new Date(a.origin?.slots?.[0]?.start).valueOf () - new Date(b.origin?.slots?.[0]?.start).valueOf ()
+          )
+        } else {
+          return deliveries.sort ((a: any, b: any) =>
+            new Date(a.destination?.slots?.[0]?.start).valueOf () - new Date(b.destination?.slots?.[0]?.start).valueOf ()
+          )
+        }
+    }
+  
     fromH24Transport (transport: any) {
         transport?.deliveries?.forEach ((delivery: any) => {
             if (delivery.origin) {

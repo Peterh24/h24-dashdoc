@@ -7,7 +7,8 @@ export class Contact {
       public email: string,
       public phone_number: string,
       public company: string,
-      public company_name: string
+      public company_name: string,
+      public has_pending_invite: boolean = false
     ){}
   }
   

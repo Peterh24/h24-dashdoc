@@ -9,6 +9,7 @@ import { Deliveries, Delivery } from "../private/deliveries/delivery.model";
 import { compareAsc } from "date-fns";
 import { Contact } from "../private/profile/contacts/contact.model";
 import { AuthService } from "./auth.service";
+import { UtilsService } from "../utils/services/utils.service";
 
 export class ApiTransportDashdoc {
     static model: string = 'dashdoc';
@@ -18,6 +19,7 @@ export class ApiTransportDashdoc {
 
     storage = inject (Storage);
     http = inject (HttpClient);
+    utilsService = inject(UtilsService);
 
     constructor() {
         this.apiUrl = DASHDOC_API_URL;
@@ -159,7 +161,9 @@ export class ApiTransportDashdoc {
 
     /* Vehicles */
     getVehicles () {
-        return this.http.get(`${API_URL}vehicles`);
+        return this.http.get(`${API_URL}vehicles`).pipe (
+          map((res: any) => res['hydra:member']),
+        );
     }
 
     /* Transports */ 
@@ -210,13 +214,7 @@ export class ApiTransportDashdoc {
         const deliveriesData = data.deliveries.map((delivery: any) => {
             const { uid, origin, destination, loads, tracking_contacts } = delivery;
             return { uid, origin, destination, loads, tracking_contacts };
-        }).sort((delivery1: Deliveries, delivery2: Deliveries) => { // TODO
-            const dateDiff = compareAsc(new Date(delivery1.origin.real_start), new Date(delivery2.origin.real_start));
-            if(dateDiff != 0) {
-                return dateDiff;
-            }
-            return compareAsc(new Date(delivery1.destination.real_end), new Date(delivery2.destination.real_end));
-        })
+        });
 
         const licensePlate = data.segments[0].trailers[0] ? data.segments[0].trailers[0].license_plate : '';
 
@@ -239,7 +237,7 @@ export class ApiTransportDashdoc {
             statuses,
             data.pricing_total_price,
             data.quotation_total_price,
-            deliveriesData,
+            this.sortDeliveries (deliveriesData),
             data.messages,
             data.documents,
             licensePlate,
@@ -248,6 +246,21 @@ export class ApiTransportDashdoc {
         )
     }
 
+    sortDeliveries (deliveries: any) {
+      const isSingleOrigin = this.utilsService.areAllValuesIdentical(deliveries, 'origin', 'address');
+      const isSingleDestination = this.utilsService.areAllValuesIdentical(deliveries, 'destination', 'address');
+  
+      if (!isSingleOrigin && !isSingleDestination || !isSingleOrigin) {
+        return deliveries.sort ((a: any, b: any) =>
+          new Date(a.origin?.slots?.[0]?.start).valueOf () - new Date(b.origin?.slots?.[0]?.start).valueOf ()
+        )
+      } else {
+        return deliveries.sort ((a: any, b: any) =>
+          new Date(a.destination?.slots?.[0]?.start).valueOf () - new Date(b.destination?.slots?.[0]?.start).valueOf ()
+        )
+      }
+    }
+  
     fromDashdocTransport (transport: any) {
         transport?.deliveries?.forEach ((delivery: any) => {
           if (delivery.origin) {

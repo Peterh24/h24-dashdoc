@@ -198,7 +198,7 @@ h2 {
     border-top: 1px solid lightgray;
   }
   
-  ion-modal.custom {
+  ion-modal.custom, ion-modal.custom-big {
     & {
         --max-width: 400px !important;
         --max-height: 80% !important;
@@ -206,7 +206,7 @@ h2 {
         --height: fit-content;
         --border-radius: 6px;
         --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
-    }
+      }
 
     &::part(content) {
       overflow-y: scroll;
@@ -226,6 +226,18 @@ h2 {
   
     ion-button {
       margin: 10px 0 0 0;
+    }
+  }
+  
+  ion-modal.modal-default.show-modal~ion-modal.modal-default {
+    --backdrop-opacity: 25%;
+  }
+
+  ion-modal.custom-big {
+    & {
+      --width: 95%;
+      --height: 97%;
+      --max-height: 97% !important;
     }
   }
 

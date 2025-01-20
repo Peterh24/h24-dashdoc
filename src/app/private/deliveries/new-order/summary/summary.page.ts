@@ -196,7 +196,7 @@ export class SummaryPage implements OnInit {
       ...this.defaultTransport,
       requested_vehicle: this.transport.vehicle,
       deliveries: deliveries,
-      segments: segments
+      segments: segments,
     };
 
     console.log(dataToApi);
@@ -324,6 +324,7 @@ export class SummaryPage implements OnInit {
       modal.dismiss ();
 
       const transport = await this.buildTransport ();
+      transport.is_multipoint = this.transport.isMultipoint;
 
       this.storage.get(DASHDOC_COMPANY).then ((pk) => {
         this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {

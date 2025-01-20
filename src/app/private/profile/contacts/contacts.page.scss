@@ -14,7 +14,6 @@ ion-content  {
 
       display: flex;
       justify-content: space-between;
-      align-items: center;
 
       font-size: 13px;
       font-weight: 400;
@@ -39,11 +38,24 @@ ion-content  {
     .icons {
       & {
         color: black;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-end;
+      }
+      & > div {
+        margin-right: 10px;
       }
       ion-icon {
         width: 19px;
         height: 19px;
         margin-left: 20px;
+      }
+      .pending-invite {
+        font-weight: 400;
+        font-size: 12px;
+        color: #185BE1;
+        background-color: #99BAFD;
       }
     }
   }

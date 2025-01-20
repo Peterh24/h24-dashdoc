@@ -40,6 +40,7 @@ export class VehicleChoicePage implements OnInit {
           }
         } else {
           this.vehicleService.fetchVehicles().subscribe((vehicles) => {
+            console.log (8, vehicles);
             this.vehicles = vehicles;
             if (!this.currentVehicle && vehicles.length > 0) {
               this.currentVehicle = vehicles[0];

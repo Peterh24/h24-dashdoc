@@ -70,14 +70,16 @@
                 </span>
                 <br>
                 {{ item.company_name }}<br>
-                <span *ngIf="item?.email"><a href="tel:{{ item.email }}">{{ item.email }}</a></span><br>
+                <span *ngIf="item?.email"><a href="mailto:{{ item.email }}">{{ item.email }}</a></span><br>
                 <span *ngIf="item?.phone_number"><a href="tel:{{ item.phone_number }}">{{ formatPhone (item.phone_number) }}</a></span>
               </div>
               <div class="icons">
+                <div><ion-chip class="pending-invite" *ngIf="item.has_pending_invite">Invitation envoyée</ion-chip></div>
                 <div class="ion-text-nowrap">
                   <ion-icon class="pointer" name="create-outline" (click)="onAddContact (item.uid)"></ion-icon>
                   <ion-icon class="pointer" name="trash-outline" (click)="setDeleteContact (item)"></ion-icon>
                 </div>
+                <div></div>
               </div>
             </div>
           </ion-item>

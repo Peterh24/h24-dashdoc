@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { IonModal } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
 import { take } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
@@ -65,7 +66,11 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  signout () {
+  signout (modal: IonModal) {
+    if (modal) {
+      modal.dismiss ();
+    }
+
     this.authService.signOut ();
   }
 }

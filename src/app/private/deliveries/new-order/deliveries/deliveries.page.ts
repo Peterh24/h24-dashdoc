@@ -76,7 +76,7 @@ export class DeliveriesPage implements OnInit {
         originMaxSlot: this.getOriginsMaxSlot (this.transport.getOrigins ()),
         destinationMinSlot: this.getDestinationsMinSlot (this.transport.getDestinations ())
       },
-      cssClass: 'delivery-modal',
+      cssClass: 'custom-big',
     });
 
     this.isModalOpen = true;

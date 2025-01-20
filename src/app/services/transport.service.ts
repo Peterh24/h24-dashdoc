@@ -84,17 +84,8 @@ export class TransportService {
     this.uid = transport.uid;
     this.type = 'audiovisual';
     this.vehicle = transport.requested_vehicle;
+    this.isMultipoint = transport.is_multipoint;
     this.deliveries = this.loadDeliveries (transport.deliveries);
-    this.isMultipoint = null;
-
-    const origins = this.getOrigins ().length;
-    const destinations = this.getDestinations ().length;
-
-    if (origins > 1 && destinations > 1) {
-      this.isMultipoint = true;
-    } else {
-      this.isMultipoint = false;
-    }
 
     this.sortDeliveries ();
 
@@ -107,9 +98,10 @@ export class TransportService {
     const isSingleOrigin = this.utilsService.areAllValuesIdentical(deliveriesJson, 'origin', 'address');
     const isSingleDestination = this.utilsService.areAllValuesIdentical(deliveriesJson, 'destination', 'address');
 
-    if (!isSingleOrigin && !isSingleDestination) {
-      // multipoints
+    if (this.isMultipoint || !isSingleOrigin && !isSingleDestination) {
+      this.isMultipoint = true;
     } else if (isSingleOrigin) {
+      this.isMultipoint = false;
       const origin = { ...deliveries[0] };
       deliveries.forEach ((d, index) => {
         delete d.origin;
@@ -117,6 +109,7 @@ export class TransportService {
       delete origin.destination;
       deliveries.unshift (origin);
     } else {
+      this.isMultipoint = false;
       const destination = { ...deliveries[deliveries.length - 1] };
       deliveries.forEach ((d, index) => {
         delete d.destination;

@@ -159,44 +159,40 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
   getStatusIndex (delivery: any) {
     const statuses = delivery.statuses;
 
-    if (statuses.done) {
-      return 3;
-    } else if (statuses.trucker ||
-        statuses.on_loading_site ||
-        statuses.loading_complete ||
-        statuses.on_unloading_site ||
-        statuses.unloading_complete) {
-          return 2;
-    } else {
-      return 1;
-    }
-  }
-
-  getStatusIndex0 (delivery: any) {
-    if (!delivery.status) {
-      return 1;
-    }
-
-    switch (delivery.status) {
-      case 'created':
-      case 'updated':
-      case 'confirmed': {
+    if (Object.keys (statuses).length) {
+      if (statuses.done) {
+        return 3;
+      } else if (statuses.trucker ||
+          statuses.on_loading_site ||
+          statuses.loading_complete ||
+          statuses.on_unloading_site ||
+          statuses.unloading_complete) {
+            return 2;
+      } else {
         return 1;
       }
-      case 'trucker':
-      case 'on_loading_site':
-      case 'loading_complete':
-      case 'on_unloading_site':
-      case 'unloading_complete': {
-        return 2;
+    } else {
+      switch (delivery.status) {
+        case 'created':
+        case 'updated':
+        case 'confirmed': {
+          return 1;
+        }
+        case 'trucker':
+        case 'on_loading_site':
+        case 'loading_complete':
+        case 'on_unloading_site':
+        case 'unloading_complete': {
+          return 2;
+        }
+        case 'invoiced':
+        case 'done': {
+          return 3;
+        }
       }
-      case 'invoiced':
-      case 'done': {
-        return 3;
-      }
-    }
 
-    return 1;
+      return 1;
+    }
   }
 
   onDraftDelete (draftName: string, modal: any) {

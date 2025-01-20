@@ -395,7 +395,7 @@ export class DeliveryPage implements OnInit {
     }
 
     const merchandise = this.merchandiseForm.value;
-    merchandise.id = this.merchandiseEdit;
+    merchandise.id = this.merchandiseId[merchandise.description];
     this.merchandisesSelected[merchandise.id] = merchandise;
   }
 

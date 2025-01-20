@@ -171,8 +171,8 @@
       <ion-icon name="close-outline" class="ion-float-right" (click)="setMerchandiseEdit (null)"></ion-icon>
       <div class="title">Ajouter une marchandise</div>
 
-      <ion-select label="Type de marchandise *" labelPlacement="floating" formControlName="id">
-        <ion-select-option *ngFor="let merchandise of merchandises" [value]="merchandiseId[merchandise]">{{merchandise}}</ion-select-option>
+      <ion-select label="Type de marchandise *" labelPlacement="floating" formControlName="description">
+        <ion-select-option *ngFor="let merchandise of merchandises" [value]="merchandise">{{merchandise}}</ion-select-option>
       </ion-select>
   
       <ion-input
@@ -235,7 +235,9 @@
         formControlName="linear_meters">
       </ion-input>
       <br>
+      <!--
       <ion-button (click)="deleteMerchandise(merchandiseForm.value.id, merchandiseModal)" fill="outline">Supprimer</ion-button>
+      -->
       <ion-button (click)="setMerchandise(merchandiseModal)">Valider</ion-button>
     </div>
   </ng-template>
