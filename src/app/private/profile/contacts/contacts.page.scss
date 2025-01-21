@@ -129,6 +129,10 @@ ion-content  {
     right: 20px;
   }
 
+  ion-item-option {
+    margin-bottom: 15px;
+  }
+  
   .title {
     font-weight: 700;
     font-size: 16px;
@@ -137,5 +141,6 @@ ion-content  {
   }
 
   ion-item-option {
+    margin-top: 15px;
     margin-bottom: 15px;
   }

@@ -310,12 +310,12 @@ export class SummaryPage implements OnInit {
     return segments;
   }
 
-  onSetOrderName (name: any, deleteDraft: string, modal: any) {
+  onSetOrderName (name: any, deleteDraft: any, modal: any) {
     if (name) {
       modal.dismiss ();
 
       this.shipperReference = name;
-      this.onSubmit (false); // TODO
+      this.onSubmit (deleteDraft); // TODO
     }
   }
 

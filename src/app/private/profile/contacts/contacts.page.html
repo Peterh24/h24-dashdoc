@@ -11,7 +11,7 @@
       </ion-col>
     </ion-row>
 
-    <ion-row>
+    <ion-row *ngIf="!searchbarElem?.nativeElement?.value">
       <ion-col>
         <ion-button shape="round" (click)="onAddContact ()"><ion-icon name="location-outline"></ion-icon> &nbsp; Envoyer une invitation</ion-button>
         <!-- <ion-button shape="round" fill="outline" id="create-folder"><ion-icon name="folder-outline"></ion-icon> &nbsp; Créer un dossier</ion-button> -->

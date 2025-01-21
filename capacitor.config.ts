@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.h24transports',
+  appId: 'com.h24transports',
   appName: 'H24 Transports',
   webDir: 'www',
   server: {

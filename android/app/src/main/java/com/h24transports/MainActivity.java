@@ -1,4 +1,4 @@
-package io.h24transports;
+package com.h24transports;
 
 import android.content.Intent;
 import android.net.Uri;

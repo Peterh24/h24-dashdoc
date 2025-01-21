@@ -9,7 +9,8 @@ h2 {
 }
 
 h3 {
-    font-size: 12pt;
+    font-size: 16px;
+    font-weight: 500;
     position: relative;
 }
 
@@ -45,8 +46,13 @@ ion-modal {
 }
 
 .delivery {
+    & {
+        font-size: 14px;
+    }
+
     .details > div {
-        margin-bottom: 15px;
+        margin-top: 7px;
+        margin-bottom: 7px;
     }
 
     .header {
@@ -57,12 +63,14 @@ ion-modal {
         }
 
         ion-badge {
+            color: white;
+            background-color: black;
             margin-right: 20px;
         }
     }   
 
-    .name {
-        font-weight: bold;
+    .title {
+        font-weight: 700;
     }
 
     .merchandises {
@@ -119,6 +127,6 @@ ion-accordion {
     }
 
     ion-icon {
-        padding-right: 20px;
+        font-size: 20px;
     }
 }

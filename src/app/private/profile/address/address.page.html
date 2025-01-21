@@ -10,7 +10,7 @@
       </ion-col>
     </ion-row>
 
-    <ion-row>
+    <ion-row *ngIf="!searchbarElem?.nativeElement?.value">
       <ion-col>
         <ion-button shape="round" (click)="onAddAddress ()"><ion-icon name="location-outline"></ion-icon> &nbsp; Ajouter une adresse</ion-button>
         <ion-button shape="round" fill="outline" id="create-folder"><ion-icon name="folder-outline"></ion-icon> &nbsp; Créer un dossier</ion-button>
@@ -33,7 +33,7 @@
       </ion-col>
     </ion-row>
 
-    <ion-row>
+    <ion-row *ngIf="!searchbarElem?.nativeElement?.value">
       <ion-col>
         <!-- <div class="folder" [class.selected]="folder === currentFolder" (click)="selectFolder (folder)"> -->
           <div [ngTemplateOutlet]="folderTpl" [ngTemplateOutletContext]="{ folder }" *ngFor="let folder of folders"></div>
@@ -78,7 +78,7 @@
   </div>
 </ng-template>
 
-<ng-template #deliveryTpl let-item="item" let-moveto="moveto">
+<ng-template #deliveryTpl let-item="item" let-moveto="moveto" let-modal="modal">
   <ion-item-sliding #slidingAddress>
     <ion-item-options side="start">
       <ion-item-option color="success" (click)="onAddAddress(item.pk, null, slidingAddress)">
@@ -89,7 +89,7 @@
   <ion-accordion  [value]="item.pk" class="address">
 
       <ion-item slot="header" class="ion-align-items-start" lines="none">
-        <ion-label (click)="selectAddress (item, $event)">
+        <ion-label (click)="selectAddress (item, $event, modal)">
           <!--
           <ion-chip class="ion-float-right" *ngIf="item.is_destination">Livraison</ion-chip>
           <ion-chip class="ion-float-right" *ngIf="item.is_origin">Enlèvement</ion-chip>
@@ -199,14 +199,14 @@
   </ng-template>
 </ion-modal>
 
-<ion-modal id="open-folder" class="custom folder-modal" [isOpen]="!!currentFolderName" (willDismiss)="openFolder(null)">
+<ion-modal id="open-folder" class="custom folder-modal" [isOpen]="!!currentFolderName" (willDismiss)="openFolder(null)" #openFolderModal>
   <ng-template>
     <div class="wrapper">
       <ion-icon name="close-outline" class="ion-float-right" (click)="openFolder (null)"></ion-icon>
       <div class="title">{{ currentFolderName }}</div>
       <br>
       <ion-accordion-group [multiple]="true">
-        <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ item }" *ngFor="let item of currentFolder"></div>
+        <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ item, modal: openFolderModal }" *ngFor="let item of currentFolder"></div>
       </ion-accordion-group>
       <hr>
       <div class="add-address-button" (click)="onAddAddress(null, currentFolderName)"><ion-icon name="add"></ion-icon> &nbsp; Ajouter une adresse au dossier</div>

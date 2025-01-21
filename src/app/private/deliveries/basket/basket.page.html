@@ -47,7 +47,11 @@
       <ion-chip slot="end" color="danger" *ngIf="delivery.status && delivery.status === 'invoice'">En attente</ion-chip>
       <ion-chip slot="end" color="warning" *ngIf="draftname">Brouillon</ion-chip>
       <div>
-        {{ draftname || delivery?.shipper_reference || getDefaultDeliveryName (delivery) }}
+        {{ draftname || delivery?.shipper_reference || 'Demande' }} <span class="price" *ngIf="delivery.pricing_total_price"> - {{ delivery.pricing_total_price }} €</span><br>
+        <span class="delivery-infos">
+          {{ getHeaderDay (delivery.created) }}
+          <span *ngIf="delivery.carbon_footprint"> - CO₂ {{ delivery.carbon_footprint?.toFixed (2) }}Kg</span>
+        </span>
       </div>
     </ion-item>
     <div class="ion-padding" slot="content">
@@ -82,7 +86,7 @@
         </div>
       </div>
       <br>
-      <ion-button routerLink="/private/tabs/transports/checkout-delivery" [queryParams]="{ transport: delivery.uid }" *ngIf="!draft">Paiement</ion-button>
+      <!-- <ion-button routerLink="/private/tabs/transports/checkout-delivery" [queryParams]="{ transport: delivery.uid }" *ngIf="!draft">Paiement</ion-button> -->
       <ion-button fill="outline" (click)="gotoDraft (draftname)" *ngIf="draft">Reprendre ma demande</ion-button>
       <ion-button fill="outline" (click)="onDraftDeleteRequest ()" *ngIf="draft">Supprimer ma demande</ion-button>
     </div>

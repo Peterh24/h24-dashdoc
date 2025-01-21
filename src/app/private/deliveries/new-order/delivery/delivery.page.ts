@@ -18,6 +18,7 @@ styleUrls: ['./delivery.page.scss'],
 })
 export class DeliveryPage implements OnInit {
   @Input() delivery: any;
+  @Input() defaultContacts: any;
   @Input() deliveryType: string;
   @Input() originMaxSlot: number;
   @Input() destinationMinSlot: number;
@@ -30,7 +31,6 @@ export class DeliveryPage implements OnInit {
   company: any;
   contacts: any[];
   contactsError: string;
-  defaultContact: any;
   merchandisesUrl = 'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/';
   merchandiseId: any = {
     'Caméra': 'camera',
@@ -139,8 +139,12 @@ export class DeliveryPage implements OnInit {
     this.storage.get(DASHDOC_COMPANY).then (pk => { 
       this.company = pk;
 
-      if (ApiTransportService.isDashdocModel) {
-        this.defaultContact = {
+      if (!this.contacts?.length) {
+        this.contacts = this.defaultContacts || [];
+      }
+
+      if (ApiTransportService.isDashdocModel && this.authService.currentUserDetail?.id && !this.contacts?.length) {
+        this.contacts = [{
           contact: {
             company: {
               pk: this.company,
@@ -151,11 +155,7 @@ export class DeliveryPage implements OnInit {
             email: this.authService.currentUserDetail.email,
             phone_number: this.authService.currentUserDetail.phone
           }
-        };
-
-        if (!this.contacts?.length) {
-          this.contacts = [this.defaultContact];
-        }
+        }];
       }
     });
   }
@@ -249,7 +249,7 @@ export class DeliveryPage implements OnInit {
         isModal: true,
         type
       },
-      cssClass: 'address-modal',
+      cssClass: 'custom-big',
     });
 
     modal.present();
@@ -284,7 +284,7 @@ export class DeliveryPage implements OnInit {
       componentProps: {
         isModal: true,
       },
-      cssClass: 'contacts-modal',
+      cssClass: 'custom-big',
     });
 
     modal.present();
@@ -292,10 +292,6 @@ export class DeliveryPage implements OnInit {
 
     if (data) {
       this.contacts = data;
-      if (ApiTransportService.isDashdocModel && !this.contacts.find (c => c.contact.email === this.defaultContact.contact.email )) {
-        this.contacts.push (this.defaultContact);
-      }
-
       this.contacts = this.contacts.sort ((a, b) => a.contact.first_name.localeCompare (b.contact.first_name));
 
       this.updateEnabled ();
@@ -332,6 +328,17 @@ export class DeliveryPage implements OnInit {
     }
 
     return '4000-01-01T00:00:00';
+  }
+
+  isSlotExceeded (date: string) {
+    if (!date) {
+      return false;
+    }
+
+    const day = new Date(date).toISOString ().split (/T/)[0];
+    const now = new Date().toISOString ().split (/T/)[0];
+
+    return new Date(day).valueOf() < new Date(now).valueOf ();
   }
 
   setSlot (form: FormGroup, name: string, event: any) {
@@ -396,6 +403,7 @@ export class DeliveryPage implements OnInit {
 
     const merchandise = this.merchandiseForm.value;
     merchandise.id = this.merchandiseId[merchandise.description];
+    merchandise.category = 'vrac';
     this.merchandisesSelected[merchandise.id] = merchandise;
   }
 
@@ -465,6 +473,7 @@ export class DeliveryPage implements OnInit {
 
     this.hasErrors = Object.keys (this.originErrors).length > 0 || 
       Object.keys (this.destinationErrors).length > 0 ||
+      this.contactsError != null || 
       this.fileToUploadError != null;
     
     return !this.hasErrors;

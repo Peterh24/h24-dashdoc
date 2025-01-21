@@ -82,10 +82,7 @@
           <div *ngIf="!contacts?.length">Ajouter un contact</div>
           <div *ngFor="let contact of contacts; let index = index">
             <hr *ngIf="index > 0">
-            <div class="title">
-              {{ contact?.contact?.first_name }} 
-              {{ contact?.contact?.last_name }}
-            </div>
+            <div class="title">{{ contact?.contact?.first_name }} {{ contact?.contact?.last_name }}</div>
             <div>
               {{ contact.contact.email }}
             </div>
@@ -113,6 +110,7 @@
             <span *ngIf="form.value.day">{{ formatDay(form.value.day) }}</span>
           </div>
           <div class="error" *ngIf="errors['day']">Veuiller saisir une date</div>
+          <div class="error" *ngIf="isSlotExceeded (form?.value?.day)">Date dépassée</div>
 
           <div class="time">
             <label>Entre</label>
@@ -171,20 +169,10 @@
       <ion-icon name="close-outline" class="ion-float-right" (click)="setMerchandiseEdit (null)"></ion-icon>
       <div class="title">Ajouter une marchandise</div>
 
-      <ion-select label="Type de marchandise *" labelPlacement="floating" formControlName="description">
-        <ion-select-option *ngFor="let merchandise of merchandises" [value]="merchandise">{{merchandise}}</ion-select-option>
+      <ion-select label="Nature de la marchandise *" labelPlacement="floating" formControlName="description">
+        <ion-select-option *ngFor="let merchandise of merchandises" [value]="merchandise">{{ merchandise }}</ion-select-option>
       </ion-select>
   
-      <ion-input
-        label="Nature de la marchandise *"
-        label-placement="floating"
-        fill="outline"
-        shape="round"
-        autofocus="true"
-        placeholder="Nature de la marchandise"
-        formControlName="category">
-      </ion-input>
-
       <ion-input
         label="Informations complementaires"
         label-placement="floating"

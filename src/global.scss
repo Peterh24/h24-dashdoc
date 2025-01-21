@@ -221,14 +221,13 @@ h2 {
       font-weight: 700;
       font-size: 16px;
       margin-bottom: 15px;
-      margin-left: 10px;
     }
   
     ion-button {
       margin: 10px 0 0 0;
     }
   }
-  
+
   ion-modal.modal-default.show-modal~ion-modal.modal-default {
     --backdrop-opacity: 25%;
   }
@@ -253,6 +252,17 @@ h2 {
 
   .pointer {
     cursor: pointer;
+  }
+
+  .card {
+    display: block;
+    border: 1px solid lightgray;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 10px;
+
+    color: #9c9c9c;
+    box-shadow: 0px 1px 9.4px 0px #00000024;
   }
   
   @media (min-width: 768px) {

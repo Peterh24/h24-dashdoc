@@ -85,7 +85,9 @@ export class ApiTransportDashdoc {
     }
 
     getCompanyStatus () {
-        return this.http.get(`${this.apiUrl}transports/?status__in=created,updated,confirmed,declined,verified`);
+        return this.http.get(`${this.apiUrl}transports/?status__in=created,updated,confirmed,declined,verified`).pipe (
+          map ((res: any) => res.items)
+        );
     }
     
     /* Contacts */

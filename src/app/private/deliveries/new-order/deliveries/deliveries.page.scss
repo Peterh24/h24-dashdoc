@@ -8,13 +8,41 @@ ion-button {
 }
 
 .address {
+    & {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        color: #070707;
+        font-size: 14px;
+    }
     .title {
-        font-weight: bold;
+        font-weight: 700;
+    }
+    & > div {
+        flex-grow: 1;
+    }
+    ion-badge.index {
+        font-size: 13px;
+        color: white;
+        background-color: #070707;
+        margin-right: 20px;
+    }
+    ion-badge.origin {
+        color: #2B6DEF;
+        background-color: #99BAFD;
+        font-size: 12px;
+        font-weight: 400;
+    }
+    ion-badge.destination {
+        color: #00BA51;
+        background-color: #8BFBBB;
+        font-size: 12px;
+        font-weight: 400;
     }
 }
 
 .delivery {
-    margin-top: 15px;
     margin-right: 35px;
     padding: 15px;
     border: solid black 1px;
@@ -22,9 +50,25 @@ ion-button {
     cursor: pointer;
 }
 
-.delivery:active {
-    background-color: black;
-    color: white;
+.delivery.multipoint {
+    & {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    & > div {
+        flex-grow: 1;
+    }
+
+    ion-badge {
+        margin-right: 20px;
+    }
+}
+
+h3 {
+    font-size: 16px;
+    font-weight: 500;
 }
 
 hr {
@@ -47,6 +91,20 @@ ion-badge {
     display: flex;
     justify-content: flex-end;
     align-items: center;
+}
+
+.with-trash {
+    & {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        margin-top: 15px;
+    }
+
+    & > .delivery {
+        flex-grow: 1;
+    }
 }
 
 .trash ion-icon {

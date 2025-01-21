@@ -38,7 +38,7 @@ export class ContactsPage implements OnInit {
 
   deleteContact: any;
 
-  @ViewChild("searchbarElem", { read: ElementRef }) private searchbarElem: ElementRef;
+  @ViewChild("searchbarElem", { read: ElementRef }) public searchbarElem: ElementRef;
   constructor(
     private contactService: ContactsService,
     private router: Router,

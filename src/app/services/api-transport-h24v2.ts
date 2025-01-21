@@ -33,7 +33,14 @@ export class ApiTransportH24v2 {
     }
 
     createUser (user: any) {
-        return this.http.post(`${API_URL}app_users`, user);
+        return this.http.post(`${this.apiUrl}../../user`, {
+            first_name: user.firstname,
+            last_name: user.lastname,
+            email: user.email,
+            phone_number: user.phone,
+            password: user.password,
+            carrier: 2, // TODO
+        });
     }
 
     updateUser (userId: number, user: any) {
@@ -85,7 +92,9 @@ export class ApiTransportH24v2 {
     }
 
     getCompanyStatus () {
-        return this.http.get(`${this.apiUrl}transports/?status__in=created,updated,confirmed,declined,verified`);
+        return this.http.get(`${this.apiUrl}transports/?status__in=created,updated,confirmed,declined,verified`).pipe (
+            map ((res: any) => res.items)
+        )
     }
     
     /* Contacts */
@@ -220,23 +229,26 @@ export class ApiTransportH24v2 {
         return this.http.patch(`${this.apiUrl}transports/${transport.uid}`, transport, { headers });
     }
 
+    // TODO: gestion des statuts
     getTransports (status: string = null) {
         if (this.isTransportLastPageReached) {
             return EMPTY; 
         }
-        const url = this.nextTransportPage ? this.nextTransportPage : `${this.apiUrl}transports/` + (status ? '?status__in=' + status : '');
+        const url = this.nextTransportPage ? this.nextTransportPage : `${this.apiUrl}transports` + (status ? '?status__in=' + status : '');
 
         return this.http.get(url).pipe(
-            map((resData: Request) => {
-                const data = resData;
-                this.nextTransportPage = resData.next;
-                if (resData.next === null) {
+            map((resData: any) => {
+                if (resData.page === resData.lastPage) {
                     this.isTransportLastPageReached = true;
+                    this.nextTransportPage = null;
+                } else {
+                    this.nextTransportPage = `${this.apiUrl}transports?page=${resData.page + 1}`;
                 }
 
-                return data.results.map ((data:any) => this.loadTransport (data));
+                return resData.items.map ((data:any) => this.loadTransport (data));
             }),
-            reduce((deliveries: Delivery[], results: Delivery[]) => deliveries.concat(results), []));
+//            reduce((deliveries: Delivery[], results: Delivery[]) => deliveries.concat(results), [])
+        );
     }
 
     resetTransports () {
@@ -248,11 +260,16 @@ export class ApiTransportH24v2 {
         this.fromH24Transport (data);
 
         const deliveriesData = data.deliveries.map((delivery: any) => {
-            const { uid, origin, destination, loads, tracking_contacts } = delivery;
+            const uid = delivery.id;
+            // TODO: origin & destination dans l'api, Loads & TrackingContacts en minuscule
+            const origin = delivery.sites.find ((site: any) => site.reference == 'LOADING');
+            const destination = delivery.sites.find ((site: any) => site.reference == 'UNLOADING');
+            const loads = delivery.Loads;
+            const tracking_contacts = delivery.TrackingContacts;
             return { uid, origin, destination, loads, tracking_contacts };
         });
 
-        const licensePlate = data.segments[0].trailers[0] ? data.segments[0].trailers[0].license_plate : '';
+        const licensePlate = data.segments?.[0]?.trailers?.[0] ? data.segments?.[0].trailers?.[0]?.license_plate : '';
 
         const statuses: any = {};
         data.status_updates?.forEach ((status: any) => {
@@ -265,10 +282,10 @@ export class ApiTransportH24v2 {
         });
 
         return new Delivery(
-            data.uid,
-            data.created,
+            data.id,
+            data.created_at,
             data.deliveries[0].shipper_reference,
-            data.status,
+            data.trasnport_status,
             data.global_status,
             statuses,
             data.pricing_total_price,
@@ -328,8 +345,8 @@ export class ApiTransportH24v2 {
                 load.volume_display_unit = 'm3';
             });
 
-            delivery.tracking_contact = delivery.tracking_contacts.map ((contact: any) => 
-                ({ contact: contact.contact.id, reference: 'shipper' })
+            delivery.tracking_contact = delivery.tracking_contacts?.map ((contact: any) => 
+                ({ contact: contact.contact.id, reference: 'shipper' }) // TODO: quelle référence
             );
             delete delivery.tracking_contacts;
 

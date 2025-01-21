@@ -40,7 +40,11 @@
       <ion-chip slot="end" *ngIf="delivery.status && delivery.status !== 'invoice'">{{ statuses[delivery.status] || delivery.status }}</ion-chip>
       <ion-chip slot="end" color="danger" *ngIf="delivery.status && delivery.status === 'invoice'">En attente</ion-chip>
       <div>
-        {{ delivery?.shipper_reference || getDefaultDeliveryName (delivery) }}
+        {{ delivery?.shipper_reference || 'Demande' }} <span class="price" *ngIf="delivery.pricing_total_price"> - {{ delivery.pricing_total_price }} €</span><br>
+        <span class="delivery-infos">
+          {{ getHeaderDay (delivery.created) }}
+          <span *ngIf="delivery.carbon_footprint"> - CO₂ {{ delivery.carbon_footprint?.toFixed (2) }}Kg</span>
+        </span>
       </div>
     </ion-item>
     <div class="ion-padding" slot="content">
@@ -77,7 +81,9 @@
         </div>
       </div>
       <br>
+      <!--
       <ion-button fill="outline" routerLink="/private/tabs/transports/detail-delivery/{{ delivery.uid }}"><ion-icon name="add-outline"></ion-icon> &nbsp; Détails</ion-button>
+      -->
     </div>
   </ion-accordion>
 </ng-template>

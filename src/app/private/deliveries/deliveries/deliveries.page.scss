@@ -47,6 +47,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        box-sizing: content-box;
     }
 
     .bullet > div {
@@ -56,11 +57,13 @@
         background-color: black;
         width: 15px;
         height: 15px;
+        box-sizing: content-box;
     }
 
     .bullet.active {
         & > div {
             background-color: #22C452;
+            backdrop-filter: blur(4px);
         }
     }
 }

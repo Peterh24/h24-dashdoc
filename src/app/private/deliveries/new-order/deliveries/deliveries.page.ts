@@ -68,10 +68,12 @@ export class DeliveriesPage implements OnInit {
   */
 
   async addDelivery (delivery: any = null, deliveryType: string = null)  {
+    const defaultContacts = this.transport?.deliveries?.[0]?.tracking_contacts;
     const modal = await this.modalController.create({
       component: DeliveryPage,
       componentProps: {
-        delivery: delivery,
+        delivery,
+        defaultContacts,
         deliveryType: this.isMultipointAuto ? null : deliveryType,
         originMaxSlot: this.getOriginsMaxSlot (this.transport.getOrigins ()),
         destinationMinSlot: this.getDestinationsMinSlot (this.transport.getDestinations ())
@@ -168,6 +170,17 @@ export class DeliveriesPage implements OnInit {
     const dates = destinations.filter ((d) => d?.destination?.slots?.[0]?.start)?.map ((d) => new Date(d?.destination?.slots?.[0]?.start).valueOf ());
     const min = Math.min (...dates);
     return isFinite(min) ? new Date(min).toISOString () : null
+  }
+
+  isSlotExceeded (date: string) {
+    if (!date) {
+      return false;
+    }
+
+    const day = new Date(date).toISOString ().split (/T/)[0];
+    const now = new Date().toISOString ().split (/T/)[0];
+
+    return new Date(day).valueOf() < new Date(now).valueOf ();
   }
 
   synchronize () {

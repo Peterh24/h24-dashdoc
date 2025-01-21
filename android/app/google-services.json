@@ -28,7 +28,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:198133437861:android:e3084a0768755fe57b044c",
         "android_client_info": {
-          "package_name": "io.h24transports"
+          "package_name": "com.h24transports"
         }
       },
       "oauth_client": [],

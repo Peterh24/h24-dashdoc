@@ -7,16 +7,22 @@
     <h3>Enlèvement / Livraison</h3>
 
     <div class="relative" *ngFor="let delivery of transport.deliveries; let index = index" (click)="addDelivery (delivery)">
-      <div class="trash" (click)="deleteDelivery ('origin', delivery)">
-        <ion-icon name="trash-outline"></ion-icon>
+      <div class="with-trash">
+        <div class="delivery multipoint">
+          <ion-badge>{{ index + 1 }}</ion-badge>
+          <div>
+            <div [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: delivery.origin?.address, type: 'origin' }"></div>
+            <hr>
+            <div [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: delivery.destination?.address, type: 'destination' }"></div>
+          </div>
+        </div>
+        <div class="trash" (click)="deleteDelivery ('origin', delivery)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </div>
       </div>
-      <div class="delivery">
-        <ion-badge class="ion-float-right">{{ index + 1 }}</ion-badge>
-        <div [ngTemplateOutlet]="address" [ngTemplateOutletContext]="{ address: delivery.origin?.address }"></div>
-        <hr>
-        <div [ngTemplateOutlet]="address" [ngTemplateOutletContext]="{ address: delivery.destination?.address }"></div>
-      </div>
-      <div class="error" *ngIf="isMultipointDeliveryInvalid (index)">L'horaire d'enlèvement n'est pas valide</div>
+      <div class="error" *ngIf="isMultipointDeliveryInvalid (index)">L'horaire d'enlèvement est invalide</div>
+      <div class="error" *ngIf="isSlotExceeded (delivery.origin?.slots?.[0]?.start)">La date d'enlèvement est dépassée</div>
+      <div class="error" *ngIf="isSlotExceeded (delivery.destination?.slots?.[0]?.start)">La date de livraison est dépassée</div>
     </div>
     <br>
     <ion-button fill="outline" (click)="addDelivery ()"><ion-icon name="add-outline"></ion-icon> &nbsp; Ajouter une adresse d'enlèvement / livraison</ion-button>
@@ -25,14 +31,16 @@
   <div *ngIf="!transport.isMultipoint">
     <h3>Enlèvements</h3>
 
-    <div class="relative" *ngFor="let delivery of origins; let index = index" (click)="addDelivery (delivery)">
-      <div class="trash" (click)="deleteDelivery ('origin', delivery)">
-        <ion-icon name="trash-outline"></ion-icon>
+    <div *ngFor="let delivery of origins; let index = index" (click)="addDelivery (delivery)">
+      <div class="with-trash">
+        <div class="delivery">
+            <div [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: delivery.origin?.address, index, type: 'origin' }"></div>
+        </div>
+        <div class="trash" (click)="deleteDelivery ('origin', delivery)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </div>
       </div>
-      <div class="delivery">
-          <ion-badge class="ion-float-right">{{ index + 1 }}</ion-badge>
-          <div [ngTemplateOutlet]="address" [ngTemplateOutletContext]="{ address: delivery.origin?.address }"></div>
-      </div>
+      <div class="error" *ngIf="isSlotExceeded (delivery.origin?.slots?.[0]?.start)">La date d'enlèvement est dépassée</div>
     </div>
     <br>
     <ion-button fill="outline" (click)="addDelivery (null, 'origin')" [disabled]="addOriginDisabled ()"><ion-icon name="add-outline"></ion-icon> &nbsp; Ajouter une addresse d'enlèvement</ion-button>
@@ -41,13 +49,15 @@
     <h3>Livraisons</h3>
 
     <div class="relative" *ngFor="let delivery of destinations; let index = index" (click)="addDelivery (delivery)">
-      <div class="trash" (click)="deleteDelivery ('destination', delivery)">
-        <ion-icon name="trash-outline"></ion-icon>
+      <div class="with-trash">
+        <div class="delivery">
+          <div [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: delivery.destination?.address, index, type: 'destination' }"></div>
+        </div>
+        <div class="trash" (click)="deleteDelivery ('destination', delivery)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </div>
       </div>
-      <div class="delivery">
-        <ion-badge class="ion-float-right">{{ index + 1 }}</ion-badge>
-        <div [ngTemplateOutlet]="address" [ngTemplateOutletContext]="{ address: delivery.destination?.address }"></div>
-      </div>
+      <div class="error" *ngIf="isSlotExceeded (delivery.destination?.slots?.[0]?.start)">La date de livraison est dépassée</div>
     </div>
     <br>
     <ion-button fill="outline" (click)="addDelivery (null, 'destination')" [disabled]="addDestinationDisabled ()"><ion-icon name="add-outline"></ion-icon> &nbsp; Ajouter une addresse de livraison</ion-button>
@@ -57,9 +67,15 @@
   <br>
 </ion-content>
 
-<ng-template #address let-address="address">
+<ng-template #addressTpl let-address="address" let-index="index" let-type="type">
   <div class="address">
-    <div class="title">{{ address.name }}</div>
-    <div class="city">{{ address.city }} {{ address.postcode }}</div>
+    <ion-badge class="index" *ngIf="index !== undefined">{{ index + 1 }}</ion-badge>
+    <div>
+      <div class="title">{{ address.name }}</div>
+      <div class="city">{{ address.city }}</div>
+      <div class="city">({{ address.postcode }}) - {{ address.country }}</div>
+    </div>
+    <ion-badge class="origin" *ngIf="type === 'origin'">enlèvement</ion-badge>
+    <ion-badge class="destination" *ngIf="type !== 'origin'">livraison</ion-badge>
   </div>
 </ng-template>

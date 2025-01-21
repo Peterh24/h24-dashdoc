@@ -40,7 +40,7 @@ export class AddressPage implements OnInit {
 
   deleteAddress: any;
 
-  @ViewChild("searchbarElem", { read: ElementRef }) private searchbarElem: ElementRef;
+  @ViewChild("searchbarElem", { read: ElementRef }) public searchbarElem: ElementRef;
   constructor(
     private addressService: AddressService,
     private router: Router,
@@ -397,12 +397,18 @@ export class AddressPage implements OnInit {
     return phone.replace (/^\+33/, '0').replace (/\s+/, '').replace (/(\d\d)/g, "$1 ");
   }
 
-  selectAddress (address: any, event: any) {
+  selectAddress (address: any, event: any, modal: any) {
     if (this.isModal) {
       event.preventDefault ();
       event.stopPropagation ();
       event.stopImmediatePropagation ();
-      this.modalController.dismiss (address);
+      if (modal) {
+        modal.dismiss (address).then (() => {
+          this.modalController.dismiss (address);
+        })
+      } else {
+        this.modalController.dismiss (address);
+      }
     }
   }
 

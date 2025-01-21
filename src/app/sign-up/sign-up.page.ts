@@ -58,10 +58,10 @@ export class SignUpPage implements OnInit {
 
         const toast = await this.toastController.create({
           message: 'Votre demande d\'inscription à été envoyée',
-          duration: 5000,
+          duration: 60000,
           position: 'bottom',
           icon: 'checkbox-outline',
-          cssClass: 'toast-success'
+          cssClass: 'success'
         });
     
         await toast.present();

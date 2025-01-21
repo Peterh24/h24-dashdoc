@@ -115,12 +115,20 @@ export class BasketPage implements OnInit, AfterViewInit {
     });
   }
 
+  getDateDay (date: string) {
+    return new Date (date).toLocaleDateString (navigator.languages?.[0] || 'fr');
+  }
+
   getDefaultDeliveryName (delivery: any) {
     if (!delivery.created) {
       return "Demande";
     }
 
-    return "Demande du " + new Date (delivery.created).toLocaleDateString (navigator.languages?.[0] || 'fr')
+    return "Demande du " + this.getDateDay (delivery.created);
+  }
+
+  getHeaderDay (date: string) {
+    return date ? 'Du ' + this.getDateDay (date) : '';
   }
 
   getOrigin (delivery: any) {
@@ -148,7 +156,7 @@ export class BasketPage implements OnInit, AfterViewInit {
     const contacts: any = {};
 
     delivery.deliveries?.map((c: any)=> c.tracking_contacts).flat().forEach ((contact: any) => {
-      contacts[contact.contact.email] = contact;
+      contacts[contact?.contact?.email] = contact;
     });
 
     return Object.values(contacts).map ((c: any) => c?.contact?.first_name + " " + c?.contact?.last_name)
