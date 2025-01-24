@@ -90,7 +90,7 @@
                   </p>
                   <hr>
                   <div>
-                    <ion-button *ngIf="item.status === 'upcoming' || item.status === 'ongoing'">Régler la facture</ion-button>
+                    <!-- TODO <ion-button *ngIf="item.status === 'upcoming' || item.status === 'ongoing'">Régler la facture</ion-button> -->
                     <a class="a-button" target="_blank" [href]="item.file_url" [download]="item.filename" *ngIf="item.file_url"><ion-icon name="document-outline"></ion-icon> &nbsp; Télécharger la facture</a>
                   </div>
                 </ion-label>

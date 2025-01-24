@@ -4,13 +4,13 @@
   <ion-icon name="close-outline" class="close-button ion-float-right" (click)="closeModal ()" *ngIf="isModal"></ion-icon>
   <div class="title" *ngIf="isModal">Mes adresses</div>
   <ion-grid class="page-grid ion-no-padding">
-    <ion-row *ngIf="!isLoading && address.length > 0" class="searchbar">
+    <ion-row *ngIf="!isLoading && address.length > 0 && !isModal" class="searchbar">
       <ion-col>
         <ion-searchbar #searchbarElem placeholder="Rechercher" class="ion-no-padding" [(ngModel)]="searchAddress" (ionInput)="setFilteredItems(searchAddress)"></ion-searchbar>
       </ion-col>
     </ion-row>
 
-    <ion-row *ngIf="!searchbarElem?.nativeElement?.value">
+    <ion-row *ngIf="!searchbarElem?.nativeElement?.value && !isModal">
       <ion-col>
         <ion-button shape="round" (click)="onAddAddress ()"><ion-icon name="location-outline"></ion-icon> &nbsp; Ajouter une adresse</ion-button>
         <ion-button shape="round" fill="outline" id="create-folder"><ion-icon name="folder-outline"></ion-icon> &nbsp; Créer un dossier</ion-button>

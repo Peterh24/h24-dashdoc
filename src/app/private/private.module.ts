@@ -7,13 +7,14 @@ import { IonicModule } from '@ionic/angular';
 import { PrivatePageRoutingModule } from './private-routing.module';
 
 import { PrivatePage } from './private.page';
+import { ProfilePageModule } from './profile/profile.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    PrivatePageRoutingModule
+    PrivatePageRoutingModule,
   ],
   declarations: [PrivatePage]
 })

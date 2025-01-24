@@ -38,18 +38,19 @@
 
 <ng-template #deliveryTpl let-type="type" let-delivery="delivery" let-address="address" let-loads="loads" let-contacts="contacts" let-file="file" let-index="index">
   <ion-accordion class="delivery">
-    <div slot="header" color="light" lines="none">
-      <ion-icon name="chevron-down-outline" class="ion-float-right"></ion-icon>
-      <div class="header">
-        <ion-badge>{{ index + 1 }}</ion-badge>
-        <div>
-          <div class="title">{{ address.name }}</div>
-          <div class="city">{{ address.city }} ({{ address.postcode }})</div>
+    <ion-item slot="header" color="light" lines="none">
+      <div>
+        <div class="header">
+          <ion-badge>{{ index + 1 }}</ion-badge>
+          <div>
+            <div class="title">{{ address.name }}</div>
+            <div class="city">{{ address.city }} ({{ address.postcode }})</div>
+          </div>
         </div>
+        <br>
+        <div class="date" [innerHTML]="formatSlot(delivery.slots?.[0])"></div>
       </div>
-      <br>
-      <div class="date" [innerHTML]="formatSlot(delivery.slots?.[0])"></div>
-    </div>
+    </ion-item>
     <div class="details" slot="content">
       <div class="address"><b>Adresse: </b>{{  address.address }} {{ address.city }} {{ address.postcode }}</div>
       <div class="contact" *ngIf="delivery.contact"><b>Contact: </b>{{ delivery.contact }}</div>
@@ -57,6 +58,7 @@
       <div class="contacts" *ngIf="type === 'origin'"><b>Contacts: </b>{{ getContacts(contacts) }}</div>
       <div class="instructions" *ngIf="delivery.instructions"><b>Instructions: </b>{{ delivery.instructions }}</div>
       <div class="merchandises" *ngIf="type === 'origin' && loads?.length"><b>Marchandises: </b>{{ getMerchandises (loads) }} </div>
+      <div class="reference" *ngIf="delivery.reference"><b>Référence: </b>{{ delivery.reference }}</div>
       <div class="attachments" *ngIf="delivery.file?.name"><b>Pièce jointe: </b>{{ delivery.file.name }} </div>
     </div>
   </ion-accordion>

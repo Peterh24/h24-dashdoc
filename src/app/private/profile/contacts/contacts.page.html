@@ -5,7 +5,7 @@
   <div class="title" *ngIf="isModal">Mes contacts</div>
 
   <ion-grid class="page-grid ion-no-padding">
-    <ion-row *ngIf="!isLoading && contacts.length > 0" class="searchbar">
+    <ion-row *ngIf="!isLoading && contacts.length > 0 && !isModal" class="searchbar">
       <ion-col>
         <ion-searchbar #searchbarElem placeholder="Rechercher" class="ion-no-padding" [(ngModel)]="searchContact" (ionInput)="setFilteredItems(searchContact)"></ion-searchbar>
       </ion-col>

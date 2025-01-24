@@ -5,7 +5,7 @@ import { Address } from './address.model';
 import { AlertController, IonItemSliding, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
-import { ADDRESS_FOLDER_KEY, DASHDOC_API_URL, DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
+import { ADDRESS_FOLDER_KEY, ADDRESS_FOLDERS_KEY, DASHDOC_API_URL, DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
 import { NewAddressPage } from './new-address/new-address.page';
 import { EditAddressPage } from './edit-address/edit-address.page';
 
@@ -77,18 +77,25 @@ export class AddressPage implements OnInit {
 
         this.storage.get(DASHDOC_COMPANY).then ((pk) => {
           this.storage.get (`${ADDRESS_FOLDER_KEY}_${pk}`).then ((addressFolder) => {
-            if (addressFolder == null) {
-              this.folders = DEFAULT_FOLDERS;
-            } else {
-              // on efface le dossier des adresses supprimées
-              Object.keys (addressFolder).forEach ((pk) => {
-                if (!address.find ((a) => a.pk == parseInt(pk))) {
-                  delete addressFolder[pk];
-                }
-              });
-              this.addressFolder = addressFolder;
-              this.folders = [...new Set (Object.values(addressFolder))];
+            if (!addressFolder) {
+              addressFolder = {};
             }
+
+            // on efface le dossier des adresses supprimées
+            Object.keys (addressFolder).forEach ((pk) => {
+              if (!address.find ((a) => a.pk == parseInt(pk))) {
+                delete addressFolder[pk];
+              }
+            });
+            this.addressFolder = addressFolder;
+
+            this.storage.get (`${ADDRESS_FOLDERS_KEY}_${pk}`).then ((folders) => {
+              if (!folders) {
+                folders = DEFAULT_FOLDERS;
+              }
+              folders.sort ((a: any,b: any) => a.localeCompare (b));
+              this.folders = folders;
+            });
 
             this.loadAddress (address);
           })
@@ -102,7 +109,8 @@ export class AddressPage implements OnInit {
     this.subscription.add(() => {
       this.subscription = null;
       this.isLoading = false;
-    })
+    });
+
   }
 
   ionViewWillLeave () {
@@ -115,20 +123,6 @@ export class AddressPage implements OnInit {
   loadAddress (address: any[]) {
     this.address = address;
     this.jsonData = address;
-
-    /*
-    DEFAULT_FOLDERS.forEach ((folder) => {
-      if (!this.folders.find ((f) => f == folder)) {
-        this.folders.push (folder);
-      }
-    })
-    */
-
-    if (this.folders?.length == 0) {
-      this.folders = DEFAULT_FOLDERS;
-    }
-
-    this.folders.sort ((a,b) => a.localeCompare (b));
 
     this.selectFolder (null);
   }
@@ -157,7 +151,7 @@ export class AddressPage implements OnInit {
         isModal: true,
         addressPk: addressPk
       },
-      cssClass: 'custom',
+      cssClass: 'custom-big',
     });
 
     modal.present();
@@ -184,7 +178,7 @@ export class AddressPage implements OnInit {
 
       const toast = await this.toastController.create({
         message: 'L\'adresses a bien été ajoutée à votre liste d\'adresses',
-        duration: 3000,
+        duration: 5000,
         position: 'bottom',
         icon: 'checkbox-outline',
         cssClass: 'success'
@@ -216,7 +210,7 @@ export class AddressPage implements OnInit {
 
       const toast = await this.toastController.create({
         message: 'L\'adresses a bien été supprimée',
-        duration: 3000,
+        duration: 5000,
         position: 'bottom',
         icon: 'checkbox-outline',
         cssClass: 'success'
@@ -244,6 +238,10 @@ export class AddressPage implements OnInit {
     if (name) {
       this.folders.push (name);
       this.folders.sort ((a,b) => a.localeCompare (b));
+
+      this.storage.get(DASHDOC_COMPANY).then ((pk) => {
+        this.storage.set (`${ADDRESS_FOLDERS_KEY}_${pk}`, this.folders);
+      });
     }
     modal.dismiss ();
   }
@@ -270,6 +268,7 @@ export class AddressPage implements OnInit {
               this.folders = this.folders.filter ((f) => f !== folder);
 
               this.storage.set (`${ADDRESS_FOLDER_KEY}_${pk}`, this.addressFolder);
+              this.storage.set (`${ADDRESS_FOLDERS_KEY}_${pk}`, this.folders);
         
               this.selectFolder (null);
             });
@@ -293,6 +292,7 @@ export class AddressPage implements OnInit {
 
       this.folders = this.folders.map ((folder) => folder == this.renameFolderName ? newFolderName : folder);
       this.folders.sort ((a,b) => a.localeCompare (b));
+      this.storage.set (`${ADDRESS_FOLDERS_KEY}_${pk}`, this.folders);
 
       this.selectFolder (null);
 
@@ -383,7 +383,7 @@ export class AddressPage implements OnInit {
     if (notify) {
       const toast = await this.toastController.create({
         message: 'Les adresses ont bien été déplacée dans le dossier ' + folder,
-        duration: 3000,
+        duration: 5000,
         position: 'bottom',
         icon: 'checkbox-outline',
         cssClass: 'success'

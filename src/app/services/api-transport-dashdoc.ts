@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { Storage } from "@ionic/storage-angular";
 import { API_URL, COMPANIES_KEY, DASHDOC_API_URL } from "./constants";
-import { defaultIfEmpty, EMPTY, expand, forkJoin, from, map, mergeMap, reduce, tap } from "rxjs";
+import { catchError, defaultIfEmpty, EMPTY, expand, filter, forkJoin, from, map, mergeMap, of, reduce, tap } from "rxjs";
 import { Address } from "../private/profile/address/address.model";
 import { Request } from "../private/models/request.model";
 import { Deliveries, Delivery } from "../private/deliveries/delivery.model";
@@ -58,7 +58,7 @@ export class ApiTransportDashdoc {
     }
 
     /* Companies */
-    getCompanies (tokens: any) { // TODO à tester
+    getCompanies (tokens: any) {
         return forkJoin([from(this.storage.get (COMPANIES_KEY)), from(this.storage.get (COMPANIES_KEY)).pipe (
           mergeMap ((companies) => forkJoin(
             tokens
@@ -67,13 +67,16 @@ export class ApiTransportDashdoc {
                 this.http.get(`${DASHDOC_API_URL}addresses/`, {
                   headers:  new HttpHeaders().set('Authorization', `Token ${token.token}`)
                 }).pipe (
-                  map ((res: any) => ({ ...res.results[0].created_by, token: token.token }))
+                  catchError (err => EMPTY),
+                  map ((res: any) => ({ ...res.results[0].created_by, token: token.token })),
                 )
               )
           )),
           defaultIfEmpty ([]),
         )]).pipe (
           map((res: any) => (res[0] /* old */ || []).concat (res[1] /* new */ || [])),
+          // suppression des anciens tokens
+          map ((allCompanies: any) => allCompanies.filter ((company: any) => tokens.find ((token: any) => token.token == company.token))),
           tap((allCompanies: any) => {
             this.storage.set (COMPANIES_KEY, allCompanies);
           })
@@ -86,7 +89,7 @@ export class ApiTransportDashdoc {
 
     getCompanyStatus () {
         return this.http.get(`${this.apiUrl}transports/?status__in=created,updated,confirmed,declined,verified`).pipe (
-          map ((res: any) => res.items)
+          map ((res: any) => res.results)
         );
     }
     
@@ -233,7 +236,7 @@ export class ApiTransportDashdoc {
         return new Delivery(
             data.uid,
             data.created,
-            data.deliveries[0].shipper_reference,
+            data.deliveries?.[0]?.shipper_reference,
             data.status,
             data.global_status,
             statuses,
@@ -264,27 +267,46 @@ export class ApiTransportDashdoc {
     }
   
     fromDashdocTransport (transport: any) {
-        transport?.deliveries?.forEach ((delivery: any) => {
-          if (delivery.origin) {
-            delivery.origin.handlers = parseInt(delivery.origin.action || 0);
-          }
+      transport?.deliveries?.forEach ((delivery: any) => {
+        if (delivery.origin) {
+          delivery.origin.handlers = parseInt(delivery.origin.action || 0);
+        }
 
-          if (delivery.destination) {
-            delivery.destination.handlers = parseInt(delivery.destination.action || 0);
-          }
-        });
+        if (delivery.destination) {
+          delivery.destination.handlers = parseInt(delivery.destination.action || 0);
+        }
+      });
+    }
+
+    // TODO remove this
+    toH24Apiv1 (transport: any) {
+      transport.created = new Date().toISOString();
+      transport.created_by = "Dev test";
+      transport.creation_method = "api";
+      transport.instructions = "Instructions";
+      transport.shipper_reference = transport?.deliveries?.[0]?.shipper_reference;
+
+      transport.deliveries?.forEach ((delivery: any) => {
+        delivery.origin.loading_instructions = delivery.origin.instructions || "instructions";
+        delivery.origin.unloading_instructions = delivery.origin.instructions || "instructions";
+
+        delivery.destination.loading_instructions = delivery.destination.instructions || "instructions";
+        delivery.destination.unloading_instructions = delivery.destination.instructions || "instructions";
+      });
     }
 
     toDashdocTransport (transport: any) {
-        transport?.deliveries?.forEach ((delivery: any) => {
-          if (delivery.origin) {
-            delivery.origin.action = String(delivery.origin.handlers || 0);
-            delete delivery.origin.handlers;
-          }
-          if (delivery.destination) {
-            delivery.destination.action = String(delivery.destination.handlers || 0);
-            delete delivery.destination.handlers;
-          }
-        })
+      this.toH24Apiv1 (transport);
+
+      transport?.deliveries?.forEach ((delivery: any) => {
+        if (delivery.origin) {
+          delivery.origin.action = String(delivery.origin.handlers || 0);
+          delete delivery.origin.handlers;
+        }
+        if (delivery.destination) {
+          delivery.destination.action = String(delivery.destination.handlers || 0);
+          delete delivery.destination.handlers;
+        }
+      })
     }
 }  

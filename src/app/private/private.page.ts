@@ -2,13 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
 import { AuthService } from '../services/auth.service';
-import { DashdocService } from '../services/dashdoc.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subscription, firstValueFrom } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { DASHDOC_API_URL, DASHDOC_COMPANY, USER_STORAGE_KEY } from '../services/constants';
+import { DASHDOC_COMPANY } from '../services/constants';
 import { CompanyService } from '../services/company.service';
 import { NotificationsService } from '../services/notifications.service';
+import { ConfigService } from '../services/config.service';
 
 @Component({
   selector: 'app-private',
@@ -21,8 +20,11 @@ export class PrivatePage {
   showBackButton: boolean = true;
   companyName: string;
   userHasChooseCompany: boolean;
+  showClientMenu = false;
+
   constructor(
     private platform: Platform,
+    public config: ConfigService,
     public authService: AuthService,
     public companyService: CompanyService,
     public notifications: NotificationsService,
@@ -31,6 +33,8 @@ export class PrivatePage {
   ) { }
 
   ionViewWillEnter() {
+    this.showClientMenu = false;
+
     this.userhasChooseCompanySub = this.companyService.userHasChooseCompany.subscribe((res) => {
       this.router.events.subscribe((event) => {
         if (event instanceof NavigationEnd) {
@@ -57,6 +61,16 @@ export class PrivatePage {
     });
   }
 
+  isActive (page: string) {
+    return document.location.href.includes (page);
+  }
+
+  toggleShowClientMenu () {
+    if (this.config.isDesktop) {
+      this.showClientMenu = !this.showClientMenu;
+    }
+  }
+
   isBackButtonVisible() {
     const currentUrl = this.platform.url();
     if(currentUrl.includes('/home') || currentUrl.includes('/profile/details')) {
@@ -66,8 +80,6 @@ export class PrivatePage {
   }
 
   signOut() {
-
-
     this.authService.signOut();
   }
 

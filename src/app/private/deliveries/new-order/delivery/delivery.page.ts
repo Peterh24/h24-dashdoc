@@ -528,7 +528,7 @@ export class DeliveryPage implements OnInit {
     this.modalController.dismiss ({ 
       origin,
       destination,
-      planned_loads,
+      planned_loads, // TODO doit être défini pour les enlèvements uniquement
       tracking_contacts: this.contacts,
       file: this.fileToUpload 
     });

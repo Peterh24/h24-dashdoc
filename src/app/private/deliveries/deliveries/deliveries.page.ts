@@ -90,6 +90,9 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
 
     this.subscription = this.deliveriesService.fetchDeliveries(status).subscribe({
       next: (deliveries) => {
+        deliveries.forEach ((delivery: any) => {
+          delivery.deliveries = this.transportService.loadDeliveries(delivery.deliveries);
+        });
         this.deliveries = deliveries;
         if (this.tab === 1) {
           this.deliveries1 = deliveries.length;
@@ -108,6 +111,9 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
 
   loadMoreDeliveries(event: any) {
     this.deliveriesService.fetchDeliveries().subscribe((additionalDeliveries) => {
+      additionalDeliveries.forEach ((delivery: any) => {
+        delivery.deliveries = this.transportService.loadDeliveries(delivery.deliveries);
+      });
       this.deliveries = this.deliveries.concat(additionalDeliveries);
       event.target.complete();
     });
@@ -128,6 +134,10 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
   }
 
   getDateDay (date: string) {
+    if (!date) {
+      return '';
+    }
+
     return new Date (date).toLocaleDateString (navigator.languages?.[0] || 'fr');
   }
 
@@ -143,6 +153,27 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     return date ? 'Du ' + this.getDateDay (date) : '';
   }
 
+  getAllDeliveries (deliveries: any) {
+    const all: any = [];
+
+    deliveries?.forEach ((delivery: any) => {
+      if (delivery.origin?.address) {
+        all.push (delivery.origin);
+      }
+
+      if (delivery.destination?.address) {
+        all.push (delivery.destination);
+      }
+    });
+
+    if (all.length) {
+      all[0].title = 'De';
+      all[all.length - 1].title = 'À'
+    }
+
+    return all;
+  }
+
   getOrigin (delivery: any) {
     return delivery.deliveries?.[0]?.origin;
   }
@@ -152,16 +183,45 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     return destinations ? delivery.deliveries[destinations - 1]?.destination : {};
   }
 
+  getOriginDate (delivery: any) {
+    const origin = this.getOrigin(delivery);
+    if (!origin) {
+      return '';
+    }
+
+    return this.getDateDay(origin?.slots?.[0]?.start);
+  }
+
+  getDestinationDate (delivery: any) {
+    const destination = this.getDestination(delivery);
+    if (!destination) {
+      return '';
+    }
+
+    return this.getDateDay(destination?.slots?.[0]?.start);
+  }
+
   getAllPlannedLoads (delivery: any) {
     const merchandises: any = {};
 
-    delivery.deliveries.map ((d: any) => d.loads).forEach ((loads: any) => {
-      loads.forEach ((load: any) => { 
+    delivery.deliveries.map ((d: any) => d.planned_loads).forEach ((loads: any) => {
+      loads?.forEach ((load: any) => { 
         merchandises[load.description] = true;
       })
     });
 
     return Object.keys (merchandises).sort ((a, b) => a.localeCompare (b)).join (',');
+  }
+
+  getContacts (delivery: any) {
+    const contacts: any = {};
+
+    delivery.deliveries?.map((c: any)=> c.tracking_contacts).flat().forEach ((contact: any) => {
+      contacts[contact?.contact?.email] = contact;
+    });
+
+    return Object.values(contacts).map ((c: any) => c?.contact?.first_name + " " + c?.contact?.last_name)
+      .join (", ");
   }
 
   getStatusIndex (delivery: any) {

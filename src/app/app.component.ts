@@ -60,6 +60,7 @@ export class AppComponent {
       'checkbox-outline': 'assets/lucide/square-check-big.svg',
       'checkmark-outline': 'assets/lucide/check.svg',
       'chevron-forward-outline': 'assets/lucide/chevron-right.svg',
+      'chevron-down': 'assets/lucide/chevron-down.svg',
       'chevron-left': 'assets/lucide/chevron-left.svg',
       'close': 'assets/lucide/x.svg',
       'close-outline': 'assets/lucide/x.svg',
@@ -90,6 +91,7 @@ export class AppComponent {
       'time': 'assets/lucide/clock.svg',
       'trash': 'assets/lucide/trash.svg',
       'trash-outline': 'assets/lucide/trash.svg',
+      'truck': 'assets/lucide/truck.svg'
     });
   }
 }

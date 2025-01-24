@@ -1,7 +1,7 @@
-<app-header [defaultHref]="'/private'"></app-header>
+<app-header [defaultHref]="'/private'" *ngIf="config.isMobile"></app-header>
 
 <ion-content>
-  <div class="user-header">
+  <div class="user-header" *ngIf="config.isMobile">
     <div><ion-icon name="person-circle-outline"></ion-icon></div>
     <div class="user-name">
       {{ form.get('firstname').value }}
@@ -9,7 +9,7 @@
     </div>
   </div>
 
-  <div class="alert-error" *ngIf="success === false">
+  <div class="alert-error" *ngIf="success === false && config.isMobile">
     Les informations du profile ne sont pas disponibles
   </div>
 

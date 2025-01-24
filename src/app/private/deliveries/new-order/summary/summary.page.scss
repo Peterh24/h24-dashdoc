@@ -50,6 +50,10 @@ ion-modal {
         font-size: 14px;
     }
 
+    .details {
+        margin-left: 15px;
+    }
+
     .details > div {
         margin-top: 7px;
         margin-bottom: 7px;
@@ -109,6 +113,10 @@ ion-modal {
         max-width: 200px;
         margin: auto;
     }
+}
+
+.date {
+    font-size: 14px;
 }
 
 .edit-button {

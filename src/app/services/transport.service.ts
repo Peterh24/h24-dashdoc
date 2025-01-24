@@ -85,20 +85,20 @@ export class TransportService {
     this.type = 'audiovisual';
     this.vehicle = transport.requested_vehicle;
     this.isMultipoint = transport.is_multipoint;
-    this.deliveries = this.loadDeliveries (transport.deliveries);
+    this.deliveries = this.loadDeliveries (transport.deliveries, this.isMultipoint);
 
     this.sortDeliveries ();
 
     console.log ('load', transport, this);
   }
 
-  loadDeliveries (deliveriesJson: any) {
+  loadDeliveries (deliveriesJson: any, isMultipoint = false) {
     const deliveries: any[] = deliveriesJson.map ((d: any) => this.loadDelivery (d));
 
     const isSingleOrigin = this.utilsService.areAllValuesIdentical(deliveriesJson, 'origin', 'address');
     const isSingleDestination = this.utilsService.areAllValuesIdentical(deliveriesJson, 'destination', 'address');
 
-    if (this.isMultipoint || !isSingleOrigin && !isSingleDestination) {
+    if (isMultipoint || !isSingleOrigin && !isSingleDestination) {
       this.isMultipoint = true;
     } else if (isSingleOrigin) {
       this.isMultipoint = false;
@@ -160,6 +160,10 @@ export class TransportService {
   }
 
   loadAddress (addressJson: any) {
+    if (!addressJson) {
+      return {};
+    }
+    
     const { pk, name, address, city, postcode, country, latitude, longitude } = addressJson;
     return { pk, name, address, city, postcode, country, latitude, longitude };
   }

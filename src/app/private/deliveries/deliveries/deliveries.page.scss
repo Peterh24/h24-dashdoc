@@ -1,3 +1,23 @@
+.two-columns {
+    & {
+        display: flex;
+        flex-wrap: wrap;
+        font-size: 10pt;
+    }
+
+    & > div {
+        flex: 1 1 50%;
+        box-sizing: border-box;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .title {
+        color: #9c9c9c;
+        margin-bottom: 5px;
+    }
+}
+
 .steps-container {
     & {
         width: 300px;

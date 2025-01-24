@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
+import { EMPTY, mergeMap } from 'rxjs';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { API_URL, DASHDOC_API_URL, DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
@@ -122,6 +123,11 @@ export class SummaryPage implements OnInit {
 
   async onSubmit (deleteDraft = false) {
     const transport = await this.buildTransport ();
+    // TODO: gestion de l'upload des fichiers
+    transport?.deliveries?.forEach ((delivery: any) => {
+      delete delivery.file;
+    });
+
     let request;
 
     if (transport.uid) {
@@ -130,15 +136,9 @@ export class SummaryPage implements OnInit {
       request = this.apiTransport.createTransport (transport);
     }
 
-    // TODO
-    //    request = this.http.post (`${API_URL}../transports/new`, transport);
-
-    // TODO: gestion de l'upload des fichiers
-    transport?.deliveries?.forEach ((delivery: any) => {
-      delete delivery.file;
-    });
-
-    request.subscribe({
+    request.pipe(
+      mergeMap ((res) => ApiTransportService.isDashdocModel ? this.http.post (`${API_URL}../transports/new`, transport) : EMPTY) // TODO 
+    ).subscribe({
       next: async res => {
         // On renouvelle le token firebase pour éviter qu'il n'expire bientot
         this.transport.resetTransport ();
@@ -153,7 +153,7 @@ export class SummaryPage implements OnInit {
             });
           });
         }
-  
+
         const confirm = await this.alertController.create({
           header: 'Bravo, votre course a été enregistrée',
           message: 'Votre course a été validée et nous est parvenue, en cas de besoin d\'informations complementaires, nous vous contacterons sur le numero de téléphone présent dans votre profil.',
@@ -161,7 +161,7 @@ export class SummaryPage implements OnInit {
             {
               text: 'Compris',
               handler: () => {
-                this.router.navigateByUrl('/private/tabs/transports/basket');
+                  this.router.navigateByUrl('/private/tabs/transports/basket');
               }
             }
           ],
@@ -170,6 +170,8 @@ export class SummaryPage implements OnInit {
         await confirm.present();
       },
       error: async (error) => {
+        console.log (error);
+
         const alert = await this.alertController.create({
           header: "Echec de la requête: " + error.error.message,
           buttons: ['Compris'],
@@ -217,6 +219,7 @@ export class SummaryPage implements OnInit {
         // Single origin
         destinations.forEach ((d) => {
           delete d.origin;
+          delete d.planned_loads; // TODO
           deliveries.push ({
             ...origins[0],
             ...d

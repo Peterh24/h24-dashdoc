@@ -6,6 +6,7 @@ import { IonModal } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
 import { take } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
+import { ConfigService } from 'src/app/services/config.service';
 import { API_URL, DASHDOC_COMPANY } from 'src/app/services/constants';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import { phoneValidator, regex } from 'src/app/utils/regex';
@@ -31,6 +32,7 @@ export class ProfilePage implements OnInit {
     private storage: Storage,
     private http: HttpClient,
     private formBuilder: FormBuilder,
+    public config: ConfigService,
     public authService: AuthService,
     public notifications: NotificationsService,
     private router: Router

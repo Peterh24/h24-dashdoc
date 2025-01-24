@@ -17,6 +17,7 @@ import { HeaderModule } from 'src/app/components';
     ProfilePageRoutingModule,
     HeaderModule
   ],
-  declarations: [ProfilePage]
+  declarations: [ProfilePage],
+  exports: [ProfilePage]
 })
 export class ProfilePageModule {}

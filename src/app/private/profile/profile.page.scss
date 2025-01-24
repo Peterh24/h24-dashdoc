@@ -54,3 +54,9 @@ ion-modal {
       flex-grow: 1;
     }
 }
+
+@media (min-width: 768px) {
+    ion-item {
+        margin-top: 0px;
+    }
+}

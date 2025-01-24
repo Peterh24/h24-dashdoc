@@ -163,7 +163,7 @@
   </div>
 </ion-content>
 
-<ion-modal id="merchandise-modal" class="custom" [isOpen]="!!merchandiseEdit" (willDismiss)="setMerchandiseEdit(null)" #merchandiseModal>
+<ion-modal id="merchandise-modal" class="custom-big" [isOpen]="!!merchandiseEdit" (willDismiss)="setMerchandiseEdit(null)" #merchandiseModal>
   <ng-template>
     <div class="wrapper" [formGroup]="merchandiseForm" *ngIf="merchandiseForm">
       <ion-icon name="close-outline" class="ion-float-right" (click)="setMerchandiseEdit (null)"></ion-icon>

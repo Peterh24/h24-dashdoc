@@ -22,7 +22,7 @@ export class InvoiceService {
   fetchInvoices(): Observable<Invoice[]> {
     return from(this.storage.get('DASHDOC_COMPANY')).pipe(
       switchMap(companyPk => {
-        return this.http.get(`${API_URL}carrier/invoices/${companyPk}`).pipe(
+        return this.http.get(`${API_URL}invoices/${companyPk}`).pipe( // TODO
           map((resData: any) => {
             const invoices: Invoice[] = [];
             resData.invoices.forEach((jsonData: any) => {
