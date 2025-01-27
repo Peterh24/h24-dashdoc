@@ -78,6 +78,7 @@ export class AppComponent {
       'key-outline': 'assets/lucide/key-round.svg',
       'location': 'assets/lucide/map-pin.svg',
       'location-outline': 'assets/lucide/map-pin.svg',
+      'log-out': 'assets/lucide/log-out.svg',
       'logo-euro': 'assets/lucide/receipt-text.svg',
       'notifications-outline': 'assets/lucide/bell.svg',
       'person-circle': 'assets/lucide/circle-user-round.svg',

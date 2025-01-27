@@ -9,6 +9,7 @@ import { AddressPageRoutingModule } from './address-routing.module';
 import { AddressPage } from './address.page';
 import { HeaderModule } from 'src/app/components';
 import { NewAddressPageModule } from './new-address/new-address.module';
+import { ProfileComponentModule } from '../profile.component.module';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import { NewAddressPageModule } from './new-address/new-address.module';
     IonicModule,
     AddressPageRoutingModule,
     HeaderModule,
-    NewAddressPageModule
+    NewAddressPageModule,
+    ProfileComponentModule
   ],
   declarations: [AddressPage]
 })

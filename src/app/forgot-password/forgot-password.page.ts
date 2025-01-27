@@ -4,11 +4,12 @@ import { StorageService } from '../utils/services/storage.service';
 import { regex, regexErrors } from '../utils/regex';
 import { AuthService } from '../services/auth.service';
 import { AlertController } from '@ionic/angular';
+import { ConfigService } from '../services/config.service';
 
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.page.html',
-  styleUrls: ['./forgot-password.page.scss'],
+  styleUrls: ['./forgot-password.page.scss', '../auth/auth.desktop.page.scss'],
 })
 export class ForgotPasswordPage implements OnInit {
   regexErrors: any = regexErrors;
@@ -21,8 +22,7 @@ export class ForgotPasswordPage implements OnInit {
   constructor(
     private authService: AuthService,
     private storageService: StorageService,
-    private alertController: AlertController,
-    private cdRef: ChangeDetectorRef
+    public config: ConfigService
   ) { }
 
   ngOnInit() {

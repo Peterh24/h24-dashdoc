@@ -1,4 +1,7 @@
-ion-content {
-    --padding-start: 30px;
-    --padding-end: 30px;
+@media (max-width: 768px) {
+    ion-content  {
+        --padding-start: 15px;
+        --padding-end: 15px;
+        --padding-top: 15px;
+    }
 }

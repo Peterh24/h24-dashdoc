@@ -1,48 +1,19 @@
-<ion-header>
-  <ion-toolbar *ngIf="!!config.isDesktop">
-      <div class="menu">
-        <div [routerLink]="['/private/tabs/home']">
-          <ion-img src="assets/logo-h24-noir-fond-blanc.jpeg" class="toolbar-header-logo" slot="start" alt="H24 Transports"></ion-img>
-        </div>
-        <div [class.active]="isActive ('/tabs/home')" [routerLink]="['/private/tabs/home']">
-          <ion-icon name="home"></ion-icon> Home
-        </div>
-        <div [class.active]="isActive ('/tabs/transports/basket')" [routerLink]="['/private/tabs/transports/basket']" [class.disabled]="!userHasChooseCompany">
-          <ion-icon name="cart-outline"></ion-icon> Panier
-        </div>
-        <div [class.active]="isActive ('/tabs/transports/deliveries')" [routerLink]="['/private/tabs/transports/deliveries']" [class.disabled]="!userHasChooseCompany">
-          <ion-icon name="truck"></ion-icon> Transport
-        </div>
-      </div>
-      <div class="client" slot="end">
-        <ion-icon class="toggle" name="person-circle" (click)="toggleShowClientMenu()"></ion-icon>
-        <ion-icon class="chevron" name="chevron-down"></ion-icon>
-      </div>
-  </ion-toolbar>
-</ion-header>
-
-<!--
-<div class="client-menu" *ngIf="showClientMenu">
-  <app-profile></app-profile>
-</div>
--->
-
 <ion-tabs>
   <ion-tab-bar slot="bottom" *ngIf="!config.isDesktop">
-    <ion-tab-button [routerLink]="['/private/tabs/home']">
+    <ion-tab-button routerLink="/private/tabs/home">
       <ion-label>Acceuil</ion-label>
       <ion-icon name="home"></ion-icon>
     </ion-tab-button>
-    <ion-tab-button [routerLink]="['/private/tabs/transports/basket']" [disabled]="!userHasChooseCompany">
+    <ion-tab-button routerLink="/private/tabs/transports/basket" [disabled]="!userHasChooseCompany">
       <ion-badge color="danger" *ngIf="companyService.companyStatusBadge">{{ companyService.companyStatusBadge }}</ion-badge>
       <ion-label>Pannier</ion-label>
       <ion-icon name="cart-outline"></ion-icon>
     </ion-tab-button>
-    <ion-tab-button [routerLink]="['/private/tabs/transports/deliveries']" [disabled]="!userHasChooseCompany">
+    <ion-tab-button routerLink="/private/tabs/transports/deliveries" [disabled]="!userHasChooseCompany">
       <ion-label>Transports</ion-label>
       <ion-icon name="location"></ion-icon>
     </ion-tab-button>
-    <ion-tab-button [routerLink]="['/private/tabs/profile']">
+    <ion-tab-button routerLink="/private/tabs/profile">
       <ion-badge color="danger" *ngIf="notifications.notifications.length">{{ notifications.notifications.length }}</ion-badge>
       <ion-label>Profil</ion-label>
       <ion-icon name="person-circle"></ion-icon>

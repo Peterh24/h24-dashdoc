@@ -1,53 +1,56 @@
-<ion-content class="ion-padding">
-  <form [formGroup]="form">
-    <div>
-      <div class="logo-container">
-        <img class="header-logo" src="https://h24-public-website.s3.eu-west-3.amazonaws.com/assets/logo-noir-sur-fond-blanc.jpeg" alt="H24 Transports">
-      </div>
-      <h1 class="ion-text-nowrap">
-        Le transport <br>
-        fiable et efficace
-      </h1>
-    </div>
-
-    <div>
-      <ion-input
-        label="Adresse email"
-        type="email"
-        autocomplete="email"
-        label-placement="floating"
-        fill="outline"
-        shape="round"
-        placeholder="Adresse email"
-        errorText="{{ regexErrors['email'] }}"
-        formControlName="email">
-      </ion-input>
-
-      <ion-input
-        label="Mot de passe"
-        type="password"
-        label-placement="floating"
-        fill="outline"
-        shape="round"
-        placeholder="Mot de passe"
-        errorText="Merci d'indiquer un mot de passe valide"
-        formControlName="password" #password>
-        <ion-icon name="eye-closed" slot="end" (click)="toggleShowPassword (password)"></ion-icon>
-      </ion-input>
-
-      <div class="ion-text-end">
-        <ion-button [routerLink]="['/forgot-password']" type="button" class="btn-forgot ion-no-padding ion-no-margin" fill="clear">Mot de passe oublié ?</ion-button>
+<ion-content> 
+  <div class="container">
+    <form [formGroup]="form">
+      <div>
+        <div class="logo-container">
+          <img class="header-logo" src="https://h24-public-website.s3.eu-west-3.amazonaws.com/assets/logo-noir-sur-fond-blanc.jpeg" alt="H24 Transports">
+        </div>
+        <h1 class="ion-text-nowrap">
+          Le transport <br>
+          fiable et efficace
+        </h1>
       </div>
 
-      <div class="buttons">
-        <ion-button (click)="onSubmit()" color="primary" shape="round" [disabled]="!form.valid">
-          Connexion
-        </ion-button>
+      <div>
+        <ion-input
+          label="Adresse email"
+          type="email"
+          autocomplete="email"
+          label-placement="floating"
+          fill="outline"
+          shape="round"
+          placeholder="Adresse email"
+          errorText="{{ regexErrors['email'] }}"
+          formControlName="email">
+        </ion-input>
 
-        <ion-button routerLink="/sign-up" shape="round" fill="outline">
-          Créer un compte
-        </ion-button>
+        <ion-input
+          label="Mot de passe"
+          type="password"
+          label-placement="floating"
+          fill="outline"
+          shape="round"
+          placeholder="Mot de passe"
+          errorText="Merci d'indiquer un mot de passe valide"
+          formControlName="password" #password>
+          <ion-icon name="eye-closed" slot="end" (click)="toggleShowPassword (password)"></ion-icon>
+        </ion-input>
+
+        <div class="ion-text-end">
+          <ion-button [routerLink]="['/forgot-password']" type="button" class="btn-forgot ion-no-padding ion-no-margin" fill="clear">Mot de passe oublié ?</ion-button>
+        </div>
+
+        <div class="buttons">
+          <ion-button (click)="onSubmit()" color="primary" shape="round" [disabled]="!form.valid">
+            Connexion
+          </ion-button>
+
+          <ion-button routerLink="/sign-up" shape="round" fill="outline">
+            Créer un compte
+          </ion-button>
+        </div>
       </div>
-    </div>
-  </form>
+    </form>
+    <div class="truck-big"><img src="assets/truck-big.jpeg"></div>
+  </div>
 </ion-content>

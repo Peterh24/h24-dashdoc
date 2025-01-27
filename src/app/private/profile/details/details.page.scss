@@ -1,27 +1,3 @@
-ion-content  {
-  --padding-top: 15px;
-  --padding-start: 15px;
-  --padding-end: 15px;
-  display: flex;
-}
-
-.user-header {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin-top: 30px;
-  margin-bottom: 30px;
-  text-align: center;
-}
-
-.user-header ion-icon {
-  font-size: 30pt;
-}
- 
-.user-infos {
-  margin-top: 60px;
-}
-
 ion-button.submit {
   display: block;
   margin-top: 30px;
@@ -42,5 +18,13 @@ ion-item {
 
   ion-icon {
     margin-right: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  ion-content  {
+    --padding-start: 15px;
+    --padding-end: 15px;
+    --padding-top: 15px;
   }
 }

@@ -1,4 +1,4 @@
-<ion-header class="ion-no-border">
+<ion-header class="ion-no-border" *ngIf="config.isMobile">
   <ion-toolbar>
     <ion-buttons [slot]="slot" *ngIf="defaultHref">
       <ion-back-button [defaultHref]="defaultHref" text="" icon="chevron-left"></ion-back-button>
@@ -20,3 +20,32 @@
     -->
   </ion-toolbar>
 </ion-header>
+
+<ion-header *ngIf="config.isDesktop">
+  <ion-toolbar>
+      <div class="menu">
+        <div (click)="goto('/private/tabs/home')">
+          <ion-img src="assets/logo-h24-noir-fond-blanc.jpeg" class="toolbar-header-logo" slot="start" alt="H24 Transports"></ion-img>
+        </div>
+        <div [class.active]="isActive ('/tabs/home')" (click)="goto('/private/tabs/home')">
+          <ion-icon name="home"></ion-icon> Home
+        </div>
+        <div [class.active]="isActive ('/tabs/transports/basket')" (click)="goto('/private/tabs/transports/basket')" [class.disabled]="!userHasChooseCompany">
+          <ion-icon name="cart-outline"></ion-icon> Panier
+        </div>
+        <div [class.active]="isActive ('/tabs/transports/deliveries')" (click)="goto('/private/tabs/transports/deliveries')" [class.disabled]="!userHasChooseCompany">
+          <ion-icon name="truck"></ion-icon> Transport
+        </div>
+      </div>
+      <div class="client" (click)="goto('/private/tabs/profile')" slot="end">
+        <ion-icon class="toggle" name="person-circle" (click)="toggleShowClientMenu()"></ion-icon>
+        <ion-icon class="chevron" name="chevron-down"></ion-icon>
+      </div>
+  </ion-toolbar>
+</ion-header>
+<!--
+<div class="client-menu" *ngIf="showClientMenu">
+  <app-profile></app-profile>
+</div>
+-->
+

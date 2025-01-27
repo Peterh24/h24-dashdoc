@@ -9,6 +9,7 @@ import { InvoicePageRoutingModule } from './invoice-routing.module';
 import { InvoicePage } from './invoice.page';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { HeaderModule } from 'src/app/components';
+import { ProfileComponentModule } from '../profile.component.module';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import { HeaderModule } from 'src/app/components';
     IonicModule,
     InvoicePageRoutingModule,
     SharedModule,
-    HeaderModule
+    HeaderModule,
+    ProfileComponentModule
   ],
   declarations: [InvoicePage]
 })

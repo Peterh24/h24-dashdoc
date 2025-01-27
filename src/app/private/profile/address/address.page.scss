@@ -1,9 +1,3 @@
-ion-content  {
-  --padding-start: 15px;
-  --padding-end: 15px;
-  --padding-top: 15px;
-}
-
 ion-accordion-group {
   margin: 0 15px 0 10px;
 }
@@ -195,4 +189,25 @@ ion-item-option {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+@media (max-width: 768px) {
+  ion-content  {
+    --padding-start: 15px;
+    --padding-end: 15px;
+    --padding-top: 15px;
+  }
+}
+
+@media (min-width: 768px) {
+  .page {
+    padding-right: 30% !important;
+  }
+
+  .move-to-folder-desktop {
+    position: absolute;
+    right: 30px;
+    top: 20px;
+    width: calc(30% - 60px);
+  }
 }

@@ -1,112 +1,114 @@
 <app-header [defaultHref]="'/private/tabs/profile'"></app-header>
 
 <ion-content>
-  <ion-grid class="page-grid ion-no-padding">
-    <ion-row class="ion-padding-start ion-padding-end">
-      <ion-col>
-        <ion-searchbar #searchbarElem placeholder="Rechercher" class="ion-no-padding" [(ngModel)]="searchInvoice" (ionInput)="setFilteredItems(searchInvoice)"></ion-searchbar>
-      </ion-col>
-    </ion-row>
-    <ion-row class="ion-padding-start ion-padding-end">
-      <ion-col>
-        <h2>Factures</h2>
-      </ion-col>
-    </ion-row>
+  <div class="profile-container">
+    <app-profile-component [desktopOnly]="true"></app-profile-component>
+    <div class="page">
+      <ion-grid class="page-grid ion-no-padding">
+        <ion-row class="ion-padding-start ion-padding-end">
+          <ion-col>
+            <ion-searchbar #searchbarElem placeholder="Rechercher" class="ion-no-padding" [(ngModel)]="searchInvoice" (ionInput)="setFilteredItems(searchInvoice)"></ion-searchbar>
+          </ion-col>
+        </ion-row>
+        <ion-row class="ion-padding-start ion-padding-end">
+          <ion-col>
+            <h2>Factures</h2>
+          </ion-col>
+        </ion-row>
 
-    <ion-row class="ion-padding-start ion-padding-end ion-padding-bottom">
-      <ion-col>
-        <ion-segment value="all" mode="ios" (ionChange)="filterChanged($event)" value="all" #filter>
-          <ion-segment-button color="primary" value="all">
-            <ion-label>Toutes</ion-label>
-          </ion-segment-button>
-          <ion-segment-button color="primary" value="paid">
-            <ion-label>Payées</ion-label>
-          </ion-segment-button>
-          <ion-segment-button color="primary" value="upcoming">
-            <ion-label>A payer</ion-label>
-          </ion-segment-button>
-          <ion-segment-button color="primary" value="cancelled">
-            <ion-label>Annulées</ion-label>
-          </ion-segment-button>
-        </ion-segment>
-      </ion-col>
-    </ion-row>
+        <ion-row class="ion-padding-start ion-padding-end ion-padding-bottom">
+          <ion-col>
+            <ion-segment value="all" mode="ios" (ionChange)="filterChanged($event)" value="all" #filter>
+              <ion-segment-button color="primary" value="all">
+                <ion-label>Toutes</ion-label>
+              </ion-segment-button>
+              <ion-segment-button color="primary" value="paid">
+                <ion-label>Payées</ion-label>
+              </ion-segment-button>
+              <ion-segment-button color="primary" value="upcoming">
+                <ion-label>A payer</ion-label>
+              </ion-segment-button>
+              <ion-segment-button color="primary" value="cancelled">
+                <ion-label>Annulées</ion-label>
+              </ion-segment-button>
+            </ion-segment>
+          </ion-col>
+        </ion-row>
 
-    <ion-row *ngIf="isLoading">
-      <ion-col class="ion-text-center">
-        <ion-spinner  color="primary"></ion-spinner>
-      </ion-col>
-    </ion-row>
+        <ion-row *ngIf="isLoading">
+          <ion-col class="ion-text-center">
+            <ion-spinner  color="primary"></ion-spinner>
+          </ion-col>
+        </ion-row>
 
-    <ion-row *ngIf="!isLoading && invoices.length <= 0">
-      <ion-col>
-        <p class="ion-text-center">
-          Vous n'avez pas de factures de disponible
-        </p>
-      </ion-col>
-    </ion-row>
+        <ion-row *ngIf="!isLoading && invoices.length <= 0">
+          <ion-col>
+            <p class="ion-text-center">
+              Vous n'avez pas de factures de disponible
+            </p>
+          </ion-col>
+        </ion-row>
 
-    <ion-row *ngIf="noFilter">
-      <ion-col>
-        <p class="ion-text-center">
-          Vous n'avez pas de factures avec ce status
-        </p>
-      </ion-col>
-    </ion-row>
+        <ion-row *ngIf="noFilter">
+          <ion-col>
+            <p class="ion-text-center">
+              Vous n'avez pas de factures avec ce status
+            </p>
+          </ion-col>
+        </ion-row>
 
-    <ion-row *ngIf="!isLoading && invoices?.length">
-      <ion-col>
-        <ion-accordion-group #accordionGroup>
-          <ion-item-sliding #slidingItem *ngFor="let item of jsonData">
-            <ion-text *ngIf="noFilter">Vous n'avez pas de transport avec ce status</ion-text>
-            <ion-item-options side="start">
-              <ion-item-option color="success" (click)="onDownload(item.file_url)">
-                <ion-icon name="create" slot="icon-only"></ion-icon>
-              </ion-item-option>
-            </ion-item-options>
-            <ion-accordion  [value]="item.id" >
-              <ion-item slot="header" lines="none">
-                <div class="accordion-header">
-                  <div class="accordion-row">
-                    <ion-label>
-                      <h3>{{item.invoice_number || 'Pas de référence'}}</h3>
+        <ion-row *ngIf="!isLoading && invoices?.length">
+          <ion-col>
+            <ion-accordion-group #accordionGroup>
+              <ion-item-sliding #slidingItem *ngFor="let item of jsonData">
+                <ion-text *ngIf="noFilter">Vous n'avez pas de transport avec ce status</ion-text>
+                <ion-item-options side="start">
+                  <ion-item-option color="success" (click)="onDownload(item.file_url)">
+                    <ion-icon name="create" slot="icon-only"></ion-icon>
+                  </ion-item-option>
+                </ion-item-options>
+                <ion-accordion  [value]="item.id" >
+                  <ion-item slot="header" lines="none">
+                    <div class="accordion-header">
+                      <div class="accordion-row">
+                        <ion-label>
+                          <h3>{{item.invoice_number || 'Pas de référence'}}</h3>
+                        </ion-label>
+                        <ion-badge [class]="'status-'+item.status" slot="end">{{getStatus(item.status)}}</ion-badge>
+                      </div>
+                      <div class="accordion-row accordion-row-price" *ngIf="item.amount">
+                        <ion-label color="secondary">
+                          {{item.currency_amount_before_tax | priceFormat }} € HT
+                        </ion-label>
+                      </div>
+                    </div>
+                  </ion-item>
+                  <ion-item class="content ion-no-padding" slot="content" lines="none">
+                    <ion-label class="ion-padding-start ion-padding-end origin-address">
+                      <p class="ion-no-margin ion-text-truncate"  color="primary">
+                        <ion-text color="primary"><span>Date :</span> {{item.date | date: 'dd/MM/yyyy' }}</ion-text>
+                      </p>
+                      <p class="ion-no-margin ion-text-truncate"  color="primary">
+                        <ion-text color="primary"><span>Adresse :</span> {{item.customer.address + ' ' + item.customer.postal_code + ' ' + item.customer.city + ' ' + getCountry(item.customer.country_alpha2)}}</ion-text>
+                      </p>
+                      <hr>
+                      <div>
+                        <!-- TODO <ion-button *ngIf="item.status === 'upcoming' || item.status === 'ongoing'">Régler la facture</ion-button> -->
+                        <a class="a-button" target="_blank" [href]="item.file_url" [download]="item.filename" *ngIf="item.file_url"><ion-icon name="document-outline"></ion-icon> &nbsp; Télécharger la facture</a>
+                      </div>
                     </ion-label>
-                    <ion-badge [class]="'status-'+item.status" slot="end">{{getStatus(item.status)}}</ion-badge>
-                  </div>
-                  <div class="accordion-row accordion-row-price" *ngIf="item.amount">
-                    <ion-label color="secondary">
-                      {{item.currency_amount_before_tax | priceFormat }} € HT
-                    </ion-label>
-                  </div>
-                </div>
-              </ion-item>
-              <ion-item class="content ion-no-padding" slot="content" lines="none">
-                <ion-label class="ion-padding-start ion-padding-end origin-address">
-                  <p class="ion-no-margin ion-text-truncate"  color="primary">
-                    <ion-text color="primary"><span>Date :</span> {{item.date | date: 'dd/MM/yyyy' }}</ion-text>
-                  </p>
-                  <p class="ion-no-margin ion-text-truncate"  color="primary">
-                    <ion-text color="primary"><span>Adresse :</span> {{item.customer.address + ' ' + item.customer.postal_code + ' ' + item.customer.city + ' ' + getCountry(item.customer.country_alpha2)}}</ion-text>
-                  </p>
-                  <hr>
-                  <div>
-                    <!-- TODO <ion-button *ngIf="item.status === 'upcoming' || item.status === 'ongoing'">Régler la facture</ion-button> -->
-                    <a class="a-button" target="_blank" [href]="item.file_url" [download]="item.filename" *ngIf="item.file_url"><ion-icon name="document-outline"></ion-icon> &nbsp; Télécharger la facture</a>
-                  </div>
-                </ion-label>
-              </ion-item>
+                  </ion-item>
 
-            </ion-accordion>
-          </ion-item-sliding>
-        </ion-accordion-group>
+                </ion-accordion>
+              </ion-item-sliding>
+            </ion-accordion-group>
 
-        <ion-infinite-scroll #infiniteScroll threshold="0" (ionInfinite)="loadMoreData($event)">
-          <ion-infinite-scroll-content></ion-infinite-scroll-content>
-        </ion-infinite-scroll>
-      </ion-col>
-    </ion-row>
-
-
-
-  </ion-grid>
+            <ion-infinite-scroll #infiniteScroll threshold="0" (ionInfinite)="loadMoreData($event)">
+              <ion-infinite-scroll-content></ion-infinite-scroll-content>
+            </ion-infinite-scroll>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+  </div>
 </ion-content>

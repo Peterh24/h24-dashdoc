@@ -8,6 +8,7 @@ import { Storage } from '@ionic/storage-angular';
 import { ADDRESS_FOLDER_KEY, ADDRESS_FOLDERS_KEY, DASHDOC_API_URL, DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
 import { NewAddressPage } from './new-address/new-address.page';
 import { EditAddressPage } from './edit-address/edit-address.page';
+import { ConfigService } from 'src/app/services/config.service';
 
 const DEFAULT_FOLDERS = [
   "Mes loueurs",
@@ -43,12 +44,11 @@ export class AddressPage implements OnInit {
   @ViewChild("searchbarElem", { read: ElementRef }) public searchbarElem: ElementRef;
   constructor(
     private addressService: AddressService,
-    private router: Router,
-    private loadingController: LoadingController,
     private alertController: AlertController,
     private modalController: ModalController,
     private toastController: ToastController,
     private storage: Storage,
+    public config: ConfigService
   ) { }
 
   ngOnInit() {

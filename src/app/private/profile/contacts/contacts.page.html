@@ -1,97 +1,102 @@
 <app-header [defaultHref]="'/private/tabs/profile'" title="Membres" *ngIf="!isModal"></app-header>
 
 <ion-content>
-  <ion-icon name="close-outline" class="close-button ion-float-right" (click)="closeModal ()" *ngIf="isModal"></ion-icon>
-  <div class="title" *ngIf="isModal">Mes contacts</div>
+  <div class="profile-container">
+    <app-profile-component [desktopOnly]="true"></app-profile-component>
+    <div class="page">
+      <ion-icon name="close-outline" class="close-button ion-float-right" (click)="closeModal ()" *ngIf="isModal"></ion-icon>
+      <div class="title" *ngIf="isModal">Mes contacts</div>
 
-  <ion-grid class="page-grid ion-no-padding">
-    <ion-row *ngIf="!isLoading && contacts.length > 0 && !isModal" class="searchbar">
-      <ion-col>
-        <ion-searchbar #searchbarElem placeholder="Rechercher" class="ion-no-padding" [(ngModel)]="searchContact" (ionInput)="setFilteredItems(searchContact)"></ion-searchbar>
-      </ion-col>
-    </ion-row>
+      <ion-grid class="page-grid ion-no-padding">
+        <ion-row *ngIf="!isLoading && contacts.length > 0 && !isModal" class="searchbar">
+          <ion-col>
+            <ion-searchbar #searchbarElem placeholder="Rechercher" class="ion-no-padding" [(ngModel)]="searchContact" (ionInput)="setFilteredItems(searchContact)"></ion-searchbar>
+          </ion-col>
+        </ion-row>
 
-    <ion-row *ngIf="!searchbarElem?.nativeElement?.value">
-      <ion-col>
-        <ion-button shape="round" (click)="onAddContact ()"><ion-icon name="location-outline"></ion-icon> &nbsp; Envoyer une invitation</ion-button>
-        <!-- <ion-button shape="round" fill="outline" id="create-folder"><ion-icon name="folder-outline"></ion-icon> &nbsp; Créer un dossier</ion-button> -->
-        <ion-button class="ion-hide" id="move-to-folder"></ion-button>
-      </ion-col>
-    </ion-row>
+        <ion-row *ngIf="!searchbarElem?.nativeElement?.value">
+          <ion-col>
+            <ion-button shape="round" (click)="onAddContact ()"><ion-icon name="location-outline"></ion-icon> &nbsp; Envoyer une invitation</ion-button>
+            <!-- <ion-button shape="round" fill="outline" id="create-folder"><ion-icon name="folder-outline"></ion-icon> &nbsp; Créer un dossier</ion-button> -->
+            <ion-button class="ion-hide" id="move-to-folder"></ion-button>
+          </ion-col>
+        </ion-row>
 
-    <ion-row *ngIf="isLoading">
-      <ion-col class="ion-text-center">
-        <ion-spinner  color="primary"></ion-spinner>
-      </ion-col>
-    </ion-row>
+        <ion-row *ngIf="isLoading">
+          <ion-col class="ion-text-center">
+            <ion-spinner  color="primary"></ion-spinner>
+          </ion-col>
+        </ion-row>
 
-    <ion-row *ngIf="!isLoading && contacts.length <= 0">
-      <ion-col>
-        <p class="ion-text-center">
-          Pas encore d'adresses dans votre carnet!<br />
-          Merci d'en ajouter une!
-        </p>
-      </ion-col>
-    </ion-row>
+        <ion-row *ngIf="!isLoading && contacts.length <= 0">
+          <ion-col>
+            <p class="ion-text-center">
+              Pas encore d'adresses dans votre carnet!<br />
+              Merci d'en ajouter une!
+            </p>
+          </ion-col>
+        </ion-row>
 
-    <!--
-    <ion-row *ngFor="let folder of folders">
-      <ion-col>
-        <div class="folder" [class.selected]="folder === currentFolder" (click)="selectFolder (folder)">
-          <ion-icon name="folder-outline"></ion-icon> &nbsp; &nbsp; 
-          {{ folder }} &nbsp; 
-          <ion-badge slot="end" *ngIf="contactsFolderItems (folder)">{{ contactsFolderItems (folder) }}</ion-badge>
-        </div>
-      </ion-col>
-    </ion-row>
-    -->
-
-    <ion-row *ngIf="!isLoading && contacts.length > 0">
-      <ion-col>
-        <ion-item-sliding #slidingContact *ngFor="let item of jsonData; let index = index">
-          <ion-item-options side="start">
-            <ion-item-option color="success" (click)="onAddContact(item.uid, slidingContact)">
-              <ion-icon name="create" slot="icon-only"></ion-icon>
-            </ion-item-option>
-          </ion-item-options>
-
-          <ion-item slot="header" class="ion-no-margin ion-no-padding" lines="none" (click)="selectContact (item, $event)">
-            <div class="contact">
-              <div>
-                <ion-chip class="ion-float-right" *ngIf="item.is_destination">Livraison</ion-chip>
-                <ion-chip class="ion-float-right" *ngIf="item.is_origin">Enlèvement</ion-chip>
-                <span class="contact-name">
-                  <span *ngIf="isModal">
-                    <ion-icon name="stop-outline" (click)="toggleSelectedContact (item, $event)" *ngIf="!selectedContacts[item.uid]"></ion-icon> 
-                    <ion-icon name="checkbox-outline" (click)="toggleSelectedContact (item, $event)" *ngIf="selectedContacts[item.uid]"></ion-icon> &nbsp; 
-                    &nbsp; 
-                  </span>
-                  {{ item.first_name }} {{ item.last_name }}
-                </span>
-                <br>
-                {{ item.company_name }}<br>
-                <span *ngIf="item?.email"><a href="mailto:{{ item.email }}">{{ item.email }}</a></span><br>
-                <span *ngIf="item?.phone_number"><a href="tel:{{ item.phone_number }}">{{ formatPhone (item.phone_number) }}</a></span>
-              </div>
-              <div class="icons">
-                <div><ion-chip class="pending-invite" *ngIf="item.has_pending_invite">Invitation envoyée</ion-chip></div>
-                <div class="ion-text-nowrap">
-                  <ion-icon class="pointer" name="create-outline" (click)="onAddContact (item.uid)"></ion-icon>
-                  <ion-icon class="pointer" name="trash-outline" (click)="setDeleteContact (item)"></ion-icon>
-                </div>
-                <div></div>
-              </div>
+        <!--
+        <ion-row *ngFor="let folder of folders">
+          <ion-col>
+            <div class="folder" [class.selected]="folder === currentFolder" (click)="selectFolder (folder)">
+              <ion-icon name="folder-outline"></ion-icon> &nbsp; &nbsp; 
+              {{ folder }} &nbsp; 
+              <ion-badge slot="end" *ngIf="contactsFolderItems (folder)">{{ contactsFolderItems (folder) }}</ion-badge>
             </div>
-          </ion-item>
-          <ion-item-options side="end">
-            <ion-item-option color="danger" (click)="setDeleteContact(item, slidingContact)">
-              <ion-icon name="trash" slot="icon-only"></ion-icon>
-            </ion-item-option>
-          </ion-item-options>
-        </ion-item-sliding>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+          </ion-col>
+        </ion-row>
+        -->
+
+        <ion-row *ngIf="!isLoading && contacts.length > 0">
+          <ion-col>
+            <ion-item-sliding #slidingContact *ngFor="let item of jsonData; let index = index">
+              <ion-item-options side="start">
+                <ion-item-option color="success" (click)="onAddContact(item.uid, slidingContact)">
+                  <ion-icon name="create" slot="icon-only"></ion-icon>
+                </ion-item-option>
+              </ion-item-options>
+
+              <ion-item slot="header" class="ion-no-margin ion-no-padding" lines="none" (click)="selectContact (item, $event)">
+                <div class="contact">
+                  <div>
+                    <ion-chip class="ion-float-right" *ngIf="item.is_destination">Livraison</ion-chip>
+                    <ion-chip class="ion-float-right" *ngIf="item.is_origin">Enlèvement</ion-chip>
+                    <span class="contact-name">
+                      <span *ngIf="isModal">
+                        <ion-icon name="stop-outline" (click)="toggleSelectedContact (item, $event)" *ngIf="!selectedContacts[item.uid]"></ion-icon> 
+                        <ion-icon name="checkbox-outline" (click)="toggleSelectedContact (item, $event)" *ngIf="selectedContacts[item.uid]"></ion-icon> &nbsp; 
+                        &nbsp; 
+                      </span>
+                      {{ item.first_name }} {{ item.last_name }}
+                    </span>
+                    <br>
+                    {{ item.company_name }}<br>
+                    <span *ngIf="item?.email"><a href="mailto:{{ item.email }}">{{ item.email }}</a></span><br>
+                    <span *ngIf="item?.phone_number"><a href="tel:{{ item.phone_number }}">{{ formatPhone (item.phone_number) }}</a></span>
+                  </div>
+                  <div class="icons">
+                    <div><ion-chip class="pending-invite" *ngIf="item.has_pending_invite">Invitation envoyée</ion-chip></div>
+                    <div class="ion-text-nowrap">
+                      <ion-icon class="pointer" name="create-outline" (click)="onAddContact (item.uid)"></ion-icon>
+                      <ion-icon class="pointer" name="trash-outline" (click)="setDeleteContact (item)"></ion-icon>
+                    </div>
+                    <div></div>
+                  </div>
+                </div>
+              </ion-item>
+              <ion-item-options side="end">
+                <ion-item-option color="danger" (click)="setDeleteContact(item, slidingContact)">
+                  <ion-icon name="trash" slot="icon-only"></ion-icon>
+                </ion-item-option>
+              </ion-item-options>
+            </ion-item-sliding>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+  </div>
 </ion-content>
 
 <ion-modal id="delete-contact-modal" class="custom" [isOpen]="!!deleteContact" (willDismiss)="setDeleteContact(null)" #deleteContactModal>

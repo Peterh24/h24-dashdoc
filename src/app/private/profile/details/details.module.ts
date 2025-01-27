@@ -8,6 +8,7 @@ import { DetailsPageRoutingModule } from './details-routing.module';
 
 import { DetailsPage } from './details.page';
 import { HeaderModule } from 'src/app/components';
+import { ProfileComponentModule } from '../profile.component.module';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { HeaderModule } from 'src/app/components';
     ReactiveFormsModule,
     IonicModule,
     DetailsPageRoutingModule,
-    HeaderModule
+    HeaderModule,
+    ProfileComponentModule
   ],
   declarations: [DetailsPage]
 })

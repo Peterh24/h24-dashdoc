@@ -8,6 +8,7 @@ import { ChangePasswordPageRoutingModule } from './change-password-routing.modul
 
 import { ChangePasswordPage } from './change-password.page';
 import { HeaderModule } from 'src/app/components';
+import { ProfileComponentModule } from '../profile.component.module';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { HeaderModule } from 'src/app/components';
     ReactiveFormsModule,
     IonicModule,
     ChangePasswordPageRoutingModule,
-    HeaderModule
+    HeaderModule,
+    ProfileComponentModule
   ],
   declarations: [ChangePasswordPage]
 })

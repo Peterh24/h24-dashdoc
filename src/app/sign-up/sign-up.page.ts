@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-sign-up',
   templateUrl: './sign-up.page.html',
-  styleUrls: ['./sign-up.page.scss'],
+  styleUrls: ['./sign-up.page.scss', '../auth/auth.desktop.page.scss'],
 })
 export class SignUpPage implements OnInit {
   private regex: any = regex;

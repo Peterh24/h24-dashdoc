@@ -1,0 +1,48 @@
+@media (max-width: 768px) {
+    ion-content {
+        --padding-start: 20px;
+        --padding-end: 20px;
+    }
+
+    .truck-big {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        display: flex;
+        height: 100%;
+        overflow: hidden;
+        justify-content: space-between;
+    }
+
+    .container>form {
+        flex-basis: 40%;
+    }
+
+    .container>div {
+        flex-basis: 60%;
+    }
+
+    .container>div>img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+        object-position: left;
+    }
+
+    .logo-container {
+        text-align: center;
+    }
+
+    h1 {
+        display: none;
+    }
+
+    form {
+        justify-content: center;
+        padding-left: 100px;
+        padding-right: 100px;
+    }
+}

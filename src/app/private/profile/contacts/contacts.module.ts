@@ -8,6 +8,7 @@ import { ContactsPageRoutingModule } from './contacts-routing.module';
 
 import { ContactsPage } from './contacts.page';
 import { HeaderModule } from 'src/app/components';
+import { ProfileComponentModule } from '../profile.component.module';
 
 @NgModule({
   imports: [
@@ -16,6 +17,7 @@ import { HeaderModule } from 'src/app/components';
     IonicModule,
     ContactsPageRoutingModule,
     HeaderModule,
+    ProfileComponentModule
   ],
   declarations: [ContactsPage]
 })

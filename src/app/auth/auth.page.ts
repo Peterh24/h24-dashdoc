@@ -10,7 +10,7 @@ import { Storage } from '@ionic/storage-angular';
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.page.html',
-  styleUrls: ['./auth.page.scss'],
+  styleUrls: ['./auth.page.scss', './auth.desktop.page.scss'],
 })
 export class AuthPage {
   private regex: any = regex;

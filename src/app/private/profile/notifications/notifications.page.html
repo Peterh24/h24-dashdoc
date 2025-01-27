@@ -1,12 +1,17 @@
 <app-header [defaultHref]="'/private'" title="Notifications"></app-header>
 
 <ion-content [fullscreen]="true">
-  <div class="alert-warning" *ngFor="let notification of notifications.notifications">
-    <div class="title">
-      {{ notification.title }}
-    </div>
-    <div class="body">
-      {{ notification.body }}
+  <div class="profile-container">
+    <app-profile-component [desktopOnly]="true"></app-profile-component>
+    <div class="page">
+      <div class="alert-warning" *ngFor="let notification of notifications.notifications">
+        <div class="title">
+          {{ notification.title }}
+        </div>
+        <div class="body">
+          {{ notification.body }}
+        </div>
+      </div>
     </div>
   </div>
 </ion-content>

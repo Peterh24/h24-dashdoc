@@ -8,6 +8,7 @@ import { ProfilePageRoutingModule } from './profile-routing.module';
 
 import { ProfilePage } from './profile.page';
 import { HeaderModule } from 'src/app/components';
+import { ProfileComponentModule } from './profile.component.module';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { HeaderModule } from 'src/app/components';
     FormsModule,
     IonicModule,
     ProfilePageRoutingModule,
-    HeaderModule
+    HeaderModule,
+    ProfileComponentModule
   ],
   declarations: [ProfilePage],
   exports: [ProfilePage]

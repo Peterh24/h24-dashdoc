@@ -209,12 +209,12 @@ h2 {
       }
 
     &::part(content) {
-      overflow-y: scroll;
+      overflow-y: auto;
     }
   
     .wrapper {
         padding: 15px;
-        overflow-y: scroll;
+        overflow-y: auto;
     }
 
     .title {
@@ -265,6 +265,20 @@ h2 {
     box-shadow: 0px 1px 9.4px 0px #00000024;
   }
   
+  .profile-container {
+    & {
+      display: flex;
+      height: 100%;
+    }
+
+    .page {
+      width: 100%;
+      overflow-y: scroll;
+      margin-top: 20px;
+      padding-right: 10px;
+    }
+  }
+
   /*
   @media (min-width: 768px) {
     body {

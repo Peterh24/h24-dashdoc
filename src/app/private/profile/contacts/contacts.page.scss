@@ -1,9 +1,3 @@
-ion-content  {
-    --padding-start: 15px;
-    --padding-end: 15px;
-    --padding-top: 15px;
-  }
-  
   .contact {
     & {
       border: 1px solid lightgray;
@@ -144,4 +138,12 @@ ion-content  {
   ion-item-option {
     margin-top: 15px;
     margin-bottom: 15px;
+  }
+
+  @media (max-width: 768px) {
+    ion-content  {
+      --padding-start: 15px;
+      --padding-end: 15px;
+      --padding-top: 15px;
+    }
   }

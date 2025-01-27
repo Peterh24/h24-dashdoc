@@ -1,68 +1,8 @@
-<app-header [defaultHref]="'/private'" *ngIf="config.isMobile"></app-header>
+<app-header [defaultHref]="'/private'"></app-header>
 
 <ion-content>
-  <div class="user-header" *ngIf="config.isMobile">
-    <div><ion-icon name="person-circle-outline"></ion-icon></div>
-    <div class="user-name">
-      {{ form.get('firstname').value }}
-      {{ form.get('lastname').value }}
-    </div>
+  <div class="profile-container">
+    <app-profile-component [show]="true"></app-profile-component>
+    <div class="page"></div>
   </div>
-
-  <div class="alert-error" *ngIf="success === false && config.isMobile">
-    Les informations du profile ne sont pas disponibles
-  </div>
-
-  <ion-list lines="none">
-    <ion-item routerLink="/private/tabs/profile/details">
-      <ion-icon name="person-circle-outline" slot="start"></ion-icon> &nbsp; 
-      <ion-label>Informations personnelles</ion-label>
-    </ion-item>
-
-    <ion-item routerLink="/private/tabs/profile/change-password">
-      <ion-icon name="key-outline" slot="start"></ion-icon> &nbsp; 
-      <ion-label>Mot de passe</ion-label>
-    </ion-item>
-
-    <ion-item routerLink="/private/tabs/profile/notifications">
-      <ion-icon name="notifications-outline" slot="start"></ion-icon> &nbsp; 
-      <ion-label>
-        Notifications
-        <ion-badge color="danger" *ngIf="notifications.notifications.length">{{ notifications.notifications.length }}</ion-badge>
-      </ion-label>
-    </ion-item>
-
-    <ion-item routerLink="/private/tabs/profile/address" [disabled]="!company">
-      <ion-icon name="location-outline" slot="start"></ion-icon> &nbsp; 
-      <ion-label>Mes adresses</ion-label>
-    </ion-item>
-
-    <ion-item routerLink="/private/tabs/profile/contacts" [disabled]="!company">
-      <ion-icon name="people-outline" slot="start"></ion-icon> &nbsp; 
-      <ion-label>Membres</ion-label>
-    </ion-item>
-
-    <ion-item routerLink="/private/tabs/profile/invoice">
-      <ion-icon name="logo-euro" slot="start"></ion-icon> &nbsp; 
-      <ion-label>Mes factures</ion-label>
-    </ion-item>
-
-    <ion-item class="signout" id="signout">
-      <ion-label>Se déconnecter</ion-label>
-    </ion-item>
-  </ion-list>
 </ion-content>
-
-<ion-modal id="signout-modal" class="custom" #signoutModal trigger="signout">
-  <ng-template>
-    <div class="wrapper">
-      <ion-icon name="close-outline" class="ion-float-right" (click)="signoutModal.dismiss ()"></ion-icon>
-      <div class="title">Êtes-vous sur de vouloir vous déconnecter ?</div>
-
-      <div class="buttons">
-        <ion-button (click)="signoutModal.dismiss ()">Non</ion-button> &nbsp;
-        <ion-button fill="outline" (click)="signout (signoutModal)">Oui</ion-button>
-      </div>
-    </div>
-  </ng-template>
-</ion-modal>

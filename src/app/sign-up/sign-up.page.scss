@@ -1,8 +1,3 @@
-ion-content {
-  --padding-start: 20px;
-  --padding-end: 20px;
-}
-
 .header-logo {
   width: 65px;
   padding-top: 20px;
@@ -12,7 +7,7 @@ ion-content {
   background-color: #FFF;
 }
 
-.container {
+.inputs-container {
   & {
     display: flex;
     flex-direction: column;
@@ -56,6 +51,10 @@ h1 {
   font-weight: 700;
 }
 
+.login {
+  text-decoration: underline;
+}
+
 ion-toolbar {
   div {
     text-align: center;
@@ -63,8 +62,16 @@ ion-toolbar {
     font-size: 16px;
     font-weight: 400;
   }
+}
 
-  .login {
-    text-decoration: underline;
+@media (max-width: 768px) {
+  .connect-button-desktop {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  ion-toolbar {
+    display: none;
   }
 }
