@@ -3,6 +3,7 @@ import { TransportService } from 'src/app/services/transport.service';
 import { DeliveryPage } from '../delivery/delivery.page';
 import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { ConfigService } from 'src/app/services/config.service';
 
 @Component({
   selector: 'app-deliveries',
@@ -12,12 +13,15 @@ import { Router } from '@angular/router';
 export class DeliveriesPage implements OnInit {
   origins: any[];
   destinations: any[];
+  currentDelivery: any;
   isMultipointAuto: boolean;
 
   isModalOpen: boolean;
+  showSummaryComponent = false;
 
   constructor(
     public transport: TransportService,
+    public config: ConfigService,
     private router: Router,
     private modalController: ModalController
   ) { }
@@ -28,10 +32,14 @@ export class DeliveriesPage implements OnInit {
 
   ionViewWillEnter() {
     if (!this.transport.type) {
-      this.router.navigateByUrl ('/private/tabs/transports/new-order');  
+      this.router.navigateByUrl ('/private/tabs/transports/new-order');
+      return;
     }
 
+    this.currentDelivery = null;
     this.isMultipointAuto = this.transport.isMultipoint === null;
+    this.showSummaryComponent = this.transport.deliveries?.length > 0;
+
     this.synchronize ();
     
     window.addEventListener('popstate', (event) => {
@@ -43,15 +51,6 @@ export class DeliveriesPage implements OnInit {
         this.modalController.getTop ().then ((m) => m.dismiss ());
       }  
     }, { capture: true });
-  }
-
-  initializeTransport () {
-    this.transport.isMultipoint = false;
-    this.transport.isEditMode = false;
-    this.transport.deliveries = [];
-    this.transport.segments = [];
-    this.transport.trailers = [];
-    this.transport.vehicle = {};
   }
 
   /*
@@ -67,40 +66,54 @@ export class DeliveriesPage implements OnInit {
   }
   */
 
-  async addDelivery (delivery: any = null, deliveryType: string = null)  {
+  async showAddDelivery (delivery: any = null, deliveryType: string = null)  {
+    this.showSummaryComponent = false;
+
     const defaultContacts = this.transport?.deliveries?.[0]?.tracking_contacts;
-    const modal = await this.modalController.create({
-      component: DeliveryPage,
-      componentProps: {
-        delivery,
-        defaultContacts,
-        deliveryType: this.isMultipointAuto ? null : deliveryType,
-        originMaxSlot: this.getOriginsMaxSlot (this.transport.getOrigins ()),
-        destinationMinSlot: this.getDestinationsMinSlot (this.transport.getDestinations ())
-      },
-      cssClass: 'custom-big',
-    });
 
-    this.isModalOpen = true;
-    modal.present();
-    const { data } = await modal.onWillDismiss();
-    this.isModalOpen = false;
-    if (!data) {
-      return;
+    this.currentDelivery = {
+      isModal: true,
+      delivery,
+      defaultContacts,
+      deliveryType: this.isMultipointAuto ? null : deliveryType,
+      originMaxSlot: this.getOriginsMaxSlot (this.transport.getOrigins ()),
+      destinationMinSlot: this.getDestinationsMinSlot (this.transport.getDestinations ())
+    };
+
+    if (this.config.isMobile) {
+      const modal = await this.modalController.create({
+        component: DeliveryPage,
+        componentProps: this.currentDelivery,
+        cssClass: 'custom-big',
+      });
+
+      this.isModalOpen = true;
+      modal.present();
+      const { data } = await modal.onWillDismiss();
+      this.isModalOpen = false;
+      if (!data) {
+        return;
+      }
+
+      if (delivery) {
+        /* edit delivery */
+      } else {
+        this.addDelivery (data);
+      }
     }
+  }
 
-    if (delivery !== null) {
-      /* edit delivery */
-    } else if (this.transport.isMultipoint) {
-      this.transport.deliveries.push (data);
+  addDelivery (delivery: any) {
+    if (this.transport.isMultipoint) {
+      this.transport.deliveries.push (delivery);
     } else {
-      if (data.destination) {
-        if (!this.transport.deliveries.find ((d) => d.destination?.address?.pk === data.destination?.address?.pk)) {
-          this.transport.deliveries.push (data);
+      if (delivery.destination) {
+        if (!this.transport.deliveries.find ((d) => d.destination?.address?.pk === delivery.destination?.address?.pk)) {
+          this.transport.deliveries.push (delivery);
         }
-      } else if (data.origin) {
-        if (!this.transport.deliveries.find ((d) => d.origin?.address?.pk === data.origin?.address?.pk)) {
-          this.transport.deliveries.push (data);
+      } else if (delivery.origin) {
+        if (!this.transport.deliveries.find ((d) => d.origin?.address?.pk === delivery.origin?.address?.pk)) {
+          this.transport.deliveries.push (delivery);
         }
       }
 
@@ -125,9 +138,11 @@ export class DeliveriesPage implements OnInit {
       }
     }
 
+    this.currentDelivery = null;
+
     this.synchronize ();
 
-    console.log ('add', this.origins, this.destinations, data);
+    console.log ('add', this.origins, this.destinations, delivery);
   }
 
   deleteDelivery (type: string, delivery: any) {
@@ -204,7 +219,15 @@ export class DeliveriesPage implements OnInit {
     return false;
   }
 
+  setShowSummaryComponent (value: boolean = true) {
+    this.showSummaryComponent = value;
+  }
+
   onSubmit () {
-    this.router.navigateByUrl('/private/tabs/transports/new-order/summary');
+    if (this.config.isMobile) {
+      this.router.navigateByUrl('/private/tabs/transports/new-order/summary');
+    } else {
+      this.showSummaryComponent = true;
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { IonInput, ModalController } from '@ionic/angular';
 import { TransportService } from 'src/app/services/transport.service';
@@ -16,12 +16,15 @@ selector: 'app-delivery',
 templateUrl: './delivery.page.html',
 styleUrls: ['./delivery.page.scss'],
 })
-export class DeliveryPage implements OnInit {
+export class DeliveryPage implements OnInit, OnChanges {
+  @Input() isModal: boolean;
   @Input() delivery: any;
   @Input() defaultContacts: any;
   @Input() deliveryType: string;
   @Input() originMaxSlot: number;
   @Input() destinationMinSlot: number;
+
+  @Output() selectDelivery = new EventEmitter<any>();
 
   origin: any;
   destination: any;
@@ -59,6 +62,8 @@ export class DeliveryPage implements OnInit {
   destinationErrors: any = {};
   hasErrors: boolean;
 
+  isDashdocModel = ApiTransportService.isDashdocModel;
+
   constructor(
     public transport: TransportService,
     public authService: AuthService,
@@ -67,6 +72,12 @@ export class DeliveryPage implements OnInit {
   ) { }
 
   ngOnInit () {
+    this.ngOnChanges ();
+  }
+
+  ngOnChanges () {
+    this.reset ();
+
     this.originForm = new FormGroup({
       reference: new FormControl('', { validators: [] }),
       day: new FormControl(null, { validators: [Validators.required] }),
@@ -104,13 +115,6 @@ export class DeliveryPage implements OnInit {
       other: this.otherForm,
       merchandise: this.merchandiseForm
     });
-  }
-
-  ionViewWillEnter() {
-    this.originErrors = {};
-    this.destinationErrors = {};
-    this.contactsError = null;
-    this.hasErrors = false;
 
     this.merchandises.push (this.merchandises.shift());
 
@@ -160,6 +164,21 @@ export class DeliveryPage implements OnInit {
     });
   }
 
+  reset () {
+    this.origin = null;
+    this.destination = null;
+    this.enableOrigin = false;
+    this.enableDestination = false;
+    this.company = null;
+    this.contacts = null;
+    this.fileToUpload = null;
+
+    this.originErrors = {};
+    this.destinationErrors = {};
+    this.contactsError = null;
+    this.hasErrors = false;
+  }
+
   loadDelivery (form: FormGroup, delivery: any) {
     if (!delivery) {
       return;
@@ -167,8 +186,12 @@ export class DeliveryPage implements OnInit {
 
     const parseSlot = (slot: string) => (slot ? slot.split(/T/) : [null, null]);
 
-    const [ start_day, start_time ] = parseSlot(delivery?.slots?.[0]?.start);
-    const [ end_day, end_time ] = parseSlot(delivery?.slots?.[0]?.end);
+    let [ start_day, start_time ] = parseSlot(delivery?.slots?.[0]?.start);
+    let [ end_day, end_time ] = parseSlot(delivery?.slots?.[0]?.end);
+
+    if (start_time && start_time == end_time) {
+      end_time = null;
+    }
 
     const values: any = {
       day: start_day,
@@ -264,6 +287,8 @@ export class DeliveryPage implements OnInit {
 
       this.updateEnabled ();
     }
+
+    this.validateForm ();
   }
 
   deleteAddress (type: string) {
@@ -296,6 +321,8 @@ export class DeliveryPage implements OnInit {
 
       this.updateEnabled ();
     }
+
+    this.validateForm ();
   }
 
   formatDay (day: string) {
@@ -525,13 +552,19 @@ export class DeliveryPage implements OnInit {
 
     console.log ('submit', { origin, destination, planned_loads });
 
-    this.modalController.dismiss ({ 
+    const delivery = { 
       origin,
       destination,
       planned_loads, // TODO doit être défini pour les enlèvements uniquement
       tracking_contacts: this.contacts,
       file: this.fileToUpload 
-    });
+    };
+
+    this.selectDelivery.emit (delivery);
+
+    if (this.isModal) {
+      this.modalController.dismiss (delivery);
+    }
   }
 
   buildDelivery (values: any, address: any) {

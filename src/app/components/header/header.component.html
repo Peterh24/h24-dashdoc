@@ -30,10 +30,10 @@
         <div [class.active]="isActive ('/tabs/home')" (click)="goto('/private/tabs/home')">
           <ion-icon name="home"></ion-icon> Home
         </div>
-        <div [class.active]="isActive ('/tabs/transports/basket')" (click)="goto('/private/tabs/transports/basket')" [class.disabled]="!userHasChooseCompany">
+        <div [class.active]="isActive ('/tabs/transports/basket')" (click)="goto('/private/tabs/transports/basket')" [class.disabled]="!config.currentCompany">
           <ion-icon name="cart-outline"></ion-icon> Panier
         </div>
-        <div [class.active]="isActive ('/tabs/transports/deliveries')" (click)="goto('/private/tabs/transports/deliveries')" [class.disabled]="!userHasChooseCompany">
+        <div [class.active]="isActive ('/tabs/transports/(deliveries|new-order)')" (click)="goto('/private/tabs/transports/deliveries')" [class.disabled]="!config.currentCompany">
           <ion-icon name="truck"></ion-icon> Transport
         </div>
       </div>

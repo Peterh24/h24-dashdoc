@@ -8,6 +8,7 @@ import { MultipointChoicePageRoutingModule } from './multipoint-choice-routing.m
 
 import { MultipointChoicePage } from './multipoint-choice.page';
 import { HeaderModule } from 'src/app/components';
+import { MultipointChoiceComponentModule } from './multipoint-choice.component.module';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { HeaderModule } from 'src/app/components';
     FormsModule,
     IonicModule,
     MultipointChoicePageRoutingModule,
-    HeaderModule
+    HeaderModule,
+    MultipointChoiceComponentModule
   ],
   declarations: [MultipointChoicePage]
 })

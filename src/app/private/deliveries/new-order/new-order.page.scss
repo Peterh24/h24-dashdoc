@@ -1,69 +1,50 @@
-ion-content {
-    --padding-start: 20px;
-    --padding-end: 20px;
-    height: 100%;
+.desktop {
+    & {
+        display: flex;
+        justify-content: center;
+        max-height: 100%;
+        padding-top: 30px;
+    }
+
+    & > * {
+        flex-basis: 30vw;
+    }
+
+    .choice {
+        position: relative;
+        margin: 0 20px 0 20px;
+        padding: 0 20px 0 20px;
+        border: 1px solid lightgray;
+        border-radius: 15px;    
+    }
+
+    app-type-choice-component, app-vehicle-choice-component, app-multipoint-choice-component {
+        display: block;
+    }
+
+    app-multipoint-choice-component {
+        padding-left: 10px;
+    }
+
+    .chevron-right {
+        position: absolute;
+        top: 50%;
+        left: -30px;
+        width: 40px;
+        height: 40px;
+    }
 }
 
-.container {
-    height: 100%;
+@media (max-width: 768px) {
+    ion-content {
+        --padding-start: 20px;
+        --padding-end: 20px;
+        height: 100%;
+    }
 }
 
-.cards {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.card {
-    position: relative;
-    flex-basis: 33%;
-    border: 1px black;
-    border-radius: 15px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    overflow: hidden;
-    background-color: black;
-    cursor: pointer;
-}
-
-.card img {
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
-    -webkit-mask-image: -webkit-gradient(linear, right 0%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));
-    mask-image: gradient(linear, right 0%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));
-}
-
-.card .title {
-    position: absolute;
-    left: 20px;
-    bottom: 20px;
-    color: white;
-    font-weight: bold;
-}
-
-.card.disabled {
-    background-color: grey;
-    opacity: 85%;
-}
-
-h3 {
-    font-size: 12pt;
-}
-
-ion-button {
-    display: block;
-}
-
-.comming {
-    display: flex;
-    position: absolute;
-    justify-content: center;
-    align-items: center;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    font-size: 24pt;
-    color: white;
+@media (min-width: 768px) {
+    .hidden {
+        opacity: 0;
+    }
 }

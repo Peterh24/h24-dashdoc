@@ -1,6 +1,7 @@
-ion-content {
-    --padding-start: 20px;
-    --padding-end: 20px;
+.container {
+    padding: 20px;
+    overflow-y: auto;
+    font-size: 14px;
 }
 
 .close-button {
@@ -113,7 +114,7 @@ ion-datetime-button {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 10px;
+//    margin-top: 10px;
     padding: 10px;
 }
 
@@ -122,7 +123,7 @@ ion-datetime-button {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: 10px;
+//        margin-top: 10px;
     }
 
     div {
@@ -147,8 +148,6 @@ ion-datetime-button {
 }
 
 .error {
-    position: relative;
-    top: calc(100% + 1lh);
     color: red;
     margin-left: 10px;
     margin-top: 5px;
@@ -257,3 +256,57 @@ legend {
 ion-toggle {
     margin-top: 10px;
 }
+
+@media (max-width: 768px) {
+    .time {
+        margin-top: 15px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        height: 100%;
+    }
+
+    .address-and-contact {
+        display: flex;
+    }
+
+    .address-and-contact > * {
+        flex-basis: 50%;
+    }
+
+    .date-and-time {
+        display: flex;
+    }
+
+    .date-and-time > * {
+        flex-basis: 50%;
+    }
+
+    .date-and-time .day {
+        margin-right: 10px;
+    }
+
+    .section {
+        border: 1px solid lightgray;
+        border-radius: 15px;
+        padding: 0 15px 15px 15px;
+        margin-top: 20px;
+    }
+
+    .merchandise {
+        flex-basis: 29%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        padding-right: 30%;
+    }   
+}
+
+ion-input::part(native) {
+    display: flex;
+    align-items: center;
+  }

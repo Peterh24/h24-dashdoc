@@ -1,8 +1,8 @@
 <app-header [defaultHref]="'/private/tabs/profile'" title="Membres" *ngIf="!isModal"></app-header>
 
 <ion-content>
-  <div class="profile-container">
-    <app-profile-component [desktopOnly]="true"></app-profile-component>
+  <div class="profile-container {{ isModal ? 'modal' : 'not-modal' }}">
+    <app-profile-component [desktopOnly]="!isModal"></app-profile-component>
     <div class="page">
       <ion-icon name="close-outline" class="close-button ion-float-right" (click)="closeModal ()" *ngIf="isModal"></ion-icon>
       <div class="title" *ngIf="isModal">Mes contacts</div>
@@ -16,7 +16,8 @@
 
         <ion-row *ngIf="!searchbarElem?.nativeElement?.value">
           <ion-col>
-            <ion-button shape="round" (click)="onAddContact ()"><ion-icon name="location-outline"></ion-icon> &nbsp; Envoyer une invitation</ion-button>
+            <ion-button shape="round" (click)="onAddContact ()" *ngIf="!isModal"><ion-icon name="location-outline"></ion-icon> &nbsp; Envoyer une invitation</ion-button>
+            <ion-button shape="round" (click)="onAddContact ()" *ngIf="isModal"><ion-icon name="location-outline"></ion-icon> &nbsp; Ajouter un contact</ion-button>
             <!-- <ion-button shape="round" fill="outline" id="create-folder"><ion-icon name="folder-outline"></ion-icon> &nbsp; Créer un dossier</ion-button> -->
             <ion-button class="ion-hide" id="move-to-folder"></ion-button>
           </ion-col>
@@ -59,12 +60,12 @@
               </ion-item-options>
 
               <ion-item slot="header" class="ion-no-margin ion-no-padding" lines="none" (click)="selectContact (item, $event)">
-                <div class="contact">
+                <div class="contact pointer">
                   <div>
                     <ion-chip class="ion-float-right" *ngIf="item.is_destination">Livraison</ion-chip>
                     <ion-chip class="ion-float-right" *ngIf="item.is_origin">Enlèvement</ion-chip>
                     <span class="contact-name">
-                      <span *ngIf="isModal">
+                      <span *ngIf="isModal && false">
                         <ion-icon name="stop-outline" (click)="toggleSelectedContact (item, $event)" *ngIf="!selectedContacts[item.uid]"></ion-icon> 
                         <ion-icon name="checkbox-outline" (click)="toggleSelectedContact (item, $event)" *ngIf="selectedContacts[item.uid]"></ion-icon> &nbsp; 
                         &nbsp; 
@@ -153,7 +154,7 @@
 </ion-modal>
 -->
 
-<ion-toolbar *ngIf="isModal && haveSelectedContacts ()">
+<ion-toolbar *ngIf="false && isModal && haveSelectedContacts ()">
   <!-- <ion-button shape="round" (click)="showMoveToFolderModal ()"><ion-icon name="folder-outline"></ion-icon> &nbsp; Déplacer dans un dossier</ion-button> -->
   <ion-button shape="round" (click)="selectContacts ()" *ngIf="isModal && haveSelectedContacts ()"><ion-icon name="checkmark-outline"></ion-icon> &nbsp; Selectionner les contacts</ion-button> 
 </ion-toolbar>

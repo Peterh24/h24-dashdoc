@@ -15,6 +15,7 @@ import * as cordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { concatMap, forkJoin, from, mergeMap, of, take, tap } from 'rxjs';
 import { JWT_KEY, USER_STORAGE_KEY } from './services/constants';
 import { AuthService } from './services/auth.service';
+import { APP_INIT_PROVIDER } from './app.initializer';
 
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
@@ -84,7 +85,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     })
   ],
 
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+  providers: [
+    APP_INIT_PROVIDER,
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideHttpClient(withInterceptors([authInterceptor]))
   ],
   bootstrap: [AppComponent],

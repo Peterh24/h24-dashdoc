@@ -5,7 +5,7 @@ import { Address } from './address.model';
 import { AlertController, IonItemSliding, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
-import { ADDRESS_FOLDER_KEY, ADDRESS_FOLDERS_KEY, DASHDOC_API_URL, DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
+import { ADDRESS_FOLDER_KEY, ADDRESS_FOLDERS_KEY, DASHDOC_API_URL, DASHDOC_COMPANY, HTTP_REQUEST_UNKNOWN_ERROR, USER_STORAGE_KEY } from 'src/app/services/constants';
 import { NewAddressPage } from './new-address/new-address.page';
 import { EditAddressPage } from './edit-address/edit-address.page';
 import { ConfigService } from 'src/app/services/config.service';
@@ -203,20 +203,33 @@ export class AddressPage implements OnInit {
       slidingItem.close();
     }
 
-    this.addressService.removeAddress(addressPk).subscribe(async (addresses) => {
-      this.jsonData = addresses;
-      this.address = addresses;
-      this.selectFolder (null);
+    this.addressService.removeAddress(addressPk).subscribe({
+      next: async (addresses) => {
+        this.jsonData = addresses;
+        this.address = addresses;
+        this.selectFolder (null);
 
-      const toast = await this.toastController.create({
-        message: 'L\'adresses a bien été supprimée',
-        duration: 5000,
-        position: 'bottom',
-        icon: 'checkbox-outline',
-        cssClass: 'success'
-      });
+        const toast = await this.toastController.create({
+          message: 'L\'adresses a bien été supprimée',
+          duration: 5000,
+          position: 'bottom',
+          icon: 'checkbox-outline',
+          cssClass: 'success'
+        });
 
-      await toast.present();
+        await toast.present();
+      },
+      error: async (error) => {
+        console.log (error);
+
+        const alert = await this.alertController.create({
+          header: "Erreur",
+          message: HTTP_REQUEST_UNKNOWN_ERROR,
+          buttons: ['Compris'],
+        });
+  
+        await alert.present();  
+      }
     });
   }
 

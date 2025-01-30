@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { API_URL } from '../../../../app/services/constants';
+import { API_URL, HTTP_REQUEST_UNKNOWN_ERROR } from '../../../../app/services/constants';
 import { take } from 'rxjs';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AlertController, LoadingController } from '@ionic/angular';
@@ -89,8 +89,8 @@ export class DetailsPage {
         console.log('error: ', error);
         loading.dismiss();
         const alert = await this.alertController.create({
-          header: 'Error',
-          message: 'Registration Failed: '+ error.error.message,
+          header: 'Erreur',
+          message: HTTP_REQUEST_UNKNOWN_ERROR,
           buttons: ['Ok']
         });
 

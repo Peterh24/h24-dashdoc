@@ -73,6 +73,10 @@ ion-toolbar {
         margin-right: 42px;
         vertical-align: middle;
     }
+
+    .disabled {
+        color: lightgray;
+    }
 }
 
 .toolbar-header-logo {

@@ -177,7 +177,9 @@ export class ApiTransportDashdoc {
 
     createTransport (transport: any) {
         this.toDashdocTransport (transport);
-        return this.http.post(`${this.apiUrl}transports/`, transport);
+        return this.http.post(`${this.apiUrl}transports/`, transport).pipe (
+          mergeMap (res => this.http.post (`${API_URL}../transports/new`, transport))
+        )
     }
 
     updateTransport (transport: any) {

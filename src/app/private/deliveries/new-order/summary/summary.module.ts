@@ -8,6 +8,7 @@ import { SummaryPageRoutingModule } from './summary-routing.module';
 
 import { SummaryPage } from './summary.page';
 import { HeaderModule } from 'src/app/components';
+import { SummmaryComponentModule } from './summary.component.module';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { HeaderModule } from 'src/app/components';
     FormsModule,
     IonicModule,
     SummaryPageRoutingModule,
-    HeaderModule
+    HeaderModule,
+    SummmaryComponentModule
   ],
   declarations: [SummaryPage]
 })

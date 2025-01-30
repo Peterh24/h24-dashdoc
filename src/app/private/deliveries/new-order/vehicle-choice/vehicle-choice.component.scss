@@ -1,0 +1,73 @@
+ion-button {
+    --border-radius: 20px;
+}
+
+.swiper-wrap {
+    position: relative;
+
+    ion-buttons {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 98%;
+    }
+}
+
+h3 {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.description {
+    &  {
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 30px;
+        margin-bottom: 20px;
+        color: #6A6A6A;
+        font-weight: 700;
+    }
+
+    .title {
+        color: black;
+    }
+
+    .price {
+        font-size: 25px;
+    }
+
+    .price-from {
+        color: black;
+    }    
+}
+
+.vehicles-list {
+    & {
+        display: flex;
+    }
+
+    ion-img {
+        width: 60px;
+        padding: 5px;
+        margin: 5px;
+    }
+
+    ion-img.selected {
+        border: 1px solid grey;
+        border-radius: 15px;
+    }
+}
+
+.next-page {
+    min-width: 150px;
+}
+
+@media (min-width: 768px) {
+    swiper-container {
+        max-width: 25vw;
+    }
+
+    .vehicles-list ion-img {
+        width: calc(20% - 10px);
+    }
+}

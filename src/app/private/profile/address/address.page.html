@@ -1,11 +1,11 @@
 <app-header [defaultHref]="'/private/tabs/profile'" title="Mes adresses" *ngIf="!isModal"></app-header>
 
 <ion-content>
-  <div class="profile-container">
-    <app-profile-component [desktopOnly]="true"></app-profile-component>
+  <div class="profile-container {{ isModal ? 'modal' : 'not-modal' }}">
+    <app-profile-component [desktopOnly]="!isModal"></app-profile-component>
 
     <div class="page">
-      <ion-button class="move-to-folder-desktop" shape="round" [disabled]="!haveSelectedAddress ()" (click)="showMoveToFolderModal ()" *ngIf="config.isDesktop"><ion-icon name="folder-outline"></ion-icon> &nbsp; Déplacer dans un dossier</ion-button>
+      <ion-button class="move-to-folder-desktop" shape="round" [disabled]="!haveSelectedAddress ()" (click)="showMoveToFolderModal ()" *ngIf="config.isDesktop && !isModal"><ion-icon name="folder-outline"></ion-icon> &nbsp; Déplacer dans un dossier</ion-button>
 
       <ion-icon name="close-outline" class="close-button ion-float-right" (click)="closeModal ()" *ngIf="isModal"></ion-icon>
       <div class="title" *ngIf="isModal">Mes adresses</div>
@@ -16,10 +16,10 @@
           </ion-col>
         </ion-row>
 
-        <ion-row *ngIf="!searchbarElem?.nativeElement?.value && !isModal">
+        <ion-row *ngIf="!searchbarElem?.nativeElement?.value">
           <ion-col>
             <ion-button shape="round" (click)="onAddAddress ()"><ion-icon name="location-outline"></ion-icon> &nbsp; Ajouter une adresse</ion-button>
-            <ion-button shape="round" fill="outline" id="create-folder"><ion-icon name="folder-outline"></ion-icon> &nbsp; Créer un dossier</ion-button>
+            <ion-button shape="round" fill="outline" id="create-folder" *ngIf="!isModal"><ion-icon name="folder-outline"></ion-icon> &nbsp; Créer un dossier</ion-button>
             <ion-button class="ion-hide" id="move-to-folder"></ion-button>
           </ion-col>
         </ion-row>

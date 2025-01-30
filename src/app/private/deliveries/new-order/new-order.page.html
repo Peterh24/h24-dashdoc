@@ -2,26 +2,19 @@
 
 
 <ion-content scrollY="false">
-  <div class="container">
-    <div class="cards">
-      <h3>Choisissez votre type de transport</h3>
-      <ion-button size="small" fill="outline" *ngFor="let draft of draftsName" (click)="loadDraft (draft)">
-        Charger ma demande '{{ draft }}'
-      </ion-button>
-      <div class="card" (click)="setTransportType ('audiovisual')">
-        <img src="assets/order-type/audiovisual.jpeg">
-        <div class="title">Audiovisuel</div>
-      </div>
-      <div class="card disabled" (click)="setTransportType ('charter')">
-        <img src="assets/order-type/charter.jpeg">
-        <div class="title">Affrètement</div>
-        <div class="comming">A venir</div>
-      </div>
-      <div class="card disabled" (click)="setTransportType ('air')">
-        <img src="assets/order-type/air.jpeg">
-        <div class="title">Aeriens</div>
-        <div class="comming">A venir</div>
-      </div>
+  <app-type-choice-component *ngIf="config.isMobile"></app-type-choice-component>
+
+  <div class="desktop" *ngIf="config.isDesktop">
+    <div class="choice">
+      <app-type-choice-component></app-type-choice-component>
+    </div>
+    <div class="choice" [class.hidden]="!transportService.type">
+      <div class="chevron-right pointer"><ion-icon name="chevron-right"></ion-icon></div>
+      <app-vehicle-choice-component></app-vehicle-choice-component>
+    </div>
+    <div class="choice" [class.hidden]="!transportService.vehicle">
+      <div class="chevron-right pointer"><ion-icon name="chevron-right"></ion-icon></div>
+      <app-multipoint-choice-component></app-multipoint-choice-component>
     </div>
   </div>
 </ion-content>

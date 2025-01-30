@@ -4,6 +4,7 @@ import { IonAccordionGroup, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
 import { Subscription } from 'rxjs';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
+import { ConfigService } from 'src/app/services/config.service';
 import { DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { TransportService } from 'src/app/services/transport.service';
@@ -44,6 +45,7 @@ export class BasketPage implements OnInit, AfterViewInit {
     public deliveriesService: DeliveriesService,
     public transportService: TransportService,
     public apiTransport: ApiTransportService,
+    public config: ConfigService,
     private router: Router,
     private loadingController: LoadingController,
     private storage: Storage,
@@ -70,6 +72,11 @@ export class BasketPage implements OnInit, AfterViewInit {
     }
   }
 
+  handleRefresh(event: CustomEvent) {
+    this.ionViewWillEnter ();
+    (event.target as HTMLIonRefresherElement).complete();
+  }
+
   setTab (tab: number) {
     this.tab = tab;
   }
@@ -84,7 +91,7 @@ export class BasketPage implements OnInit, AfterViewInit {
     await loading.present();
     this.deliveriesService.resetDeliveries();
 
-    this.subscription = this.deliveriesService.fetchDeliveries('created,updated,confirmed,declined,verified').subscribe({
+    this.subscription = this.deliveriesService.fetchDeliveries('created,updated,confirmed,verified').subscribe({
       next: (deliveries) => {
         this.deliveries = deliveries;
       },
@@ -187,6 +194,6 @@ export class BasketPage implements OnInit, AfterViewInit {
   gotoDraft (draftName: string) {
     this.transportService.loadTransport (this.drafts[draftName]);
     this.transportService.draftName = draftName;
-    this.router.navigateByUrl ('/private/tabs/transports/new-order/summary');
+    this.router.navigateByUrl ('/private/tabs/transports/new-order/deliveries');
   }
 }

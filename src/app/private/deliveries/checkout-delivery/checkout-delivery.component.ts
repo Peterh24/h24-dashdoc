@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { AlertController } from '@ionic/angular';
+import { HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
 
 @Component({
@@ -114,7 +115,7 @@ export class CheckoutDeliveryComponent {
 
     const alert = await this.alertController.create({
       header: 'Erreur',
-      message: 'Echec requête de paiement: ' + error.error.message,
+      message: HTTP_REQUEST_UNKNOWN_ERROR,
       buttons: ['Ok']
     });  
 

@@ -16,6 +16,7 @@ import { AddressService } from 'src/app/services/address.service';
 import { ContactsService } from 'src/app/services/contacts.service';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
+import { ConfigService } from 'src/app/services/config.service';
 
 
 @Component({
@@ -44,7 +45,8 @@ export class HomePage implements OnDestroy {
     private router: Router,
     public deliveriesService: DeliveriesService,
     private transportService: TransportService,
-    private notifications: NotificationsService
+    private notifications: NotificationsService,
+    public config: ConfigService
   ) { }
   
   ionViewWillEnter(){
@@ -92,6 +94,7 @@ export class HomePage implements OnDestroy {
             this.companyService.setCompanyName(company.name);
             this.storage.set(USER_STORAGE_KEY, company.token || company.pk).then (() => this.companyService.getCompanyStatus () );
             this.storage.set(DASHDOC_COMPANY, currentCompany);
+            this.config.setCurrentCompany (currentCompany);
             this.isCompanySelected = true;
             this.companyService.isCompanySwitch = false;
             this.addressService.resetAddresses ();

@@ -2,9 +2,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Contact } from '../contact.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoadingController, ModalController, NavController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController, NavController } from '@ionic/angular';
 import { ContactsService } from 'src/app/services/contacts.service';
 import { phoneValidator, regex } from 'src/app/utils/regex';
+import { HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
 
 @Component({
   selector: 'app-new-contact',
@@ -24,6 +25,7 @@ export class NewContactPage implements OnInit {
     private contactsService: ContactsService,
     private loadingController: LoadingController,
     private modalController: ModalController,
+    private alertController: AlertController,
     private router: Router,
   ) { }
 
@@ -86,13 +88,26 @@ export class NewContactPage implements OnInit {
         request = this.contactsService.addContact(this.form.value.first_name, this.form.value.last_name, this.form.value.email, this.form.value.phone_number, company.pk, company.name);
       }
 
-      request.subscribe((res) => {
-        loadingElement.dismiss();
-        if(!this.isModal) {
-          this.router.navigate(['/private/tabs/profile/contacts']);
-          return;
-        } else {
-          this.modalController.dismiss(res);
+      request.subscribe({
+        next: (res) => {
+          loadingElement.dismiss();
+          if(!this.isModal) {
+            this.router.navigate(['/private/tabs/profile/contacts']);
+            return;
+          } else {
+            this.modalController.dismiss(res);
+          }
+        },
+        error: async (error) => {
+          console.log (error);
+
+          const alert = await this.alertController.create({
+            header: "Erreur",
+            message: HTTP_REQUEST_UNKNOWN_ERROR,
+            buttons: ['Compris'],
+          });
+    
+          await alert.present();  
         }
       });
     });

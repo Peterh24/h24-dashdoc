@@ -1,17 +1,16 @@
-<ion-content [fullscreen]="true">
-  <div [formGroup]="mainForm" (ngSubmit)="onSubmit()">
-    <ion-icon name="close-outline" class="close-button" (click)="closeModal ()"></ion-icon>
-    <div *ngIf="enableOrigin">
+  <div class="container" [formGroup]="mainForm" (ngSubmit)="onSubmit()">
+    <ion-icon name="close-outline" class="close-button" (click)="closeModal ()" *ngIf="isModal"></ion-icon>
+    <div class="section" *ngIf="enableOrigin">
       <h3>Ajouter un enlèvement</h3>
       <div [ngTemplateOutlet]="delivery" [ngTemplateOutletContext]="{ type: 'origin', form: originForm, address: origin, errors: originErrors }"></div>
+      <br>
     </div>
-    <br>
-    <div *ngIf="enableDestination">
+    <div  class="section" *ngIf="enableDestination">
       <h3>Ajouter une livraison</h3>
       <div [ngTemplateOutlet]="delivery" [ngTemplateOutletContext]="{ type: 'destination', form: destinationForm, address: destination, errors: destinationErrors }"></div>
     </div>
 
-    <div [formGroup]="otherForm" *ngIf="origin">
+    <div [formGroup]="otherForm"  class="section" *ngIf="origin">
       <h3>Ajouter une marchandise</h3>
 
       <div>
@@ -35,19 +34,21 @@
         </div>
       </div>
     </div>
-    <br>
-    <h3>Ajouter une pièce jointe</h3>
-    <i>Taille du fichier : 10Mo max .jpeg, .png, .pdf</i>
-    <div class="attachment" [class.selected]="!!fileToUpload" (click)="askFileToUpload ()">
-      <ion-icon name="download-outline"></ion-icon>
-      <div *ngIf="!!fileToUpload">{{ fileToUpload.name }}</div>
-      <div class="error" *ngIf="fileToUploadError">{{ fileToUploadError }}</div>
+    <div class="section" *ngIf="!isDashdocModel">
+      <br>
+      <h3>Ajouter une pièce jointe</h3>
+      <i>Taille du fichier : 10Mo max .jpeg, .png, .pdf</i>
+      <div class="attachment" [class.selected]="!!fileToUpload" (click)="askFileToUpload ()">
+        <ion-icon name="download-outline"></ion-icon>
+        <div *ngIf="!!fileToUpload">{{ fileToUpload.name }}</div>
+        <div class="error" *ngIf="fileToUploadError">{{ fileToUploadError }}</div>
 
-      <div *ngIf="!fileToUpload">
-        Joindre un fichier à la demande 
+        <div *ngIf="!fileToUpload">
+          Joindre un fichier à la demande 
+        </div>
+
+        <input id="file-upload" class="ion-hide" type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xslx" (change)="onUploadFile($event)" />
       </div>
-
-      <input id="file-upload" class="ion-hide" type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xslx" (change)="onUploadFile($event)" />
     </div>
     <br>
     <ion-button (click)="onSubmit()">Valider la demande</ion-button>
@@ -55,42 +56,43 @@
     
     <!-- Delivery template -->
     <ng-template #delivery let-type="type" let-address="address" let-form="form" let-errors="errors">
-      <div [formGroup]="form" class="relative">
-        <!--
-        <div class="trash" (click)="deleteAddress (type)" *ngIf="address && transport.isMultipoint">
-          <ion-icon name="trash-outline"></ion-icon>
-        </div>
-        -->  
-        <fieldset class="custom-control address" (click)="setAddress (type)">
-            <legend *ngIf="type === 'origin'">Addresse d'enlèvement</legend>
-            <legend *ngIf="type === 'destination'">Addresse de la livraison</legend>
-            <div *ngIf="!address">Sélectionner</div>
-            <div class="title" *ngIf="address">{{ address.name }}</div>
-            <div *ngIf="address">{{ address.address }} {{ address.city }} {{ address.postcode }}</div>
-        </fieldset>
-        <div class="error" *ngIf="errors['address']">Veuiller saisir une addresse</div>
-      </div>
-
-      <div class="relative">
-        <!--
-        <div class="trash" *ngIf="false">
-          <ion-icon name="trash-outline"></ion-icon>
-        </div>
-        -->
-        <fieldset class="custom-control contact" (click)="setContacts ()">
-          <legend>Contact(s)</legend>
-          <div *ngIf="!contacts?.length">Ajouter un contact</div>
-          <div *ngFor="let contact of contacts; let index = index">
-            <hr *ngIf="index > 0">
-            <div class="title">{{ contact?.contact?.first_name }} {{ contact?.contact?.last_name }}</div>
-            <div>
-              {{ contact.contact.email }}
-            </div>
+      <div class="address-and-contact">
+        <div [formGroup]="form" class="relative">
+          <!--
+          <div class="trash" (click)="deleteAddress (type)" *ngIf="address && transport.isMultipoint">
+            <ion-icon name="trash-outline"></ion-icon>
           </div>
-        </fieldset>
-        <div class="error" *ngIf="contactsError">Veuiller saisir un ou plusieurs contacts</div>
-      </div>
+          -->  
+          <fieldset class="custom-control address" (click)="setAddress (type)">
+              <legend *ngIf="type === 'origin'">Addresse d'enlèvement</legend>
+              <legend *ngIf="type === 'destination'">Addresse de la livraison</legend>
+              <div *ngIf="!address">Sélectionner</div>
+              <div class="title" *ngIf="address">{{ address.name }}</div>
+              <div *ngIf="address">{{ address.address }} {{ address.city }} {{ address.postcode }}</div>
+          </fieldset>
+          <div class="error" *ngIf="errors['address']">Veuiller saisir une addresse</div>
+        </div>
 
+        <div class="relative">
+          <!--
+          <div class="trash" *ngIf="false">
+            <ion-icon name="trash-outline"></ion-icon>
+          </div>
+          -->
+          <fieldset class="custom-control contact" (click)="setContacts ()">
+            <legend>Contact</legend>
+            <div *ngIf="!contacts?.length">Ajouter un contact</div>
+            <div *ngFor="let contact of contacts; let index = index">
+              <hr *ngIf="index > 0">
+              <div class="title">{{ contact?.contact?.first_name }} {{ contact?.contact?.last_name }}</div>
+              <div>
+                {{ contact.contact.email }}
+              </div>
+            </div>
+          </fieldset>
+          <div class="error" *ngIf="contactsError">Veuiller saisir un ou plusieurs contacts</div>
+        </div>
+      </div>
       <ion-input
         label="Référence"
         label-placement="floating"
@@ -104,23 +106,27 @@
         <h3 *ngIf="type === 'origin'">Date de l'enlèvement demandée</h3>
         <h3 *ngIf="type === 'destination'">Date de la livraison demandée</h3>
 
-        <div class="slot">
-          <div class="custom-control day" [class.error]="errors['day']" id="{{ type }}_day_select">
-            <span *ngIf="!form.value.day">Selectionner</span>
-            <span *ngIf="form.value.day">{{ formatDay(form.value.day) }}</span>
+        <div class="slot date-and-time">
+          <div>
+            <div class="custom-control day" [class.error]="errors['day']" id="{{ type }}_day_select">
+              <span *ngIf="!form.value.day">Selectionner</span>
+              <span *ngIf="form.value.day">{{ formatDay(form.value.day) }}</span>
+            </div>
+            <div class="error" *ngIf="errors['day']">Veuiller saisir une date</div>
+            <div class="error" *ngIf="isSlotExceeded (form?.value?.day)">Date dépassée</div>
           </div>
-          <div class="error" *ngIf="errors['day']">Veuiller saisir une date</div>
-          <div class="error" *ngIf="isSlotExceeded (form?.value?.day)">Date dépassée</div>
 
-          <div class="time">
-            <label>Entre</label>
-            <input type="time" [formControl]="form.get('time_start')">
-            <!-- TODO: minTime >  originTimeStart -->
-            <label>&nbsp; Et</label>
-            <input type="time" [formControl]="form.get('time_end')">
+          <div>
+            <div class="time">
+              <div>Entre</div>
+              <input type="time" [formControl]="form.get('time_start')" (change)="validateForm()">
+              <!-- TODO: minTime >  originTimeStart -->
+              <div class="ion-padding-start">Et</div>
+              <input type="time" [formControl]="form.get('time_end')">
+            </div>
+            <div class="error" *ngIf="errors['time_start']">Veuiller saisir un horaire</div>
           </div>
-          <div class="error" *ngIf="errors['time_start']">Veuiller saisir un horaire</div>
-
+          
           <div class="ion-hide">
             <ion-datetime-button datetime="{{ type }}_day"></ion-datetime-button>
           </div>
@@ -161,8 +167,8 @@
       </div>
     </ng-template>
   </div>
-</ion-content>
 
+<!-- TODO file upload -->
 <ion-modal id="merchandise-modal" class="custom-big" [isOpen]="!!merchandiseEdit" (willDismiss)="setMerchandiseEdit(null)" #merchandiseModal>
   <ng-template>
     <div class="wrapper" [formGroup]="merchandiseForm" *ngIf="merchandiseForm">

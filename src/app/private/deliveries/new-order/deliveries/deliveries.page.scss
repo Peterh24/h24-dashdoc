@@ -1,6 +1,5 @@
-ion-content {
-    --padding-start: 20px;
-    --padding-end: 20px;
+.container {
+    font-size: 14px;
 }
 
 ion-button {
@@ -91,6 +90,7 @@ ion-badge {
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    cursor: pointer;
 }
 
 .with-trash {
@@ -117,4 +117,64 @@ ion-badge {
     color: red;
     margin-left: 10px;
     margin-top: 5px;
+}
+
+@media (max-width: 768px) {
+    ion-content {
+        --padding-start: 20px;
+        --padding-end: 20px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        & {
+            display: flex;
+            height: 100%;
+        }
+
+        .index {
+            flex-shrink: 0;
+            margin-left: 15px;
+            margin-right: 30px;
+            overflow: auto;
+        }
+    
+        .page {
+            flex-grow: 1;
+            height: 100%;
+        }
+
+        .page > * {
+            height: 100%;
+        }
+
+        .summary {
+            & {
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
+            }
+
+            .summary-back {
+                display: flex;
+                align-items: center;
+                font-size: 16px;
+                font-weight: 700;
+                padding-top: 20px;
+                cursor: pointer;
+            }
+        }
+    }
+
+    app-summary-component {
+        display: block;
+        height: 100%;
+    }
+}
+
+@media (min-width: 1200px) {
+    app-summary-component {
+        padding-right: 30%;
+    }
 }

@@ -1,43 +1,50 @@
 <app-header [defaultHref]="'/private/tabs/home'" title="Panier"></app-header>
 
 <ion-content>
-  <div class="tabs">
-    <div class="tab pointer" [class.active]="tab === 1" (click)="setTab(1)">
-      <span>
-        <ion-badge color="danger" *ngIf="deliveries?.length">{{ deliveries.length}}</ion-badge>
-        <span>En attente</span>
-      </span>
-    </div>
-    <div class="tab pointer" [class.active]="tab === 2" (click)="setTab(2)">
-      <span>
-        <ion-badge  color="warning" *ngIf="draftsName?.length">{{ draftsName.length }}</ion-badge>
-        <span>Brouillons</span>
-      </span>
-    </div>
-  </div>
+  <div class="container">
+    <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
 
-  <div *ngIf="tab === 1">
-    <ion-accordion-group value="a0" #accordionGroup>
-      <div *ngFor="let delivery of deliveries; let index = index">
-        <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ delivery, index }"></div>
+    <div class="tabs">
+      <div class="tab pointer" [class.active]="tab === 1" (click)="setTab(1)">
+        <span>
+          <ion-badge color="danger" *ngIf="deliveries?.length">{{ deliveries.length}}</ion-badge>
+          <span *ngIf="config.isMobile">En attente</span>
+          <span *ngIf="config.isDesktop">En attente de paiement</span>
+        </span>
       </div>
-    </ion-accordion-group>
-
-    <ion-infinite-scroll #infiniteScroll threshold="0" (ionInfinite)="loadMoreDeliveries($event)" >
-      <ion-infinite-scroll-content loadingSpinner="none" *ngIf="deliveries?.length && !apiTransport.isTransportLastPageReached">
-          <div class="h24loader" ></div>
-      </ion-infinite-scroll-content>
-    </ion-infinite-scroll>
-  </div>
-
-  <div *ngIf="tab === 2">
-    <ion-accordion-group #accordionDraftGroup>
-      <div *ngFor="let draft of draftsName; let index = index">
-        <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ delivery: drafts[draft], draftname: draft, draft: true, index }"></div>
+      <div class="tab pointer" [class.active]="tab === 2" (click)="setTab(2)">
+        <span>
+          <ion-badge  color="warning" *ngIf="draftsName?.length">{{ draftsName.length }}</ion-badge>
+          <span>Brouillons</span>
+        </span>
       </div>
-    </ion-accordion-group>  
+    </div>
+
+    <div *ngIf="tab === 1">
+      <ion-accordion-group value="a0" #accordionGroup>
+        <div *ngFor="let delivery of deliveries; let index = index">
+          <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ delivery, index }"></div>
+        </div>
+      </ion-accordion-group>
+
+      <ion-infinite-scroll #infiniteScroll threshold="0" (ionInfinite)="loadMoreDeliveries($event)" >
+        <ion-infinite-scroll-content loadingSpinner="none" *ngIf="deliveries?.length && !apiTransport.isTransportLastPageReached">
+            <div class="h24loader" ></div>
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </div>
+
+    <div *ngIf="tab === 2">
+      <ion-accordion-group #accordionDraftGroup>
+        <div *ngFor="let draft of draftsName; let index = index">
+          <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ delivery: drafts[draft], draftname: draft, draft: true, index }"></div>
+        </div>
+      </ion-accordion-group>  
+    </div>
+    <ion-button fill="outline" id="draft-delete" class="ion-hide">Supprimer ma demande</ion-button>
   </div>
-  <ion-button fill="outline" id="draft-delete" class="ion-hide">Supprimer ma demande</ion-button>
 </ion-content>
 
 <ng-template #deliveryTpl let-delivery="delivery" let-draft="draft" let-draftname="draftname" let-index="index">
@@ -54,44 +61,7 @@
       </div>
     </ion-item>
     <div class="ion-padding" slot="content">
-      <div class="content">
-        <div>
-          <div>
-            <div class="title">Type de transport</div>
-            <div class="value">Audio visuel <!-- TODO {{ typeName[delivery.type] }} --></div>
-          </div>
-          <div>
-            <div class="title">Enlèvement</div>
-            <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getOrigin (delivery)?.address }"></div>
-          </div>
-          <div>
-            <div class="title">Marchandises</div>
-            <div class="value">{{ getAllPlannedLoads (delivery) }}</div>
-          </div>
-          <div *ngIf="delivery.pricing_total_price">
-            <div class="title">Prix</div>
-            <div class="value">{{ delivery.pricing_total_price }} €</div>
-          </div>
-        </div>
-        <div>
-          <div>
-            <div class="title">Vehicule</div>
-            <div class="value">{{ delivery.requested_vehicle || 'Non déterminé' }}</div>
-          </div>
-          <div>
-            <div class="title">Livraison</div>
-            <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getDestination (delivery)?.address }"></div>
-          </div>
-          <div>
-            <div class="title">Contact</div>
-            <div class="value">{{ getContacts (delivery) }}</div>
-          </div>
-          <div *ngIf="delivery.carbon_footprint">
-            <div class="title">Empreinte carbone</div>
-            <div class="value">CO₂ {{ delivery.carbon_footprint?.toFixed (2) }}Kg</div>
-          </div>
-        </div>
-      </div>
+      <div [ngTemplateOutlet]="deliveryMobileTpl" [ngTemplateOutletContext]="{ delivery }"></div>
       <br>
       <!-- <ion-button routerLink="/private/tabs/transports/checkout-delivery" [queryParams]="{ transport: delivery.uid }" *ngIf="!draft">Paiement</ion-button> -->
       <ion-button fill="outline" (click)="gotoDraft (draftname)" *ngIf="draft">Reprendre ma demande</ion-button>
@@ -119,5 +89,42 @@
   <div class="address">
     <div class="name">{{ address?.name }}</div>
     <div class="city">{{ address?.address }} <br> {{ address?.postcode }} {{ address?.city }}</div>
+  </div>
+</ng-template>
+
+<ng-template #deliveryMobileTpl let-delivery="delivery">
+  <div class="{{ config.isMobile ? 'two-columns' : 'four-columns' }}">
+    <div>
+      <div class="title">Type de transport</div>
+      <div class="value">Audio visuel <!-- TODO {{ typeName[delivery.type] }} --></div>
+    </div>
+    <div>
+      <div class="title">Vehicule</div>
+      <div class="value">{{ delivery.requested_vehicle || 'Non déterminé' }}</div>
+    </div>
+    <div>
+      <div class="title">Enlèvement</div>
+      <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getOrigin (delivery)?.address }"></div>
+    </div>
+    <div>
+      <div class="title">Livraison</div>
+      <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getDestination (delivery)?.address }"></div>
+    </div>
+    <div>
+      <div class="title">Marchandises</div>
+      <div class="value">{{ getAllPlannedLoads (delivery) }}</div>
+    </div>
+    <div>
+      <div class="title">Contact</div>
+      <div class="value">{{ getContacts (delivery) }}</div>
+    </div>
+    <div *ngIf="delivery.pricing_total_price">
+      <div class="title">Prix</div>
+      <div class="value">{{ delivery.pricing_total_price }} €</div>
+    </div>
+    <div *ngIf="delivery.carbon_footprint">
+      <div class="title">Empreinte carbone</div>
+      <div class="value">CO₂ {{ delivery.carbon_footprint?.toFixed (2) }}Kg</div>
+    </div>
   </div>
 </ng-template>

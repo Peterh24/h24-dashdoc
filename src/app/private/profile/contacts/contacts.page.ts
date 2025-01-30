@@ -4,7 +4,7 @@ import { AddressService } from 'src/app/services/address.service';
 import { AlertController, IonItemSliding, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
-import { CONTACT_FOLDER_KEY, DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
+import { CONTACT_FOLDER_KEY, DASHDOC_COMPANY, HTTP_REQUEST_UNKNOWN_ERROR, USER_STORAGE_KEY } from 'src/app/services/constants';
 import { Contact } from './contact.model';
 import { ContactsService } from 'src/app/services/contacts.service';
 import { NewContactPage } from './new-contact/new-contact.page';
@@ -202,6 +202,17 @@ export class ContactsPage implements OnInit {
         });
     
         await toast.present();      
+      },
+      error: async (error) => {
+        console.log (error);
+
+        const alert = await this.alertController.create({
+          header: "Erreur",
+          message: HTTP_REQUEST_UNKNOWN_ERROR,
+          buttons: ['Compris'],
+        });
+  
+        await alert.present();  
       }
     });
   }
@@ -286,14 +297,25 @@ export class ContactsPage implements OnInit {
   }
 
   selectContact (contact: any, event: any) {
-    /*
     if (this.isModal) {
       event.preventDefault ();
       event.stopPropagation ();
       event.stopImmediatePropagation ();
-      this.modalController.dismiss (contact);
+      this.modalController.dismiss ([ 
+        { 
+          contact: {
+            company: {
+              pk: contact.company
+            },
+            id: contact.uid,
+            first_name: contact.first_name,
+            last_name: contact.last_name,
+            email: contact.email,
+            phone_nunmber: contact.phone_number
+          }
+       } 
+      ]);
     }
-    */
   }
 
   selectContacts () {

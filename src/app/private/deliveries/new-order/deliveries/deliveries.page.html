@@ -2,69 +2,88 @@
 
 <ion-content>
   <!-- TODO <app-progress-bar [current]="0.5" [next]="0.7" ></app-progress-bar> -->
+  <div class="container">
+    <div class="index">
+      <div *ngIf="transport.isMultipoint">
+        <h3>Enlèvement / Livraison</h3>
 
-  <div *ngIf="transport.isMultipoint">
-    <h3>Enlèvement / Livraison</h3>
-
-    <div class="relative" *ngFor="let delivery of transport.deliveries; let index = index" (click)="addDelivery (delivery)">
-      <div class="with-trash">
-        <div class="delivery multipoint">
-          <ion-badge>{{ index + 1 }}</ion-badge>
-          <div>
-            <div [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: delivery.origin?.address, type: 'origin' }"></div>
-            <hr>
-            <div [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: delivery.destination?.address, type: 'destination' }"></div>
+        <div class="relative" *ngFor="let delivery of transport.deliveries; let index = index" (click)="showAddDelivery (delivery)">
+          <div class="with-trash">
+            <div class="delivery multipoint">
+              <ion-badge>{{ index + 1 }}</ion-badge>
+              <div>
+                <div [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: delivery.origin?.address, type: 'origin' }"></div>
+                <hr>
+                <div [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: delivery.destination?.address, type: 'destination' }"></div>
+              </div>
+            </div>
+            <div class="trash" (click)="deleteDelivery ('origin', delivery)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </div>
           </div>
+          <div class="error" *ngIf="isMultipointDeliveryInvalid (index)">L'horaire d'enlèvement est invalide</div>
+          <div class="error" *ngIf="isSlotExceeded (delivery.origin?.slots?.[0]?.start)">La date d'enlèvement est dépassée</div>
+          <div class="error" *ngIf="isSlotExceeded (delivery.destination?.slots?.[0]?.start)">La date de livraison est dépassée</div>
         </div>
-        <div class="trash" (click)="deleteDelivery ('origin', delivery)">
-          <ion-icon name="trash-outline"></ion-icon>
-        </div>
+        <br>
+        <ion-button fill="outline" (click)="showAddDelivery ()"><ion-icon name="add-outline"></ion-icon> &nbsp; Ajouter une adresse d'enlèvement / livraison</ion-button>
       </div>
-      <div class="error" *ngIf="isMultipointDeliveryInvalid (index)">L'horaire d'enlèvement est invalide</div>
-      <div class="error" *ngIf="isSlotExceeded (delivery.origin?.slots?.[0]?.start)">La date d'enlèvement est dépassée</div>
-      <div class="error" *ngIf="isSlotExceeded (delivery.destination?.slots?.[0]?.start)">La date de livraison est dépassée</div>
+
+      <div *ngIf="!transport.isMultipoint">
+        <h3>Enlèvements</h3>
+
+        <div *ngFor="let delivery of origins; let index = index" (click)="showAddDelivery (delivery)">
+          <div class="with-trash">
+            <div class="delivery">
+                <div [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: delivery.origin?.address, index, type: 'origin' }"></div>
+            </div>
+            <div class="trash" (click)="deleteDelivery ('origin', delivery)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </div>
+          </div>
+          <div class="error" *ngIf="isSlotExceeded (delivery.origin?.slots?.[0]?.start)">La date d'enlèvement est dépassée</div>
+        </div>
+        <br>
+        <ion-button fill="outline" (click)="showAddDelivery (null, 'origin')" [disabled]="addOriginDisabled ()"><ion-icon name="add-outline"></ion-icon> &nbsp; Ajouter une addresse d'enlèvement</ion-button>
+        <br>
+        <br>
+        <h3>Livraisons</h3>
+
+        <div class="relative" *ngFor="let delivery of destinations; let index = index" (click)="showAddDelivery (delivery)">
+          <div class="with-trash">
+            <div class="delivery">
+              <div [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: delivery.destination?.address, index, type: 'destination' }"></div>
+            </div>
+            <div class="trash" (click)="deleteDelivery ('destination', delivery)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </div>
+          </div>
+          <div class="error" *ngIf="isSlotExceeded (delivery.destination?.slots?.[0]?.start)">La date de livraison est dépassée</div>
+        </div>
+        <br>
+        <ion-button fill="outline" (click)="showAddDelivery (null, 'destination')" [disabled]="addDestinationDisabled ()"><ion-icon name="add-outline"></ion-icon> &nbsp; Ajouter une addresse de livraison</ion-button>
+      </div>
+      <br>
+      <ion-button [disabled]="showSummaryComponent" (click)="onSubmit ()">Suivant &nbsp; <ion-icon name="chevron-forward-outline"></ion-icon></ion-button>
+      <br>
     </div>
-    <br>
-    <ion-button fill="outline" (click)="addDelivery ()"><ion-icon name="add-outline"></ion-icon> &nbsp; Ajouter une adresse d'enlèvement / livraison</ion-button>
+    <div class="page">
+      <app-delivery 
+        [delivery]="currentDelivery.delivery"
+        [defaultContacts]="currentDelivery.defaultContacts"
+        [deliveryType]="currentDelivery.deliveryType"
+        [originMaxSlot]="currentDelivery.originMaxSlot"
+        [destinationMinSlot]="currentDelivery.destinationMinSlot"
+        (selectDelivery)="addDelivery ($event)"
+        *ngIf="config.isDesktop && currentDelivery && !showSummaryComponent">
+      </app-delivery>
+
+      <div class="summary" *ngIf="showSummaryComponent">
+        <div class="summary-back" (click)="setShowSummaryComponent (false)"><ion-icon name="chevron-left"></ion-icon> &nbsp; Retour à la demande</div>
+        <app-summary-component></app-summary-component>
+      </div>
+    </div>
   </div>
-
-  <div *ngIf="!transport.isMultipoint">
-    <h3>Enlèvements</h3>
-
-    <div *ngFor="let delivery of origins; let index = index" (click)="addDelivery (delivery)">
-      <div class="with-trash">
-        <div class="delivery">
-            <div [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: delivery.origin?.address, index, type: 'origin' }"></div>
-        </div>
-        <div class="trash" (click)="deleteDelivery ('origin', delivery)">
-          <ion-icon name="trash-outline"></ion-icon>
-        </div>
-      </div>
-      <div class="error" *ngIf="isSlotExceeded (delivery.origin?.slots?.[0]?.start)">La date d'enlèvement est dépassée</div>
-    </div>
-    <br>
-    <ion-button fill="outline" (click)="addDelivery (null, 'origin')" [disabled]="addOriginDisabled ()"><ion-icon name="add-outline"></ion-icon> &nbsp; Ajouter une addresse d'enlèvement</ion-button>
-    <br>
-    <br>
-    <h3>Livraisons</h3>
-
-    <div class="relative" *ngFor="let delivery of destinations; let index = index" (click)="addDelivery (delivery)">
-      <div class="with-trash">
-        <div class="delivery">
-          <div [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: delivery.destination?.address, index, type: 'destination' }"></div>
-        </div>
-        <div class="trash" (click)="deleteDelivery ('destination', delivery)">
-          <ion-icon name="trash-outline"></ion-icon>
-        </div>
-      </div>
-      <div class="error" *ngIf="isSlotExceeded (delivery.destination?.slots?.[0]?.start)">La date de livraison est dépassée</div>
-    </div>
-    <br>
-    <ion-button fill="outline" (click)="addDelivery (null, 'destination')" [disabled]="addDestinationDisabled ()"><ion-icon name="add-outline"></ion-icon> &nbsp; Ajouter une addresse de livraison</ion-button>
-  </div>
-  <br>
-  <ion-button (click)="onSubmit ()">Suivant &nbsp; <ion-icon name="chevron-forward-outline"></ion-icon></ion-button>
-  <br>
 </ion-content>
 
 <ng-template #addressTpl let-address="address" let-index="index" let-type="type">

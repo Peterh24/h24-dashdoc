@@ -8,6 +8,8 @@ import { DeliveriesPageRoutingModule } from './deliveries-routing.module';
 
 import { DeliveriesPage } from './deliveries.page';
 import { HeaderModule, ProgressBarModule } from 'src/app/components';
+import { DeliveryPageModule } from '../delivery/delivery.module';
+import { SummmaryComponentModule } from '../summary/summary.component.module';
 
 @NgModule({
   imports: [
@@ -16,7 +18,9 @@ import { HeaderModule, ProgressBarModule } from 'src/app/components';
     IonicModule,
     DeliveriesPageRoutingModule,
     ProgressBarModule,
-    HeaderModule
+    HeaderModule,
+    DeliveryPageModule,
+    SummmaryComponentModule
   ],
   declarations: [DeliveriesPage]
 })

@@ -1,23 +1,7 @@
-ion-content {
-    --padding-start: 20px;
-    --padding-end: 20px;
-    height: 100%;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-}
-
-h3 {
-    font-size: 12pt;
-}
-
-h4 {
-    font-size: 10pt;
-}
-
-ion-img {
-    max-width: 100%;
+@media (max-width: 768px) {
+    ion-content {
+        --padding-start: 20px;
+        --padding-end: 20px;
+        height: 100%;
+    }
 }

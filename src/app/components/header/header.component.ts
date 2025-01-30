@@ -16,7 +16,6 @@ export class HeaderComponent  implements OnInit {
   @Input() slot: string = 'start';
   @Input() title: string;
   showClientMenu = false;
-  userHasChooseCompany = false;
 
   constructor(
     private authService: AuthService,
@@ -27,14 +26,7 @@ export class HeaderComponent  implements OnInit {
   ) { }
 
   ngOnInit(
-  ) {}
-
-  ionViewWillEnter () {
-    this.storage.get(DASHDOC_COMPANY).then((company) => {
-      if(company){
-        this.userHasChooseCompany = true;
-      }
-    });
+  ) {
   }
 
   getcompanyName() {
@@ -54,8 +46,8 @@ export class HeaderComponent  implements OnInit {
     this.authService.signOut();
   }
 
-  isActive (page: string) {
-    return document.location.href.includes (page);
+  isActive (regex: string) {
+    return document.location.href.match (regex);
   }
 
   toggleShowClientMenu () {

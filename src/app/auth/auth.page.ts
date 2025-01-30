@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { AlertController, IonInput, LoadingController, NavController } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
 import { Storage } from '@ionic/storage-angular';
+import { HTTP_REQUEST_UNKNOWN_ERROR } from '../services/constants';
 
 @Component({
   selector: 'app-auth',
@@ -84,8 +85,8 @@ export class AuthPage {
         console.log('error: ', error);
         loading.dismiss();
         const alert = await this.alertController.create({
-          header: 'Error',
-          message: 'Login Failed: ' + error.error.message,
+          header: 'Erreur',
+          message: error.error.code == 401 ? 'Identifiants invalides. Vérifiez votre mot de passe et réessayez.' : HTTP_REQUEST_UNKNOWN_ERROR,
           buttons: ['Ok']
         });
 

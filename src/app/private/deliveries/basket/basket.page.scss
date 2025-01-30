@@ -46,20 +46,45 @@ ion-button {
     display: block;
 }
 
-.content {
+.two-columns {
     & {
         display: flex;
+        flex-wrap: wrap;
         font-size: 10pt;
     }
 
     & > div {
-        flex-basis: 50%;
+        flex: 1 1 50%;
+        box-sizing: border-box;
+        margin-top: 5px;
+        margin-bottom: 5px;
     }
 
     .title {
         color: #9c9c9c;
-        margin-top: 10px;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
+    }
+}
+
+.four-columns {
+    & {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: flex-start;
+        font-size: 10pt;
+    }
+
+    & > div {
+        flex-basis: 25%;
+        box-sizing: border-box;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .title {
+        color: #9c9c9c;
+        margin-bottom: 5px;
     }
 }
 
@@ -88,4 +113,11 @@ ion-modal .buttons ion-button {
 
 .delivery-infos {
     color: #9c9c9c;
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 700px;
+        margin: auto;
+    }
 }

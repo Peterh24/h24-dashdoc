@@ -8,6 +8,7 @@ import { VehicleChoicePageRoutingModule } from './vehicle-choice-routing.module'
 
 import { VehicleChoicePage } from './vehicle-choice.page';
 import { HeaderModule, ProgressBarModule } from 'src/app/components';
+import { VehicleChoiceComponentModule } from './vehicle-choice.component.module';
 
 @NgModule({
   imports: [
@@ -16,7 +17,8 @@ import { HeaderModule, ProgressBarModule } from 'src/app/components';
     IonicModule,
     VehicleChoicePageRoutingModule,
     HeaderModule,
-    ProgressBarModule
+    ProgressBarModule,
+    VehicleChoiceComponentModule
   ],
   declarations: [VehicleChoicePage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

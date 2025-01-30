@@ -5,8 +5,9 @@ import { Country } from '../../../../private/models/country.model';
 import { take, Subscription } from 'rxjs';
 import { CountriesService } from 'src/app/utils/services/countries.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoadingController, ModalController, NavController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController, NavController } from '@ionic/angular';
 import { AddressService } from 'src/app/services/address.service';
+import { HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
 
 @Component({
   selector: 'app-edit-address',
@@ -27,6 +28,7 @@ export class EditAddressPage implements OnInit {
     private addressService: AddressService,
     private loadingController: LoadingController,
     private modalController: ModalController,
+    private alertController: AlertController,
     private router: Router
   ) { }
 
@@ -77,15 +79,28 @@ export class EditAddressPage implements OnInit {
       message: '<div class="h24loader"></div>',
     }).then(loadingElement  =>  {
       loadingElement.present();
-      this.addressService.updateAddress(this.address.pk,  this.address.name, this.address.address, this.address.postcode, this.address.city, this.address.country, this.address.instructions).subscribe((res) => {
-        loadingElement.dismiss();
-        this.form.reset();
+      this.addressService.updateAddress(this.address.pk,  this.address.name, this.address.address, this.address.postcode, this.address.city, this.address.country, this.address.instructions).subscribe({
+        next: (res) => {
+          loadingElement.dismiss();
+          this.form.reset();
 
-        if(!this.isModal) {
-          this.router.navigate(['/private/tabs/profile/address']);
-          return;
-        } else {
-          this.modalController.dismiss(res);
+          if(!this.isModal) {
+            this.router.navigate(['/private/tabs/profile/address']);
+            return;
+          } else {
+            this.modalController.dismiss(res);
+          }
+        },
+        error: async (error) => {
+          console.log (error);
+
+          const alert = await this.alertController.create({
+            header: "Erreur",
+            message: HTTP_REQUEST_UNKNOWN_ERROR,
+            buttons: ['Compris'],
+          });
+    
+          await alert.present();  
         }
       })
     })

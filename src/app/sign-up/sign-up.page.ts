@@ -4,6 +4,7 @@ import { AlertController, IonInput, LoadingController, ToastController } from '@
 import { passwordValidator, phoneValidator, regex, regexErrors } from '../utils/regex';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { HTTP_REQUEST_UNKNOWN_ERROR } from '../services/constants';
 
 @Component({
   selector: 'app-sign-up',
@@ -57,7 +58,7 @@ export class SignUpPage implements OnInit {
         this.router.navigateByUrl ('/auth');
 
         const toast = await this.toastController.create({
-          message: 'Votre demande d\'inscription à été envoyée',
+          message: 'Votre demande d\'inscription a été envoyée',
           duration: 60000,
           position: 'bottom',
           icon: 'checkbox-outline',
@@ -69,11 +70,7 @@ export class SignUpPage implements OnInit {
       error: async (error) => {
         loading.dismiss();
         console.log('error: ', error);
-        let errorMessage = 'Une erreur inconnue s\'est produite';
-
-        if (error && error.error && error.error.message) {
-          errorMessage = 'Enregistrement échoué';
-        }
+        let errorMessage = HTTP_REQUEST_UNKNOWN_ERROR;
 
         const alert = await this.alertController.create({
           header: 'Erreur',

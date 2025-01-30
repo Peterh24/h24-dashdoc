@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AlertController, IonInput } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
+import { HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
 import { passwordValidator, regexErrors } from 'src/app/utils/regex';
 
 @Component({
@@ -66,7 +67,8 @@ export class ChangePasswordPage implements OnInit {
         },
         error: async (error) => {
           const alert = await this.alertController.create({
-            header: "Echec de la requête: " + error.error.message,
+            header: "Erreur",
+            message: HTTP_REQUEST_UNKNOWN_ERROR,
             buttons: ['Compris'],
           });
     

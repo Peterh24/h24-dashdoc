@@ -45,7 +45,7 @@
       <ion-label>Mes factures</ion-label>
     </ion-item>
 
-    <ion-item class="signout" id="signout" *ngIf="config.isMobile">
+    <ion-item class="signout" id="signout" (click)="setShowSignout ()" *ngIf="config.isMobile">
       <ion-label>Se déconnecter</ion-label>
     </ion-item>
 

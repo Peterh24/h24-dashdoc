@@ -10,21 +10,19 @@ import { TransportService } from 'src/app/services/transport.service';
 export class MultipointChoicePage implements OnInit {
 
   constructor(
-    private transportService: TransportService,
-    private router: Router
-  ) { }
+    public transport: TransportService,
+    private router: Router,
+  ) {
+
+  }
 
   ngOnInit() {
   }
 
-  ionViewWillEnter () {
-    if (!this.transportService.type) {
-      this.router.navigateByUrl ('/private/tabs/transports/new-order');  
+  ionViewWillEnter() {
+    if (!this.transport.type) {
+      this.router.navigateByUrl ('/private/tabs/transports/new-order');
+      return;
     }
-  }
-
-  setMultipoint (isMultipoint: boolean) {
-    this.transportService.isMultipoint = isMultipoint;
-    this.router.navigateByUrl('/private/tabs/transports/new-order/deliveries');
   }
 }

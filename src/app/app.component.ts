@@ -6,6 +6,8 @@ import { register } from 'swiper/element/bundle';
 import { ModalController, NavController, Platform } from '@ionic/angular';
 import { App } from '@capacitor/app';
 import { addIcons } from 'ionicons';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs';
 
 register();
 @Component({
@@ -19,15 +21,12 @@ export class AppComponent {
     private storage: Storage, 
     private platform: Platform,
     private modalCtrl: ModalController,
+    private router: Router,
   ) {
     this.init();
   }
 
   async init() {
-    await this.storage.defineDriver(CordovaSQLiteDriver);
-    await this.storage.create();
-    await SplashScreen.hide();
-
     App.addListener ('backButton', data => {
       this.modalCtrl.getTop().then ((modal) => {
         if (modal) {
@@ -62,6 +61,7 @@ export class AppComponent {
       'chevron-forward-outline': 'assets/lucide/chevron-right.svg',
       'chevron-down': 'assets/lucide/chevron-down.svg',
       'chevron-left': 'assets/lucide/chevron-left.svg',
+      'chevron-right': 'assets/lucide/chevron-right.svg',
       'close': 'assets/lucide/x.svg',
       'close-outline': 'assets/lucide/x.svg',
 //      'create-outline': 'assets/lucide/pencil.svg',

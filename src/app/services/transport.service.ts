@@ -69,13 +69,14 @@ export class TransportService {
   }
 
   resetTransport () {
+    this.type = null;
     this.isMultipoint = false;
     this.isEditMode = false;
     this.draftName = null;
     this.deliveries = [];
     this.segments = [];
     this.trailers = [];
-    this.vehicle = {};
+    this.vehicle = null;
   }
 
   loadTransport (transport: any) {

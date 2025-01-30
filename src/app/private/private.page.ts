@@ -19,7 +19,6 @@ export class PrivatePage {
   private userhasChooseCompanySub: Subscription;
   showBackButton: boolean = true;
   companyName: string;
-  userHasChooseCompany: boolean;
   showClientMenu = false;
 
   constructor(
@@ -45,7 +44,6 @@ export class PrivatePage {
 
     this.companyService.companyName.subscribe(companyName => {
       if(companyName != ''){
-        this.userHasChooseCompany = true;
         this.companyName = companyName;
       } else {
         //TODO: uncomment this
@@ -53,22 +51,6 @@ export class PrivatePage {
       }
 
     });
-
-    this.storage.get(DASHDOC_COMPANY).then((company) => {
-      if(company){
-        this.userHasChooseCompany = true;
-      }
-    });
-  }
-
-  isActive (page: string) {
-    return document.location.href.includes (page);
-  }
-
-  toggleShowClientMenu () {
-    if (this.config.isDesktop) {
-      this.showClientMenu = !this.showClientMenu;
-    }
   }
 
   isBackButtonVisible() {

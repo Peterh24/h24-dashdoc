@@ -3,11 +3,12 @@ import { Address } from '../address.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Country } from '../../../../private/models/country.model';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoadingController, ModalController, NavController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController, NavController } from '@ionic/angular';
 
 import { CountriesService } from '../../../../utils/services/countries.service';
 import { AddressService } from '../../../../services/address.service';
 import { take } from 'rxjs';
+import { HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
 
 @Component({
   selector: 'app-new-address',
@@ -26,6 +27,7 @@ export class NewAddressPage implements OnInit {
     private addressService: AddressService,
     private loadingController: LoadingController,
     private modalController: ModalController,
+    private alertController: AlertController,
     private router: Router,
   ) { }
 
@@ -61,14 +63,27 @@ export class NewAddressPage implements OnInit {
       message: '<div class="h24loader"></div>',
     }).then(loadingElement => {
       loadingElement.present();
-      this.addressService.addAdress(this.form.value.name, this.form.value.address, this.form.value.city, this.form.value.postal, this.form.value.country, this.form.value.instructions || '').subscribe((res) => {
-        loadingElement.dismiss();
-        this.form.reset;
-        if(!this.isModal) {
-          this.router.navigate(['/private/tabs/profile/address']);
-          return;
-        } else {
-          this.modalController.dismiss(res);
+      this.addressService.addAdress(this.form.value.name, this.form.value.address, this.form.value.city, this.form.value.postal, this.form.value.country, this.form.value.instructions || '').subscribe({
+        next: (res) => {
+          loadingElement.dismiss();
+          this.form.reset;
+          if(!this.isModal) {
+            this.router.navigate(['/private/tabs/profile/address']);
+            return;
+          } else {
+            this.modalController.dismiss(res);
+          }
+        },
+        error: async (error) => {
+          console.log (error);
+
+          const alert = await this.alertController.create({
+            header: "Erreur",
+            message: HTTP_REQUEST_UNKNOWN_ERROR,
+            buttons: ['Compris'],
+          });
+    
+          await alert.present();    
         }
       });
     });

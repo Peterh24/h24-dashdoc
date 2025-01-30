@@ -8,6 +8,9 @@ import { NewOrderPageRoutingModule } from './new-order-routing.module';
 
 import { NewOrderPage } from './new-order.page';
 import { HeaderModule } from 'src/app/components';
+import { TypeChoiceComponentModule } from './type-choice/type-choice.component.module';
+import { VehicleChoiceComponentModule } from './vehicle-choice/vehicle-choice.component.module';
+import { MultipointChoiceComponentModule } from './multipoint-choice/multipoint-choice.component.module';
 
 @NgModule({
   imports: [
@@ -15,7 +18,10 @@ import { HeaderModule } from 'src/app/components';
     FormsModule,
     IonicModule,
     NewOrderPageRoutingModule,
-    HeaderModule
+    HeaderModule,
+    TypeChoiceComponentModule,
+    VehicleChoiceComponentModule,
+    MultipointChoiceComponentModule
   ],
   declarations: [NewOrderPage]
 })

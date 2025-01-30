@@ -4,6 +4,7 @@ import { IonAccordionGroup, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
 import { Subscription } from 'rxjs';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
+import { ConfigService } from 'src/app/services/config.service';
 import { DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { TransportService } from 'src/app/services/transport.service';
@@ -32,7 +33,15 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
   statuses: any = {
     created: 'Crée',
     confirmed: 'Confirmé',
-    declined: 'Refusé', 
+    assigned: 'Attribuée',
+    declined: 'Refusé',
+    verified: 'Vérifiée',
+    send_to_trucker: 'Transporteur',
+    acknowledged: 'Admis',
+    on_loading_site: 'Chargement',
+    loading_complete: 'Chargé',
+    on_unloading_site: 'Déchargement',
+    unloading_complete: 'Déchargé',
     invoiced: 'Facturé',
     paid: 'Payé',
     cancelled: 'Annulé',
@@ -44,6 +53,7 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     public deliveriesService: DeliveriesService,
     public transportService: TransportService,
     public apiTransport: ApiTransportService,
+    public config: ConfigService,
     private router: Router,
     private loadingController: LoadingController,
     private storage: Storage,
@@ -70,6 +80,11 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     }
   }
 
+  handleRefresh(event: CustomEvent) {
+    this.ionViewWillEnter ();
+    (event.target as HTMLIonRefresherElement).complete();
+  }
+
   setTab (tab: number) {
     this.tab = tab;
     this.loadDeliveries ();
@@ -86,7 +101,7 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     this.deliveriesService.resetDeliveries();
 
 //    const status = this.tab === 1 ? 'sent_to_trucker,on_loading_site,loading_complete,on_unloading_site,unloading_complete' : 'invoiced,paid,cancelled,done';
-    const status: any = this.tab === 1 ? 'created,updated,confirmed,declined,verified,trucker,on_loading_site,loading_complete,on_unloading_site,unloading_complete' : null;
+    const status: any = this.tab === 1 ? 'created,updated,confirmed,assigned,declined,verified,send_to_trucker,acknowledged,on_loading_site,loading_complete,on_unloading_site,unloading_complete' : null;
 
     this.subscription = this.deliveriesService.fetchDeliveries(status).subscribe({
       next: (deliveries) => {
@@ -167,8 +182,8 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     });
 
     if (all.length) {
-      all[0].title = 'De';
-      all[all.length - 1].title = 'À'
+      all[0].prefix = 'De';
+      all[all.length - 1].prefix = 'À'
     }
 
     return all;

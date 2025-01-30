@@ -16,6 +16,7 @@ import { DeliveryPage } from './delivery.page';
     IonicModule,
     DeliveryPageRoutingModule
   ],
-  declarations: [DeliveryPage]
+  declarations: [DeliveryPage],
+  exports: [DeliveryPage]
 })
 export class DeliveryPageModule {}

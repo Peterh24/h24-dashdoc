@@ -39,8 +39,6 @@ export class AuthService {
     private notifications: NotificationsService,
     private utils: UtilsService
   ) {
-    this.loadUser();
-
     // TODO: this.notifications.initialize ();
   }
 
@@ -57,17 +55,11 @@ export class AuthService {
         }
         this.currentUser = decoded;
         this.user.next(userData);
-
-        if (this.router.url.match(/^\/(auth)?$/)) {
-          this.navCtrl.navigateRoot('/private/tabs/home');
-        }
       } else {
         this.user.next(null);
-        this.router.navigateByUrl('/auth');
       }
     } else {
       this.user.next(null); 
-      this.router.navigateByUrl('/auth');
     }
   }
 
