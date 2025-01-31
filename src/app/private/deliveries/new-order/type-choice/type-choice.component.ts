@@ -43,10 +43,6 @@ export class TypeChoiceComponent  implements OnInit {
   }
 
   setTransportType (type: string) {
-    if (!this.transportService.type || this.transportService.type != type) {
-      this.transportService.resetTransport ();
-    }
-
     if (type == 'audiovisual') {
       this.transportService.type = type;
       if (this.config.isMobile) {

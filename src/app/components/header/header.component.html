@@ -32,20 +32,21 @@
         </div>
         <div [class.active]="isActive ('/tabs/transports/basket')" (click)="goto('/private/tabs/transports/basket')" [class.disabled]="!config.currentCompany">
           <ion-icon name="cart-outline"></ion-icon> Panier
+          <!-- <ion-badge color="danger" *ngIf="companyService.companyStatusBadge">{{ companyService.companyStatusBadge }}</ion-badge> -->
         </div>
         <div [class.active]="isActive ('/tabs/transports/(deliveries|new-order)')" (click)="goto('/private/tabs/transports/deliveries')" [class.disabled]="!config.currentCompany">
           <ion-icon name="truck"></ion-icon> Transport
         </div>
       </div>
-      <div class="client" (click)="goto('/private/tabs/profile')" slot="end">
+      <div class="client" slot="end" (click)="goto('/private/tabs/profile')">
         <ion-icon class="toggle" name="person-circle" (click)="toggleShowClientMenu()"></ion-icon>
         <ion-icon class="chevron" name="chevron-down"></ion-icon>
       </div>
   </ion-toolbar>
 </ion-header>
+
 <!--
-<div class="client-menu" *ngIf="showClientMenu">
-  <app-profile></app-profile>
+<div class="client-menu" *ngIf="showClientMenu && config.isDesktop">
+  <app-profile-component [show]="true"></app-profile-component>
 </div>
 -->
-

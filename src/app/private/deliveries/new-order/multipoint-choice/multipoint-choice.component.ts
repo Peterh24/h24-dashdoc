@@ -27,7 +27,12 @@ export class MultipointChoiceComponent  implements OnInit {
   }
 
   setMultipoint (isMultipoint: boolean) {
+    if (this.transportService.isMultipoint !== isMultipoint) {
+      this.transportService.deliveries = [];
+    }
+
     this.transportService.isMultipoint = isMultipoint;
+
     this.router.navigateByUrl('/private/tabs/transports/new-order/deliveries');
   }
 }

@@ -31,7 +31,7 @@ export class TransportService {
   minDateDestination: string;
   minHourDestination: string;
   isEditMode = false;
-  isMultipoint = false;
+  isMultipoint: any = null;
   draftName: string;
 
   constructor(private utilsService: UtilsService) { }
@@ -70,7 +70,7 @@ export class TransportService {
 
   resetTransport () {
     this.type = null;
-    this.isMultipoint = false;
+    this.isMultipoint = null;
     this.isEditMode = false;
     this.draftName = null;
     this.deliveries = [];

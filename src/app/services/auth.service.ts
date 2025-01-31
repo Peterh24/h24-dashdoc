@@ -134,6 +134,7 @@ export class AuthService {
     await this.storage.remove(DASHDOC_COMPANY);
     this.userIsAuthenticated = false;
     this.user.next(null);
+    this.currentUser = null;
     this.router.navigate(['/'], { replaceUrl: true });
   }
 }

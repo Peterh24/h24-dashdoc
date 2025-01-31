@@ -8,6 +8,7 @@ import * as cordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { ConfigService } from './config.service';
 import { DASHDOC_COMPANY } from './constants';
 import { NavigationEnd, Router } from '@angular/router';
+import { CompanyService } from './company.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,7 @@ import { NavigationEnd, Router } from '@angular/router';
 export class AppInitService {
   constructor(
     private authService: AuthService,
+    private companyService: CompanyService,
     private http: HttpClient,
     private storage: Storage,
     private config: ConfigService,
@@ -27,12 +29,15 @@ export class AppInitService {
     
     const company = await this.storage.get(DASHDOC_COMPANY);
     this.config.setCurrentCompany (company);
+    if (company) {
+      this.companyService.getCompanyStatus ();
+    }
 
     await this.authService.loadUser ();
     await SplashScreen.hide();
 
     if (this.authService.currentUser) {
-        if (location.pathname.match(/^\/(auth)?$/)) {
+        if (location.pathname.match(/\/auth$/)) {
             this.router.navigateByUrl('/private/tabs/home');
         }                
     } else {

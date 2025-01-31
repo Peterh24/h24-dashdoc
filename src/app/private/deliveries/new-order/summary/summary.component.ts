@@ -1,11 +1,12 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
-import { EMPTY, mergeMap } from 'rxjs';
+import { EMPTY, mergeMap, of } from 'rxjs';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { ConfigService } from 'src/app/services/config.service';
 import { API_URL, DASHDOC_API_URL, DASHDOC_COMPANY, HTTP_REQUEST_UNKNOWN_ERROR, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import { TransportService } from 'src/app/services/transport.service';
@@ -56,6 +57,7 @@ export class SummaryComponent  implements OnInit {
 
   constructor(
     public transport: TransportService,
+    public config: ConfigService,
     private authService: AuthService,
     private notifications: NotificationsService,
     private vehicles: VehiclesService,
@@ -63,6 +65,7 @@ export class SummaryComponent  implements OnInit {
     private storage: Storage,
     private http: HttpClient,
     private alertController: AlertController,
+    private loadingController: LoadingController,
     private apiTransport: ApiTransportService
   ) { }
 
@@ -108,14 +111,27 @@ export class SummaryComponent  implements OnInit {
   }
 
   editSection (type: string) {
-    const urls: any = {
-      type: '/private/tabs/transports/new-order',
-      vehicle: '/private/tabs/transports/new-order/vehicle-choice',
-      origins: '/private/tabs/transports/new-order/deliveries',
-      destinations: '/private/tabs/transports/new-order/deliveries'
+    let url = null;
+
+    if (this.config.isMobile) {
+      const urls: any = {
+        type: '/private/tabs/transports/new-order',
+        vehicle: '/private/tabs/transports/new-order/vehicle-choice',
+        origins: '/private/tabs/transports/new-order/deliveries',
+        destinations: '/private/tabs/transports/new-order/deliveries'
+      }
+
+      url = urls[type];
     }
 
-    const url = urls[type];
+    if (this.config.isDesktop) {
+      if (type == 'type' || type == 'vehicle') {
+        url = '/private/tabs/transports/new-order';
+      } else {
+        url = '/private/tabs/transports/new-order/deliveries';
+      }
+    }
+
     if (url) {
       this.router.navigateByUrl (url);
     }
@@ -136,9 +152,18 @@ export class SummaryComponent  implements OnInit {
       request = this.apiTransport.createTransport (transport);
     }
 
+    const loading = await this.loadingController.create({
+      keyboardClose: true,
+      message: '<div class="h24loader"></div>',
+      spinner: null,
+    });
+
+    await loading.present();
+
     request.subscribe({
       next: async (res: any) => {
         // On renouvelle le token firebase pour éviter qu'il n'expire bientot
+        loading.dismiss ();
         this.transport.resetTransport ();
         this.notifications.resetToken ();
 
@@ -169,6 +194,7 @@ export class SummaryComponent  implements OnInit {
       },
       error: async (error: any) => {
         console.log (error);
+        loading.dismiss ();
 
         const alert = await this.alertController.create({
           header: "Erreur",

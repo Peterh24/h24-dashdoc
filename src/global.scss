@@ -279,6 +279,12 @@ h2 {
     }
   }
 
+  @media (min-width: 1200px) {
+    .profile-container .page {
+        padding-right: 30%;
+    }
+  }
+
   /*
   @media (min-width: 768px) {
     body {

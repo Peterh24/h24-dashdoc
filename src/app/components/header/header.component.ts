@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
 import { AuthService } from 'src/app/services/auth.service';
@@ -11,7 +11,7 @@ import { DASHDOC_COMPANY } from 'src/app/services/constants';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent  implements OnInit {
+export class HeaderComponent  implements OnInit, OnDestroy, OnChanges {
   @Input() defaultHref: string;
   @Input() slot: string = 'start';
   @Input() title: string;
@@ -25,8 +25,13 @@ export class HeaderComponent  implements OnInit {
     private storage: Storage
   ) { }
 
-  ngOnInit(
-  ) {
+  ngOnInit() {
+  }
+
+  ngOnDestroy() {
+  }
+
+  ngOnChanges() {
   }
 
   getcompanyName() {

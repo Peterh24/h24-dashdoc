@@ -43,3 +43,15 @@
   </form>
 
 </ion-content>
+
+<ion-modal id="reset-transport-modal" class="custom" [isOpen]="showResetTransport" (willDismiss)="setShowResetTransport(false)" #resetTransportModal>
+  <ng-template>
+    <div class="wrapper">
+      <div class="title">Voulez vous poursuivre votre demande en cours ?</div>
+      <div class="buttons">
+        <ion-button (click)="setResetTransport (true, resetTransportModal)">Non</ion-button> &nbsp;
+        <ion-button fill="outline" (click)="setResetTransport (false, resetTransportModal)">Oui</ion-button>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>

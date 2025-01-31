@@ -19,11 +19,13 @@ export class DeliveriesPage implements OnInit {
   isModalOpen: boolean;
   showSummaryComponent = false;
 
+  errors: any = {};
+
   constructor(
     public transport: TransportService,
     public config: ConfigService,
     private router: Router,
-    private modalController: ModalController
+    private modalController: ModalController,
   ) { }
 
   ngOnInit() {
@@ -38,7 +40,8 @@ export class DeliveriesPage implements OnInit {
 
     this.currentDelivery = null;
     this.isMultipointAuto = this.transport.isMultipoint === null;
-    this.showSummaryComponent = this.transport.deliveries?.length > 0;
+    this.showSummaryComponent = this.config.isDesktop && this.transport.deliveries?.length > 0;
+    this.errors = {};
 
     this.synchronize ();
     
@@ -141,6 +144,7 @@ export class DeliveriesPage implements OnInit {
     this.currentDelivery = null;
 
     this.synchronize ();
+    this.validateForm ();
 
     console.log ('add', this.origins, this.destinations, delivery);
   }
@@ -159,6 +163,7 @@ export class DeliveriesPage implements OnInit {
     }
 
     this.synchronize ();
+    this.validateForm ();
   }
 
   addOriginDisabled () {
@@ -223,7 +228,34 @@ export class DeliveriesPage implements OnInit {
     this.showSummaryComponent = value;
   }
 
+  hasErrors () {
+    return Object.keys(this.errors).length;
+  }
+
+  validateForm () {
+    this.errors = {};
+
+    if (this.transport.isMultipoint) {
+      if (!this.transport.deliveries?.length) {
+        this.errors.missingOriginDestination = true;
+      }
+    } else {
+      if (!this.transport.getOrigins().length) {
+        this.errors.missingOrigin = true;
+      }
+
+      if (!this.transport.getDestinations().length) {
+        this.errors.missingDestination = true;
+      }
+    }
+  }
+
   onSubmit () {
+    this.validateForm ();
+    if (this.hasErrors ()) {
+      return;
+    }
+
     if (this.config.isMobile) {
       this.router.navigateByUrl('/private/tabs/transports/new-order/summary');
     } else {

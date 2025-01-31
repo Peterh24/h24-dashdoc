@@ -22,9 +22,5 @@ export class NewOrderPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    if (!this.transportService.type) {
-      this.router.navigateByUrl ('/private/tabs/transports/new-order');
-      return;
-    }
   }
 }

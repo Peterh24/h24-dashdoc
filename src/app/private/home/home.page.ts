@@ -1,4 +1,4 @@
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AlertController, IonSelect, LoadingController, ModalController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
 import { Subscription, catchError, take } from 'rxjs';
@@ -33,6 +33,8 @@ export class HomePage implements OnDestroy {
   lastname: string;
   currentUser: any;
   selectedCompanyId: any; // Ajoutez cette variable
+  showResetTransport = false;
+
   @ViewChild('companyChoose', { static: false }) companyChoose: IonSelect;
   constructor(
     private storage: Storage,
@@ -107,7 +109,6 @@ export class HomePage implements OnDestroy {
           this.companyService.setCompanyName(company.name);
           this.isCompanySelected = true;
           this.companyService.isCompanySwitch = false;
-          this.companyService.getCompanyStatus ();
         });
       }
     });
@@ -118,8 +119,43 @@ export class HomePage implements OnDestroy {
   }
 
   onNewOrder () {
-    this.transportService.resetTransport ();
-    this.router.navigateByUrl ('/private/tabs/transports/new-order');
+    if (this.transportService.type) {
+      this.showResetTransport = true;
+    } else {
+      this.router.navigateByUrl ('/private/tabs/transports/new-order');
+    }
+  }
+
+  setShowResetTransport (value = true) {
+    this.showResetTransport = value;
+  }
+
+  setResetTransport (value: boolean, modal: any) {
+    this.showResetTransport = false;
+    modal.dismiss ();
+
+    if (value) {
+      this.transportService.resetTransport ();
+      this.router.navigateByUrl('/private/tabs/transports/new-order');
+    } else {
+      if (this.config.isDesktop) {
+        if (this.transportService.deliveries?.length) {
+          this.router.navigateByUrl('/private/tabs/transports/new-order/deliveries');
+        } else {
+          this.router.navigateByUrl('/private/tabs/transports/new-order');
+        }
+      } else {
+        if (this.transportService.isMultipoint === true || this.transportService.isMultipoint === false) {
+          this.router.navigateByUrl ('/private/tabs/transports/new-order/deliveries')
+        } else if (this.transportService.vehicle) {
+          this.router.navigateByUrl ('/private/tabs/transports/new-order/multipoint-choice');
+        } else if (this.transportService.type) {
+          this.router.navigateByUrl('/private/tabs/transports/new-order/vehicle-choice');
+        } else {
+          this.router.navigateByUrl('/private/tabs/transports/new-order');
+        }
+      }
+    }
   }
 
   ngOnDestroy() {

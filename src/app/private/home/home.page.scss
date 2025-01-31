@@ -40,6 +40,17 @@ ion-button {
   margin-bottom: 15px;
 }
 
+ion-modal {
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  ion-button {
+    flex-grow: 1;
+  }
+}
+
 @media (max-width: 768px) {
   ion-content {
     --padding-start: 20px;

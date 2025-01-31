@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './header.component';
 import { IonicModule } from '@ionic/angular';
+import { ProfileComponentModule } from 'src/app/private/profile/profile.component.module';
 
 
 
@@ -11,7 +12,8 @@ import { IonicModule } from '@ionic/angular';
   ],
   imports: [
     IonicModule,
-    CommonModule
+    CommonModule,
+    ProfileComponentModule
   ],
   exports: [
     HeaderComponent

@@ -27,6 +27,7 @@
         </div>
         <br>
         <ion-button fill="outline" (click)="showAddDelivery ()"><ion-icon name="add-outline"></ion-icon> &nbsp; Ajouter une adresse d'enlèvement / livraison</ion-button>
+        <div class="error" *ngIf="errors.missingOriginDestination">Enlèvement / Livraison manquant</div>
       </div>
 
       <div *ngIf="!transport.isMultipoint">
@@ -45,6 +46,7 @@
         </div>
         <br>
         <ion-button fill="outline" (click)="showAddDelivery (null, 'origin')" [disabled]="addOriginDisabled ()"><ion-icon name="add-outline"></ion-icon> &nbsp; Ajouter une addresse d'enlèvement</ion-button>
+        <div class="error" *ngIf="errors.missingOrigin">Enlèvement manquant</div>
         <br>
         <br>
         <h3>Livraisons</h3>
@@ -62,12 +64,13 @@
         </div>
         <br>
         <ion-button fill="outline" (click)="showAddDelivery (null, 'destination')" [disabled]="addDestinationDisabled ()"><ion-icon name="add-outline"></ion-icon> &nbsp; Ajouter une addresse de livraison</ion-button>
+        <div class="error" *ngIf="errors.missingDestination">Livraison manquante</div>
       </div>
       <br>
-      <ion-button [disabled]="showSummaryComponent" (click)="onSubmit ()">Suivant &nbsp; <ion-icon name="chevron-forward-outline"></ion-icon></ion-button>
+      <ion-button [disabled]="config.isDesktop && showSummaryComponent || hasErrors ()" (click)="onSubmit ()">Suivant &nbsp; <ion-icon name="chevron-forward-outline"></ion-icon></ion-button>
       <br>
     </div>
-    <div class="page">
+    <div class="page" *ngIf="config.isDesktop">
       <app-delivery 
         [delivery]="currentDelivery.delivery"
         [defaultContacts]="currentDelivery.defaultContacts"
@@ -75,7 +78,7 @@
         [originMaxSlot]="currentDelivery.originMaxSlot"
         [destinationMinSlot]="currentDelivery.destinationMinSlot"
         (selectDelivery)="addDelivery ($event)"
-        *ngIf="config.isDesktop && currentDelivery && !showSummaryComponent">
+        *ngIf="currentDelivery && !showSummaryComponent">
       </app-delivery>
 
       <div class="summary" *ngIf="showSummaryComponent">

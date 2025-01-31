@@ -53,19 +53,6 @@ export class VehicleChoiceComponent  implements OnInit {
     ).subscribe();
   }
 
-  ionViewDidEnter() {
-    /*
-    if(!this.isModal) {
-      this.transportService.isMultipoint = false;
-      this.transportService.isEditMode = false;
-      this.transportService.deliveries = [];
-      this.transportService.segments = [];
-      this.transportService.trailers = [];
-      this.transportService.vehicle = {};
-    }
-    */
-  }
-
   onSlideChange(elem: any){
     this.currentIndex = elem.srcElement.swiper.realIndex;
     this.currentVehicle = this.vehicles[this.currentIndex];
