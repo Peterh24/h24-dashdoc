@@ -12,9 +12,9 @@ export class MultipointChoiceComponent  implements OnInit {
 
 
   constructor(
-    private transportService: TransportService,
+    public transportService: TransportService,
+    public config: ConfigService,
     private router: Router,
-    public config: ConfigService
   ) { }
 
   ngOnInit() {

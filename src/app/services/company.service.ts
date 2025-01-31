@@ -50,8 +50,8 @@ export class CompanyService {
 
   getCompanyStatus () {
     this.apiTransport.getCompanyStatus().pipe(take(1)).subscribe({
-      next: ((res:any[]) => {
-        this.companyStatusBadge = res?.length;
+      next: ((res:any) => {
+        this.companyStatusBadge = res;
       })
     });
   }

@@ -108,16 +108,12 @@ export class DeliveriesPage implements OnInit {
 
   addDelivery (delivery: any) {
     if (this.transport.isMultipoint) {
-      this.transport.deliveries.push (delivery);
+      if (! this.currentDelivery.delivery) {
+        this.transport.deliveries.push (delivery);
+      }
     } else {
-      if (delivery.destination) {
-        if (!this.transport.deliveries.find ((d) => d.destination?.address?.pk === delivery.destination?.address?.pk)) {
-          this.transport.deliveries.push (delivery);
-        }
-      } else if (delivery.origin) {
-        if (!this.transport.deliveries.find ((d) => d.origin?.address?.pk === delivery.origin?.address?.pk)) {
-          this.transport.deliveries.push (delivery);
-        }
+      if (! this.currentDelivery.delivery) {
+        this.transport.deliveries.push (delivery);
       }
 
       const origins = this.transport.getOrigins ().length;
@@ -151,16 +147,18 @@ export class DeliveriesPage implements OnInit {
 
   deleteDelivery (type: string, delivery: any) {
     if (type === 'origin') {
-      this.transport.deliveries = this.transport.deliveries.filter ((d) => !d.origin?.address || d.origin?.address?.pk != delivery?.origin?.address?.pk);
+      this.transport.deliveries = this.transport.deliveries.filter ((d) => d !== delivery);
     }
 
     if (type === 'destination') {
-      this.transport.deliveries = this.transport.deliveries.filter ((d) => !d.destination?.address || d.destination?.address?.pk != delivery?.destination?.address?.pk);
+      this.transport.deliveries = this.transport.deliveries.filter ((d) => d !== delivery);
     }
 
     if (this.isMultipointAuto) {
       this.transport.isMultipoint = this.transport.getOrigins().length >= 2 && this.transport.getDestinations ().length >= 2;
     }
+
+    this.currentDelivery = null;
 
     this.synchronize ();
     this.validateForm ();
@@ -225,6 +223,7 @@ export class DeliveriesPage implements OnInit {
   }
 
   setShowSummaryComponent (value: boolean = true) {
+    this.currentDelivery = null;
     this.showSummaryComponent = value;
   }
 

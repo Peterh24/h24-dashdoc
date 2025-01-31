@@ -69,7 +69,9 @@ export class DeliveryPage implements OnInit, OnChanges {
     public authService: AuthService,
     private modalController: ModalController,
     private storage: Storage,
-  ) { }
+  ) { 
+    this.merchandises.push (this.merchandises.shift());
+  }
 
   ngOnInit () {
     this.ngOnChanges ();
@@ -115,8 +117,6 @@ export class DeliveryPage implements OnInit, OnChanges {
       other: this.otherForm,
       merchandise: this.merchandiseForm
     });
-
-    this.merchandises.push (this.merchandises.shift());
 
     if (this.delivery) {
       this.origin = this.delivery.origin?.address;

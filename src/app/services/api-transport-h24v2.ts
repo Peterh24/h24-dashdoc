@@ -93,7 +93,7 @@ export class ApiTransportH24v2 {
 
     getCompanyStatus () {
         return this.http.get(`${this.apiUrl}transports/?status__in=created,updated,confirmed,declined,verified`).pipe (
-            map ((res: any) => res.items)
+            map ((res: any) => res?.items?.length) // TODO
         )
     }
     
