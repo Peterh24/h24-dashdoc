@@ -4,13 +4,8 @@
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "lint": "ng lint",
-    "heroku-postbuild": "ng build"
+    "start": "node server.js",
+    "watch": "ng build --watch --configuration=production",
   },
   "private": true,
   "dependencies": {
