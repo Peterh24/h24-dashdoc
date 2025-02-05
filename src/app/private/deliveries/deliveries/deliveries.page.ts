@@ -4,6 +4,7 @@ import { IonAccordionGroup, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
 import { Subscription } from 'rxjs';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
+import { CompanyService } from 'src/app/services/company.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
@@ -51,6 +52,7 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
 
   constructor(
     public deliveriesService: DeliveriesService,
+    public companyService: CompanyService,
     public transportService: TransportService,
     public apiTransport: ApiTransportService,
     public config: ConfigService,
@@ -101,7 +103,7 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     this.deliveriesService.resetDeliveries();
 
 //    const status = this.tab === 1 ? 'sent_to_trucker,on_loading_site,loading_complete,on_unloading_site,unloading_complete' : 'invoiced,paid,cancelled,done';
-    const status: any = this.tab === 1 ? 'created,updated,confirmed,assigned,declined,verified,send_to_trucker,acknowledged,on_loading_site,loading_complete,on_unloading_site,unloading_complete' : null;
+    const status: any = this.tab === 1 ? 'created,updated,confirmed,assigned,verified,send_to_trucker,acknowledged,on_loading_site,loading_complete,on_unloading_site,unloading_complete' : null;
 
     this.subscription = this.deliveriesService.fetchDeliveries(status).subscribe({
       next: (deliveries) => {
@@ -157,21 +159,25 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
   }
 
   getDefaultDeliveryName (delivery: any) {
+    return "Demande";
+    /*
     if (!delivery.created) {
       return "Demande";
     }
 
     return "Demande du " + this.getDateDay (delivery.created);
+    */
   }
 
   getHeaderDay (date: string) {
-    return date ? 'Du ' + this.getDateDay (date) : '';
+    return date ? this.getDateDay (date) : '';
   }
 
-  getAllDeliveries (deliveries: any) {
+  getAllDeliveries (delivery: any) {
     const all: any = [];
+    const segments = this.transportService.loadSegments (delivery?.segments);
 
-    deliveries?.forEach ((delivery: any) => {
+    segments?.forEach ((delivery: any) => {
       if (delivery.origin?.address) {
         all.push (delivery.origin);
       }
@@ -219,7 +225,7 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
   getAllPlannedLoads (delivery: any) {
     const merchandises: any = {};
 
-    delivery.deliveries.map ((d: any) => d.planned_loads).forEach ((loads: any) => {
+    delivery.deliveries.map ((d: any) => d.planned_loads || d.loads).forEach ((loads: any) => {
       loads?.forEach ((load: any) => { 
         merchandises[load.description] = true;
       })
@@ -289,6 +295,12 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
         this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${pk}`, drafts).then (() => this.loadDrafts ());
       })
     });
+  }
+
+  gotoTransportDetail (transport: any) {
+    if (transport?.uid) {
+      this.router.navigateByUrl ('/private/tabs/transports/detail/' + transport.uid);
+    }
   }
 
   gotoDraft (draftName: string) {

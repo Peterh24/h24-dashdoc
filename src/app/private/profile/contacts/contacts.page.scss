@@ -140,6 +140,10 @@
     margin-bottom: 15px;
   }
 
+  .modal .page {
+    padding: 0 15px 15px 15px;
+  }
+  
   @media (max-width: 768px) {
     ion-content  {
       --padding-start: 15px;
@@ -149,7 +153,4 @@
   }
 
   @media (min-width: 768px) {
-    .page {
-      padding: 15px;
-    }
   }

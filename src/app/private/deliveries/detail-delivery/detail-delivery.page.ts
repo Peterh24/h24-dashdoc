@@ -10,6 +10,10 @@ import { Map, tileLayer, marker, icon } from 'leaflet';
 import { Marker } from '../marker.model';
 import { Browser } from '@capacitor/browser';
 
+/**
+ * @deprecated TODO
+ */
+
 @Component({
   selector: 'app-detail-delivery',
   templateUrl: './detail-delivery.page.html',

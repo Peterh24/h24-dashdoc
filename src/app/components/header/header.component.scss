@@ -22,8 +22,6 @@ ion-buttons {
     border-radius: 100%;
     width: 44px !important;
     height: 44px !important;
-    margin-top: 13px !important;
-    margin-right: 10px !important;
 }
 
 ion-toolbar {
@@ -80,6 +78,7 @@ ion-toolbar {
 
     ion-badge {
         min-width: 15pt;
+        margin-left: 5px;
     }
 }
 

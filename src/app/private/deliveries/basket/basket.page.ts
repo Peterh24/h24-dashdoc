@@ -61,6 +61,7 @@ export class BasketPage implements OnInit, AfterViewInit {
   }
 
   ionViewWillEnter () {
+    this.tab = 1;
     this.loadDeliveries ();
     this.loadDrafts ();
   }
@@ -127,15 +128,19 @@ export class BasketPage implements OnInit, AfterViewInit {
   }
 
   getDefaultDeliveryName (delivery: any) {
+    return "Demande";
+    /*
     if (!delivery.created) {
       return "Demande";
     }
 
     return "Demande du " + this.getDateDay (delivery.created);
+    
+    */
   }
 
   getHeaderDay (date: string) {
-    return date ? 'Du ' + this.getDateDay (date) : '';
+    return date ? this.getDateDay (date) : '';
   }
 
   getOrigin (delivery: any) {
@@ -150,7 +155,7 @@ export class BasketPage implements OnInit, AfterViewInit {
   getAllPlannedLoads (delivery: any) {
     const merchandises: any = {};
 
-    delivery.deliveries.map ((d: any) => d.loads).forEach ((loads: any) => {
+    delivery.deliveries.map ((d: any) => d.planned_loads || d.loads).forEach ((loads: any) => {
       loads?.forEach ((load: any) => { 
         merchandises[load.description] = true;
       })
@@ -188,6 +193,12 @@ export class BasketPage implements OnInit, AfterViewInit {
           this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${pk}`, drafts).then (() => this.loadDrafts ());
         })
       });
+    }
+  }
+
+  gotoTransportDetail (transport: any) {
+    if (transport?.uid) {
+      this.router.navigateByUrl ('/private/tabs/transports/detail/' + transport.uid);
     }
   }
 

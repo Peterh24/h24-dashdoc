@@ -9,6 +9,7 @@ export class Delivery {
     public pricing_total_price: number,
     public quotation_total_price: number,
     public deliveries: Array<Deliveries>,
+    public segments: Array<Deliveries>,
     public messages: Array<Message>,
     public documents: Array<Document>,
     public licensePlate: string,

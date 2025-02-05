@@ -32,9 +32,9 @@
         </div>
         <div [class.active]="isActive ('/tabs/transports/basket')" (click)="goto('/private/tabs/transports/basket')" [class.disabled]="!config.currentCompany">
           <ion-icon name="cart-outline"></ion-icon> Panier
-          <!-- <ion-badge color="danger" *ngIf="companyService.companyStatusBadge">{{ companyService.companyStatusBadge }}</ion-badge> -->
+          <ion-badge color="danger" *ngIf="companyService.companyStatusBadge">{{ companyService.companyStatusBadge }}</ion-badge>
         </div>
-        <div [class.active]="isActive ('/tabs/transports/(deliveries|new-order)')" (click)="goto('/private/tabs/transports/deliveries')" [class.disabled]="!config.currentCompany">
+        <div [class.active]="isActive ('/tabs/transports/(deliveries|new-order|detail)')" (click)="goto('/private/tabs/transports/deliveries')" [class.disabled]="!config.currentCompany">
           <ion-icon name="truck"></ion-icon> Transport
         </div>
       </div>

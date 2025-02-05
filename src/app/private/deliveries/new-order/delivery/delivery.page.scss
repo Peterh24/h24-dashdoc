@@ -20,6 +20,7 @@ ion-button {
 
 ion-input {
     margin-top: 20px;
+    --padding-top: 5px;
 }
 
 h3 {
@@ -116,6 +117,7 @@ ion-datetime-button {
     align-items: center;
 //    margin-top: 10px;
     padding: 10px;
+    height: 40px;
 }
 
 .time {
@@ -144,6 +146,7 @@ ion-datetime-button {
         border-radius: 15px;
         border: 1px solid lightgray;
         text-align: center;
+        height: 40px;
     }
 }
 
@@ -171,12 +174,13 @@ legend {
         margin: 2%;
         padding-top: 20px;
         padding-bottom: 20px;
+        text-align: center;
     }
 
     .title {
         position: absolute;
-        right: 10px;
-        bottom: 10px;
+        left: 15px;
+        bottom: 5px;
     }
 
     .checkbox {
@@ -190,6 +194,9 @@ legend {
     img {
         max-width: 100%;
         max-height: 100%;
+        max-height: 150px;
+        -webkit-mask-image: -webkit-gradient(linear, right 0%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));
+        mask-image: gradient(linear, right 0%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));    
     }
 }
 
@@ -305,8 +312,3 @@ ion-toggle {
         padding-right: 30%;
     }   
 }
-
-ion-input::part(native) {
-    display: flex;
-    align-items: center;
-  }

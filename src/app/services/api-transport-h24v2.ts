@@ -15,7 +15,7 @@ export class ApiTransportH24v2 {
     static isDashdocModel: boolean = false;
 
     apiUrl: string;
-    companyId: number;
+    companyId: number; // TODO: use config.currentCompany
 
     storage = inject (Storage);
     http = inject (HttpClient);
@@ -85,14 +85,17 @@ export class ApiTransportH24v2 {
     }
 
     chooseCompany (companyId: number) {
-        this.companyId = companyId;
         return this.http.post(`${this.apiUrl}company/switch-company`, {
             companyId
-        });
+        }).pipe (
+            tap (() => {
+                this.companyId = companyId;
+            })
+        );
     }
 
     getCompanyStatus () {
-        return this.http.get(`${this.apiUrl}transports/?status__in=created,updated,confirmed,declined,verified`).pipe (
+        return this.http.get(`${this.apiUrl}transports/?status__in=created,updated,confirmed,verified`).pipe (
             map ((res: any) => res?.items?.length) // TODO
         )
     }
@@ -291,6 +294,7 @@ export class ApiTransportH24v2 {
             data.pricing_total_price,
             data.quotation_total_price,
             this.sortDeliveries(deliveriesData),
+            null, // TODO
             data.messages,
             data.documents,
             licensePlate,

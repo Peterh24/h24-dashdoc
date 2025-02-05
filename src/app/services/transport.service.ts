@@ -88,8 +88,11 @@ export class TransportService {
     this.isMultipoint = transport.is_multipoint;
     this.deliveries = this.loadDeliveries (transport.deliveries, this.isMultipoint);
 
-    this.sortDeliveries ();
+    const origins = this.getOrigins().length;
+    const destinations = this.getDestinations().length;
 
+    this.isMultipoint = origins > 1 && destinations > 1;
+  
     console.log ('load', transport, this);
   }
 
@@ -100,9 +103,8 @@ export class TransportService {
     const isSingleDestination = this.utilsService.areAllValuesIdentical(deliveriesJson, 'destination', 'address');
 
     if (isMultipoint || !isSingleOrigin && !isSingleDestination) {
-      this.isMultipoint = true;
+      // Multipoint
     } else if (isSingleOrigin) {
-      this.isMultipoint = false;
       const origin = { ...deliveries[0] };
       deliveries.forEach ((d, index) => {
         delete d.origin;
@@ -110,7 +112,6 @@ export class TransportService {
       delete origin.destination;
       deliveries.unshift (origin);
     } else {
-      this.isMultipoint = false;
       const destination = { ...deliveries[deliveries.length - 1] };
       deliveries.forEach ((d, index) => {
         delete d.destination;
@@ -177,4 +178,19 @@ export class TransportService {
     const { id, company, first_name, last_name, email, phone_number } = contactJson.contact;
     return { contact: { company: { pk: company?.pk }, id, first_name, last_name, email, phone_number } };
   }
+
+  loadSegments (deliveriesJson: any, isMultipoint = false) {
+    const segments: any[] = deliveriesJson?.map ((d: any) => this.loadDelivery (d));
+
+    segments.forEach ((segment, index) => {
+      if (index > 0) {
+        if (segment.origin?.pk === segments[index-1].destination?.pk) {
+          delete segment.origin;
+        }
+      }
+    });
+
+    return segments;
+  }
+
 }

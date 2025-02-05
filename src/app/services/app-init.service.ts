@@ -6,7 +6,7 @@ import { Storage } from '@ionic/storage-angular';
 import { SplashScreen } from '@capacitor/splash-screen';
 import * as cordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { ConfigService } from './config.service';
-import { DASHDOC_COMPANY } from './constants';
+import { COMPANIES_KEY, DASHDOC_COMPANY } from './constants';
 import { NavigationEnd, Router } from '@angular/router';
 import { CompanyService } from './company.service';
 
@@ -31,6 +31,13 @@ export class AppInitService {
     this.config.setCurrentCompany (company);
     if (company) {
       this.companyService.getCompanyStatus ();
+      const companies = await this.storage.get (COMPANIES_KEY);
+      if (companies) {
+        const companyInfos = companies.find ((c: any) => c.pk == company);
+        if (companyInfos?.name) {
+          this.companyService.setCompanyName (companyInfos.name);
+        }
+      }
     }
 
     await this.authService.loadUser ();

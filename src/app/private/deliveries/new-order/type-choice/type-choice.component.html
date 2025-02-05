@@ -1,19 +1,19 @@
 <div class="container">
-  <div class="cards">
+  <div class="types">
     <h3>Choisissez votre type de transport</h3>
     <ion-button size="small" fill="outline" *ngFor="let draft of draftsName" (click)="loadDraft (draft)">
       Charger ma demande '{{ draft }}'
     </ion-button>
-    <div class="card" (click)="setTransportType ('audiovisual')">
+    <div class="type" (click)="setTransportType ('audiovisual')">
       <img src="assets/order-type/audiovisual.jpeg">
       <div class="title">Audiovisuel</div>
     </div>
-    <div class="card disabled" [class.hidden]="transportService.type" (click)="setTransportType ('charter')">
+    <div class="type disabled" [class.hidden]="transportService.type" (click)="setTransportType ('charter')">
       <img src="assets/order-type/charter.jpeg">
       <div class="title">Affrètement</div>
       <div class="comming">A venir</div>
     </div>
-    <div class="card disabled" [class.hidden]="transportService.type" (click)="setTransportType ('air')">
+    <div class="type disabled" [class.hidden]="transportService.type" (click)="setTransportType ('air')">
       <img src="assets/order-type/air.jpeg">
       <div class="title">Aeriens</div>
       <div class="comming">A venir</div>

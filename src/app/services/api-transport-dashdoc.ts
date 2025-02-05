@@ -88,7 +88,7 @@ export class ApiTransportDashdoc {
     }
 
     getCompanyStatus () {
-        return this.http.get(`${this.apiUrl}transports/?status__in=created,updated,confirmed,declined,verified`).pipe (
+        return this.http.get(`${this.apiUrl}transports/?status__in=created,updated,confirmed,verified`).pipe (
           map ((res: any) => res.count)
         );
     }
@@ -218,9 +218,14 @@ export class ApiTransportDashdoc {
     loadTransport (data: any) {
         this.fromDashdocTransport (data);
 
-        const deliveriesData = data.deliveries.map((delivery: any) => {
+        const deliveriesData = data.deliveries?.map((delivery: any) => {
             const { uid, origin, destination, loads, tracking_contacts } = delivery;
             return { uid, origin, destination, loads, tracking_contacts };
+        });
+
+        const segmentsData = data.segments?.map((segment: any) => {
+          const { uid, origin, destination, loads, tracking_contacts } = segment;
+          return { uid, origin, destination, loads, tracking_contacts };
         });
 
         const licensePlate = data.segments[0].trailers[0] ? data.segments[0].trailers[0].license_plate : '';
@@ -245,6 +250,7 @@ export class ApiTransportDashdoc {
             data.pricing_total_price,
             data.quotation_total_price,
             this.sortDeliveries (deliveriesData),
+            segmentsData,
             data.messages,
             data.documents,
             licensePlate,

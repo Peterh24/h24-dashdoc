@@ -34,11 +34,12 @@ export class DeliveryPage implements OnInit, OnChanges {
   company: any;
   contacts: any[];
   contactsError: string;
-  merchandisesUrl = 'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/';
+  merchandisesUrl = 'assets/merchandises/';
+//  merchandisesUrl = 'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/';
   merchandiseId: any = {
     'Caméra': 'camera',
     'Lumières': 'light',
-    'Photographie': 'photo',
+//    'Photographie': 'photo',
     'Régie': 'management',
     'Vêtements': 'clothe',
     'Machinerie': 'machinery',

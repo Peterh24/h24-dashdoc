@@ -8,6 +8,10 @@ import { take } from 'rxjs';
 import { TransportService } from 'src/app/services/transport.service';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
 
+/**
+ * @deprecated TODO
+ */
+
 @Component({
   selector: 'app-deliveries',
   templateUrl: './deliveries.page.html',

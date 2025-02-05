@@ -2,16 +2,16 @@
     height: 100%;
 }
 
-.cards {
+.types {
     height: 100%;
     display: flex;
     flex-direction: column;
 }
 
-.card {
+.type {
     position: relative;
-    flex-basis: 33%;
-    padding: 10px 0 10px 0;
+    flex-grow: 1;
+    margin: 10px;
     border: 1px black;
     border-radius: 15px;
     overflow: hidden;
@@ -19,7 +19,7 @@
     cursor: pointer;
 }
 
-.card img {
+.type img {
     object-fit: cover;
     width: 100%;
     height: 100%;
@@ -27,7 +27,7 @@
     mask-image: gradient(linear, right 0%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));
 }
 
-.card .title {
+.type .title {
     position: absolute;
     left: 20px;
     bottom: 20px;
@@ -35,7 +35,7 @@
     font-weight: bold;
 }
 
-.card.disabled {
+.type.disabled {
     background-color: grey;
     opacity: 90%;
 }
@@ -66,7 +66,7 @@ ion-button {
 }
 
 @media (min-width: 768px) {
-    .cards {
+    .types {
         max-height: 500px;
     }
 }

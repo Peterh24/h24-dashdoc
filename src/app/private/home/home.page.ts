@@ -101,6 +101,7 @@ export class HomePage implements OnDestroy {
             this.companyService.isCompanySwitch = false;
             this.addressService.resetAddresses ();
             this.contactService.resetContacts ();
+            this.transportService.resetTransport ();
           }
         });
       } else {

@@ -52,15 +52,13 @@
         </span>
       </div>
     </ion-item>
-    <div class="ion-padding" slot="content">
+    <div class="ion-padding pointer" slot="content" (click)="gotoTransportDetail (delivery)">
       <div [ngTemplateOutlet]="statusTpl" [ngTemplateOutletContext]="{ status: getStatusIndex (delivery) }"></div>
       <br>
       <div [ngTemplateOutlet]="deliveryMobileTpl" [ngTemplateOutletContext]="{ delivery }" *ngIf="config.isMobile"></div>
       <div [ngTemplateOutlet]="deliveryDesktopTpl" [ngTemplateOutletContext]="{ delivery }" *ngIf="config.isDesktop"></div>
       <br>
-      <!--
-      <ion-button fill="outline" routerLink="/private/tabs/transports/detail-delivery/{{ delivery.uid }}"><ion-icon name="add-outline"></ion-icon> &nbsp; Détails</ion-button>
-      -->
+      <!-- <div class="detail-button" routerLink="/private/tabs/transports/detail/{{ delivery.uid }}"><ion-icon name="add-outline"></ion-icon> &nbsp; Détails</div> -->
     </div>
   </ion-accordion>
 </ng-template>
@@ -101,76 +99,42 @@
     </div>
     <div>
       <div class="title">Vehicule</div>
-      <div class="value">{{ delivery.requested_vehicle || 'Non déterminé' }}</div>
+      <div class="value">{{ delivery.licensePlate || delivery.requested_vehicle || 'Non déterminé' }}</div>
     </div>
   </div>
   <div class="two-columns">
-    <div class="address" *ngFor="let step of getAllDeliveries(delivery.deliveries)">
-      <div class="title">{{ step.prefix || 'En passant par' }}</div>
-      <div class="name">{{ step?.address?.name }}</div>
-      <div class="city">{{ step?.address?.address }} <br> {{ step?.address?.postcode }} {{ step?.address?.city }}</div>
+    <div>
+      <div class="title">Enlèvement</div>
+      <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getOrigin (delivery)?.address }"></div>
+    </div>
+    <div>
+      <div class="title">Livraison</div>
+      <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getDestination (delivery)?.address }"></div>
     </div>
   </div>
   <div class="two-columns">
     <div><div class="title">Date</div><div>{{ getOriginDate(delivery) }}</div></div>
     <div><div class="title">Date</div><div>{{ getDestinationDate(delivery) }}</div></div>
-  </div>
-  <div class="two-columns">
-    <div>
-      <div class="title">Marchandises</div>
-      <div class="value">{{ getAllPlannedLoads (delivery) }}</div>
-    </div>
-    <div>
-      <div class="title">Contact</div>
-      <div class="value">{{ getContacts (delivery) }}</div>
-    </div>
-    <div *ngIf="delivery.pricing_total_price">
-      <div class="title">Prix</div>
-      <div class="value">{{ delivery.pricing_total_price }} €</div>
-    </div>
-    <div *ngIf="delivery.carbon_footprint">
-      <div class="title">Empreinte carbone</div>
-      <div class="value">CO₂ {{ delivery.carbon_footprint?.toFixed (2) }}Kg</div>
-    </div>
   </div>
 </ng-template>
 
 <ng-template #deliveryDesktopTpl let-delivery="delivery">
   <div class="four-columns">
     <div>
-      <div class="title">Type de transport</div>
-      <div class="value">Audio visuel <!-- TODO {{ typeName[delivery.type] }} --></div>
+      <div class="title">Enlèvement</div>
+      <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getOrigin (delivery)?.address }"></div>
     </div>
     <div>
-      <div class="title">Vehicule</div>
-      <div class="value">{{ delivery.requested_vehicle || 'Non déterminé' }}</div>
+      <div class="title">Livraison</div>
+      <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getDestination (delivery)?.address }"></div>
     </div>
     <div>
-      <div class="title">Marchandises</div>
-      <div class="value">{{ getAllPlannedLoads (delivery) }}</div>
+      <div class="title">Client</div>
+      <div class="value">{{ companyService.companyName | async }}</div>
     </div>
     <div>
-      <div class="title">Contact</div>
-      <div class="value">{{ getContacts (delivery) }}</div>
+      <div class="title">Numéro de commande</div>
+      <div class="value">{{ delivery.uid }}</div>
     </div>
-  </div>
-  <div class="four-columns">
-    <div class="address" *ngFor="let step of getAllDeliveries(delivery.deliveries)">
-      <div class="title">{{ step.prefix || 'En passant par' }}</div>
-      <div class="name">{{ step?.address?.name }}</div>
-      <div class="city">{{ step?.address?.address }} <br> {{ step?.address?.postcode }} {{ step?.address?.city }}</div>
-    </div>
-  </div>
-  <div class="four-columns">
-    <div><div class="title">Date</div><div>{{ getOriginDate(delivery) }}</div></div>
-    <div *ngIf="delivery.pricing_total_price">
-      <div class="title">Prix</div>
-      <div class="value">{{ delivery.pricing_total_price }} €</div>
-    </div>
-    <div *ngIf="delivery.carbon_footprint">
-      <div class="title">Empreinte carbone</div>
-      <div class="value">CO₂ {{ delivery.carbon_footprint?.toFixed (2) }}Kg</div>
-    </div>
-    <div><div class="title">Date</div><div>{{ getDestinationDate(delivery) }}</div></div>
   </div>
 </ng-template>

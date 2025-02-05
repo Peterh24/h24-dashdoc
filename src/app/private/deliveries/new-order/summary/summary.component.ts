@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController, NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
 import { EMPTY, mergeMap, of } from 'rxjs';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
@@ -30,31 +30,6 @@ export class SummaryComponent  implements OnInit {
   company: string;
   shipperReference: string;
 
-  defaultTransport: any = {
-    "carrier_address": {
-      "company": {
-        "pk": 1755557,
-      },
-      "is_verified": true,
-    },
-    "deliveries": [
-    ],
-    "segments": [
-    ],
-    "instructions": "Notes exploitant", // TODO
-    "volume_display_unit": "m3",
-    "business_privacy": false,
-    "is_template": false,
-    "is_multiple_compartments": false,
-    "requires_washing": false,
-    "send_to_trucker": false,
-    "send_to_carrier": true,
-    "analytics": {
-        "has_price": false
-    }
-  }
-
-
   constructor(
     public transport: TransportService,
     public config: ConfigService,
@@ -66,6 +41,7 @@ export class SummaryComponent  implements OnInit {
     private http: HttpClient,
     private alertController: AlertController,
     private loadingController: LoadingController,
+    private navController: NavController,
     private apiTransport: ApiTransportService
   ) { }
 
@@ -207,6 +183,30 @@ export class SummaryComponent  implements OnInit {
     });
   }
 
+  defaultTransport: any = {
+    "carrier_address": {
+      "company": {
+        "pk": 1755557,
+      },
+      "is_verified": true,
+    },
+    "deliveries": [
+    ],
+    "segments": [
+    ],
+    "instructions": "Notes exploitant", // TODO
+    "volume_display_unit": "m3",
+    "business_privacy": false,
+    "is_template": false,
+    "is_multiple_compartments": false,
+    "requires_washing": false,
+    "send_to_trucker": false,
+    "send_to_carrier": true,
+    "analytics": {
+        "has_price": false
+    }
+  }
+
   async buildTransport () {
     if (!this.transport.trailers?.length) {
       this.transport.trailers.push({
@@ -242,7 +242,7 @@ export class SummaryComponent  implements OnInit {
 
       if (destinations.length > 1) {
         // Single origin
-        destinations.forEach ((d) => {
+        destinations.forEach ((d: any) => {
           delete d.origin;
           delete d.planned_loads; // TODO
           deliveries.push ({
@@ -252,7 +252,7 @@ export class SummaryComponent  implements OnInit {
         });
       } else {
         // Single destination
-        origins.forEach ((o) => {
+        origins.forEach ((o: any) => {
           delete o.destination;
           deliveries.push ({
             ...destinations[0],

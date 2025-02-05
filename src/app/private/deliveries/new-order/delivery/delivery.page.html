@@ -154,7 +154,7 @@
           <ion-icon name="add-outline" (click)="addHandlers (form)"></ion-icon>
         </div>
 
-        <ion-toggle labelPlacement="end" (ionChange)="setAskSecureGuarding($event, form)" [checked]="false">Option de gardiennage sécurisé</ion-toggle><br>
+        <ion-toggle labelPlacement="end" (ionChange)="setAskSecureGuarding($event, form)" [checked]="false" *ngIf="!isDashdocModel">Option de gardiennage sécurisé</ion-toggle><br>
 
         <ion-input
           [label]="type === 'origin' ? 'Instructions à l\'enlèvement' : 'Instructions à la livraison'"

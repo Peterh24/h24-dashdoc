@@ -60,7 +60,7 @@
         </span>
       </div>
     </ion-item>
-    <div class="ion-padding" slot="content">
+    <div class="ion-padding pointer" slot="content" (click)="gotoTransportDetail(delivery)">
       <div [ngTemplateOutlet]="deliveryMobileTpl" [ngTemplateOutletContext]="{ delivery }"></div>
       <br>
       <!-- <ion-button routerLink="/private/tabs/transports/checkout-delivery" [queryParams]="{ transport: delivery.uid }" *ngIf="!draft">Paiement</ion-button> -->
@@ -100,7 +100,7 @@
     </div>
     <div>
       <div class="title">Vehicule</div>
-      <div class="value">{{ delivery.requested_vehicle || 'Non déterminé' }}</div>
+      <div class="value">{{ delivery.licensePlate || delivery.requested_vehicle || 'Non déterminé' }}</div>
     </div>
     <div>
       <div class="title">Enlèvement</div>

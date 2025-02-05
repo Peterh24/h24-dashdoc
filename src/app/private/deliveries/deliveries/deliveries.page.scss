@@ -69,6 +69,18 @@
     }
 }
 
+ion-accordion {
+    padding-bottom: 0;
+}
+
+.detail-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+}
+
 @media (max-width: 768px) {
     .create-order {
         display: none;

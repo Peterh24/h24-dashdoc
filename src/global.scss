@@ -261,22 +261,28 @@ h2 {
     padding: 20px;
     margin: 10px;
 
-    color: #9c9c9c;
     box-shadow: 0px 1px 9.4px 0px #00000024;
   }
   
-  .profile-container {
-    & {
-      display: flex;
-      height: 100%;
-    }
+  @media (min-width: 768px) {
+    .profile-container {
+      & {
+        display: flex;
+        height: 100%;
+      }
+  
+      app-profile-component {
+        margin-left: 20px;
+        margin-right: 20px;
+      }
 
-    .page {
-      width: 100%;
-      overflow-y: scroll;
-      margin-top: 20px;
-      padding-right: 10px;
-    }
+      .page {
+        width: 100%;
+        overflow-y: scroll;
+        margin-top: 20px;
+        padding-right: 10px;
+      }
+    }  
   }
 
   @media (min-width: 1200px) {
@@ -284,18 +290,4 @@ h2 {
         padding-right: 30%;
     }
   }
-
-  /*
-  @media (min-width: 768px) {
-    body {
-      background-color: black;
-    }
-
-    ion-app {
-      background-color: white;
-      max-width: 600px;
-      margin: auto;
-    }
-  }
-  */
 }
