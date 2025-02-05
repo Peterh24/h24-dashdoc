@@ -5,7 +5,7 @@
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "start": "node server.js",
-    "watch": "ng build --watch --configuration=production",
+    "watch": "ng build --watch --configuration=production"
   },
   "private": true,
   "dependencies": {
