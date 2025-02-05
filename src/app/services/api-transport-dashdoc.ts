@@ -175,12 +175,19 @@ export class ApiTransportDashdoc {
     isTransportLastPageReached = false;
     nextTransportPage: string;
 
-    createTransport (transport: any) {
+    createTransport1 (transport: any) {
         this.toDashdocTransport (transport);
         return this.http.post(`${this.apiUrl}transports/`, transport).pipe (
           mergeMap (res => this.http.post (`${API_URL}../transports/new`, transport))
         )
     }
+
+    createTransport (transport: any) {
+      this.toDashdocTransport (transport);
+      return this.http.post (`${API_URL}../transports/new`, transport).pipe (
+        mergeMap (res => this.http.post(`${this.apiUrl}transports/`, transport))
+      )
+  }
 
     updateTransport (transport: any) {
         this.toDashdocTransport (transport);
@@ -316,5 +323,26 @@ export class ApiTransportDashdoc {
           delete delivery.destination.handlers;
         }
       })
+    }
+
+    createTransportMessage (transport: any, file: any, delivery: number = null) {
+      const formData = new FormData();
+
+      const message: any = {
+        transport: transport.uid || transport.id,
+        type: file.name.match (/\.(jpg|jpeg|gif|png|webp)/i) ? "photo" : "document",
+        document_title: file.name,
+        reference: delivery ? `[delivery=${delivery}]` : '',
+      };
+
+      formData.append ("document", file, file.name);
+
+      for (let key in message) {
+        formData.append(key, message[key]);
+      };
+
+      return this.http.post(`${this.apiUrl}transport-messages/`, formData).pipe (
+
+      )
     }
 }  

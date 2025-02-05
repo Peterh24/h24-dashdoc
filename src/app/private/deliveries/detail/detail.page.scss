@@ -34,6 +34,27 @@
     }
 }
 
+.attachments {
+    & {
+        background-color: lightgray;
+        text-align: center;
+        padding: 20px;
+        margin-top: 20px;
+        border: 1px solid gray;
+        border-radius: 15px;
+        cursor: pointer;
+    }
+
+    &.selected {
+        background-color: #C6D9FE;
+    }
+
+    ion-icon {
+        font-size: 25pt;
+        margin-bottom: 10px;
+    }
+}
+
 @media (max-width: 768px) {
     .back-button, .company-name {
         display: none;

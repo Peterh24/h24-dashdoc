@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ModalController, NavController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController, NavController } from '@ionic/angular';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { Map, tileLayer, marker, icon, Marker, LatLngBounds } from 'leaflet';
 import { ConfigService } from 'src/app/services/config.service';
@@ -11,6 +11,8 @@ import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { ModalImgComponent } from '../detail-delivery/modal-img/modal-img.component';
 import { TransportService } from 'src/app/services/transport.service';
+import { FILE_UPLOAD_MAX_SIZE, HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
+import { ApiTransportService } from 'src/app/services/api-transport.service';
 
 const DEBUG = false;
 
@@ -31,10 +33,13 @@ export class DetailPage implements OnInit {
     public config: ConfigService,
     public companyService: CompanyService,
     private route: ActivatedRoute,
+    private apiTransport: ApiTransportService,
     private navController: NavController,
     private deliveriesService: DeliveriesService,
     private transportService: TransportService,
+    private alertController: AlertController,
     private modalController: ModalController,
+    private loadingController: LoadingController,
     private http: HttpClient
   ) { }
 
@@ -210,8 +215,8 @@ export class DetailPage implements OnInit {
   openMessage (message: any, dateString: string) {
     if (message.isImage) {
       this.openImg (message.document, dateString)
-    } else if (message.isPdf) {
-      this.openPdf (message.document);
+    } else {
+      this.openFile (message.document);
     }
   }
 
@@ -229,9 +234,57 @@ export class DetailPage implements OnInit {
     modal.present();
   }
 
-  openPdf(pdf: string) {
-    console.log(pdf);
-    Browser.open({ url: pdf});
+  openFile (file: string) {
+    console.log(file);
+    Browser.open({ url: file});
+  }
+
+  askFileToUpload () {
+    document.getElementById ("file-upload").click ();
+  }
+
+  async onUploadFile (event: Event) {
+    if ((event.target as HTMLInputElement).files) {
+      let input = event.target as HTMLInputElement;
+      let files = [];
+      for (let i = 0; i < input.files.length; i++) {
+        const file = input.files[i];
+
+        if (file.size > FILE_UPLOAD_MAX_SIZE) {
+          console.log ("Fichier trop gros"); // TODO
+          continue;
+        }
+
+        const loading = await this.loadingController.create({
+          keyboardClose: true,
+          message: '<div class="h24loader"></div>',
+          spinner: null,
+        });
+
+        await loading.present();
+
+        this.apiTransport.createTransportMessage (this.transport, file).subscribe ({
+          next: (res: any) => {
+            loading.dismiss ();
+            this.transport.messages.push ({
+              document: res.document,
+              created: res.created,
+              isImage: res.document.match (/\.(jpg|jpeg|gif|png|webp)/i)
+            });
+          },
+          error: async (res) => {
+            loading.dismiss ();
+            const alert = await this.alertController.create({
+              header: "Erreur",
+              message: HTTP_REQUEST_UNKNOWN_ERROR,
+              buttons: ['Compris'],
+            });
+
+            await alert.present();
+          }
+        });
+      }
+    }
   }
 
   initMap() {

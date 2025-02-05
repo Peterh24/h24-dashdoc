@@ -13,15 +13,15 @@
       <div [ngTemplateOutlet]="deliveryMobileTpl" [ngTemplateOutletContext]="{ transport }" *ngIf="transport && config.isMobile"></div>
       <div [ngTemplateOutlet]="deliveryDesktopTpl" [ngTemplateOutletContext]="{ transport }" *ngIf="transport && config.isDesktop"></div>
 
-      <div class="documents" *ngIf="transport && transport.documents?.length > 0">
+      <div class="documents pointer" *ngIf="transport && transport.documents?.length > 0">
         <h2>Documents</h2>
-        <ion-item *ngFor="let document of transport.documents" (click)="openPdf(document.file)" class="ion-no-padding ion-no-margin">
+        <ion-item *ngFor="let document of transport.documents" (click)="openFile(document.file)" class="ion-no-padding ion-no-margin">
           <ion-label><p>{{ getDate(document.file_updated_date) }} - {{document.name}}</p></ion-label>
           <ion-icon [name]="'download'" slot="end"></ion-icon>
         </ion-item>
       </div>
 
-      <div class="messages" *ngIf="transport && transport.messages.length > 0">
+      <div class="messages pointer" *ngIf="transport && transport.messages.length > 0">
         <h2>Images</h2>
           <div class="message" *ngFor="let message of getAllMessages (transport)">
             <ion-item lines="none" class="ion-no-padding" (click)="openMessage(message, message.created)">
@@ -34,6 +34,16 @@
               </ion-label>
             </ion-item>
           </div>
+      </div>
+
+      <div class="attachments" (click)="askFileToUpload ()">
+        <ion-icon name="download-outline"></ion-icon>
+
+        <div>
+          Joindre un fichier à la demande
+        </div>
+
+        <input id="file-upload" class="ion-hide" type="file" multiple="true" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xslx" (change)="onUploadFile($event)" />
       </div>
     </div>
   </div>

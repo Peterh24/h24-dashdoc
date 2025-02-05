@@ -34,11 +34,11 @@
         </div>
       </div>
     </div>
-    <div class="section" *ngIf="!isDashdocModel">
+    <div class="section">
       <br>
       <h3>Ajouter une pièce jointe</h3>
       <i>Taille du fichier : 10Mo max .jpeg, .png, .pdf</i>
-      <div class="attachment" [class.selected]="!!fileToUpload" (click)="askFileToUpload ()">
+      <div class="attachment pointer" [class.selected]="!!fileToUpload" (click)="askFileToUpload ()">
         <ion-icon name="download-outline"></ion-icon>
         <div *ngIf="!!fileToUpload">{{ fileToUpload.name }}</div>
         <div class="error" *ngIf="fileToUploadError">{{ fileToUploadError }}</div>

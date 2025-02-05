@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController, NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
-import { EMPTY, mergeMap, of } from 'rxjs';
+import { EMPTY, firstValueFrom, mergeMap, of } from 'rxjs';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
@@ -115,9 +115,19 @@ export class SummaryComponent  implements OnInit {
 
   async onSubmit (deleteDraft = false) {
     const transport = await this.buildTransport ();
-    // TODO: gestion de l'upload des fichiers
-    transport?.deliveries?.forEach ((delivery: any) => {
-      delete delivery.file;
+    const files: any[] = [];
+
+    transport?.deliveries?.forEach ((delivery: any, index: any) => {
+      const file = delivery.file;
+
+      if (file) {
+        files.push ({
+          file: file,
+          delivery: index + 1
+        });
+
+        delete delivery.file;
+      }
     });
 
     let request;
@@ -138,35 +148,51 @@ export class SummaryComponent  implements OnInit {
 
     request.subscribe({
       next: async (res: any) => {
-        // On renouvelle le token firebase pour éviter qu'il n'expire bientot
-        loading.dismiss ();
-        this.transport.resetTransport ();
-        this.notifications.resetToken ();
+        const transport = res;
 
-        if (this.transport.draftName && deleteDraft) {
-          this.storage.get(DASHDOC_COMPANY).then ((pk) => {
-            this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
-              delete drafts[this.transport.draftName];
-              this.transport.draftName = null;
-              this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${pk}`, drafts); 
-            });
+        loading.dismiss ();
+
+        const errors = await this.uploadFiles (transport, files);
+
+        if (errors?.length) {
+          const alert = await this.alertController.create({
+            header: `Erreur chargement de ${errors?.length + 1} fichier(s)`,
+            message: HTTP_REQUEST_UNKNOWN_ERROR,
+            buttons: ['Compris'],
           });
+
+          await alert.present();
         }
 
-        const confirm = await this.alertController.create({
-          header: 'Bravo, votre course a été enregistrée',
-          message: 'Votre course a été validée et nous est parvenue, en cas de besoin d\'informations complementaires, nous vous contacterons sur le numero de téléphone présent dans votre profil.',
-          buttons: [
-            {
-              text: 'Compris',
-              handler: () => {
-                  this.router.navigateByUrl('/private/tabs/transports/basket');
-              }
-            }
-          ],
-        });
+        this.router.navigateByUrl('/private/tabs/transports/basket').then (async () => {
+          this.transport.resetTransport ();
+          // On renouvelle le token firebase pour éviter qu'il n'expire bientot
+          this.notifications.resetToken ();
 
-        await confirm.present();
+          if (this.transport.draftName && deleteDraft) {
+            this.storage.get(DASHDOC_COMPANY).then ((pk) => {
+              this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
+                delete drafts[this.transport.draftName];
+                this.transport.draftName = null;
+                this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${pk}`, drafts); 
+              });
+            });
+          }
+
+          const confirm = await this.alertController.create({
+            header: 'Bravo, votre course a été enregistrée',
+            message: 'Votre course a été validée et nous est parvenue, en cas de besoin d\'informations complementaires, nous vous contacterons sur le numero de téléphone présent dans votre profil.',
+            buttons: [
+              {
+                text: 'Compris',
+                handler: () => {
+                }
+              }
+            ],
+          });
+
+          await confirm.present();
+        });
       },
       error: async (error: any) => {
         console.log (error);
@@ -336,6 +362,22 @@ export class SummaryComponent  implements OnInit {
     segments.forEach ((segment) => segment.trailer = this.transport.trailers);
 
     return segments;
+  }
+
+  async uploadFiles (transport: any, files: any[]) {
+    const errors: any[] = [];
+
+    files.forEach (async (file: any, index: any) => {
+      if (file) {
+        try {
+          await firstValueFrom (this.apiTransport.createTransportMessage (transport, file.file, file.delivery));
+        } catch (error) {
+          errors.push (file.file.name);
+        }
+      }
+    });
+
+    return errors;
   }
 
   onSetOrderName (name: any, deleteDraft: any, modal: any) {
