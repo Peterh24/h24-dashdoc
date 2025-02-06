@@ -51,9 +51,6 @@ export class DeliveryPage implements OnInit, OnChanges {
   merchandisesSelected: any = {};
   merchandiseEdit: string;
 
-  fileToUpload: any;
-  fileToUploadError: string;
-
   mainForm: FormGroup;
   originForm: FormGroup;
   destinationForm: FormGroup;
@@ -89,6 +86,7 @@ export class DeliveryPage implements OnInit, OnChanges {
       instructions: new FormControl('', { validators: [] }),
       loads: new FormControl(null, { validators: [] }),
       handlers: new FormControl(0, { validators: [] }),
+      file: new FormControl(null, { validators: [] }),
     });
     this.destinationForm = new FormGroup({
       reference: new FormControl('', { validators: [] }),
@@ -98,6 +96,7 @@ export class DeliveryPage implements OnInit, OnChanges {
       instructions: new FormControl('', { validators: [] }),
       loads: new FormControl(null, { validators: [] }),
       handlers: new FormControl(0, { validators: [] }),
+      file: new FormControl(null, { validators: [] }),
     });
     this.merchandiseForm = new FormGroup({
       id: new FormControl('', { validators: [] }),
@@ -135,8 +134,6 @@ export class DeliveryPage implements OnInit, OnChanges {
       const destination = this.loadDelivery(this.destinationForm, this.delivery.destination);
 
       console.log ('edit', this.delivery);
-
-      this.fileToUpload = this.delivery.file;
     } else {
       this.updateEnabled ();
     }
@@ -172,7 +169,6 @@ export class DeliveryPage implements OnInit, OnChanges {
     this.enableDestination = false;
     this.company = null;
     this.contacts = null;
-    this.fileToUpload = null;
 
     this.originErrors = {};
     this.destinationErrors = {};
@@ -201,6 +197,7 @@ export class DeliveryPage implements OnInit, OnChanges {
       instructions: delivery?.instructions,
       reference: delivery?.reference,
       handlers: parseInt(delivery?.handlers) || 0,
+      file: delivery?.file
     };
     
 
@@ -443,14 +440,21 @@ export class DeliveryPage implements OnInit, OnChanges {
     delete this.merchandisesSelected[id];
   }
 
-  askFileToUpload () {
-    document.getElementById ("file-upload").click ();
+  askFileToUpload (type: string) {
+    document.getElementById ("file-upload-" + type).click ();
   }
 
-  onUploadFile (event: Event) {
+  onUploadFile (form: FormGroup, event: Event) {
     if ((event.target as HTMLInputElement).files) {
       let input = event.target as HTMLInputElement;
-      this.fileToUpload = input.files[0];
+      form.value.file = input.files[0];
+    }
+  }
+
+  validateFormFile (form: FormGroup, errors: any) {
+    delete errors['file'];
+    if (form.value.file && form.value.file.size > FILE_UPLOAD_MAX_SIZE) {
+      errors['file'] = 'Fichier non valide';
     }
   }
 
@@ -463,7 +467,7 @@ export class DeliveryPage implements OnInit, OnChanges {
         if (!this.originForm.value[control]) {
           this.originErrors[control] = true;
         }
-      })
+      });
     } 
     
     if (this.transport.isMultipoint) {
@@ -492,18 +496,15 @@ export class DeliveryPage implements OnInit, OnChanges {
       })
     }
 
-    this.contactsError = this.contacts?.length ? null: 'error';
+    this.validateFormFile (this.originForm, this.originErrors);
+    this.validateFormFile (this.destinationForm, this.destinationErrors);
 
-    this.fileToUploadError = null;
-    if (this.fileToUpload && this.fileToUpload.size > FILE_UPLOAD_MAX_SIZE) {
-      this.fileToUploadError = 'Fichier non valide';
-    }
+    this.contactsError = this.contacts?.length ? null: 'error';
 
     this.hasErrors = Object.keys (this.originErrors).length > 0 || 
       Object.keys (this.destinationErrors).length > 0 ||
-      this.contactsError != null || 
-      this.fileToUploadError != null;
-    
+      this.contactsError != null;
+
     return !this.hasErrors;
   }
 
@@ -545,10 +546,6 @@ export class DeliveryPage implements OnInit, OnChanges {
       }
       this.delivery.planned_loads = planned_loads || [];
       this.delivery.tracking_contacts = this.contacts;
-
-      if (this.fileToUpload) {
-        this.delivery.file = this.fileToUpload;
-      }
     }
 
     console.log ('submit', { origin, destination, planned_loads });
@@ -557,8 +554,7 @@ export class DeliveryPage implements OnInit, OnChanges {
       origin,
       destination,
       planned_loads, // TODO doit être défini pour les enlèvements uniquement
-      tracking_contacts: this.contacts,
-      file: this.fileToUpload 
+      tracking_contacts: this.contacts
     };
 
     this.selectDelivery.emit (delivery);
@@ -588,6 +584,7 @@ export class DeliveryPage implements OnInit, OnChanges {
       reference: values.reference,
       slots: slots,
       handlers: values.handlers || 0,
+      file: values.file
     };
   }
 

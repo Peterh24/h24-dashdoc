@@ -118,15 +118,24 @@ export class SummaryComponent  implements OnInit {
     const files: any[] = [];
 
     transport?.deliveries?.forEach ((delivery: any, index: any) => {
-      const file = delivery.file;
-
-      if (file) {
+      if (delivery?.origin?.file) {
         files.push ({
-          file: file,
+          file: delivery.origin.file,
+          type: 'origin',
           delivery: index + 1
         });
 
-        delete delivery.file;
+        delete delivery.origin.file;
+      }
+
+      if (delivery?.destination?.file) {
+        files.push ({
+          file: delivery.destination.file,
+          type: 'destination',
+          delivery: index + 1
+        });
+
+        delete delivery.destination.file;
       }
     });
 
@@ -370,7 +379,7 @@ export class SummaryComponent  implements OnInit {
     files.forEach (async (file: any, index: any) => {
       if (file) {
         try {
-          await firstValueFrom (this.apiTransport.createTransportMessage (transport, file.file, file.delivery));
+          await firstValueFrom (this.apiTransport.createTransportMessage (transport, file.file, file.type, file.delivery));
         } catch (error) {
           errors.push (file.file.name);
         }

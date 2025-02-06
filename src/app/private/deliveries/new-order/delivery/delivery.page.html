@@ -34,22 +34,6 @@
         </div>
       </div>
     </div>
-    <div class="section">
-      <br>
-      <h3>Ajouter une pièce jointe</h3>
-      <i>Taille du fichier : 10Mo max .jpeg, .png, .pdf</i>
-      <div class="attachment pointer" [class.selected]="!!fileToUpload" (click)="askFileToUpload ()">
-        <ion-icon name="download-outline"></ion-icon>
-        <div *ngIf="!!fileToUpload">{{ fileToUpload.name }}</div>
-        <div class="error" *ngIf="fileToUploadError">{{ fileToUploadError }}</div>
-
-        <div *ngIf="!fileToUpload">
-          Joindre un fichier à la demande 
-        </div>
-
-        <input id="file-upload" class="ion-hide" type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xslx" (change)="onUploadFile($event)" />
-      </div>
-    </div>
     <br>
     <ion-button (click)="onSubmit()">Valider la demande</ion-button>
     <br>
@@ -164,6 +148,23 @@
           placeholder="{{ type === 'origin' ? 'Instructions à l\'enlèvement' : 'Instructions à la livraison' }}"
           [formControl]="form.get('instructions')">
         </ion-input>
+      </div>
+
+      <div class="section">
+        <br>
+        <h3>Ajouter une pièce jointe</h3>
+        <i>Taille du fichier : 10Mo max .jpeg, .png, .pdf, .doc, .xls</i>
+        <div class="attachment pointer" [class.selected]="!!form.value.file" (click)="askFileToUpload (type)">
+          <ion-icon name="download-outline"></ion-icon>
+          <div *ngIf="!!form.value.file">{{ form.value.file.name }}</div>
+          <div class="error" *ngIf="errors['file']">{{ errors['file'] }}</div>
+
+          <div *ngIf="!form.value.file">
+            Joindre un fichier à la demande
+          </div>
+
+          <input id="file-upload-{{ type }}" class="ion-hide" type="file" multiple="false" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xslx" (change)="onUploadFile(form, $event)" />
+        </div>
       </div>
     </ng-template>
   </div>

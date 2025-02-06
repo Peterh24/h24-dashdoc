@@ -325,14 +325,14 @@ export class ApiTransportDashdoc {
       })
     }
 
-    createTransportMessage (transport: any, file: any, delivery: number = null) {
+    createTransportMessage (transport: any, file: any, type: string = null, delivery: number = null) {
       const formData = new FormData();
 
       const message: any = {
         transport: transport.uid || transport.id,
         type: file.name.match (/\.(jpg|jpeg|gif|png|webp)/i) ? "photo" : "document",
         document_title: file.name,
-        reference: delivery ? `[delivery=${delivery}]` : '',
+        reference: type && delivery ? `[type=${type}&delivery=${delivery}]` : '',
       };
 
       formData.append ("document", file, file.name);
