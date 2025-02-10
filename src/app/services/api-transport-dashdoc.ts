@@ -10,6 +10,7 @@ import { compareAsc } from "date-fns";
 import { Contact } from "../private/profile/contacts/contact.model";
 import { AuthService } from "./auth.service";
 import { UtilsService } from "../utils/services/utils.service";
+import { DashdocToken } from "../private/models/dashdoc-token.model";
 
 export class ApiTransportDashdoc {
     static model: string = 'dashdoc';
@@ -38,7 +39,18 @@ export class ApiTransportDashdoc {
     }
 
     getUserInfos (userId: number) {
-        return this.http.get(`${API_URL}app_users/${userId}`);
+        return this.http.get(`${API_URL}app_users/${userId}`).pipe (
+          tap ((res: any) => {
+            if (res.firstname) {
+              res.firstname = res.firstname?.[0]?.toUpperCase() + res.firstname?.slice(1)?.toLowerCase();
+            }
+
+            res.tokens = res.appDashdocTokens?.map((token: any) => {
+              return new DashdocToken (token['@id'], token.token);
+            });
+            delete res.appDashdocTokens;
+          })
+        );
     }
 
     changeUserPassword (userId: number, username: string, password: string, newpassword: string) {
@@ -175,13 +187,6 @@ export class ApiTransportDashdoc {
     isTransportLastPageReached = false;
     nextTransportPage: string;
 
-    createTransport1 (transport: any) {
-        this.toDashdocTransport (transport);
-        return this.http.post(`${this.apiUrl}transports/`, transport).pipe (
-          mergeMap (res => this.http.post (`${API_URL}../transports/new`, transport))
-        )
-    }
-
     createTransport (transport: any) {
       this.toDashdocTransport (transport);
       return this.http.post (`${API_URL}../transports/new`, transport).pipe (
@@ -282,13 +287,34 @@ export class ApiTransportDashdoc {
     }
   
     fromDashdocTransport (transport: any) {
-      transport?.deliveries?.forEach ((delivery: any) => {
-        if (delivery.origin) {
-          delivery.origin.handlers = parseInt(delivery.origin.action || 0);
-        }
-
-        if (delivery.destination) {
-          delivery.destination.handlers = parseInt(delivery.destination.action || 0);
+      transport.tags?.forEach ((tag: any) => {
+        const m = tag.name?.match (/^(\w+)-(\w+)-(\w+)-(\w+)$/);
+        if (m) {
+          const attribute = m[1];
+          const index = parseInt(m[2]) - 1;
+          const type = m[3];
+          const value = m[4];
+          const delivery = transport.deliveries?.[index];
+          switch (attribute) {
+            case 'handlers': {
+              if (type == 'origin' && delivery.origin?.address) {
+                delivery.origin.handlers = parseInt (value || '0');
+              }
+              if (type == 'destination' && delivery.destination?.address) {
+                delivery.destination.handlers = parseInt (value || '0');
+              }
+              break;
+            }
+            case 'guarding': {
+              if (type == 'origin' && delivery.origin) {
+                delivery.origin.guarding = value == 'true';
+              }
+              if (type == 'destination' && delivery.destination) {
+                delivery.destination.guarding = value == 'true';
+              }
+              break;
+            }
+          }
         }
       });
     }
@@ -302,27 +328,34 @@ export class ApiTransportDashdoc {
       transport.shipper_reference = transport?.deliveries?.[0]?.shipper_reference;
 
       transport.deliveries?.forEach ((delivery: any) => {
-        delivery.origin.loading_instructions = delivery.origin.instructions || "instructions";
-        delivery.origin.unloading_instructions = delivery.origin.instructions || "instructions";
+        delivery.origin.loading_instructions = delivery.origin.instructions || '';
+        delivery.origin.unloading_instructions = delivery.origin.instructions || '';
 
-        delivery.destination.loading_instructions = delivery.destination.instructions || "instructions";
-        delivery.destination.unloading_instructions = delivery.destination.instructions || "instructions";
+        delivery.destination.loading_instructions = delivery.destination.instructions || '';
+        delivery.destination.unloading_instructions = delivery.destination.instructions || '';
       });
     }
 
     toDashdocTransport (transport: any) {
       this.toH24Apiv1 (transport);
 
-      transport?.deliveries?.forEach ((delivery: any) => {
-        if (delivery.origin) {
-          delivery.origin.action = String(delivery.origin.handlers || 0);
-          delete delivery.origin.handlers;
-        }
-        if (delivery.destination) {
-          delivery.destination.action = String(delivery.destination.handlers || 0);
-          delete delivery.destination.handlers;
-        }
-      })
+      const tags: any[] = [];
+
+      transport?.deliveries?.forEach ((delivery: any, index: any) => {
+        [ delivery.origin, delivery.destination ].forEach ((d) => {
+          const type = d === delivery.origin ? 'origin' : 'destination';
+
+          if (d.handlers) {
+            tags.push ({ name: `handlers-${index + 1}-${type}-${d.handlers}` });
+          }
+
+          if (d.guarding) {
+            tags.push ({ name: `guarding-${index + 1}-${type}-${d.guarding}` });
+          }
+        })
+      });
+
+      transport.tags = tags;
     }
 
     createTransportMessage (transport: any, file: any, type: string = null, delivery: number = null) {
@@ -331,8 +364,9 @@ export class ApiTransportDashdoc {
       const message: any = {
         transport: transport.uid || transport.id,
         type: file.name.match (/\.(jpg|jpeg|gif|png|webp)/i) ? "photo" : "document",
+        document_type: type && delivery ? 'delivery_note' : '',
         document_title: file.name,
-        reference: type && delivery ? `[type=${type}&delivery=${delivery}]` : '',
+        reference: type && delivery ? (type == 'origin' ? `Enlèvement${delivery}` : `Livraison${delivery}`) : '',
       };
 
       formData.append ("document", file, file.name);
@@ -341,8 +375,6 @@ export class ApiTransportDashdoc {
         formData.append(key, message[key]);
       };
 
-      return this.http.post(`${this.apiUrl}transport-messages/`, formData).pipe (
-
-      )
+      return this.http.post(`${this.apiUrl}transport-messages/`, formData).pipe ();
     }
 }  

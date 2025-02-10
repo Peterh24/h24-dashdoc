@@ -22,7 +22,7 @@
       </div>
 
       <div class="messages pointer" *ngIf="transport && transport.messages.length > 0">
-        <h2>Images</h2>
+        <h2>Messages</h2>
           <div class="message" *ngFor="let message of getAllMessages (transport)">
             <ion-item lines="none" class="ion-no-padding" (click)="openMessage(message, message.created)">
               <ion-thumbnail slot="start">
@@ -30,7 +30,7 @@
                 <ion-icon name="document-text-outline" *ngIf="!message.isImage"></ion-icon>
               </ion-thumbnail>
               <ion-label>
-                {{ getDate(message.created) }} - {{ getHour(message.created) }}
+                {{ getDate(message.created) }} - {{ getHour(message.created) }} <span *ngIf="message.reference">- {{ message.reference }}</span>
               </ion-label>
             </ion-item>
           </div>
@@ -44,7 +44,7 @@
           <i>Taille du fichier : 10Mo max .jpeg, .png, .pdf, .doc, .xls</i>
         </div>
 
-        <input id="file-upload" class="ion-hide" type="file" multiple="true" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xslx" (change)="onUploadFile($event)" />
+        <input id="file-upload" class="ion-hide" type="file" multiple="true" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xslx,.webp" (change)="onUploadFile($event)" />
       </div>
     </div>
   </div>
@@ -66,6 +66,10 @@
       <div class="title">{{ step.prefix || 'En passant par' }}</div>
       <div class="name">{{ step?.address?.name }}</div>
       <div class="city">{{ step?.address?.address }} <br> {{ step?.address?.postcode }} {{ step?.address?.city }}</div>
+      <div class="options">
+        <div *ngIf="step.handlers">{{ step.handlers }} manutentionnaires</div>
+        <div *ngIf="step.guarding">Gardiennage sécurisé</div>
+      </div>
     </div>
   </div>
   <div class="two-columns">
@@ -116,6 +120,10 @@
       <div class="title">{{ step.prefix || 'En passant par' }}</div>
       <div class="name">{{ step?.address?.name }}</div>
       <div class="city">{{ step?.address?.address }} <br> {{ step?.address?.postcode }} {{ step?.address?.city }}</div>
+      <div class="options">
+        <div *ngIf="step.handlers">{{ step.handlers }} manutentionnaires</div>
+        <div *ngIf="step.guarding">Gardiennage sécurisé</div>
+      </div>
     </div>
   </div>
   <div class="four-columns">

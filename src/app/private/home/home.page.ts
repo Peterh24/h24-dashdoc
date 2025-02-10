@@ -1,14 +1,11 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AlertController, IonSelect, LoadingController, ModalController } from '@ionic/angular';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { IonSelect, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
-import { Subscription, catchError, take } from 'rxjs';
-import { ModalAddTokenComponent } from './modal-add-token/modal-add-token.component';
+import { Subscription, take } from 'rxjs';
 import { Company } from '../models/company.model';
 import { CompanyService } from 'src/app/services/company.service';
-import { API_URL, DASHDOC_API_URL, DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
+import { DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
 import { AuthService } from 'src/app/services/auth.service';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { ModalAddCompanyComponent } from './modal-add-company/modal-add-company.component';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { TransportService } from 'src/app/services/transport.service';
 import { Router } from '@angular/router';
@@ -29,9 +26,7 @@ export class HomePage implements OnDestroy {
   private currentCompany: Subscription;
   loadedCompanies: Array<Company>;
   isCompanySelected: boolean = false;
-  firstname: string;
-  lastname: string;
-  currentUser: any;
+  currentUserDetail: any;
   selectedCompanyId: any; // Ajoutez cette variable
   showResetTransport = false;
 
@@ -52,11 +47,11 @@ export class HomePage implements OnDestroy {
   ) { }
   
   ionViewWillEnter(){
-    this.currentUser = this.authService.currentUser;
-    this.authService.loadCurrentUserDetail(this.currentUser?.id).pipe(take(1)).subscribe((user:any) => {
-      this.firstname = user.firstname?.[0]?.toUpperCase() + user.firstname?.slice(1)?.toLowerCase();
+    this.currentUserDetail = this.authService.currentUserDetail;
+    
+    this.authService.loadCurrentUserDetail(this.authService.currentUser?.id).pipe(take(1)).subscribe((user:any) => {
+      this.currentUserDetail = user;
 
-      this.lastname = user.lastname;
       this.companyService.fetchCompanies().pipe(take(1)).subscribe((companies) => {
         this.loadedCompanies = companies;
 

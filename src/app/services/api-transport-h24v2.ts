@@ -60,7 +60,13 @@ export class ApiTransportH24v2 {
                 email: user.email,
                 phone: user.phone_number,
                 tokens: []
-             }))
+             }),
+             tap ((user: any) => {
+                if (user.firstname) {
+                    user.firstname = user.firstname?.[0]?.toUpperCase() + user.firstname?.slice(1)?.toLowerCase();
+                }
+             })
+            )
         );
     }
 

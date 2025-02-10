@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { AlertController, LoadingController, ModalController, NavController } from '@ionic/angular';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AlertController, LoadingController, ModalController } from '@ionic/angular';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
-import { Map, tileLayer, marker, icon, Marker, LatLngBounds } from 'leaflet';
+import { Map, tileLayer, marker, icon, LatLngBounds } from 'leaflet';
 import { ConfigService } from 'src/app/services/config.service';
-import { HttpClient } from '@angular/common/http';
 import { CompanyService } from 'src/app/services/company.service';
 import { Browser } from '@capacitor/browser';
 import { format, parseISO } from 'date-fns';
@@ -34,13 +33,12 @@ export class DetailPage implements OnInit {
     public companyService: CompanyService,
     private route: ActivatedRoute,
     private apiTransport: ApiTransportService,
-    private navController: NavController,
+    private router: Router,
     private deliveriesService: DeliveriesService,
     private transportService: TransportService,
     private alertController: AlertController,
     private modalController: ModalController,
     private loadingController: LoadingController,
-    private http: HttpClient
   ) { }
 
   ngOnInit() {
@@ -52,14 +50,14 @@ export class DetailPage implements OnInit {
     this.route.paramMap.subscribe(
       paramMap => {
         if(!paramMap.has('id')) {
-          this.navController.navigateBack('/private/tabs/transports/deliveries')
+          this.router.navigateByUrl('/private/tabs/transports/deliveries')
           return;
         }
 
         this.deliveriesService.getDelivery (paramMap.get('id')).subscribe ({
           next: (res) => {
             if(!res) {
-              this.navController.navigateBack('/private/tabs/transports/deliveries')
+              this.router.navigateByUrl('/private/tabs/transports/deliveries')
               return;
             }
     
@@ -167,9 +165,9 @@ export class DetailPage implements OnInit {
 
   getAllDeliveries (delivery: any) {
     const all: any = [];
-    const segments = this.transportService.loadSegments (delivery?.segments);
+    const deliveries = this.transportService.loadDeliveries (delivery?.deliveries);
 
-    segments?.forEach ((delivery: any) => {
+    deliveries?.forEach ((delivery: any) => {
       if (delivery.origin?.address?.address) {
         all.push (delivery.origin);
       }

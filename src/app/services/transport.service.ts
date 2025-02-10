@@ -91,7 +91,7 @@ export class TransportService {
     const origins = this.getOrigins().length;
     const destinations = this.getDestinations().length;
 
-    this.isMultipoint = origins > 1 && destinations > 1;
+    this.isMultipoint = this.isMultipoint || origins > 1 && destinations > 1;
   
     console.log ('load', transport, this);
   }
@@ -134,7 +134,8 @@ export class TransportService {
         instructions: deliveryJson.origin.instructions, 
         slots: deliveryJson.origin.slots,
         reference: deliveryJson.origin.reference,
-        handlers: deliveryJson.origin?.handlers
+        handlers: deliveryJson.origin.handlers,
+        guarding: deliveryJson.origin.guarding
       }
     }
 
@@ -144,7 +145,8 @@ export class TransportService {
         instructions: deliveryJson.destination.instructions, 
         slots: deliveryJson.destination.slots,
         reference: deliveryJson.destination.reference,
-        handlers: deliveryJson.destination?.handlers
+        handlers: deliveryJson.destination.handlers,
+        guarding: deliveryJson.destination.guarding
       }
     }
 

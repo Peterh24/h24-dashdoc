@@ -42,11 +42,6 @@ export class AuthPage {
     // if(this.authService.userIsAuthenticated || token){
     //   this.router.navigateByUrl('/private/tabs/home');
     // }
-    
-    if (this.authService.currentUser?.id) {
-      this.router.navigateByUrl('/private/tabs/home');
-      return;
-    }
 
     this.loadEmail();
   }

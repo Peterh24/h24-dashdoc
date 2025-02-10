@@ -86,6 +86,7 @@ export class DeliveryPage implements OnInit, OnChanges {
       instructions: new FormControl('', { validators: [] }),
       loads: new FormControl(null, { validators: [] }),
       handlers: new FormControl(0, { validators: [] }),
+      guarding: new FormControl(false, { validators: [] }),
       file: new FormControl(null, { validators: [] }),
     });
     this.destinationForm = new FormGroup({
@@ -96,6 +97,7 @@ export class DeliveryPage implements OnInit, OnChanges {
       instructions: new FormControl('', { validators: [] }),
       loads: new FormControl(null, { validators: [] }),
       handlers: new FormControl(0, { validators: [] }),
+      guarding: new FormControl(false, { validators: [] }),
       file: new FormControl(null, { validators: [] }),
     });
     this.merchandiseForm = new FormGroup({
@@ -197,6 +199,7 @@ export class DeliveryPage implements OnInit, OnChanges {
       instructions: delivery?.instructions,
       reference: delivery?.reference,
       handlers: parseInt(delivery?.handlers) || 0,
+      guarding: delivery?.guarding,
       file: delivery?.file
     };
     
@@ -384,7 +387,7 @@ export class DeliveryPage implements OnInit, OnChanges {
   }
 
   setAskSecureGuarding (event: any, form: FormGroup) {
-    // TODO
+    form.controls['guarding'].setValue (event.detail.checked);
   }
 
   addHandlers (form: FormGroup) {
@@ -454,7 +457,7 @@ export class DeliveryPage implements OnInit, OnChanges {
   validateFormFile (form: FormGroup, errors: any) {
     delete errors['file'];
     if (form.value.file && form.value.file.size > FILE_UPLOAD_MAX_SIZE) {
-      errors['file'] = 'Fichier non valide';
+      errors['file'] = 'Fichier trop volumineux';
     }
   }
 
@@ -584,6 +587,7 @@ export class DeliveryPage implements OnInit, OnChanges {
       reference: values.reference,
       slots: slots,
       handlers: values.handlers || 0,
+      guarding: values.guarding,
       file: values.file
     };
   }

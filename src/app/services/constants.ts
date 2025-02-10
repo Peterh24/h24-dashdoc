@@ -11,7 +11,9 @@ export const TRANSPORTS_DRAFTS_KEY = 'TRANSPORTS_DRAFTS_KEY';
 export const ADDRESS_FOLDER_KEY = 'ADDRESS_FOLDER_KEY';
 export const ADDRESS_FOLDERS_KEY = 'ADDRESS_FOLDERS_KEY';
 export const CONTACT_FOLDER_KEY = 'CONTACT_FOLDER_KEY';
-export const FILE_UPLOAD_MAX_SIZE = 1024 * 1024 * 10;
 export const COMPANIES_KEY = 'COMPANIES_KEY';
+export const USER_DETAILS_KEY = 'USER_DETAILS_KEY';
+
+export const FILE_UPLOAD_MAX_SIZE = 1024 * 1024 * 10;
 
 export const HTTP_REQUEST_UNKNOWN_ERROR = 'Une erreur imprévue s\'est produite, veuillez contacter le support';

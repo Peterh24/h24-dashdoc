@@ -90,7 +90,7 @@
 </ion-content>
 
 <ng-template #addressTpl let-address="address" let-index="index" let-type="type">
-  <div class="address">
+  <div class="address" *ngIf="address">
     <ion-badge class="index" *ngIf="index !== undefined">{{ index + 1 }}</ion-badge>
     <div>
       <div class="title">{{ address.name }}</div>

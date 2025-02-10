@@ -31,9 +31,7 @@ export class CompanyService {
   ) { }
 
   fetchCompanies () {
-    const tokens = this.authService.currentUserDetail?.appDashdocTokens?.map((token: any) => {
-      return new DashdocToken (token['@id'], token.token);
-    });
+    const tokens = this.authService.currentUserDetail?.tokens;
 
     return this.apiTransport.getCompanies (tokens || []).pipe(
       tap ((allCompanies: any) => this._companies.next (allCompanies))

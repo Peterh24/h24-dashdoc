@@ -92,7 +92,7 @@
 
         <div class="slot date-and-time">
           <div>
-            <div class="custom-control day" [class.error]="errors['day']" id="{{ type }}_day_select">
+            <div class="custom-control day" id="{{ type }}_day_select">
               <span *ngIf="!form.value.day">Selectionner</span>
               <span *ngIf="form.value.day">{{ formatDay(form.value.day) }}</span>
             </div>
@@ -138,7 +138,7 @@
           <ion-icon name="add-outline" (click)="addHandlers (form)"></ion-icon>
         </div>
 
-        <ion-toggle labelPlacement="end" (ionChange)="setAskSecureGuarding($event, form)" [checked]="false" *ngIf="!isDashdocModel">Option de gardiennage sécurisé</ion-toggle><br>
+        <ion-toggle labelPlacement="end" (ionChange)="setAskSecureGuarding($event, form)" [checked]="form.value.guarding">Option de gardiennage sécurisé</ion-toggle><br>
 
         <ion-input
           [label]="type === 'origin' ? 'Instructions à l\'enlèvement' : 'Instructions à la livraison'"
@@ -163,7 +163,7 @@
             Joindre un fichier à la demande
           </div>
 
-          <input id="file-upload-{{ type }}" class="ion-hide" type="file" multiple="false" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xslx" (change)="onUploadFile(form, $event)" />
+          <input id="file-upload-{{ type }}" class="ion-hide" type="file" multiple="false" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xslx,.webp" (change)="onUploadFile(form, $event)" />
         </div>
       </div>
     </ng-template>
