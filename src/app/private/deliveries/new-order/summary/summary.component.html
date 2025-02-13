@@ -17,6 +17,9 @@
   <ion-accordion-group>
     <div *ngFor="let delivery of transport.getOrigins (); let index = index">
       <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'origin', delivery: delivery.origin, address: delivery.origin?.address, loads: delivery.planned_loads, contacts: delivery.tracking_contacts, file: delivery.file, index }"></div>
+      <div *ngIf="config.isMobile">
+        <div class="error" *ngFor="let error of getDeliveryErrors (delivery, 'origin')">{{ error }}</div>
+      </div>
     </div>
   </ion-accordion-group>
   <br>
@@ -24,15 +27,20 @@
   <ion-accordion-group>
     <div *ngFor="let delivery of transport.getDestinations (); let index = index">
       <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'destination', delivery: delivery.destination, address: delivery.destination?.address, loads: delivery.planned_loads, contacts: delivery.tracking_contacts, file: delivery.file, index }"></div>
+      <div *ngIf="config.isMobile">
+        <div class="error" *ngFor="let error of getDeliveryErrors (delivery, 'destination')">{{ error }}</div>
+      </div>
     </div>
   </ion-accordion-group>
+
+  <div class="error" *ngFor="let error of getTransportErrors ()">{{ error }}</div>
 
   <br>
 </div>
 
 <ion-toolbar>
   <ion-button fill="outline" id="save-draft">Enregistrer dans les brouillons</ion-button>
-  <ion-button id="submit-order">Nommer votre demande</ion-button>
+  <ion-button id="submit-order" [disabled]="hasErrors ()">Nommer votre demande</ion-button>
 </ion-toolbar>
 
 <ng-template #deliveryTpl let-type="type" let-delivery="delivery" let-address="address" let-loads="loads" let-contacts="contacts" let-file="file" let-index="index">
@@ -79,7 +87,7 @@
       </ion-input>
       <br>
       <div class="ion-text-center" [class.ion-hide]="!transport.draftName">
-        <ion-checkbox labelPlacement="end" checked="true" #deleteDraft>Supprimer le brouillon</ion-checkbox>
+        <ion-checkbox labelPlacement="end" #deleteDraft>Supprimer le brouillon</ion-checkbox>
       </div>
       <br>
       <ion-button (click)="onSetOrderName (orderName.value, deleteDraft?.checked, orderNameModal)">Valider ma demande</ion-button>

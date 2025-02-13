@@ -15,5 +15,6 @@ export const COMPANIES_KEY = 'COMPANIES_KEY';
 export const USER_DETAILS_KEY = 'USER_DETAILS_KEY';
 
 export const FILE_UPLOAD_MAX_SIZE = 1024 * 1024 * 10;
+export const FILE_IMAGE_MAX_WIDTH = 1024;
 
 export const HTTP_REQUEST_UNKNOWN_ERROR = 'Une erreur imprévue s\'est produite, veuillez contacter le support';

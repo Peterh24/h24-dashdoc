@@ -23,11 +23,14 @@ export class ApiTransportH24v2 {
 
     constructor() {
         this.apiUrl = API_URL_V2;
-        this.storage.get(DASHDOC_COMPANY).then((company) => {
-            this.companyId = parseInt(company);
-        });
     }
 
+    async init () {
+        const company = await this.storage.get(DASHDOC_COMPANY);
+        this.companyId = parseInt(company);
+    }
+
+    /* Users */
     loginUser (username: string, password: string) {
         return this.http.post(`${API_URL}login`, { email: username, password });
     }
@@ -126,18 +129,17 @@ export class ApiTransportH24v2 {
     createContact (contact: any) {
         contact.company = contact.company?.pk;
         return this.http.post(`${this.apiUrl}contacts`, contact).pipe(
-            map ((res: any) => new Contact (res.id, contact.first_name, contact.last_name, contact.email, contact.phone_number, contact.company?.id, contact.company_name))
+            map ((res: any) => new Contact (res.id, res.first_name, res.last_name, res.email, res.phone_number, res.company?.id, res.company?.name))
         );
     }
 
-    // TODO
     inviteUser (contact: Contact) {
         return this.http.post (`${this.apiUrl}user/invite`, { name: contact.last_name, email: contact.email, company: contact.company, phone: contact.phone_number })
     }
 
     updateContact (uid: string, contact: any) {
         return this.http.patch(`${this.apiUrl}contacts/${uid}`, contact).pipe(
-            map ((res: any) => new Contact (uid, contact.first_name, contact.last_name, contact.email, contact.phone_number, contact.company?.pk, contact.company_name))
+            map ((res: any) => new Contact (uid, res.first_name, res.last_name, res.email, res.phone_number, res.company?.pk, res.company_name))
         )
     }
 
@@ -174,7 +176,7 @@ export class ApiTransportH24v2 {
         address.is_demo = false;
         address.is_default = false;
         address.company = this.companyId;
-        address.address_type = 'default';
+//        address.address_type = 'default';
         return this.http.post(`${this.apiUrl}address`, address).pipe (
             tap ((address: any) => {
                 address.pk = address.id
@@ -271,8 +273,8 @@ export class ApiTransportH24v2 {
         const deliveriesData = data.deliveries.map((delivery: any) => {
             const uid = delivery.id;
             // TODO: origin & destination dans l'api, Loads & TrackingContacts en minuscule
-            const origin = delivery.sites.find ((site: any) => site.reference == 'LOADING');
-            const destination = delivery.sites.find ((site: any) => site.reference == 'UNLOADING');
+            const origin = delivery.sites.find ((site: any) => site.siteReference == 'LOADING');
+            const destination = delivery.sites.find ((site: any) => site.siteReference == 'UNLOADING');
             const loads = delivery.Loads;
             const tracking_contacts = delivery.TrackingContacts;
             return { uid, origin, destination, loads, tracking_contacts };
@@ -291,7 +293,7 @@ export class ApiTransportH24v2 {
         });
 
         return new Delivery(
-            data.id,
+            String(data.id),
             data.created_at,
             data.deliveries[0].shipper_reference,
             data.trasnport_status,
@@ -345,24 +347,24 @@ export class ApiTransportH24v2 {
         transport.carrier = 2; // TODO! ne pas mettre en dur
         transport.company = this.companyId;
         transport.shipper_address = this.companyId; // TODO
-        transport.requested_vehicle = 'VAN'; // TODO
+//        transport.requested_vehicle = 'VAN'; // TODO
 
         deliveries?.forEach ((delivery: any) => {
-            delivery.shipper_address = this.companyId;
-            delivery.load = delivery.planned_loads;
+            delivery.shipper_address = { remote_id: this.companyId };
+            delivery.loads = delivery.planned_loads;
             delete delivery.planned_loads;
-            delivery.load.forEach ((load: any) => {
+            delivery.loads.forEach ((load: any) => {
                 load.volume_display_unit = 'm3';
             });
 
-            delivery.tracking_contact = delivery.tracking_contacts?.map ((contact: any) => 
-                ({ contact: contact.contact.id, reference: 'shipper' }) // TODO: quelle référence
+            delivery.tracking_contacts = delivery.tracking_contacts?.map ((contact: any) => 
+                ({ contact: { remote_id: contact.contact.id }, reference: 'shipper' }) // TODO: quelle référence
             );
-            delete delivery.tracking_contacts;
 
             delivery.origin = this.toH24Site (delivery.origin);
             delivery.destination = this.toH24Site (delivery.destination);
 
+            /* TODO
             if (delivery.origin) {
                 delivery.origin.action = String(delivery.origin.handlers || 0);
                 delete delivery.origin.handlers;
@@ -371,6 +373,7 @@ export class ApiTransportH24v2 {
                 delivery.destination.action = String(delivery.destination.handlers || 0);
                 delete delivery.destination.handlers;
             }
+            */
         });
 
         segments?.forEach ((segment: any) => {
@@ -382,12 +385,15 @@ export class ApiTransportH24v2 {
 
     toH24Site (site: any) {
         if (!site) return null;
-
-        return {
-            address: site.address.pk,
-            instructions: site.instructions,
-            action: site.action,
-            slots: site.slots
+        return { 
+            ...site,
+            has_secure_guarding: !!site.guarding,
+            manutention: site.handlers || 0,
+            address: { remote_id: site.address.pk } 
         };
+    }
+
+    createTransportMessage (transport: any, file: any, type: string = null, delivery: number = null) {
+        return EMPTY;
     }
 }  

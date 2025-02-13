@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { UtilsService } from '../utils/services/utils.service';
 import { ApiTransportService } from './api-transport.service';
+import { Storage } from '@ionic/storage-angular';
+import { DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from './constants';
+import { FileUtils } from '../utils/file-utils';
 
 interface Transport {
   segments: Array<
@@ -34,7 +37,10 @@ export class TransportService {
   isMultipoint: any = null;
   draftName: string;
 
-  constructor(private utilsService: UtilsService) { }
+  constructor(
+    private storage: Storage,
+    private utilsService: UtilsService
+  ) { }
 
   getOrigins () {
     return this.deliveries?.filter ((d) => d?.origin);
@@ -93,7 +99,7 @@ export class TransportService {
 
     this.isMultipoint = this.isMultipoint || origins > 1 && destinations > 1;
   
-    console.log ('load', transport, this);
+    console.log ('load', transport);
   }
 
   loadDeliveries (deliveriesJson: any, isMultipoint = false) {
@@ -135,7 +141,8 @@ export class TransportService {
         slots: deliveryJson.origin.slots,
         reference: deliveryJson.origin.reference,
         handlers: deliveryJson.origin.handlers,
-        guarding: deliveryJson.origin.guarding
+        guarding: deliveryJson.origin.guarding,
+        file: deliveryJson.origin.file
       }
     }
 
@@ -146,7 +153,8 @@ export class TransportService {
         slots: deliveryJson.destination.slots,
         reference: deliveryJson.destination.reference,
         handlers: deliveryJson.destination.handlers,
-        guarding: deliveryJson.destination.guarding
+        guarding: deliveryJson.destination.guarding,
+        file: deliveryJson.destination.file
       }
     }
 
@@ -159,7 +167,6 @@ export class TransportService {
 
     const tracking_contacts = deliveryJson.tracking_contacts?.map ((contact: any) => this.loadContact (contact));
 
-    // TODO on oublie rien ?
     return { origin, destination, planned_loads, shipper_reference, shipper_address, tracking_contacts }
   }
 
@@ -195,4 +202,44 @@ export class TransportService {
     return segments;
   }
 
+  async loadDraft (draftName: string, draft: any) {
+    const fileUtils = new FileUtils ();
+
+    this.loadTransport (draft);
+    this.draftName = draftName;
+
+    for (const delivery of this.deliveries) {
+      if (delivery?.origin?.file) {
+        delivery.origin.file = await fileUtils.unserializeFile (delivery.origin.file);
+      }
+      if (delivery?.destination?.file) {
+        delivery.destination.file = await fileUtils.unserializeFile (delivery.destination.file);
+      }
+    }
+  }
+
+  async saveDraft (draftName: string, transport: any) {
+    const fileUtils = new FileUtils ();
+
+    for (const delivery of transport.deliveries) {
+      if (delivery?.origin?.file) {
+        delivery.origin.file = await fileUtils.serializeFile (delivery.origin.file);
+      }
+      if (delivery?.destination?.file) {
+        delivery.destination.file = await fileUtils.serializeFile (delivery.destination.file);
+      }
+    }
+
+    transport.is_multipoint = transport.isMultipoint;
+
+    this.storage.get(DASHDOC_COMPANY).then ((pk) => {
+      this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
+        if (!drafts) {
+          drafts = {};
+        }
+        drafts[draftName] = transport;
+        this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${pk}`, drafts);
+      })
+    });
+  }
 }

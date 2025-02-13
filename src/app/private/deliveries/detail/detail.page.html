@@ -21,7 +21,7 @@
         </ion-item>
       </div>
 
-      <div class="messages pointer" *ngIf="transport && transport.messages.length > 0">
+      <div class="messages pointer" *ngIf="transport?.messages?.length > 0">
         <h2>Messages</h2>
           <div class="message" *ngFor="let message of getAllMessages (transport)">
             <ion-item lines="none" class="ion-no-padding" (click)="openMessage(message, message.created)">

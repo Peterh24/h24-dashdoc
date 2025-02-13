@@ -1,9 +1,10 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TransportService } from 'src/app/services/transport.service';
 import { DeliveryPage } from '../delivery/delivery.page';
 import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { ConfigService } from 'src/app/services/config.service';
+import { NewOrderCommon } from '../new-order-common';
 
 @Component({
   selector: 'app-deliveries',
@@ -19,13 +20,14 @@ export class DeliveriesPage implements OnInit {
   isModalOpen: boolean;
   showSummaryComponent = false;
 
-  errors: any = {};
+  errors: any[] = [];
+  common = new NewOrderCommon ();
 
   constructor(
     public transport: TransportService,
     public config: ConfigService,
     private router: Router,
-    private modalController: ModalController,
+    private modalController: ModalController
   ) { }
 
   ngOnInit() {
@@ -41,7 +43,7 @@ export class DeliveriesPage implements OnInit {
     this.currentDelivery = null;
     this.isMultipointAuto = this.transport.isMultipoint === null;
     this.showSummaryComponent = this.config.isDesktop && this.transport.deliveries?.length > 0;
-    this.errors = {};
+    this.errors = [];
 
     this.synchronize ();
     
@@ -190,17 +192,6 @@ export class DeliveriesPage implements OnInit {
     return isFinite(min) ? new Date(min).toISOString () : null
   }
 
-  isSlotExceeded (date: string) {
-    if (!date) {
-      return false;
-    }
-
-    const day = new Date(date).toISOString ().split (/T/)[0];
-    const now = new Date().toISOString ().split (/T/)[0];
-
-    return new Date(day).valueOf() < new Date(now).valueOf ();
-  }
-
   synchronize () {
     this.transport.sortDeliveries ();
 
@@ -208,23 +199,17 @@ export class DeliveriesPage implements OnInit {
     this.destinations = this.transport.getDestinations ();
   }
 
-  isMultipointDeliveryInvalid (index: number) {
-    if (this.transport.isMultipoint) {
-      const delivery = this.transport.deliveries[index];
-      if (index > 0) {
-        const previousDelivery = this.transport.deliveries[index -1];
-        
-        return new Date (delivery.origin?.slots?.[0]?.start) < 
-          new Date (previousDelivery.destination?.slots?.[0]?.start);
-      }
-    }
-
-    return false;
-  }
-
   setShowSummaryComponent (value: boolean = true) {
     this.currentDelivery = null;
     this.showSummaryComponent = value;
+  }
+
+  getTransportErrors () {
+    return this.common.getTransportErrors (this.transport);
+  }
+
+  getDeliveryErrors (index: number, type: string = null) {
+    return this.common.getDeliveryErrors (this.transport, index, type);
   }
 
   hasErrors () {
@@ -232,28 +217,17 @@ export class DeliveriesPage implements OnInit {
   }
 
   validateForm () {
-    this.errors = {};
-
-    if (this.transport.isMultipoint) {
-      if (!this.transport.deliveries?.length) {
-        this.errors.missingOriginDestination = true;
-      }
-    } else {
-      if (!this.transport.getOrigins().length) {
-        this.errors.missingOrigin = true;
-      }
-
-      if (!this.transport.getDestinations().length) {
-        this.errors.missingDestination = true;
-      }
-    }
+    this.errors = this.common.getTransportErrors (this.transport);
   }
 
   onSubmit () {
     this.validateForm ();
+
+    /*
     if (this.hasErrors ()) {
       return;
     }
+    */
 
     if (this.config.isMobile) {
       this.router.navigateByUrl('/private/tabs/transports/new-order/summary');

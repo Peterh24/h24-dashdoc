@@ -22,6 +22,7 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
   drafts: any;
   draftsName: string[];
   subscription: Subscription;
+  showResetTransport = false;
 
   @ViewChild('accordionGroup') accordionGroup: IonAccordionGroup;
 
@@ -303,9 +304,35 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     }
   }
 
-  gotoDraft (draftName: string) {
-    this.transportService.loadTransport (this.drafts[draftName]);
-    this.transportService.draftName = draftName;
-    this.router.navigateByUrl ('/private/tabs/transports/new-order/summary');
+  setShowResetTransport (value = true) {
+    this.showResetTransport = value;
+  }
+
+  setResetTransport (value: boolean, modal: any) {
+    this.showResetTransport = false;
+    modal.dismiss ();
+
+    if (value) {
+      this.transportService.resetTransport ();
+      this.router.navigateByUrl('/private/tabs/transports/new-order');
+    } else {
+      if (this.config.isDesktop) {
+        if (this.transportService.deliveries?.length) {
+          this.router.navigateByUrl('/private/tabs/transports/new-order/deliveries');
+        } else {
+          this.router.navigateByUrl('/private/tabs/transports/new-order');
+        }
+      } else {
+        if (this.transportService.isMultipoint === true || this.transportService.isMultipoint === false) {
+          this.router.navigateByUrl ('/private/tabs/transports/new-order/deliveries')
+        } else if (this.transportService.vehicle) {
+          this.router.navigateByUrl ('/private/tabs/transports/new-order/multipoint-choice');
+        } else if (this.transportService.type) {
+          this.router.navigateByUrl('/private/tabs/transports/new-order/vehicle-choice');
+        } else {
+          this.router.navigateByUrl('/private/tabs/transports/new-order');
+        }
+      }
+    }
   }
 }

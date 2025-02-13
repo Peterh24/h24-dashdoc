@@ -4,7 +4,7 @@
   <!-- TODO <app-progress-bar [current]="0.5" [next]="0.7" ></app-progress-bar> -->
   <div class="container">
     <div class="index">
-      <div *ngIf="transport.isMultipoint">
+      <div class="deliveries" *ngIf="transport.isMultipoint">
         <h3>Enlèvement / Livraison</h3>
 
         <div class="relative" *ngFor="let delivery of transport.deliveries; let index = index" (click)="showAddDelivery (delivery)">
@@ -21,19 +21,17 @@
               <ion-icon name="trash-outline"></ion-icon>
             </div>
           </div>
-          <div class="error" *ngIf="isMultipointDeliveryInvalid (index)">L'horaire d'enlèvement est invalide</div>
-          <div class="error" *ngIf="isSlotExceeded (delivery.origin?.slots?.[0]?.start)">La date d'enlèvement est dépassée</div>
-          <div class="error" *ngIf="isSlotExceeded (delivery.destination?.slots?.[0]?.start)">La date de livraison est dépassée</div>
+          <div class="error" *ngFor="let error of getDeliveryErrors (delivery)">{{ error }}</div>
         </div>
         <br>
         <ion-button fill="outline" (click)="showAddDelivery ()"><ion-icon name="add-outline"></ion-icon> &nbsp; Ajouter une adresse d'enlèvement / livraison</ion-button>
-        <div class="error" *ngIf="errors.missingOriginDestination">Enlèvement / Livraison manquant</div>
+        <div class="error" *ngFor="let error of errors">{{ error }}</div>
       </div>
 
       <div *ngIf="!transport.isMultipoint">
         <h3>Enlèvements</h3>
 
-        <div *ngFor="let delivery of origins; let index = index" (click)="showAddDelivery (delivery)">
+        <div class="deliveries" *ngFor="let delivery of origins; let index = index" (click)="showAddDelivery (delivery)">
           <div class="with-trash">
             <div class="delivery">
                 <div [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: delivery.origin?.address, index, type: 'origin' }"></div>
@@ -42,16 +40,15 @@
               <ion-icon name="trash-outline"></ion-icon>
             </div>
           </div>
-          <div class="error" *ngIf="isSlotExceeded (delivery.origin?.slots?.[0]?.start)">La date d'enlèvement est dépassée</div>
+          <div class="error" *ngFor="let error of getDeliveryErrors (delivery, 'origin')">{{ error }}</div>
         </div>
         <br>
         <ion-button fill="outline" (click)="showAddDelivery (null, 'origin')" [disabled]="addOriginDisabled ()"><ion-icon name="add-outline"></ion-icon> &nbsp; Ajouter une addresse d'enlèvement</ion-button>
-        <div class="error" *ngIf="errors.missingOrigin">Enlèvement manquant</div>
         <br>
         <br>
         <h3>Livraisons</h3>
 
-        <div class="relative" *ngFor="let delivery of destinations; let index = index" (click)="showAddDelivery (delivery)">
+        <div class="deliveries relative" *ngFor="let delivery of destinations; let index = index" (click)="showAddDelivery (delivery)">
           <div class="with-trash">
             <div class="delivery">
               <div [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: delivery.destination?.address, index, type: 'destination' }"></div>
@@ -60,14 +57,15 @@
               <ion-icon name="trash-outline"></ion-icon>
             </div>
           </div>
-          <div class="error" *ngIf="isSlotExceeded (delivery.destination?.slots?.[0]?.start)">La date de livraison est dépassée</div>
+          <div class="error" *ngFor="let error of getDeliveryErrors (delivery, 'destination')">{{ error }}</div>
         </div>
         <br>
         <ion-button fill="outline" (click)="showAddDelivery (null, 'destination')" [disabled]="addDestinationDisabled ()"><ion-icon name="add-outline"></ion-icon> &nbsp; Ajouter une addresse de livraison</ion-button>
-        <div class="error" *ngIf="errors.missingDestination">Livraison manquante</div>
+        <br>
+        <div class="error" *ngFor="let error of errors">{{ error }}</div>
       </div>
       <br>
-      <ion-button [disabled]="config.isDesktop && showSummaryComponent || hasErrors ()" (click)="onSubmit ()">Suivant &nbsp; <ion-icon name="chevron-forward-outline"></ion-icon></ion-button>
+      <ion-button [disabled]="config.isDesktop && showSummaryComponent" (click)="onSubmit ()">Suivant &nbsp; <ion-icon name="chevron-forward-outline"></ion-icon></ion-button>
       <br>
     </div>
     <div class="page" *ngIf="config.isDesktop">

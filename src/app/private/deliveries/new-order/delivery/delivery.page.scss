@@ -221,6 +221,7 @@ legend {
 
 .attachment {
     & {
+        position: relative;
         background-color: lightgray;
         text-align: center;
         padding: 20px;
@@ -233,9 +234,16 @@ legend {
         background-color: #C6D9FE;
     }
 
-    ion-icon {
+    ion-icon.download-file {
         font-size: 25pt;
         margin-bottom: 10px;
+    }
+
+    ion-icon.trash-file {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 18px;
     }
 }
 

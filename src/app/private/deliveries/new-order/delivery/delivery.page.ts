@@ -8,6 +8,7 @@ import { Storage } from '@ionic/storage-angular';
 import { DASHDOC_COMPANY, FILE_UPLOAD_MAX_SIZE } from 'src/app/services/constants';
 import { ContactsPage } from 'src/app/private/profile/contacts/contacts.page';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
+import { FileUtils } from 'src/app/utils/file-utils';
 
  // TODO gestion des manutentionnaires
  
@@ -125,8 +126,8 @@ export class DeliveryPage implements OnInit, OnChanges {
       this.destination = this.delivery.destination?.address;
       this.contacts = this.delivery.tracking_contacts;
 
-      this.enableOrigin = !!this.origin;
-      this.enableDestination = !!this.destination;
+      this.enableOrigin = this.transport.isMultipoint || !!this.origin;
+      this.enableDestination = this.transport.isMultipoint || !!this.destination;
 
       this.delivery.planned_loads?.forEach ((load: any) => {
         this.merchandisesSelected[load.id] = load;
@@ -228,11 +229,11 @@ export class DeliveryPage implements OnInit, OnChanges {
   }
 
   updateEnabled () {
-    if (this.delivery) {
+    if (this.transport.isMultipoint || this.deliveryType === null) {
+      this.enableOrigin = this.enableDestination = true;
+    } else if (this.delivery) {
       this.enableOrigin = !!this.origin;
       this.enableDestination = !!this.destination;
-    } else if (this.transport.isMultipoint || this.deliveryType === null) {
-      this.enableOrigin = this.enableDestination = true;
     } else {
       const origins = this.transport.getOrigins ().length;
       const destinations = this.transport.getDestinations ().length;
@@ -433,6 +434,7 @@ export class DeliveryPage implements OnInit, OnChanges {
     merchandise.id = this.merchandiseId[merchandise.description];
     merchandise.category = 'vrac';
     this.merchandisesSelected[merchandise.id] = merchandise;
+    this.validateForm ();
   }
 
   deleteMerchandise (id: any = null, modal: any = null) {
@@ -441,17 +443,26 @@ export class DeliveryPage implements OnInit, OnChanges {
     }
 
     delete this.merchandisesSelected[id];
+    this.validateForm ();
   }
 
   askFileToUpload (type: string) {
     document.getElementById ("file-upload-" + type).click ();
   }
 
-  onUploadFile (form: FormGroup, event: Event) {
+  async onUploadFile (form: FormGroup, event: Event) {
+    const fileUtils = new FileUtils ();
     if ((event.target as HTMLInputElement).files) {
       let input = event.target as HTMLInputElement;
-      form.value.file = input.files[0];
+      form.value.file = await fileUtils.resizeImage (input.files[0]);
     }
+  }
+
+  deleteUploadFile (form: FormGroup, event: Event) {
+    event.preventDefault ();
+    event.stopPropagation ();
+
+    form.value.file = null;
   }
 
   validateFormFile (form: FormGroup, errors: any) {
@@ -471,6 +482,10 @@ export class DeliveryPage implements OnInit, OnChanges {
           this.originErrors[control] = true;
         }
       });
+
+      if (!Object.keys (this.merchandisesSelected).length) {
+        this.originErrors['loads'] = true;
+      }
     } 
     
     if (this.transport.isMultipoint) {
@@ -510,25 +525,15 @@ export class DeliveryPage implements OnInit, OnChanges {
 
     return !this.hasErrors;
   }
-
-  isFormValid () {
-    const value = this.mainForm.value;
-
-    const originValid = this.origin && value.origin_day && value.origin_time_start && value.origin_time_end;
-    const destinationValid = this.destination && value.destination_day && value.destination_time_start && value.destination_time_end;
-    const loadsValid = this.origin && Object.keys (this.merchandisesSelected).length;
-
-    return originValid && destinationValid && loadsValid ||
-      !this.transport.isMultipoint && this.origin && originValid && loadsValid ||
-      !this.transport.isMultipoint && this.destination && destinationValid;
-  }
   
   onSubmit () {
     let origin, destination, planned_loads: any;
 
+    /*
     if (!this.validateForm ()) {
       return;
     }
+    */
 
     if (this.origin) {
       origin = this.buildDelivery (this.originForm.value, this.origin);
@@ -540,25 +545,29 @@ export class DeliveryPage implements OnInit, OnChanges {
       destination = this.buildDelivery (this.destinationForm.value, this.destination);
     }
 
+    let delivery;
+
     if (this.delivery) {
-      if (this.delivery.origin) {
-        this.delivery.origin = this.buildDelivery (this.originForm.value, this.origin);
+      delivery = this.delivery;
+
+      if (origin) {
+        delivery.origin = origin;
       }
-      if (this.delivery.destination) {
-        this.delivery.destination = this.buildDelivery (this.destinationForm.value, this.destination);
+      if (destination) {
+        delivery.destination = destination;
       }
-      this.delivery.planned_loads = planned_loads || [];
-      this.delivery.tracking_contacts = this.contacts;
+      delivery.planned_loads = planned_loads || [];
+      delivery.tracking_contacts = this.contacts;
+    } else {
+      delivery = {
+        origin,
+        destination,
+        planned_loads, // TODO doit être défini pour les enlèvements uniquement
+        tracking_contacts: this.contacts
+      };
     }
 
     console.log ('submit', { origin, destination, planned_loads });
-
-    const delivery = { 
-      origin,
-      destination,
-      planned_loads, // TODO doit être défini pour les enlèvements uniquement
-      tracking_contacts: this.contacts
-    };
 
     this.selectDelivery.emit (delivery);
 
@@ -570,7 +579,7 @@ export class DeliveryPage implements OnInit, OnChanges {
   buildDelivery (values: any, address: any) {
     const slots = [];
 
-    if (values.day) {
+    if (values.day && values.time_start) {
       const day = values.day.split (/T/)[0];
 
       slots.push (

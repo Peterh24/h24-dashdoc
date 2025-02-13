@@ -6,6 +6,7 @@ import { AlertController, LoadingController, ModalController, NavController } fr
 import { ContactsService } from 'src/app/services/contacts.service';
 import { phoneValidator, regex } from 'src/app/utils/regex';
 import { HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
+import { ApiTransportService } from 'src/app/services/api-transport.service';
 
 @Component({
   selector: 'app-new-contact',
@@ -20,6 +21,7 @@ export class NewContactPage implements OnInit {
   contact: Contact;
   companies: any[];
   constructor(
+    private apiTransport: ApiTransportService,
     private route: ActivatedRoute,
     private navController: NavController,
     private contactsService: ContactsService,
@@ -90,6 +92,8 @@ export class NewContactPage implements OnInit {
 
       request.subscribe({
         next: (res) => {
+          this.apiTransport.inviteUser (res).subscribe ();
+
           loadingElement.dismiss();
           if(!this.isModal) {
             this.router.navigate(['/private/tabs/profile/contacts']);

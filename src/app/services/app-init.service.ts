@@ -8,6 +8,8 @@ import { ConfigService } from './config.service';
 import { COMPANIES_KEY, DASHDOC_COMPANY, USER_DETAILS_KEY } from './constants';
 import { Router } from '@angular/router';
 import { CompanyService } from './company.service';
+import { TransportService } from './transport.service';
+import { ApiTransportService } from './api-transport.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +18,7 @@ export class AppInitService {
   constructor(
     private authService: AuthService,
     private companyService: CompanyService,
+    private apiTransport: ApiTransportService,
     private storage: Storage,
     private config: ConfigService,
     private router: Router
@@ -26,6 +29,7 @@ export class AppInitService {
     await this.storage.create();
 
     this.authService.currentUserDetail = await this.storage.get (USER_DETAILS_KEY);
+    await this.apiTransport.init ();
 
     const company = await this.storage.get(DASHDOC_COMPANY);
     this.config.setCurrentCompany (company);

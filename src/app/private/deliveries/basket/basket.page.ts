@@ -203,8 +203,7 @@ export class BasketPage implements OnInit, AfterViewInit {
   }
 
   gotoDraft (draftName: string) {
-    this.transportService.loadTransport (this.drafts[draftName]);
-    this.transportService.draftName = draftName;
+    this.transportService.loadDraft (draftName, this.drafts[draftName]);
     this.router.navigateByUrl ('/private/tabs/transports/new-order/deliveries');
   }
 }

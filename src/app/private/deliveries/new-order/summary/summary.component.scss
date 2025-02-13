@@ -135,6 +135,15 @@ ion-accordion {
     }
 }
 
+.error {
+    color: red;
+    margin-top: 5px;
+}
+
+ion-accordion-group .error {
+    margin-left: 10px;
+}
+
 @media (min-width: 768px) {
     .section {
         border: 1px solid lightgray;

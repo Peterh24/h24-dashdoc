@@ -1,16 +1,17 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController, NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
-import { EMPTY, firstValueFrom, mergeMap, of } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
-import { API_URL, DASHDOC_API_URL, DASHDOC_COMPANY, HTTP_REQUEST_UNKNOWN_ERROR, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
+import { DASHDOC_COMPANY, HTTP_REQUEST_UNKNOWN_ERROR, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import { TransportService } from 'src/app/services/transport.service';
 import { VehiclesService } from 'src/app/services/vehicles.service';
+import { NewOrderCommon } from '../new-order-common';
 
 
 @Component({
@@ -29,6 +30,8 @@ export class SummaryComponent  implements OnInit {
   vehicle: any;
   company: string;
   shipperReference: string;
+
+  common = new NewOrderCommon ();
 
   constructor(
     public transport: TransportService,
@@ -406,17 +409,27 @@ export class SummaryComponent  implements OnInit {
       modal.dismiss ();
 
       const transport = await this.buildTransport ();
-      transport.is_multipoint = this.transport.isMultipoint;
-
-      this.storage.get(DASHDOC_COMPANY).then ((pk) => {
-        this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
-          if (!drafts) {
-            drafts = {};
-          }
-          drafts[name] = transport;
-          this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${pk}`, drafts);
-        })
-      });
+      this.transport.saveDraft (name, transport);
     }
+  }
+
+  getTransportErrors () {
+    return this.common.getTransportErrors (this.transport);
+  }
+
+  getDeliveryErrors (index: number, type: string = null) {
+    return this.common.getDeliveryErrors (this.transport, index, type);
+  }
+
+  hasErrors () {
+    const transportErrors = this.common.getTransportErrors (this.transport);
+
+    let deliveryErrors: number = 0;
+
+    this.transport.deliveries?.forEach ((delivery, index) => {
+      deliveryErrors += this.common.getDeliveryErrors (this.transport, delivery).length;
+    });
+
+    return deliveryErrors > 0 || transportErrors.length;
   }
 }

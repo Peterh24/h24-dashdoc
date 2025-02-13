@@ -26,6 +26,10 @@ export class ApiTransportDashdoc {
         this.apiUrl = DASHDOC_API_URL;
     }
 
+    init () {
+
+    }
+
     loginUser (username: string, password: string) {
         return this.http.post(`${API_URL}login`, { username, password });
     }
@@ -369,7 +373,9 @@ export class ApiTransportDashdoc {
         reference: type && delivery ? (type == 'origin' ? `Enlèvement${delivery}` : `Livraison${delivery}`) : '',
       };
 
-      formData.append ("document", file, file.name);
+      if (file) {
+        formData.append ("document", file, file.name);
+      }
 
       for (let key in message) {
         formData.append(key, message[key]);

@@ -81,6 +81,17 @@ ion-accordion {
     cursor: pointer;
 }
 
+ion-modal {
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+    }
+  
+    ion-button {
+      flex-grow: 1;
+    }
+}
+  
 @media (max-width: 768px) {
     .create-order {
         display: none;

@@ -32,6 +32,7 @@
             <img src="{{ merchandisesUrl }}{{ merchandiseId[merchandise] }}.png">
           </div>
         </div>
+        <div class="error" *ngIf="originErrors['loads']">Veuillez préciser les marchandises transportées</div>
       </div>
     </div>
     <br>
@@ -74,7 +75,7 @@
               </div>
             </div>
           </fieldset>
-          <div class="error" *ngIf="contactsError">Veuiller saisir un ou plusieurs contacts</div>
+          <div class="error" *ngIf="contactsError">Veuiller saisir un contact</div>
         </div>
       </div>
       <ion-input
@@ -155,7 +156,8 @@
         <h3>Ajouter une pièce jointe</h3>
         <i>Taille du fichier : 10Mo max .jpeg, .png, .pdf, .doc, .xls</i>
         <div class="attachment pointer" [class.selected]="!!form.value.file" (click)="askFileToUpload (type)">
-          <ion-icon name="download-outline"></ion-icon>
+          <ion-icon name="trash-outline" class="trash-file" (click)="deleteUploadFile(form, $event)"></ion-icon>
+          <ion-icon name="download-outline" class="download-file"></ion-icon>
           <div *ngIf="!!form.value.file">{{ form.value.file.name }}</div>
           <div class="error" *ngIf="errors['file']">{{ errors['file'] }}</div>
 
