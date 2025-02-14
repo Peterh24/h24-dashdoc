@@ -8,6 +8,7 @@ import { DetailPageRoutingModule } from './detail-routing.module';
 
 import { DetailPage } from './detail.page';
 import { HeaderModule } from 'src/app/components';
+import { ModalImgComponent } from './modal-img/modal-img.component';
 
 @NgModule({
   imports: [
@@ -17,6 +18,6 @@ import { HeaderModule } from 'src/app/components';
     DetailPageRoutingModule,
     HeaderModule
   ],
-  declarations: [DetailPage]
+  declarations: [DetailPage, ModalImgComponent]
 })
 export class DetailPageModule {}

@@ -3,6 +3,10 @@ import { BehaviorSubject, EMPTY, Observable, map, take } from 'rxjs';
 import { DashdocToken } from '../private/models/dashdoc-token.model';
 import { AuthService } from './auth.service';
 
+/**
+ * @deprecated
+ */
+
 @Injectable({
   providedIn: 'root'
 })

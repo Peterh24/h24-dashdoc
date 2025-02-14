@@ -48,7 +48,7 @@ export class ApiTransportH24v2 {
     }
 
     updateUser (userId: number, user: any) {
-        return this.http.patch(`${this.apiUrl}user/${userId}`, { 
+        return this.http.patch(`${this.apiUrl}user/${userId}`, {
             first_name: user.firstname,
             last_name: user.lastname,
             phone_number: user.phone
@@ -57,7 +57,7 @@ export class ApiTransportH24v2 {
 
     getUserInfos (userId: number) {
         return this.http.get(`${this.apiUrl}user/${userId}`).pipe (
-            map ((user: any) => ({ 
+            map ((user: any) => ({
                 id: user.id,
                 firstname: user.first_name,
                 lastname: user.last_name,
@@ -110,7 +110,7 @@ export class ApiTransportH24v2 {
             map ((res: any) => res?.total)
         )
     }
-    
+
     /* Contacts */
     getContacts () {
         return this.http.get(`${this.apiUrl}contacts`).pipe(
@@ -208,7 +208,7 @@ export class ApiTransportH24v2 {
         );
     }
 
-    /* Transports */ 
+    /* Transports */
     isTransportLastPageReached = false;
     nextTransportPage: string;
 
@@ -230,7 +230,7 @@ export class ApiTransportH24v2 {
     // TODO: gestion des statuts
     getTransports (status: string = null) {
         if (this.isTransportLastPageReached) {
-            return EMPTY; 
+            return EMPTY;
         }
         const url = this.nextTransportPage ? this.nextTransportPage : `${this.apiUrl}transports` + (status ? '?status__in=' + status : '');
 
@@ -312,7 +312,7 @@ export class ApiTransportH24v2 {
     sortDeliveries (deliveries: any) {
         const isSingleOrigin = this.utilsService.areAllValuesIdentical(deliveries, 'origin', 'address');
         const isSingleDestination = this.utilsService.areAllValuesIdentical(deliveries, 'destination', 'address');
-    
+
         if (!isSingleOrigin && !isSingleDestination || !isSingleOrigin) {
           return deliveries.sort ((a: any, b: any) =>
             new Date(a.origin?.slots?.[0]?.start).valueOf () - new Date(b.origin?.slots?.[0]?.start).valueOf ()
@@ -323,7 +323,137 @@ export class ApiTransportH24v2 {
           )
         }
     }
-  
+
+    async buildTransport (transport: any, shipperReference: string = null) {
+        if (!transport.trailers?.length) {
+          transport.trailers.push({
+            "licensePlate": transport.vehicle
+          });
+        }
+
+        const company = await this.storage.get(DASHDOC_COMPANY);
+
+        const deliveries = this.buildDeliveries (transport, company, shipperReference);
+        const segments = this.buildSegments (transport, deliveries);
+
+        let dataToApi: any = {
+          requested_vehicle: transport.vehicle,
+          deliveries: deliveries,
+          segments: segments,
+        };
+
+        console.log(dataToApi);
+
+        return dataToApi;
+      }
+
+      buildDeliveries (transport: any, company: string, shipperReference: string) {
+        let deliveries: any[] = [];
+
+        if (transport.isMultipoint) {
+          deliveries = transport.deliveries;
+        } else {
+          const origins = transport.getOrigins ();
+          const destinations = transport.getDestinations ();
+
+          if (destinations.length > 1) {
+            // Single origin
+            destinations.forEach ((d: any) => {
+              delete d.origin;
+              delete d.planned_loads; // TODO
+              deliveries.push ({
+                ...origins[0],
+                ...d
+              })
+            });
+          } else {
+            // Single destination
+            origins.forEach ((o: any) => {
+              delete o.destination;
+              deliveries.push ({
+                ...destinations[0],
+                ...o
+              })
+            });
+          }
+        }
+
+        deliveries.forEach((delivery: any) => {
+          delivery.shipper_reference = shipperReference;
+          delivery.shipper_address = {
+            company: {
+              pk: company
+            },
+          };
+        });
+
+        return deliveries;
+      }
+
+      buildSegments (transport: any, deliveries: any[]) {
+        const segments: any[] = [];
+
+        if (transport.isMultipoint) {
+          deliveries.forEach ((d, index) => {
+            if (index > 0) {
+              const previous = deliveries[index - 1];
+              const segment = {
+                origin: {...previous.destination},
+                destination: {...d.origin}
+              }
+
+              segments.push (segment);
+            }
+
+            const segment = {...d};
+            delete segment.segments;
+            delete segment.planned_loads;
+            delete segment.tracking_contacts;
+            segments.push (segment);
+          })
+        } else {
+          if (transport.getDestinations ().length > 1) {
+            // Single origin
+            const segment = { ...deliveries[0] };
+            delete segment.segments;
+            delete segment.planned_loads;
+            delete segment.tracking_contacts;
+            segments.push (segment);
+            deliveries.forEach ((d, index) => {
+              if (index > 0) {
+                const segment = {
+                  origin: {...deliveries[index - 1].destination},
+                  destination: {...d.destination},
+                  trailer: transport.trailers
+                };
+                segments.push (segment);
+              }
+            });
+          } else {
+            // Single destination
+            deliveries.forEach ((o, index) => {
+              if (index < deliveries.length - 1) {
+                const segment = {
+                  destination: {...deliveries[index + 1].origin},
+                  origin: {...o.origin},
+                  trailer: transport.trailers
+                };
+                segments.push (segment);
+              }
+            });
+            const segment = { ...deliveries[deliveries.length - 1] };
+            delete segment.segments;
+            delete segment.planned_loads;
+            delete segment.tracking_contacts;
+            segments.push (segment);
+          }
+        }
+
+        segments.forEach ((segment) => segment.trailer = transport.trailers);
+
+        return segments;
+    }
+
     fromH24Transport (transport: any) {
     }
 
@@ -344,7 +474,7 @@ export class ApiTransportH24v2 {
                 load.volume_display_unit = 'm3';
             });
 
-            delivery.tracking_contacts = delivery.tracking_contacts?.map ((contact: any) => 
+            delivery.tracking_contacts = delivery.tracking_contacts?.map ((contact: any) =>
                 ({ contact: { remote_id: contact.contact.id }, reference: 'shipper' }) // TODO: quelle référence
             );
 
@@ -360,15 +490,15 @@ export class ApiTransportH24v2 {
 
     toH24Site (site: any) {
         if (!site) return null;
-        return { 
+        return {
             ...site,
             has_secure_guarding: !!site.guarding,
             manutention: site.handlers || 0,
-            address: { remote_id: site.address.pk } 
+            address: { remote_id: site.address.pk }
         };
     }
 
     createTransportMessage (transport: any, file: any, type: string = null, delivery: number = null) {
         return EMPTY;
     }
-}  
+}

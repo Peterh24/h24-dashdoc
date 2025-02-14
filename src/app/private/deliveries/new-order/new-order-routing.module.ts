@@ -17,10 +17,6 @@ const routes: Routes = [
     loadChildren: () => import('./delivery/delivery.module').then( m => m.DeliveryPageModule)
   },
   {
-    path: 'address',
-    loadChildren: () => import('./address/address.module').then( m => m.AddressPageModule)
-  },
-  {
     path: 'vehicle-choice',
     loadChildren: () => import('./vehicle-choice/vehicle-choice.module').then( m => m.VehicleChoicePageModule)
   },

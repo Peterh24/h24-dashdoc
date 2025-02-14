@@ -117,7 +117,7 @@ export class SummaryComponent  implements OnInit {
   }
 
   async onSubmit (deleteDraft = false) {
-    const transport = await this.buildTransport ();
+    const transport = await this.apiTransport.buildTransport (this.transport, this.shipperReference);
     const files: any[] = [];
 
     transport?.deliveries?.forEach ((delivery: any, index: any) => {
@@ -224,136 +224,6 @@ export class SummaryComponent  implements OnInit {
     });
   }
 
-  async buildTransport () {
-    if (!this.transport.trailers?.length) {
-      this.transport.trailers.push({
-        "licensePlate": this.transport.vehicle
-      });
-    }
-
-    this.company = await this.storage.get(DASHDOC_COMPANY);
-
-    const deliveries = this.buildDeliveries ();
-    const segments = this.buildSegments (deliveries);
-
-    let dataToApi: any = {
-      requested_vehicle: this.transport.vehicle,
-      deliveries: deliveries,
-      segments: segments,
-    };
-
-    console.log(dataToApi);
-
-    return dataToApi;
-  }
-
-  buildDeliveries () {
-    let deliveries: any[] = [];
-
-    if (this.transport.isMultipoint) {
-      deliveries = this.transport.deliveries;
-    } else {
-      const origins = this.transport.getOrigins ();
-      const destinations = this.transport.getDestinations ();
-
-      if (destinations.length > 1) {
-        // Single origin
-        destinations.forEach ((d: any) => {
-          delete d.origin;
-          delete d.planned_loads; // TODO
-          deliveries.push ({
-            ...origins[0],
-            ...d
-          })
-        });
-      } else {
-        // Single destination
-        origins.forEach ((o: any) => {
-          delete o.destination;
-          deliveries.push ({
-            ...destinations[0],
-            ...o
-          })
-        });
-      }
-    }
-
-    deliveries.forEach((delivery: any) => {
-      delivery.shipper_reference = this.shipperReference;
-      delivery.shipper_address = {
-        company: {
-          pk: this.company
-        },
-      };
-    });
-
-    return deliveries;
-  }
-
-  buildSegments (deliveries: any[]) {
-    const segments: any[] = [];
-
-    if (this.transport.isMultipoint) {
-      deliveries.forEach ((d, index) => {
-        if (index > 0) {
-          const previous = deliveries[index - 1];
-          const segment = {
-            origin: {...previous.destination},
-            destination: {...d.origin}
-          }
-
-          segments.push (segment);
-        }
-
-        const segment = {...d};
-        delete segment.segments;
-        delete segment.planned_loads;
-        delete segment.tracking_contacts;
-        segments.push (segment);
-      })
-    } else {
-      if (this.transport.getDestinations ().length > 1) {
-        // Single origin
-        const segment = { ...deliveries[0] };
-        delete segment.segments;
-        delete segment.planned_loads;
-        delete segment.tracking_contacts;
-        segments.push (segment);
-        deliveries.forEach ((d, index) => {
-          if (index > 0) {
-            const segment = {
-              origin: {...deliveries[index - 1].destination}, 
-              destination: {...d.destination},
-              trailer:this.transport.trailers
-            };
-            segments.push (segment);
-          }
-        });
-      } else {
-        // Single destination
-        deliveries.forEach ((o, index) => {
-          if (index < deliveries.length - 1) {
-            const segment = {
-              destination: {...deliveries[index + 1].origin}, 
-              origin: {...o.origin},
-              trailer:this.transport.trailers
-            };
-            segments.push (segment);
-          }
-        });
-        const segment = { ...deliveries[deliveries.length - 1] };
-        delete segment.segments;
-        delete segment.planned_loads;
-        delete segment.tracking_contacts;
-        segments.push (segment);
-      }
-    }
-
-    segments.forEach ((segment) => segment.trailer = this.transport.trailers);
-
-    return segments;
-  }
-
   async uploadFiles (transport: any, files: any[]) {
     const errors: any[] = [];
 
@@ -383,7 +253,7 @@ export class SummaryComponent  implements OnInit {
     if (name) {
       modal.dismiss ();
 
-      const transport = await this.buildTransport ();
+      const transport = await this.apiTransport.buildTransport (this.transport);
       this.transport.saveDraft (name, transport);
     }
   }

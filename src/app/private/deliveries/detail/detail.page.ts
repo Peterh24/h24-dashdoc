@@ -8,10 +8,10 @@ import { CompanyService } from 'src/app/services/company.service';
 import { Browser } from '@capacitor/browser';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { ModalImgComponent } from '../detail-delivery/modal-img/modal-img.component';
 import { TransportService } from 'src/app/services/transport.service';
 import { FILE_UPLOAD_MAX_SIZE, HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
+import { ModalImgComponent } from './modal-img/modal-img.component';
 
 const DEBUG = false;
 

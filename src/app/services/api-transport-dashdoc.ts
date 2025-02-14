@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { Storage } from "@ionic/storage-angular";
-import { API_URL, COMPANIES_KEY, DASHDOC_API_URL } from "./constants";
+import { API_URL, COMPANIES_KEY, DASHDOC_API_URL, DASHDOC_COMPANY } from "./constants";
 import { catchError, defaultIfEmpty, EMPTY, expand, filter, forkJoin, from, map, mergeMap, of, reduce, tap } from "rxjs";
 import { Address } from "../private/profile/address/address.model";
 import { Request } from "../private/models/request.model";
@@ -64,13 +64,13 @@ export class ApiTransportDashdoc {
           mergeMap ((res) => {
             const headers = new HttpHeaders()
               .set ('Content-Type', 'application/merge-patch+json');
-    
+
             return this.http.patch(`${API_URL}app_users/${userId}`, { password: newpassword }, { headers }).pipe (
             );
           })
         );
     }
-    
+
     resetUserPasswordRequest (email: string) {
         return this.http.post(`${API_URL}../password/reset/request`, { email });
     }
@@ -111,7 +111,7 @@ export class ApiTransportDashdoc {
           map ((res: any) => res.count)
         );
     }
-    
+
     /* Contacts */
     getContacts () {
         return this.http.get(`${this.apiUrl}contacts/`).pipe(
@@ -190,7 +190,7 @@ export class ApiTransportDashdoc {
         );
     }
 
-    /* Transports */ 
+    /* Transports */
     isTransportLastPageReached = false;
     nextTransportPage: string;
 
@@ -217,7 +217,7 @@ export class ApiTransportDashdoc {
           "has_price": false
       }
     }
-  
+
     createTransport (transport: any) {
       this.toDashdocTransport (transport);
       return this.http.post (`${API_URL}../transports/new`, transport).pipe (
@@ -236,7 +236,7 @@ export class ApiTransportDashdoc {
 
     getTransports (status: string = null) {
         if (this.isTransportLastPageReached) {
-            return EMPTY; 
+            return EMPTY;
         }
         const url = this.nextTransportPage ? this.nextTransportPage : `${this.apiUrl}transports/` + (status ? '?status__in=' + status : '');
 
@@ -305,7 +305,7 @@ export class ApiTransportDashdoc {
     sortDeliveries (deliveries: any) {
       const isSingleOrigin = this.utilsService.areAllValuesIdentical(deliveries, 'origin', 'address');
       const isSingleDestination = this.utilsService.areAllValuesIdentical(deliveries, 'destination', 'address');
-  
+
       if (!isSingleOrigin && !isSingleDestination || !isSingleOrigin) {
         return deliveries.sort ((a: any, b: any) =>
           new Date(a.origin?.slots?.[0]?.start).valueOf () - new Date(b.origin?.slots?.[0]?.start).valueOf ()
@@ -316,7 +316,7 @@ export class ApiTransportDashdoc {
         )
       }
     }
-  
+
     fromDashdocTransport (transport: any) {
       transport.tags?.forEach ((tag: any) => {
         const m = tag.name?.match (/^(\w+)-(\w+)-(\w+)-(\w+)$/);
@@ -348,6 +348,136 @@ export class ApiTransportDashdoc {
           }
         }
       });
+    }
+
+    async buildTransport (transport: any, shipperReference: string = null) {
+      if (!transport.trailers?.length) {
+        transport.trailers.push({
+          "licensePlate": transport.vehicle
+        });
+      }
+
+      const company = await this.storage.get(DASHDOC_COMPANY);
+
+      const deliveries = this.buildDeliveries (transport, company, shipperReference);
+      const segments = this.buildSegments (transport, deliveries);
+
+      let dataToApi: any = {
+        requested_vehicle: transport.vehicle,
+        deliveries: deliveries,
+        segments: segments,
+      };
+
+      console.log(dataToApi);
+
+      return dataToApi;
+    }
+
+    buildDeliveries (transport: any, company: string, shipperReference: string) {
+      let deliveries: any[] = [];
+
+      if (transport.isMultipoint) {
+        deliveries = transport.deliveries;
+      } else {
+        const origins = transport.getOrigins ();
+        const destinations = transport.getDestinations ();
+
+        if (destinations.length > 1) {
+          // Single origin
+          destinations.forEach ((d: any) => {
+            delete d.origin;
+            delete d.planned_loads; // TODO
+            deliveries.push ({
+              ...origins[0],
+              ...d
+            })
+          });
+        } else {
+          // Single destination
+          origins.forEach ((o: any) => {
+            delete o.destination;
+            deliveries.push ({
+              ...destinations[0],
+              ...o
+            })
+          });
+        }
+      }
+
+      deliveries.forEach((delivery: any) => {
+        delivery.shipper_reference = shipperReference;
+        delivery.shipper_address = {
+          company: {
+            pk: company
+          },
+        };
+      });
+
+      return deliveries;
+    }
+
+    buildSegments (transport: any, deliveries: any[]) {
+      const segments: any[] = [];
+
+      if (transport.isMultipoint) {
+        deliveries.forEach ((d, index) => {
+          if (index > 0) {
+            const previous = deliveries[index - 1];
+            const segment = {
+              origin: {...previous.destination},
+              destination: {...d.origin}
+            }
+
+            segments.push (segment);
+          }
+
+          const segment = {...d};
+          delete segment.segments;
+          delete segment.planned_loads;
+          delete segment.tracking_contacts;
+          segments.push (segment);
+        })
+      } else {
+        if (transport.getDestinations ().length > 1) {
+          // Single origin
+          const segment = { ...deliveries[0] };
+          delete segment.segments;
+          delete segment.planned_loads;
+          delete segment.tracking_contacts;
+          segments.push (segment);
+          deliveries.forEach ((d, index) => {
+            if (index > 0) {
+              const segment = {
+                origin: {...deliveries[index - 1].destination},
+                destination: {...d.destination},
+                trailer: transport.trailers
+              };
+              segments.push (segment);
+            }
+          });
+        } else {
+          // Single destination
+          deliveries.forEach ((o, index) => {
+            if (index < deliveries.length - 1) {
+              const segment = {
+                destination: {...deliveries[index + 1].origin},
+                origin: {...o.origin},
+                trailer: transport.trailers
+              };
+              segments.push (segment);
+            }
+          });
+          const segment = { ...deliveries[deliveries.length - 1] };
+          delete segment.segments;
+          delete segment.planned_loads;
+          delete segment.tracking_contacts;
+          segments.push (segment);
+        }
+      }
+
+      segments.forEach ((segment) => segment.trailer = transport.trailers);
+
+      return segments;
     }
 
     // TODO remove this
@@ -411,4 +541,4 @@ export class ApiTransportDashdoc {
 
       return this.http.post(`${this.apiUrl}transport-messages/`, formData).pipe ();
     }
-}  
+}

@@ -25,10 +25,6 @@ export class DeliveriesService {
     private countriesService: CountriesService,
     private apiTransport: ApiTransportService
   ) { }
-
-  setFiltre(valeur: string) {
-    this.filtreSubject.next(valeur);
-  }
   
   fetchDeliveries(status: string = null) {
     return this.apiTransport.getTransports (status).pipe(
@@ -45,42 +41,6 @@ export class DeliveriesService {
         return delivery.find(d => d.uid === id);
       })
     );
-  }
-
-  getDatePostcode(delivery: Array<any>, source: string) {
-    let data;
-
-    if (source === 'origin') {
-      if (delivery[0]?.origin?.slots?.[0]?.start) {
-        const startDate = new Date(delivery[0].origin.slots[0].start);
-        const formattedStartDate = format(startDate, 'dd-MM-yyyy');
-        data = `${formattedStartDate} - ${delivery[0].origin.address.postcode}`;
-      }
-    } else if (source === 'destination') {
-      if (delivery[delivery.length - 1].destination?.slots?.[0]?.end) {
-        const endDate = new Date(delivery[delivery.length - 1].destination.slots?.[0]?.end);
-        const formattedEndDate = format(endDate, 'dd-MM-yyyy');
-        data = `${formattedEndDate} - ${delivery[delivery.length - 1].destination.address.postcode}`;
-      }
-    }
-  
-    return data;
-  }
-
-  getAddress(delivery: Array<any>, source:string){
-    let objectSource;
-
-    if (source === 'origin') {
-      objectSource = delivery[0][source].address;
-    } else if (source === 'destination') {
-      objectSource = delivery[delivery.length -1][source].address;
-    }
-
-    if (!objectSource) {
-      return null;
-    }
-    
-    return objectSource.address +', '+ objectSource.postcode +' '+ objectSource.city +' '+ this.countriesService.getCountry(objectSource.country);
   }
 
   resetDeliveries() {
