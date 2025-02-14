@@ -13,7 +13,7 @@
       <ion-select-option *ngFor="let company of companies" [value]="company.pk">{{company.name}}</ion-select-option>
     </ion-select>
     <br>
-    <ion-button type="submit" [disabled]="!form.valid" class="ion-margin-top ion-margin-bottom" (click)="onCreateOffer()">
+    <ion-button type="submit" [disabled]="!form.valid" class="ion-margin-top ion-margin-bottom" (click)="onSubmit()">
       <span>Valider</span>
     </ion-button>
   </form>

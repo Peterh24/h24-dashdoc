@@ -38,22 +38,11 @@ export class NewContactPage implements OnInit {
       }});
 
     this.form = new FormGroup({
-      first_name: new FormControl(null, {
-        validators: [Validators.required]
-      }),
-      last_name: new FormControl(null, {
-        validators: [Validators.required]
-      }),
-      email: new FormControl(null, {
-        validators: [Validators.required, Validators.pattern(regex.email)
-        ]
-      }),
-      phone_number: new FormControl(null, {
-        validators: [Validators.required, phoneValidator ()]
-      }),
-      company: new FormControl(null, {
-        validators: [Validators.required]
-      }),
+      first_name: new FormControl(null, { validators: [Validators.required] }),
+      last_name: new FormControl(null, { validators: [Validators.required] }),
+      email: new FormControl(null, { validators: [Validators.required, Validators.pattern(regex.email)] }),
+      phone_number: new FormControl(null, { validators: [Validators.required, phoneValidator ()] }),
+      company: new FormControl(null, { validators: [Validators.required] }),
     });
 
     this.route.paramMap.subscribe(
@@ -71,8 +60,7 @@ export class NewContactPage implements OnInit {
      });
   }
 
-  // TODO: fonctionalité envoyer une invitation
-  async onCreateOffer(){
+  async onSubmit(){
     if(!this.form.valid) {
       return;
     }

@@ -6,7 +6,8 @@ import { DeliveriesPage } from './deliveries.page';
 const routes: Routes = [
   {
     path: '',
-    component: DeliveriesPage
+    redirectTo: 'deliveries',
+    pathMatch: 'full'
   },
   {
     path: 'new-delivery',

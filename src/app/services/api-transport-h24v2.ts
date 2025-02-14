@@ -9,6 +9,7 @@ import { Deliveries, Delivery } from "../private/deliveries/delivery.model";
 import { compareAsc } from "date-fns";
 import { Contact } from "../private/profile/contacts/contact.model";
 import { UtilsService } from "../utils/services/utils.service";
+import { ConfigService } from "./config.service";
 
 export class ApiTransportH24v2 {
     static model: string = 'h24';
@@ -17,6 +18,7 @@ export class ApiTransportH24v2 {
     apiUrl: string;
     companyId: number; // TODO: use config.currentCompany
 
+    config = inject (ConfigService);
     storage = inject (Storage);
     http = inject (HttpClient);
     utilsService = inject(UtilsService);
@@ -27,7 +29,7 @@ export class ApiTransportH24v2 {
 
     async init () {
         const company = await this.storage.get(DASHDOC_COMPANY);
-        this.companyId = parseInt(company);
+        this.companyId = company ? parseInt(company) : null;
     }
 
     /* Users */
@@ -42,7 +44,6 @@ export class ApiTransportH24v2 {
             email: user.email,
             phone_number: user.phone,
             password: user.password,
-            carrier: 2, // TODO
         });
     }
 
@@ -66,7 +67,7 @@ export class ApiTransportH24v2 {
              }),
              tap ((user: any) => {
                 if (user.firstname) {
-                    user.firstname = user.firstname?.[0]?.toUpperCase() + user.firstname?.slice(1)?.toLowerCase();
+                    user.firstname = user.firstname?.[0]?.toUpperCase() + user.firstname?.slice(1);
                 }
              })
             )
@@ -99,13 +100,14 @@ export class ApiTransportH24v2 {
         }).pipe (
             tap (() => {
                 this.companyId = companyId;
+                this.config.setCurrentCompany (companyId);
             })
         );
     }
 
     getCompanyStatus () {
         return this.http.get(`${this.apiUrl}transports/?status__in=created,updated,confirmed,verified`).pipe (
-            map ((res: any) => res?.items?.length) // TODO
+            map ((res: any) => res?.total)
         )
     }
     
@@ -139,7 +141,7 @@ export class ApiTransportH24v2 {
 
     updateContact (uid: string, contact: any) {
         return this.http.patch(`${this.apiUrl}contacts/${uid}`, contact).pipe(
-            map ((res: any) => new Contact (uid, res.first_name, res.last_name, res.email, res.phone_number, res.company?.pk, res.company_name))
+            map ((res: any) => new Contact (uid, res.first_name, res.last_name, res.email, res.phone_number, res.company?.id, res.company?.name))
         )
     }
 
@@ -172,11 +174,9 @@ export class ApiTransportH24v2 {
     }
 
     createAddress (address: any) {
-        // TODO
         address.is_demo = false;
         address.is_default = false;
         address.company = this.companyId;
-//        address.address_type = 'default';
         return this.http.post(`${this.apiUrl}address`, address).pipe (
             tap ((address: any) => {
                 address.pk = address.id
@@ -185,7 +185,11 @@ export class ApiTransportH24v2 {
     }
 
     updateAddress (addressId: any, address: any) {
-        return this.http.patch(`${this.apiUrl}address/${addressId}`, address);
+        return this.http.patch(`${this.apiUrl}address/${addressId}`, address).pipe (
+            tap ((address: any) => {
+                address.pk = address.id
+            })
+        )
     }
 
     deleteAddress (addressId: any) {
@@ -194,23 +198,6 @@ export class ApiTransportH24v2 {
 
     /* Vehicles */
     getVehicles () {
-        // TODO
-        /*
-        return of({
-            "@context":"\/api\/contexts\/Vehicle",
-            "@id":"\/api\/vehicles",
-            "@type":"hydra:Collection",
-            "hydra:totalItems":5,
-            "hydra:member":[
-                {
-                    "@id":"\/api\/vehicles\/1",
-                    "@type":"Vehicle",
-                    "id":1,"model":"Man","type":"20M3","length":7,"depth":2,
-                    "heightCar":3,"heightChest":2,"payload":700,"price":180,
-                    "licensePlate":"20M3HAYON","hayon":true
-                }]
-            });
-*/
         return this.http.get(`${this.apiUrl}vehicles`).pipe (
             map ((res: any) => (res.items)),
             tap((vehicles: any) => {
@@ -275,8 +262,19 @@ export class ApiTransportH24v2 {
             // TODO: origin & destination dans l'api, Loads & TrackingContacts en minuscule
             const origin = delivery.sites.find ((site: any) => site.siteReference == 'LOADING');
             const destination = delivery.sites.find ((site: any) => site.siteReference == 'UNLOADING');
-            const loads = delivery.Loads;
-            const tracking_contacts = delivery.TrackingContacts;
+            const loads = delivery.loads;
+            const tracking_contacts = delivery.tracking_contacts;
+
+            if (origin) {
+                origin.handlers = origin.manutentionnaire;
+                origin.guarding = origin.hasSecureGuarding;
+            }
+
+            if (destination) {
+                destination.handlers = destination.manutentionnaire;
+                destination.guarding = destination.hasSecureGuarding;
+            }
+
             return { uid, origin, destination, loads, tracking_contacts };
         });
 
@@ -295,8 +293,8 @@ export class ApiTransportH24v2 {
         return new Delivery(
             String(data.id),
             data.created_at,
-            data.deliveries[0].shipper_reference,
-            data.trasnport_status,
+            data.shipper_reference,
+            data.transport_status,
             data.global_status,
             statuses,
             data.pricing_total_price,
@@ -327,15 +325,6 @@ export class ApiTransportH24v2 {
     }
   
     fromH24Transport (transport: any) {
-        transport?.deliveries?.forEach ((delivery: any) => {
-            if (delivery.origin) {
-              delivery.origin.handlers = parseInt(delivery.origin.action || 0);
-            }
-
-            if (delivery.destination) {
-              delivery.destination.handlers = parseInt(delivery.destination.action || 0);
-            }
-          });
     }
 
     toH24Transport (transport: any) {
@@ -344,10 +333,8 @@ export class ApiTransportH24v2 {
 
         transport.creation_method = "api";
         transport.shipper_reference = deliveries?.[0]?.shipper_reference;
-        transport.carrier = 2; // TODO! ne pas mettre en dur
         transport.company = this.companyId;
         transport.shipper_address = this.companyId; // TODO
-//        transport.requested_vehicle = 'VAN'; // TODO
 
         deliveries?.forEach ((delivery: any) => {
             delivery.shipper_address = { remote_id: this.companyId };
@@ -363,23 +350,11 @@ export class ApiTransportH24v2 {
 
             delivery.origin = this.toH24Site (delivery.origin);
             delivery.destination = this.toH24Site (delivery.destination);
-
-            /* TODO
-            if (delivery.origin) {
-                delivery.origin.action = String(delivery.origin.handlers || 0);
-                delete delivery.origin.handlers;
-            }
-            if (delivery.destination) {
-                delivery.destination.action = String(delivery.destination.handlers || 0);
-                delete delivery.destination.handlers;
-            }
-            */
         });
 
         segments?.forEach ((segment: any) => {
             segment.origin = this.toH24Site (segment.origin);
             segment.destination = this.toH24Site (segment.destination);
-            segment.vehicle = 1; // TODO
         })
     }
 

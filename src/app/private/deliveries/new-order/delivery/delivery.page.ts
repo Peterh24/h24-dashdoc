@@ -10,8 +10,6 @@ import { ContactsPage } from 'src/app/private/profile/contacts/contacts.page';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { FileUtils } from 'src/app/utils/file-utils';
 
- // TODO gestion des manutentionnaires
- 
 @Component({
 selector: 'app-delivery',
 templateUrl: './delivery.page.html',
@@ -211,7 +209,6 @@ export class DeliveryPage implements OnInit, OnChanges {
       }
     };
 
-    // TODO: les valeurs suivantes ne sont pas initialisées dans le formulaire
     setSlot (start_day, 'time_start');
     setSlot (start_day, 'time_end');
 
@@ -545,7 +542,7 @@ export class DeliveryPage implements OnInit, OnChanges {
       destination = this.buildDelivery (this.destinationForm.value, this.destination);
     }
 
-    let delivery;
+    let delivery: any;
 
     if (this.delivery) {
       delivery = this.delivery;
@@ -562,9 +559,12 @@ export class DeliveryPage implements OnInit, OnChanges {
       delivery = {
         origin,
         destination,
-        planned_loads, // TODO doit être défini pour les enlèvements uniquement
         tracking_contacts: this.contacts
       };
+
+      if (origin) {
+        delivery.planned_loads = planned_loads || [];
+      }
     }
 
     console.log ('submit', { origin, destination, planned_loads });

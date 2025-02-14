@@ -55,7 +55,7 @@ export class NewAddressPage implements OnInit {
       });
   }
 
-  async onCreateOffer(){
+  async onSubmit() {
     if(!this.form.valid) {
       return;
     }

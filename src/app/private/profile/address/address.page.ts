@@ -205,6 +205,10 @@ export class AddressPage implements OnInit {
 
     this.addressService.removeAddress(addressPk).subscribe({
       next: async (addresses) => {
+        addresses = addresses.filter ((a) => a.pk != addressPk);
+        delete this.addressFolder[addressPk];
+        this.openFolder (this.currentFolderName);
+
         this.jsonData = addresses;
         this.address = addresses;
         this.selectFolder (null);
@@ -336,7 +340,9 @@ export class AddressPage implements OnInit {
       this.currentFolder.sort ((a: any, b: any) => a.name.localeCompare (b.name));
     } else {
       this.currentFolderName = null;
-      this.currentFolder = null;
+      setTimeout ( () => {
+        this.currentFolder = null;
+      }, 400);
     }
 
     if (this.searchbarElem?.nativeElement) {
@@ -411,7 +417,7 @@ export class AddressPage implements OnInit {
   }
 
   selectAddress (address: any, event: any, modal: any) {
-    if (this.isModal) {
+    if (this.isModal && !event.target.closest (".ion-accordion-toggle-icon")) {
       event.preventDefault ();
       event.stopPropagation ();
       event.stopImmediatePropagation ();

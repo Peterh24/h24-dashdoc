@@ -1,6 +1,6 @@
 <ion-content> 
   <div class="container">
-    <form [formGroup]="form">
+    <form [formGroup]="form" (keyup.enter)="onSubmit()">
       <div>
         <div class="logo-container">
           <img class="header-logo" src="https://h24-public-website.s3.eu-west-3.amazonaws.com/assets/logo-noir-sur-fond-blanc.jpeg" alt="H24 Transports">

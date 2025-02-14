@@ -50,6 +50,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
               // success
             },
             error: (error) => {
+              console.log ('auth', error);
               if (error.status === 401) {
                 // if token expired, remove token from application and redirect to home
                 authService.signOut();

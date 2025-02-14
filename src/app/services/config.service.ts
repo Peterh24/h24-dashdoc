@@ -7,7 +7,7 @@ import { Platform } from '@ionic/angular';
 export class ConfigService {
   isMobile = false;
   isDesktop = false;
-  currentCompany: any;
+  currentCompany: string;
 
   constructor(
     private platform: Platform, 
@@ -24,6 +24,6 @@ export class ConfigService {
   }
 
   setCurrentCompany (company: any) {
-    this.currentCompany = company;
+    this.currentCompany = company ? String(company) : null;
   }
 }

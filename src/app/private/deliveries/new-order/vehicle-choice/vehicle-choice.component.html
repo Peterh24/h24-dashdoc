@@ -22,7 +22,7 @@
   <ion-row>
     <ion-col>
       <div class="vehicles-list">
-        <ion-img class="vehicle"
+        <ion-img class="vehicle pointer"
           [class.selected]="currentIndex === index"
           src="assets/trucks/{{ vehicle.licensePlate }}.png"
           (click)="onSwitchVehicle (vehicle)"

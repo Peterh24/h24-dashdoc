@@ -2,7 +2,7 @@
 
 <ion-content>
   <div class="profile-container {{ isModal ? 'modal' : 'not-modal' }}">
-    <app-profile-component [desktopOnly]="!isModal"></app-profile-component>
+    <app-profile-component [desktopOnly]="!isModal" [isModal]="isModal"></app-profile-component>
     <div class="page">
       <ion-icon name="close-outline" class="close-button ion-float-right" (click)="closeModal ()" *ngIf="isModal"></ion-icon>
       <div class="title" *ngIf="isModal">Mes contacts</div>

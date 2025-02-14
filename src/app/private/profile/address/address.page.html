@@ -2,7 +2,7 @@
 
 <ion-content>
   <div class="profile-container {{ isModal ? 'modal' : 'not-modal' }}">
-    <app-profile-component [desktopOnly]="!isModal"></app-profile-component>
+    <app-profile-component [desktopOnly]="!isModal" [isModal]="isModal"></app-profile-component>
 
     <div class="page">
       <ion-button class="move-to-folder-desktop" shape="round" [disabled]="!haveSelectedAddress ()" (click)="showMoveToFolderModal ()" *ngIf="config.isDesktop && !isModal"><ion-icon name="folder-outline"></ion-icon> &nbsp; Déplacer dans un dossier</ion-button>
@@ -96,8 +96,8 @@
 
   <ion-accordion  [value]="item.pk" class="address">
 
-      <ion-item slot="header" class="ion-align-items-start" lines="none">
-        <ion-label (click)="selectAddress (item, $event, modal)">
+      <ion-item slot="header" class="ion-align-items-start" lines="none" (click)="selectAddress (item, $event, modal)">
+        <ion-label>
           <!--
           <ion-chip class="ion-float-right" *ngIf="item.is_destination">Livraison</ion-chip>
           <ion-chip class="ion-float-right" *ngIf="item.is_origin">Enlèvement</ion-chip>

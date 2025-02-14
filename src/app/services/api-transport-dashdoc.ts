@@ -11,6 +11,7 @@ import { Contact } from "../private/profile/contacts/contact.model";
 import { AuthService } from "./auth.service";
 import { UtilsService } from "../utils/services/utils.service";
 import { DashdocToken } from "../private/models/dashdoc-token.model";
+import { ConfigService } from "./config.service";
 
 export class ApiTransportDashdoc {
     static model: string = 'dashdoc';
@@ -18,6 +19,7 @@ export class ApiTransportDashdoc {
 
     apiUrl: string;
 
+    config = inject (ConfigService);
     storage = inject (Storage);
     http = inject (HttpClient);
     utilsService = inject(UtilsService);
@@ -46,7 +48,7 @@ export class ApiTransportDashdoc {
         return this.http.get(`${API_URL}app_users/${userId}`).pipe (
           tap ((res: any) => {
             if (res.firstname) {
-              res.firstname = res.firstname?.[0]?.toUpperCase() + res.firstname?.slice(1)?.toLowerCase();
+              res.firstname = res.firstname?.[0]?.toUpperCase() + res.firstname?.slice(1);
             }
 
             res.tokens = res.appDashdocTokens?.map((token: any) => {
@@ -100,7 +102,8 @@ export class ApiTransportDashdoc {
     }
 
     chooseCompany (companyId: number) {
-        return EMPTY
+      this.config.setCurrentCompany (companyId);
+      return EMPTY
     }
 
     getCompanyStatus () {
@@ -191,6 +194,30 @@ export class ApiTransportDashdoc {
     isTransportLastPageReached = false;
     nextTransportPage: string;
 
+    defaultTransport: any = {
+      "carrier_address": {
+        "company": {
+          "pk": 1755557,
+        },
+        "is_verified": true,
+      },
+      "deliveries": [
+      ],
+      "segments": [
+      ],
+      "instructions": "Notes exploitant", // TODO
+      "volume_display_unit": "m3",
+      "business_privacy": false,
+      "is_template": false,
+      "is_multiple_compartments": false,
+      "requires_washing": false,
+      "send_to_trucker": false,
+      "send_to_carrier": true,
+      "analytics": {
+          "has_price": false
+      }
+    }
+  
     createTransport (transport: any) {
       this.toDashdocTransport (transport);
       return this.http.post (`${API_URL}../transports/new`, transport).pipe (
@@ -341,6 +368,7 @@ export class ApiTransportDashdoc {
     }
 
     toDashdocTransport (transport: any) {
+      transport = { ...this.defaultTransport, ...transport };
       this.toH24Apiv1 (transport);
 
       const tags: any[] = [];

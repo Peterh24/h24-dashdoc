@@ -224,30 +224,6 @@ export class SummaryComponent  implements OnInit {
     });
   }
 
-  defaultTransport: any = {
-    "carrier_address": {
-      "company": {
-        "pk": 1755557,
-      },
-      "is_verified": true,
-    },
-    "deliveries": [
-    ],
-    "segments": [
-    ],
-    "instructions": "Notes exploitant", // TODO
-    "volume_display_unit": "m3",
-    "business_privacy": false,
-    "is_template": false,
-    "is_multiple_compartments": false,
-    "requires_washing": false,
-    "send_to_trucker": false,
-    "send_to_carrier": true,
-    "analytics": {
-        "has_price": false
-    }
-  }
-
   async buildTransport () {
     if (!this.transport.trailers?.length) {
       this.transport.trailers.push({
@@ -260,8 +236,7 @@ export class SummaryComponent  implements OnInit {
     const deliveries = this.buildDeliveries ();
     const segments = this.buildSegments (deliveries);
 
-    let dataToApi = {
-      ...this.defaultTransport,
+    let dataToApi: any = {
       requested_vehicle: this.transport.vehicle,
       deliveries: deliveries,
       segments: segments,
@@ -400,7 +375,7 @@ export class SummaryComponent  implements OnInit {
       modal.dismiss ();
 
       this.shipperReference = name;
-      this.onSubmit (deleteDraft); // TODO
+      this.onSubmit (deleteDraft);
     }
   }
 

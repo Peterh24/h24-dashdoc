@@ -109,5 +109,6 @@ ion-modal {
         width: calc((100% - 800px)/2);
         top: 20px;
         right: 20px;
+        min-width: 200px;
     }
 }

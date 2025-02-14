@@ -1,4 +1,4 @@
-<div class="container" *ngIf="desktopOnly && config.isDesktop || show">
+<div class="container {{ isModal ? 'modal' : 'not-modal' }}" *ngIf="desktopOnly && config.isDesktop || show">
   <div class="user-header" *ngIf="config.isMobile">
     <div><ion-icon name="person-circle-outline"></ion-icon></div>
     <div class="user-name">
@@ -30,12 +30,12 @@
       </ion-label>
     </ion-item>
 
-    <ion-item (click)="goto ('/private/tabs/profile/address')" [disabled]="!company" [class.active]="isActive('profile/address')">
+    <ion-item (click)="goto ('/private/tabs/profile/address')" [disabled]="!config.currentCompany" [class.active]="isActive('profile/address')">
       <ion-icon name="location-outline" slot="start"></ion-icon> &nbsp; 
       <ion-label>Mes adresses</ion-label>
     </ion-item>
 
-    <ion-item (click)="goto ('/private/tabs/profile/contacts')" [disabled]="!company" [class.active]="isActive('profile/contacts')">
+    <ion-item (click)="goto ('/private/tabs/profile/contacts')" [disabled]="!config.currentCompany" [class.active]="isActive('profile/contacts')">
       <ion-icon name="people-outline" slot="start"></ion-icon> &nbsp; 
       <ion-label>Membres</ion-label>
     </ion-item>

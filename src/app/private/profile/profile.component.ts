@@ -19,8 +19,8 @@ import { phoneValidator, regex } from 'src/app/utils/regex';
 export class ProfileComponent  implements OnInit {  
   @Input() desktopOnly = false;
   @Input() show = false;
-
-  company: string;
+  @Input() isModal = false;
+  
   success: boolean;
   showSignout = false;
 
@@ -41,18 +41,16 @@ export class ProfileComponent  implements OnInit {
     public notifications: NotificationsService,
     private router: Router
   ) { 
-    this.company = 'OK';
+
   }
 
   ngOnInit() {
+
   }
 
   ionViewWillEnter() {
     const currentUser = this.authService.currentUser;
     this.success = undefined;
-    this.storage.get(DASHDOC_COMPANY).then((company: string) => {
-//      this.company = company; // TODO
-    });
 
     if(!currentUser){
       this.router.navigateByUrl('/private/tabs/home');
