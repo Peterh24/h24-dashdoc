@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
-import { DeliveriesService } from 'src/app/services/deliveries.service';
+import { TransportOrderService } from 'src/app/services/transport-order.service';
 import { TransportService } from 'src/app/services/transport.service';
 
 @Component({
@@ -30,7 +30,7 @@ export class BasketPage implements OnInit, AfterViewInit {
   statuses: any = {
     created: 'Crée',
     confirmed: 'Confirmé',
-    declined: 'Refusé', 
+    declined: 'Refusé',
     invoiced: 'Facturé',
     paid: 'Payé',
     cancelled: 'Annulé',
@@ -42,8 +42,8 @@ export class BasketPage implements OnInit, AfterViewInit {
   @ViewChild('accordionDraftGroup') accordionDraftGroup: IonAccordionGroup;
 
   constructor(
-    public deliveriesService: DeliveriesService,
     public transportService: TransportService,
+    public transport: TransportOrderService,
     public apiTransport: ApiTransportService,
     public config: ConfigService,
     private router: Router,
@@ -90,9 +90,9 @@ export class BasketPage implements OnInit, AfterViewInit {
     });
 
     await loading.present();
-    this.deliveriesService.resetDeliveries();
+    this.transportService.resetDeliveries();
 
-    this.subscription = this.deliveriesService.fetchDeliveries('created,updated,confirmed,verified').subscribe({
+    this.subscription = this.transportService.fetchDeliveries('created,updated,confirmed,verified').subscribe({
       next: (deliveries) => {
         this.deliveries = deliveries;
       },
@@ -108,7 +108,7 @@ export class BasketPage implements OnInit, AfterViewInit {
   }
 
   loadMoreDeliveries(event: any) {
-    this.deliveriesService.fetchDeliveries().subscribe((additionalDeliveries) => {
+    this.transportService.fetchDeliveries().subscribe((additionalDeliveries) => {
       this.deliveries = this.deliveries.concat(additionalDeliveries);
       event.target.complete();
     });
@@ -135,7 +135,7 @@ export class BasketPage implements OnInit, AfterViewInit {
     }
 
     return "Demande du " + this.getDateDay (delivery.created);
-    
+
     */
   }
 
@@ -156,7 +156,7 @@ export class BasketPage implements OnInit, AfterViewInit {
     const merchandises: any = {};
 
     delivery.deliveries.map ((d: any) => d.planned_loads || d.loads).forEach ((loads: any) => {
-      loads?.forEach ((load: any) => { 
+      loads?.forEach ((load: any) => {
         merchandises[load.description] = true;
       })
     });
@@ -168,10 +168,10 @@ export class BasketPage implements OnInit, AfterViewInit {
     const contacts: any = {};
 
     delivery.deliveries?.map((c: any)=> c.tracking_contacts).flat().forEach ((contact: any) => {
-      contacts[contact?.contact?.email] = contact;
+      contacts[contact?.email] = contact;
     });
 
-    return Object.values(contacts).map ((c: any) => c?.contact?.first_name + " " + c?.contact?.last_name)
+    return Object.values(contacts).map ((c: any) => c?.first_name + " " + c?.last_name)
       .join (", ");
   }
 
@@ -182,7 +182,7 @@ export class BasketPage implements OnInit, AfterViewInit {
   onDraftDelete (draftName: string, modal: any) {
     modal.dismiss ();
     const index = this.accordionDraftGroup?.value;
-    
+
     if (index) {
       const draftName = this.draftsName[parseInt(new String(index).substring (1))];
       this.storage.get(DASHDOC_COMPANY).then ((pk) => {

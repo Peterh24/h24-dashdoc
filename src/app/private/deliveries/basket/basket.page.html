@@ -41,7 +41,7 @@
         <div *ngFor="let draft of draftsName; let index = index">
           <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ delivery: drafts[draft], draftname: draft, draft: true, index }"></div>
         </div>
-      </ion-accordion-group>  
+      </ion-accordion-group>
     </div>
     <ion-button fill="outline" id="draft-delete" class="ion-hide">Supprimer ma demande</ion-button>
   </div>
@@ -100,7 +100,7 @@
     </div>
     <div>
       <div class="title">Vehicule</div>
-      <div class="value">{{ delivery.licensePlate || delivery.requested_vehicle || 'Non déterminé' }}</div>
+      <div class="value">{{ delivery.licensePlate || delivery.vehicle || 'Non déterminé' }}</div>
     </div>
     <div>
       <div class="title">Enlèvement</div>

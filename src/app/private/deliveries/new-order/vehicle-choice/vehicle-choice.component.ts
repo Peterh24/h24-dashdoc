@@ -1,12 +1,12 @@
 import { Component, ElementRef, Input, NgZone, OnInit, ViewChild } from '@angular/core';
-import { Vehicle } from '../../vehicle.model';
+import { Vehicle } from '../../../models/vehicle.model';
 import Swiper from 'swiper';
 import { VehiclesService } from 'src/app/services/vehicles.service';
-import { TransportService } from 'src/app/services/transport.service';
 import { ModalController } from '@ionic/angular';
 import { take, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { ConfigService } from 'src/app/services/config.service';
+import { TransportOrderService } from 'src/app/services/transport-order.service';
 
 @Component({
   selector: 'app-vehicle-choice-component',
@@ -25,7 +25,7 @@ export class VehicleChoiceComponent  implements OnInit {
   swiper?: Swiper;
   constructor(
     private vehicleService: VehiclesService,
-    private transportService: TransportService,
+    private transportOrderService: TransportOrderService,
     private router: Router,
     private modalController: ModalController,
     private _ngZone: NgZone,
@@ -56,17 +56,17 @@ export class VehicleChoiceComponent  implements OnInit {
   onSlideChange(elem: any){
     this.currentIndex = elem.srcElement.swiper.realIndex;
     this.currentVehicle = this.vehicles[this.currentIndex];
-    this.transportService.vehicle = null;
+    this.transportOrderService.vehicle = null;
   }
 
   goPrev(){
     this.swiperRef.nativeElement.swiper.slidePrev();
-    this.transportService.vehicle = null;
+    this.transportOrderService.vehicle = null;
   }
 
   goNext(){
     this.swiperRef.nativeElement.swiper.slideNext();
-    this.transportService.vehicle = null;
+    this.transportOrderService.vehicle = null;
   }
 
   cancel(){
@@ -77,16 +77,16 @@ export class VehicleChoiceComponent  implements OnInit {
     this.currentIndex = this.vehicles.findIndex ((v) => v.licensePlate == vehicle.licensePlate);
     this.currentVehicle = this.vehicles[this.currentIndex];
     this.swiperRef.nativeElement.swiper.slideTo (this.currentIndex);
-    this.transportService.vehicle = null;
+    this.transportOrderService.vehicle = null;
   }
 
   onVehicleSelected(licensePlate: string){
-    this.transportService.vehicle = licensePlate
+    this.transportOrderService.vehicle = licensePlate
     if(this.isModal){
       this.modalController.dismiss(licensePlate);
     } else {
       if (this.config.isMobile) {
-        if (this.transportService.deliveries?.length) {
+        if (this.transportOrderService.deliveries?.length) {
           this.router.navigateByUrl ('/private/tabs/transports/new-order/deliveries');
         } else {
           this.router.navigateByUrl('/private/tabs/transports/new-order/multipoint-choice');

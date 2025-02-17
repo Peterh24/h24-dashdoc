@@ -19,7 +19,7 @@
           <div class="icons">
             <ion-icon class="pointer" name="create-outline" (click)="setMerchandiseEdit(merchandise.description)"></ion-icon> &nbsp; &nbsp;
             <ion-icon class="pointer" name="trash-outline" (click)="deleteMerchandise (merchandise.id)"></ion-icon>
-          </div>  
+          </div>
         </div>
       </div>
 
@@ -38,7 +38,7 @@
     <br>
     <ion-button (click)="onSubmit()">Valider la demande</ion-button>
     <br>
-    
+
     <!-- Delivery template -->
     <ng-template #delivery let-type="type" let-address="address" let-form="form" let-errors="errors">
       <div class="address-and-contact">
@@ -47,7 +47,7 @@
           <div class="trash" (click)="deleteAddress (type)" *ngIf="address && transport.isMultipoint">
             <ion-icon name="trash-outline"></ion-icon>
           </div>
-          -->  
+          -->
           <fieldset class="custom-control address" (click)="setAddress (type)">
               <legend *ngIf="type === 'origin'">Addresse d'enlèvement</legend>
               <legend *ngIf="type === 'destination'">Addresse de la livraison</legend>
@@ -69,9 +69,9 @@
             <div *ngIf="!contacts?.length">Ajouter un contact</div>
             <div *ngFor="let contact of contacts; let index = index">
               <hr *ngIf="index > 0">
-              <div class="title">{{ contact?.contact?.first_name }} {{ contact?.contact?.last_name }}</div>
+              <div class="title">{{ contact?.first_name }} {{ contact?.last_name }}</div>
               <div>
-                {{ contact.contact.email }}
+                {{ contact?.email }}
               </div>
             </div>
           </fieldset>
@@ -83,7 +83,7 @@
         label-placement="floating"
         fill="outline"
         shape="round"
-        placeholder="Référence" 
+        placeholder="Référence"
         [formControl]="form.get('reference')">
       </ion-input>
 
@@ -111,15 +111,15 @@
             </div>
             <div class="error" *ngIf="errors['time_start']">Veuiller saisir un horaire</div>
           </div>
-          
+
           <div class="ion-hide">
             <ion-datetime-button datetime="{{ type }}_day"></ion-datetime-button>
           </div>
 
           <ion-modal [keepContentsMounted]="true" trigger="{{ type }}_day_select" #dayInput>
             <ng-template>
-              <ion-datetime 
-                id="{{ type }}_day" 
+              <ion-datetime
+                id="{{ type }}_day"
                 presentation="date"
                 [formatOptions]="{ date: { weekday: 'long', month: 'long', day: '2-digit' }}"
                 (ionChange)="setDay(form, $event, dayInput)"
@@ -181,7 +181,7 @@
       <ion-select label="Nature de la marchandise *" labelPlacement="floating" formControlName="description">
         <ion-select-option *ngFor="let merchandise of merchandises" [value]="merchandise">{{ merchandise }}</ion-select-option>
       </ion-select>
-  
+
       <ion-input
         label="Informations complementaires"
         label-placement="floating"

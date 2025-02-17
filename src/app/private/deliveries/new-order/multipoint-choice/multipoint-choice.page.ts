@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { TransportService } from 'src/app/services/transport.service';
+import { TransportOrderService } from 'src/app/services/transport-order.service';
 
 @Component({
   selector: 'app-multipoint-choice',
@@ -10,7 +10,7 @@ import { TransportService } from 'src/app/services/transport.service';
 export class MultipointChoicePage implements OnInit {
 
   constructor(
-    public transport: TransportService,
+    public transportOrderService: TransportOrderService,
     private router: Router,
   ) {
 
@@ -20,7 +20,7 @@ export class MultipointChoicePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    if (!this.transport.type) {
+    if (!this.transportOrderService?.type) {
       this.router.navigateByUrl ('/private/tabs/transports/new-order');
       return;
     }

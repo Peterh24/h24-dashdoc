@@ -1,19 +1,20 @@
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { IonSelect, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
-import { Subscription, take } from 'rxjs';
 import { Company } from '../models/company.model';
 import { CompanyService } from 'src/app/services/company.service';
 import { DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
 import { AuthService } from 'src/app/services/auth.service';
-import { DeliveriesService } from 'src/app/services/deliveries.service';
-import { TransportService } from 'src/app/services/transport.service';
 import { Router } from '@angular/router';
 import { AddressService } from 'src/app/services/address.service';
 import { ContactsService } from 'src/app/services/contacts.service';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { ConfigService } from 'src/app/services/config.service';
+import { TransportOrderService } from 'src/app/services/transport-order.service';
+import { TransportService } from 'src/app/services/transport.service';
+import { User } from '../models/user.model';
+import { firstValueFrom, take } from 'rxjs';
 
 
 @Component({
@@ -21,36 +22,33 @@ import { ConfigService } from 'src/app/services/config.service';
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
 })
-export class HomePage implements OnDestroy {
-  private companiesSub: Subscription;
-  private currentCompany: Subscription;
+export class HomePage {
   loadedCompanies: Array<Company>;
-  isCompanySelected: boolean = false;
-  currentUserDetail: any;
+  currentUser: User;
   selectedCompanyId: any; // Ajoutez cette variable
   showResetTransport = false;
 
   @ViewChild('companyChoose', { static: false }) companyChoose: IonSelect;
   constructor(
-    private storage: Storage,
+    public config: ConfigService,
     public companyService: CompanyService,
+    public transportService: TransportService,
+    private storage: Storage,
     private apiTransport: ApiTransportService,
     private authService: AuthService,
     private addressService: AddressService,
     private contactService: ContactsService,
     private loadingController: LoadingController,
     private router: Router,
-    public deliveriesService: DeliveriesService,
-    private transportService: TransportService,
+    private transportOrderService: TransportOrderService,
     private notifications: NotificationsService,
-    public config: ConfigService
   ) { }
-  
+
   ionViewWillEnter(){
-    this.currentUserDetail = this.authService.currentUserDetail;
-    
+    this.currentUser = this.authService.currentUser;
+
     this.authService.loadCurrentUserDetail(this.authService.currentUser?.id).pipe(take(1)).subscribe((user:any) => {
-      this.currentUserDetail = user;
+      this.currentUser = user;
 
       this.companyService.fetchCompanies().pipe(take(1)).subscribe((companies) => {
         this.loadedCompanies = companies;
@@ -58,9 +56,9 @@ export class HomePage implements OnDestroy {
         this.storage.get(DASHDOC_COMPANY).then((company) => {
           if(company && this.selectedCompanyId !== company){
             this.selectedCompanyId = company;
-            this.onchooseCompany(company)
+            this.onChooseCompany(company)
           } else {}
-  
+
         })
       })
     })
@@ -68,46 +66,36 @@ export class HomePage implements OnDestroy {
     this.notifications.update ();
   }
 
-  async onchooseCompany(event: any) {
-    const currentCompany = event && event.detail ? event.detail.value || event : event;
+  async onChooseCompany(event: any) {
+    const companyId = event && event.detail ? event.detail.value || event : event;
 
-    await this.storage.get(DASHDOC_COMPANY).then(async (company) => {
-      if (company !== currentCompany) {
-        this.deliveriesService.resetDeliveries();
-        this.companyService.isCompanySwitch = true;
-  
-        const loading = await this.loadingController.create({
-          keyboardClose: true,
-          message: '<div class="h24loader"></div>',
-          spinner: null,
-        });
-  
-        await loading.present();
-  
-        this.currentCompany = this.companyService.getCompany(currentCompany).subscribe((company) => {
-          loading.dismiss();
-          this.apiTransport.chooseCompany (currentCompany).subscribe ();
-          if (company) {
-            this.companyService.setCompanyName(company.name);
-            this.storage.set(USER_STORAGE_KEY, company.token || company.pk).then (() => this.companyService.getCompanyStatus () );
-            this.storage.set(DASHDOC_COMPANY, currentCompany);
-            this.config.setCurrentCompany (currentCompany);
-            this.isCompanySelected = true;
-            this.companyService.isCompanySwitch = false;
-            this.addressService.resetAddresses ();
-            this.contactService.resetContacts ();
-            this.transportService.resetTransport ();
-          }
-        });
-      } else {
-        this.apiTransport.chooseCompany (currentCompany).subscribe ();
-        this.currentCompany = this.companyService.getCompany(currentCompany).subscribe((company) => {
-          this.companyService.setCompanyName(company.name);
-          this.isCompanySelected = true;
-          this.companyService.isCompanySwitch = false;
-        });
+    if (this.companyService.currentCompany?.id !== companyId) {
+      this.transportService.resetDeliveries();
+      this.companyService.isCompanySwitch = true;
+
+      const loading = await this.loadingController.create({
+        keyboardClose: true,
+        message: '<div class="h24loader"></div>',
+        spinner: null,
+      });
+
+      await loading.present();
+
+      const currentCompany = this.companyService.getCompany(companyId);
+      loading.dismiss();
+      if (currentCompany) {
+        await firstValueFrom (await this.companyService.setCurrentCompany(currentCompany.id));
+        this.storage.set(USER_STORAGE_KEY, currentCompany.token || currentCompany.id).then (() => this.companyService.getCompanyStatus () );
+        this.storage.set(DASHDOC_COMPANY, companyId);
+        this.companyService.isCompanySwitch = false;
+        this.addressService.resetAddresses ();
+        this.contactService.resetContacts ();
+        this.transportOrderService.resetTransport ();
       }
-    });
+    } else {
+      this.apiTransport.chooseCompany (companyId).subscribe ();
+      this.companyService.isCompanySwitch = false;
+    }
   }
 
   openSelect(){
@@ -115,7 +103,7 @@ export class HomePage implements OnDestroy {
   }
 
   onNewOrder () {
-    if (this.transportService.type) {
+    if (this.transportOrderService.type) {
       this.showResetTransport = true;
     } else {
       this.router.navigateByUrl ('/private/tabs/transports/new-order');
@@ -131,35 +119,26 @@ export class HomePage implements OnDestroy {
     modal.dismiss ();
 
     if (value) {
-      this.transportService.resetTransport ();
+      this.transportOrderService.resetTransport ();
       this.router.navigateByUrl('/private/tabs/transports/new-order');
     } else {
       if (this.config.isDesktop) {
-        if (this.transportService.deliveries?.length) {
+        if (this.transportOrderService.deliveries?.length) {
           this.router.navigateByUrl('/private/tabs/transports/new-order/deliveries');
         } else {
           this.router.navigateByUrl('/private/tabs/transports/new-order');
         }
       } else {
-        if (this.transportService.isMultipoint === true || this.transportService.isMultipoint === false) {
+        if (this.transportOrderService.isMultipoint === true || this.transportOrderService.isMultipoint === false) {
           this.router.navigateByUrl ('/private/tabs/transports/new-order/deliveries')
-        } else if (this.transportService.vehicle) {
+        } else if (this.transportOrderService.vehicle) {
           this.router.navigateByUrl ('/private/tabs/transports/new-order/multipoint-choice');
-        } else if (this.transportService.type) {
+        } else if (this.transportOrderService.type) {
           this.router.navigateByUrl('/private/tabs/transports/new-order/vehicle-choice');
         } else {
           this.router.navigateByUrl('/private/tabs/transports/new-order');
         }
       }
-    }
-  }
-
-  ngOnDestroy() {
-    if(this.companiesSub) {
-      this.companiesSub.unsubscribe();
-    }
-    if(this.currentCompany) {
-      this.currentCompany.unsubscribe();
     }
   }
 }

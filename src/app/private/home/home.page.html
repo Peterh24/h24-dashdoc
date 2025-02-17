@@ -8,7 +8,7 @@
     </div>
     -->
 
-    <div class="title"><span class="bonjour">Bonjour</span> <br> <span class="name">{{ currentUserDetail?.firstname }},</span></div>
+    <div class="title"><span class="bonjour">Bonjour</span> <br> <span class="name">{{ currentUser?.first_name }},</span></div>
     <br>
     <ion-text class="intro">
       Avant de commencer, veuillez selectionner votre société de facturation:
@@ -22,22 +22,22 @@
       okText="Valider"
       cancelText="Annuler"
       label-placement="floating"
-      (ionChange)="onchooseCompany($event)"
+      (ionChange)="onChooseCompany($event)"
       [(ngModel)]="selectedCompanyId">
-      <ion-select-option *ngFor="let company of loadedCompanies" [value]="company.pk">{{company.name}}</ion-select-option>
+      <ion-select-option *ngFor="let company of loadedCompanies" [value]="company.id">{{ company.name }}</ion-select-option>
       <ion-icon color="primary" name="chevron-down" slot="end" (click)="openSelect()"></ion-icon>
     </ion-select>
 
-    <ion-button (click)="onNewOrder ()" [disabled]="!isCompanySelected">
+    <ion-button (click)="onNewOrder ()" [disabled]="!companyService.currentCompany">
       Créer une demande &nbsp;
       <ion-icon name="arrow-forward"></ion-icon>
     </ion-button>
 
-    <ion-button fill="outline" shape="round" [routerLink]="['/private/tabs/transports/deliveries']" [disabled]="!isCompanySelected">
+    <ion-button fill="outline" shape="round" [routerLink]="['/private/tabs/transports/deliveries']" [disabled]="!companyService.currentCompany">
       <ion-text>Suivis mes transports</ion-text>
     </ion-button>
 
-    <ion-button fill="outline" shape="round" [routerLink]="['/private/tabs/profile/address']" [disabled]="!isCompanySelected">
+    <ion-button fill="outline" shape="round" [routerLink]="['/private/tabs/profile/address']" [disabled]="!companyService.currentCompany">
       <ion-text>Mes adresses</ion-text>
     </ion-button>
   </form>

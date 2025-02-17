@@ -1,49 +1,47 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, take, tap } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, map, take, tap } from 'rxjs';
 import { Company } from '../private/models/company.model';
 import { ApiTransportService } from './api-transport.service';
 import { AuthService } from './auth.service';
-import { DashdocToken } from '../private/models/dashdoc-token.model';
+import { Storage } from '@ionic/storage-angular';
+import { DASHDOC_COMPANY } from './constants';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CompanyService {
-  private _companies = new BehaviorSubject<Array<Company>>([]);
-  private _companyName = new BehaviorSubject<string>('');
-  private _userHasChooseCompany = new BehaviorSubject<boolean>(false);
+  public companies: Company[] = [];
+  public currentCompany: Company;
+
   public companyStatusBadge: number;
   isCompanySwitch: boolean = false;
 
-  get userHasChooseCompany() {
-    return this._userHasChooseCompany.asObservable();
-  }
-
-  get companies() {
-    return this._companies.asObservable();
-  }
-  get companyName() {
-    return this._companyName.asObservable();
-  }
   constructor(
     private apiTransport: ApiTransportService,
-    private authService: AuthService
+    private authService: AuthService,
+    private storage: Storage
   ) { }
 
+  async init () {
+    await firstValueFrom (this.fetchCompanies ());
+    const company = await this.storage.get(DASHDOC_COMPANY);
+    if (company) {
+      this.setCurrentCompany (company);
+    }
+  }
+
   fetchCompanies () {
-    const tokens = this.authService.currentUserDetail?.tokens;
+    const tokens = this.authService.currentUser?.tokens;
 
     return this.apiTransport.getCompanies (tokens || []).pipe(
-      tap ((allCompanies: any) => this._companies.next (allCompanies))
+      tap ((allCompanies: Company[]) => {
+        this.companies = allCompanies;
+      })
     )
   }
 
-  getCompany(pk: number) {
-    return this.companies.pipe(
-      take(1),
-      map(companies => {
-        return {...companies.find(company => company.pk === pk)}
-      }))
+  getCompany(id: number) {
+    return this.companies.find ((company: Company) => company.id == id);
   }
 
   getCompanyStatus () {
@@ -54,8 +52,11 @@ export class CompanyService {
     });
   }
 
-  setCompanyName(name: string) {
-    this._companyName.next(name);
+  async setCurrentCompany(id: number) {
+    return this.apiTransport.chooseCompany (id).pipe (
+      tap ((res) => {
+        this.currentCompany = this.getCompany (id);
+      })
+    )
   }
-
 }

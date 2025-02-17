@@ -1,6 +1,6 @@
 export class Company {
   constructor(
-    public pk: number,
+    public id: number,
     public name: string,
     public token?: string
   ){}

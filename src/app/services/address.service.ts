@@ -3,9 +3,6 @@ import { Address } from '../private/profile/address/address.model';
 import { BehaviorSubject, EMPTY, delay, expand, from, map, of, reduce, switchMap, take, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Storage } from '@ionic/storage-angular';
-import { DASHDOC_API_URL } from './constants';
-import { Request } from '../private/models/request.model';
-import { LoadingController } from '@ionic/angular';
 import { ApiTransportService } from './api-transport.service';
 
 @Injectable({

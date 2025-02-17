@@ -3,7 +3,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
-import { DeliveriesService } from 'src/app/services/deliveries.service';
+import { TransportService } from 'src/app/services/transport.service';
 
 @Component({
   selector: 'app-checkout-delivery',
@@ -18,8 +18,8 @@ export class CheckoutDeliveryComponent {
   status: string;
   paymentExpress: boolean;
 
-  constructor(    
-    private deliveriesService: DeliveriesService,
+  constructor(
+    private transportService: TransportService,
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private alertController: AlertController,
@@ -32,7 +32,7 @@ export class CheckoutDeliveryComponent {
     // TODO: sauvegarde/restauration de la préférence de paiement de l'utilisateur
     this.paymentExpress = false;
 
-    (window as any).validatePaymentFromIFrame = (status: any) => { 
+    (window as any).validatePaymentFromIFrame = (status: any) => {
       this.iframeSrc = null;
       this.iframeFullScreen = false;
       this.status = status;
@@ -40,7 +40,7 @@ export class CheckoutDeliveryComponent {
       this.cdRef.detectChanges ();
     };
 
-    this.route.queryParamMap.subscribe (queryMap => {  
+    this.route.queryParamMap.subscribe (queryMap => {
       // TODO: on lit le statut depuis l'api
       this.transportId = queryMap.get ("transport");
       if (queryMap.get('status')) {
@@ -55,14 +55,14 @@ export class CheckoutDeliveryComponent {
       }
 
       // TODO: à supprimer
-      this.deliveriesService.getMoneticoPaymentRequest (this.getPaymentRequestParams (false)).subscribe ({
+      this.transportService.getMoneticoPaymentRequest (this.getPaymentRequestParams (false)).subscribe ({
         next: (res) => {
           console.log (res);
           console.log (this.getPaymentRequestParams (false));
           this.paymentRequest = res;
         },
         error: (error) => {
-          this.handleRequestError (error);        
+          this.handleRequestError (error);
         }
       });
     })
@@ -78,9 +78,9 @@ export class CheckoutDeliveryComponent {
       url_retour_err: location.href + '&status=err',
     }
   }
-  
+
   pay (form: any) {
-    this.deliveriesService.getMoneticoPaymentRequest (this.getPaymentRequestParams (false)).subscribe ({
+    this.transportService.getMoneticoPaymentRequest (this.getPaymentRequestParams (false)).subscribe ({
       next: (res) => {
         this.paymentRequest = res;
         setTimeout (() => {
@@ -95,13 +95,13 @@ export class CheckoutDeliveryComponent {
 
   payByIframe (iframeFullScreen: boolean = false) {
     this.iframeFullScreen = iframeFullScreen;
-    this.deliveriesService.getMoneticoPaymentRequest (this.getPaymentRequestParams(!iframeFullScreen)).subscribe ({
+    this.transportService.getMoneticoPaymentRequest (this.getPaymentRequestParams(!iframeFullScreen)).subscribe ({
       next: (res: any) => {
         const src = res.paymentUrl + '?' + new URLSearchParams(res.formFields).toString ();
         this.iframeSrc = this.sanitizer.bypassSecurityTrustResourceUrl (src);
       },
       error: (error) => {
-        this.handleRequestError (error);        
+        this.handleRequestError (error);
       }
     });
   }
@@ -117,7 +117,7 @@ export class CheckoutDeliveryComponent {
       header: 'Erreur',
       message: HTTP_REQUEST_UNKNOWN_ERROR,
       buttons: ['Ok']
-    });  
+    });
 
     await alert.present();
   }

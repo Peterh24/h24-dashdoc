@@ -6,6 +6,7 @@ import { IonModal } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
 import { take } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
+import { CompanyService } from 'src/app/services/company.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { API_URL, DASHDOC_COMPANY } from 'src/app/services/constants';
 import { NotificationsService } from 'src/app/services/notifications.service';
@@ -16,11 +17,11 @@ import { phoneValidator, regex } from 'src/app/utils/regex';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
 })
-export class ProfileComponent  implements OnInit {  
+export class ProfileComponent  implements OnInit {
   @Input() desktopOnly = false;
   @Input() show = false;
   @Input() isModal = false;
-  
+
   success: boolean;
   showSignout = false;
 
@@ -33,14 +34,13 @@ export class ProfileComponent  implements OnInit {
   });
 
   constructor(
-    private storage: Storage,
-    private http: HttpClient,
-    private formBuilder: FormBuilder,
     public config: ConfigService,
     public authService: AuthService,
+    public companyService: CompanyService,
     public notifications: NotificationsService,
+    private formBuilder: FormBuilder,
     private router: Router
-  ) { 
+  ) {
 
   }
 

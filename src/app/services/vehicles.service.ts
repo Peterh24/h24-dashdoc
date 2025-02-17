@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, take, tap } from 'rxjs';
-import { Vehicle } from '../private/deliveries/vehicle.model';
+import { Vehicle } from '../private/models/vehicle.model';
 import { API_URL } from './constants';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';

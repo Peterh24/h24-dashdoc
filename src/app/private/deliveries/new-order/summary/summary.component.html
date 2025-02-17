@@ -4,19 +4,19 @@
   <h3>Type de transport <ion-icon class="edit-button" name="create-outline" (click)="editSection ('type')" *ngIf="false"></ion-icon></h3>
 
   <div class="type">
-    <img src="assets/order-type/{{ transport.type }}.jpeg">
-    <div class="title">{{ typeName[transport.type] }}</div>
+    <img src="assets/order-type/{{ transportOrderService.type }}.jpeg">
+    <div class="title">{{ typeName[transportOrderService.type] }}</div>
   </div>
 
   <h3>Type de véhicule <ion-icon class="edit-button" name="create-outline" (click)="editSection ('vehicle')"></ion-icon></h3>
   <div class="vehicle">
-    <img src="assets/trucks/{{ transport.vehicle }}.png">
+    <img src="assets/trucks/{{ transportOrderService.vehicle }}.png">
   </div>
 
   <h2>Enlèvements <ion-icon class="edit-button hide-desktop" name="create-outline" (click)="editSection ('origins')"></ion-icon></h2>
   <ion-accordion-group>
-    <div *ngFor="let delivery of transport.getOrigins (); let index = index">
-      <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'origin', delivery: delivery.origin, address: delivery.origin?.address, loads: delivery.planned_loads, contacts: delivery.tracking_contacts, file: delivery.file, index }"></div>
+    <div *ngFor="let delivery of transportOrderService.getOrigins (); let index = index">
+      <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'origin', delivery: delivery.origin, address: delivery.origin?.address, loads: delivery.loads, contacts: delivery.contacts, file: delivery.file, index }"></div>
       <div *ngIf="config.isMobile">
         <div class="error" *ngFor="let error of getDeliveryErrors (delivery, 'origin')">{{ error }}</div>
       </div>
@@ -25,8 +25,8 @@
   <br>
   <h2>Livraisons<ion-icon class="edit-button hide-desktop" name="create-outline" (click)="editSection ('destinations')"></ion-icon></h2>
   <ion-accordion-group>
-    <div *ngFor="let delivery of transport.getDestinations (); let index = index">
-      <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'destination', delivery: delivery.destination, address: delivery.destination?.address, loads: delivery.planned_loads, contacts: delivery.tracking_contacts, file: delivery.file, index }"></div>
+    <div *ngFor="let delivery of transportOrderService.getDestinations (); let index = index">
+      <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'destination', delivery: delivery.destination, address: delivery.destination?.address, loads: delivery.loads, contacts: delivery.contacts, file: delivery.file, index }"></div>
       <div *ngIf="config.isMobile">
         <div class="error" *ngFor="let error of getDeliveryErrors (delivery, 'destination')">{{ error }}</div>
       </div>
@@ -86,7 +86,7 @@
         placeholder="Titre de la demande">
       </ion-input>
       <br>
-      <div class="ion-text-center" [class.ion-hide]="!transport.draftName">
+      <div class="ion-text-center" [class.ion-hide]="!transportOrderService.draftName">
         <ion-checkbox labelPlacement="end" #deleteDraft>Supprimer le brouillon</ion-checkbox>
       </div>
       <br>
@@ -108,7 +108,7 @@
         shape="round"
         autofocus="true"
         placeholder="Titre de la demande"
-        [value]="transport.draftName">
+        [value]="transportOrderService.draftName">
       </ion-input>
       <br>
       <ion-button (click)="onSetDraftName (draftName.value, saveDraftModal)">Valider</ion-button>

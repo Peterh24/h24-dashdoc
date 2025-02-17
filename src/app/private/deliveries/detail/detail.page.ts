@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, LoadingController, ModalController } from '@ionic/angular';
-import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { Map, tileLayer, marker, icon, LatLngBounds } from 'leaflet';
 import { ConfigService } from 'src/app/services/config.service';
 import { CompanyService } from 'src/app/services/company.service';
 import { Browser } from '@capacitor/browser';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { TransportService } from 'src/app/services/transport.service';
 import { FILE_UPLOAD_MAX_SIZE, HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { ModalImgComponent } from './modal-img/modal-img.component';
+import { TransportOrderService } from 'src/app/services/transport-order.service';
+import { TransportService } from 'src/app/services/transport.service';
+import { Delivery } from '../../models/transport.model';
 
 const DEBUG = false;
 
@@ -27,15 +28,15 @@ export class DetailPage implements OnInit {
   mapId: string;
   mapMarkers: any[];
   companyName: string;
-  
+
   constructor(
     public config: ConfigService,
     public companyService: CompanyService,
     private route: ActivatedRoute,
     private apiTransport: ApiTransportService,
     private router: Router,
-    private deliveriesService: DeliveriesService,
     private transportService: TransportService,
+    private transportOrderService: TransportOrderService,
     private alertController: AlertController,
     private modalController: ModalController,
     private loadingController: LoadingController,
@@ -54,13 +55,13 @@ export class DetailPage implements OnInit {
           return;
         }
 
-        this.deliveriesService.getDelivery (paramMap.get('id')).subscribe ({
+        this.transportService.getDelivery (paramMap.get('id')).subscribe ({
           next: (res) => {
             if(!res) {
               this.router.navigateByUrl('/private/tabs/transports/deliveries')
               return;
             }
-    
+
             this.transport = res;
             this.debug ("transport", res);
             this.transport.deliveries?.forEach ((delivery: any) => {
@@ -144,7 +145,7 @@ export class DetailPage implements OnInit {
     const merchandises: any = {};
 
     delivery.deliveries.map ((d: any) => d.planned_loads || d.loads).forEach ((loads: any) => {
-      loads?.forEach ((load: any) => { 
+      loads?.forEach ((load: any) => {
         merchandises[load.description] = true;
       })
     });
@@ -165,7 +166,7 @@ export class DetailPage implements OnInit {
 
   getAllDeliveries (delivery: any) {
     const all: any = [];
-    const deliveries = this.transportService.loadDeliveries (delivery?.deliveries);
+    const deliveries: any = this.transportOrderService.deliveries;
 
     deliveries?.forEach ((delivery: any) => {
       if (delivery.origin?.address?.address) {
@@ -288,7 +289,7 @@ export class DetailPage implements OnInit {
   initMap() {
     this.debug ("initMap");
 
-    this.map = new Map(this.mapId, { 
+    this.map = new Map(this.mapId, {
       zoomControl: false,
       scrollWheelZoom: false,
       doubleClickZoom: false,
@@ -301,7 +302,7 @@ export class DetailPage implements OnInit {
     }).addTo(this.map);
 
     const cityMarkerIcon = icon({
-      iconUrl:`https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/cars/${(this.transport.licensePlate || this.transport.requested_vehicle || '20M3HAYON')}.png`,
+      iconUrl:`https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/cars/${(this.transport.license_plate || this.transport.vehicle || '20M3HAYON')}.png`,
       iconSize: [75, 42],
       iconAnchor: [24, 42],
       popupAnchor: [0, -42]

@@ -1,6 +1,6 @@
 import { inject } from "@angular/core";
 import { FILE_IMAGE_MAX_WIDTH } from "src/app/services/constants";
-import { TransportService } from "src/app/services/transport.service";
+import { TransportOrderService } from "src/app/services/transport-order.service";
 
 export class NewOrderCommon {
     constructor (
@@ -21,7 +21,7 @@ export class NewOrderCommon {
           if (!origins) {
             errors.push ("Enlèvement manquant");
           }
-    
+
           if (!destinations) {
             errors.push ("Livraison manquante");
           }
@@ -30,7 +30,7 @@ export class NewOrderCommon {
         return errors;
     }
 
-    getDeliveryErrors (transport: TransportService, delivery: any, type: string = null) {
+    getDeliveryErrors (transport: TransportOrderService, delivery: any, type: string = null) {
         const errors = [];
         const isOrigin = type === null || type === 'origin';
         const isDestination = type === null || type === 'destination';
@@ -86,13 +86,13 @@ export class NewOrderCommon {
         if (!date) {
           return false;
         }
-    
+
         const day = new Date(date).toISOString ().split (/T/)[0];
         const now = new Date().toISOString ().split (/T/)[0];
-    
+
         return new Date(day).valueOf() < new Date(now).valueOf ();
     }
-    
+
     isMultipointDeliveryInvalid (transport: any, delivery: any) {
         const index = transport.deliveries?.findIndex ((d: any) => d === delivery);
 
@@ -100,12 +100,12 @@ export class NewOrderCommon {
           const delivery = transport.deliveries[index];
           if (index > 0) {
             const previousDelivery = transport.deliveries[index -1];
-            
-            return new Date (delivery.origin?.slots?.[0]?.start) < 
+
+            return new Date (delivery.origin?.slots?.[0]?.start) <
               new Date (previousDelivery.destination?.slots?.[0]?.start);
           }
         }
-    
+
         return false;
     }
 }

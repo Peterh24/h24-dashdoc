@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { TransportService } from 'src/app/services/transport.service';
 import { DeliveryPage } from '../delivery/delivery.page';
 import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { ConfigService } from 'src/app/services/config.service';
 import { NewOrderCommon } from '../new-order-common';
+import { TransportOrderService } from 'src/app/services/transport-order.service';
 
 @Component({
   selector: 'app-deliveries',
@@ -24,7 +24,7 @@ export class DeliveriesPage implements OnInit {
   common = new NewOrderCommon ();
 
   constructor(
-    public transport: TransportService,
+    public transportOrderService: TransportOrderService,
     public config: ConfigService,
     private router: Router,
     private modalController: ModalController
@@ -35,26 +35,26 @@ export class DeliveriesPage implements OnInit {
 
 
   ionViewWillEnter() {
-    if (!this.transport.type) {
+    if (!this.transportOrderService?.type) {
       this.router.navigateByUrl ('/private/tabs/transports/new-order');
       return;
     }
 
     this.currentDelivery = null;
-    this.isMultipointAuto = this.transport.isMultipoint === null;
-    this.showSummaryComponent = this.config.isDesktop && this.transport.deliveries?.length > 0;
+    this.isMultipointAuto = this.transportOrderService.isMultipoint === null;
+    this.showSummaryComponent = this.config.isDesktop && this.transportOrderService.deliveries?.length > 0;
     this.errors = [];
 
     this.synchronize ();
-    
+
     window.addEventListener('popstate', (event) => {
       if (this.isModalOpen) {
         event.preventDefault ();
         event.stopPropagation ();
         event.stopImmediatePropagation ();
-  
+
         this.modalController.getTop ().then ((m) => m.dismiss ());
-      }  
+      }
     }, { capture: true });
   }
 
@@ -74,15 +74,15 @@ export class DeliveriesPage implements OnInit {
   async showAddDelivery (delivery: any = null, deliveryType: string = null)  {
     this.showSummaryComponent = false;
 
-    const defaultContacts = this.transport?.deliveries?.[0]?.tracking_contacts;
+    const defaultContacts = this.transportOrderService?.deliveries?.[0]?.tracking_contacts;
 
     this.currentDelivery = {
       isModal: true,
       delivery,
       defaultContacts,
       deliveryType: this.isMultipointAuto ? null : deliveryType,
-      originMaxSlot: this.getOriginsMaxSlot (this.transport.getOrigins ()),
-      destinationMinSlot: this.getDestinationsMinSlot (this.transport.getDestinations ())
+      originMaxSlot: this.getOriginsMaxSlot (this.transportOrderService.getOrigins ()),
+      destinationMinSlot: this.getDestinationsMinSlot (this.transportOrderService.getDestinations ())
     };
 
     if (this.config.isMobile) {
@@ -109,32 +109,32 @@ export class DeliveriesPage implements OnInit {
   }
 
   addDelivery (delivery: any) {
-    if (this.transport.isMultipoint) {
+    if (this.transportOrderService.isMultipoint) {
       if (! this.currentDelivery.delivery) {
-        this.transport.deliveries.push (delivery);
+        this.transportOrderService.deliveries.push (delivery);
       }
     } else {
       if (! this.currentDelivery.delivery) {
-        this.transport.deliveries.push (delivery);
+        this.transportOrderService.deliveries.push (delivery);
       }
 
-      const origins = this.transport.getOrigins ().length;
-      const destinations = this.transport.getDestinations ().length;
+      const origins = this.transportOrderService.getOrigins ().length;
+      const destinations = this.transportOrderService.getDestinations ().length;
 
       if (this.isMultipointAuto && origins == 2 && destinations == 2) {
-        this.transport.isMultipoint = true;
+        this.transportOrderService.isMultipoint = true;
 
-        const origins = this.transport.getOrigins ();
-        const destinations = this.transport.getDestinations ();
+        const origins = this.transportOrderService.getOrigins ();
+        const destinations = this.transportOrderService.getDestinations ();
 
         origins[0].destination = destinations[0].destination;
         origins[1].destination = destinations[1].destination;
 
-        this.transport.deliveries = origins;
+        this.transportOrderService.deliveries = origins;
       }
 
       if (origins > 2 && destinations <= 1 || origins <= 1 && destinations > 2) {
-        this.transport.isMultipoint = false;
+        this.transportOrderService.isMultipoint = false;
         this.isMultipointAuto = false;
       }
     }
@@ -149,15 +149,15 @@ export class DeliveriesPage implements OnInit {
 
   deleteDelivery (type: string, delivery: any) {
     if (type === 'origin') {
-      this.transport.deliveries = this.transport.deliveries.filter ((d) => d !== delivery);
+      this.transportOrderService.deliveries = this.transportOrderService.deliveries.filter ((d) => d !== delivery);
     }
 
     if (type === 'destination') {
-      this.transport.deliveries = this.transport.deliveries.filter ((d) => d !== delivery);
+      this.transportOrderService.deliveries = this.transportOrderService.deliveries.filter ((d) => d !== delivery);
     }
 
     if (this.isMultipointAuto) {
-      this.transport.isMultipoint = this.transport.getOrigins().length >= 2 && this.transport.getDestinations ().length >= 2;
+      this.transportOrderService.isMultipoint = this.transportOrderService.getOrigins().length >= 2 && this.transportOrderService.getDestinations ().length >= 2;
     }
 
     this.currentDelivery = null;
@@ -167,11 +167,11 @@ export class DeliveriesPage implements OnInit {
   }
 
   addOriginDisabled () {
-    return !this.isMultipointAuto && this.transport.getOrigins ().length && this.transport.getDestinations ().length > 1;
+    return !this.isMultipointAuto && this.transportOrderService.getOrigins ().length && this.transportOrderService.getDestinations ().length > 1;
   }
 
   addDestinationDisabled () {
-    return !this.isMultipointAuto && this.transport.getDestinations ().length && this.transport.getOrigins ().length > 1;
+    return !this.isMultipointAuto && this.transportOrderService.getDestinations ().length && this.transportOrderService.getOrigins ().length > 1;
   }
 
   getOriginsMaxSlot (origins: any[]) {
@@ -193,10 +193,10 @@ export class DeliveriesPage implements OnInit {
   }
 
   synchronize () {
-    this.transport.sortDeliveries ();
+    this.transportOrderService.sortDeliveries ();
 
-    this.origins = this.transport.getOrigins ();
-    this.destinations = this.transport.getDestinations ();
+    this.origins = this.transportOrderService.getOrigins ();
+    this.destinations = this.transportOrderService.getDestinations ();
   }
 
   setShowSummaryComponent (value: boolean = true) {
@@ -205,11 +205,11 @@ export class DeliveriesPage implements OnInit {
   }
 
   getTransportErrors () {
-    return this.common.getTransportErrors (this.transport);
+    return this.common.getTransportErrors (this.transportOrderService);
   }
 
-  getDeliveryErrors (index: number, type: string = null) {
-    return this.common.getDeliveryErrors (this.transport, index, type);
+  getDeliveryErrors (delivery: any, type: string = null) {
+    return this.common.getDeliveryErrors (this.transportOrderService, delivery, type);
   }
 
   hasErrors () {
@@ -217,7 +217,7 @@ export class DeliveriesPage implements OnInit {
   }
 
   validateForm () {
-    this.errors = this.common.getTransportErrors (this.transport);
+    this.errors = this.common.getTransportErrors (this.transportOrderService);
   }
 
   onSubmit () {

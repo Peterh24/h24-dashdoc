@@ -8,11 +8,11 @@
     <div class="choice">
       <app-type-choice-component></app-type-choice-component>
     </div>
-    <div class="choice" [class.hidden]="!transportService.type">
+    <div class="choice" [class.hidden]="!transportOrderService.type">
       <div class="chevron-right pointer"><ion-icon name="chevron-right"></ion-icon></div>
       <app-vehicle-choice-component></app-vehicle-choice-component>
     </div>
-    <div class="choice" [class.hidden]="!transportService.vehicle">
+    <div class="choice" [class.hidden]="!transportOrderService.vehicle">
       <div class="chevron-right pointer"><ion-icon name="chevron-right"></ion-icon></div>
       <app-multipoint-choice-component></app-multipoint-choice-component>
     </div>

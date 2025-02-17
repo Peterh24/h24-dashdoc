@@ -4,7 +4,7 @@
 <ion-content>
   <div class="container">
     <div class="back-button" routerLink="/private/tabs/transports/deliveries"><ion-icon name="chevron-left"></ion-icon> &nbsp; Retour aux transports en cours</div>
-    <div class="company-name">{{ companyService.companyName | async }}</div>
+    <div class="company-name">{{ companyService.currentCompany?.name }}</div>
     <div class="card">
       <div id="map-container">
         <div id="{{ mapId }}"></div>
@@ -58,7 +58,7 @@
     </div>
     <div>
       <div class="title">Vehicule</div>
-      <div class="value">{{ delivery.licensePlate || delivery.requested_vehicle || 'Non déterminé' }}</div>
+      <div class="value">{{ delivery.licensePlate || delivery.vehicle || 'Non déterminé' }}</div>
     </div>
   </div>
   <div class="two-columns">
@@ -104,7 +104,7 @@
     </div>
     <div>
       <div class="title">Vehicule</div>
-      <div class="value">{{ delivery.licensePlate || delivery.requested_vehicle || 'Non déterminé' }}</div>
+      <div class="value">{{ delivery.licensePlate || delivery.vehicle || 'Non déterminé' }}</div>
     </div>
     <div>
       <div class="title">Marchandises</div>

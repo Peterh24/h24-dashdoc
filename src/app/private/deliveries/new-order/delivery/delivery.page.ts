@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { IonInput, ModalController } from '@ionic/angular';
-import { TransportService } from 'src/app/services/transport.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { AddressPage } from 'src/app/private/profile/address/address.page';
 import { Storage } from '@ionic/storage-angular';
@@ -9,6 +8,7 @@ import { DASHDOC_COMPANY, FILE_UPLOAD_MAX_SIZE } from 'src/app/services/constant
 import { ContactsPage } from 'src/app/private/profile/contacts/contacts.page';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { FileUtils } from 'src/app/utils/file-utils';
+import { TransportOrderService } from 'src/app/services/transport-order.service';
 
 @Component({
 selector: 'app-delivery',
@@ -62,11 +62,11 @@ export class DeliveryPage implements OnInit, OnChanges {
   isDashdocModel = ApiTransportService.isDashdocModel;
 
   constructor(
-    public transport: TransportService,
+    public transportOrderService: TransportOrderService,
     public authService: AuthService,
     private modalController: ModalController,
     private storage: Storage,
-  ) { 
+  ) {
     this.merchandises.push (this.merchandises.shift());
   }
 
@@ -124,8 +124,8 @@ export class DeliveryPage implements OnInit, OnChanges {
       this.destination = this.delivery.destination?.address;
       this.contacts = this.delivery.tracking_contacts;
 
-      this.enableOrigin = this.transport.isMultipoint || !!this.origin;
-      this.enableDestination = this.transport.isMultipoint || !!this.destination;
+      this.enableOrigin = this.transportOrderService.isMultipoint || !!this.origin;
+      this.enableDestination = this.transportOrderService.isMultipoint || !!this.destination;
 
       this.delivery.planned_loads?.forEach ((load: any) => {
         this.merchandisesSelected[load.id] = load;
@@ -139,24 +139,24 @@ export class DeliveryPage implements OnInit, OnChanges {
       this.updateEnabled ();
     }
 
-    this.storage.get(DASHDOC_COMPANY).then (pk => { 
+    this.storage.get(DASHDOC_COMPANY).then (pk => {
       this.company = pk;
 
       if (!this.contacts?.length) {
         this.contacts = this.defaultContacts || [];
       }
 
-      if (ApiTransportService.isDashdocModel && this.authService.currentUserDetail?.id && !this.contacts?.length) {
+      if (ApiTransportService.isDashdocModel && this.authService.currentUser?.id && !this.contacts?.length) {
         this.contacts = [{
           contact: {
             company: {
               pk: this.company,
             },
-            id: this.authService.currentUserDetail.id,
-            first_name: this.authService.currentUserDetail.firstname,
-            last_name: this.authService.currentUserDetail.lastname,
-            email: this.authService.currentUserDetail.email,
-            phone_number: this.authService.currentUserDetail.phone
+            id: this.authService.currentUser.id,
+            first_name: this.authService.currentUser.first_name,
+            last_name: this.authService.currentUser.last_name,
+            email: this.authService.currentUser.email,
+            phone_number: this.authService.currentUser.phone_number
           }
         }];
       }
@@ -201,7 +201,7 @@ export class DeliveryPage implements OnInit, OnChanges {
       guarding: delivery?.guarding,
       file: delivery?.file
     };
-    
+
 
     const setSlot = (day: string, control: string) => {
       if (day && values[control]) {
@@ -215,7 +215,7 @@ export class DeliveryPage implements OnInit, OnChanges {
     // TODO: remove that (not required ?)
     form.patchValue (values);
     form.updateValueAndValidity ();
-    
+
     Object.keys (values).forEach ((control) => {
       if (values[control]) {
         form.controls[control].setValue (values[control]);
@@ -226,14 +226,14 @@ export class DeliveryPage implements OnInit, OnChanges {
   }
 
   updateEnabled () {
-    if (this.transport.isMultipoint || this.deliveryType === null) {
+    if (this.transportOrderService.isMultipoint || this.deliveryType === null) {
       this.enableOrigin = this.enableDestination = true;
     } else if (this.delivery) {
       this.enableOrigin = !!this.origin;
       this.enableDestination = !!this.destination;
     } else {
-      const origins = this.transport.getOrigins ().length;
-      const destinations = this.transport.getDestinations ().length;
+      const origins = this.transportOrderService.getOrigins ().length;
+      const destinations = this.transportOrderService.getDestinations ().length;
 
       const newOrigins = origins + (this.origin ? 1 : 0);
       const newDestinations = destinations + (this.destination ? 1 : 0);
@@ -341,7 +341,7 @@ export class DeliveryPage implements OnInit, OnChanges {
 
   // TODO: validation sur le couple day + time
   getDateTimeMin (type: string) {
-    if (!this.transport.isMultipoint && type === 'destination' && this.originMaxSlot) {
+    if (!this.transportOrderService.isMultipoint && type === 'destination' && this.originMaxSlot) {
       return this.originMaxSlot;
     }
 
@@ -349,7 +349,7 @@ export class DeliveryPage implements OnInit, OnChanges {
   }
 
   getDateTimeMax (type: string) {
-    if (!this.transport.isMultipoint && type === 'origin' && this.destinationMinSlot) {
+    if (!this.transportOrderService.isMultipoint && type === 'origin' && this.destinationMinSlot) {
       return this.destinationMinSlot;
     }
 
@@ -483,9 +483,9 @@ export class DeliveryPage implements OnInit, OnChanges {
       if (!Object.keys (this.merchandisesSelected).length) {
         this.originErrors['loads'] = true;
       }
-    } 
-    
-    if (this.transport.isMultipoint) {
+    }
+
+    if (this.transportOrderService.isMultipoint) {
       if (!this.origin) {
         this.originErrors['address'] = true;
       }
@@ -516,13 +516,13 @@ export class DeliveryPage implements OnInit, OnChanges {
 
     this.contactsError = this.contacts?.length ? null: 'error';
 
-    this.hasErrors = Object.keys (this.originErrors).length > 0 || 
+    this.hasErrors = Object.keys (this.originErrors).length > 0 ||
       Object.keys (this.destinationErrors).length > 0 ||
       this.contactsError != null;
 
     return !this.hasErrors;
   }
-  
+
   onSubmit () {
     let origin, destination, planned_loads: any;
 

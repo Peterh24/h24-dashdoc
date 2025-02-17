@@ -7,8 +7,9 @@ import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { CompanyService } from 'src/app/services/company.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
-import { DeliveriesService } from 'src/app/services/deliveries.service';
+import { TransportOrderService } from 'src/app/services/transport-order.service';
 import { TransportService } from 'src/app/services/transport.service';
+import { Delivery } from '../../models/transport.model';
 
 @Component({
   selector: 'app-deliveries',
@@ -52,9 +53,9 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
   };
 
   constructor(
-    public deliveriesService: DeliveriesService,
-    public companyService: CompanyService,
     public transportService: TransportService,
+    public companyService: CompanyService,
+    public transport: TransportOrderService,
     public apiTransport: ApiTransportService,
     public config: ConfigService,
     private router: Router,
@@ -101,16 +102,13 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     });
 
     await loading.present();
-    this.deliveriesService.resetDeliveries();
+    this.transportService.resetDeliveries();
 
 //    const status = this.tab === 1 ? 'sent_to_trucker,on_loading_site,loading_complete,on_unloading_site,unloading_complete' : 'invoiced,paid,cancelled,done';
     const status: any = this.tab === 1 ? 'created,updated,confirmed,assigned,verified,send_to_trucker,acknowledged,on_loading_site,loading_complete,on_unloading_site,unloading_complete' : null;
 
-    this.subscription = this.deliveriesService.fetchDeliveries(status).subscribe({
+    this.subscription = this.transportService.fetchDeliveries(status).subscribe({
       next: (deliveries) => {
-        deliveries.forEach ((delivery: any) => {
-          delivery.deliveries = this.transportService.loadDeliveries(delivery.deliveries);
-        });
         this.deliveries = deliveries;
         if (this.tab === 1) {
           this.deliveries1 = deliveries.length;
@@ -128,10 +126,7 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
   }
 
   loadMoreDeliveries(event: any) {
-    this.deliveriesService.fetchDeliveries().subscribe((additionalDeliveries) => {
-      additionalDeliveries.forEach ((delivery: any) => {
-        delivery.deliveries = this.transportService.loadDeliveries(delivery.deliveries);
-      });
+    this.transportService.fetchDeliveries().subscribe((additionalDeliveries) => {
       this.deliveries = this.deliveries.concat(additionalDeliveries);
       event.target.complete();
     });
@@ -176,9 +171,9 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
 
   getAllDeliveries (delivery: any) {
     const all: any = [];
-    const segments = this.transportService.loadSegments (delivery?.segments);
+    const deliveries = this.transport.deliveries;
 
-    segments?.forEach ((delivery: any) => {
+    deliveries?.forEach ((delivery: any) => {
       if (delivery.origin?.address) {
         all.push (delivery.origin);
       }
@@ -227,7 +222,7 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     const merchandises: any = {};
 
     delivery.deliveries.map ((d: any) => d.planned_loads || d.loads).forEach ((loads: any) => {
-      loads?.forEach ((load: any) => { 
+      loads?.forEach ((load: any) => {
         merchandises[load.description] = true;
       })
     });
@@ -313,21 +308,21 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     modal.dismiss ();
 
     if (value) {
-      this.transportService.resetTransport ();
+      this.transport.resetTransport ();
       this.router.navigateByUrl('/private/tabs/transports/new-order');
     } else {
       if (this.config.isDesktop) {
-        if (this.transportService.deliveries?.length) {
+        if (this.transport.deliveries?.length) {
           this.router.navigateByUrl('/private/tabs/transports/new-order/deliveries');
         } else {
           this.router.navigateByUrl('/private/tabs/transports/new-order');
         }
       } else {
-        if (this.transportService.isMultipoint === true || this.transportService.isMultipoint === false) {
+        if (this.transport.isMultipoint === true || this.transport.isMultipoint === false) {
           this.router.navigateByUrl ('/private/tabs/transports/new-order/deliveries')
-        } else if (this.transportService.vehicle) {
+        } else if (this.transport.vehicle) {
           this.router.navigateByUrl ('/private/tabs/transports/new-order/multipoint-choice');
-        } else if (this.transportService.type) {
+        } else if (this.transport.type) {
           this.router.navigateByUrl('/private/tabs/transports/new-order/vehicle-choice');
         } else {
           this.router.navigateByUrl('/private/tabs/transports/new-order');

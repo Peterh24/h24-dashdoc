@@ -4,6 +4,7 @@ import { Storage } from '@ionic/storage-angular';
 import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
+import { TransportOrderService } from 'src/app/services/transport-order.service';
 import { TransportService } from 'src/app/services/transport.service';
 
 @Component({
@@ -16,7 +17,8 @@ export class TypeChoiceComponent  implements OnInit {
   draftsName: string[] = [];
 
   constructor(
-    public transportService: TransportService,
+    public transportOrderService: TransportOrderService,
+    private transportService: TransportService,
     private authService: AuthService,
     private router: Router,
     private storage: Storage,
@@ -44,7 +46,7 @@ export class TypeChoiceComponent  implements OnInit {
 
   setTransportType (type: string) {
     if (type == 'audiovisual') {
-      this.transportService.type = type;
+      this.transportOrderService.type = type;
       if (this.config.isMobile) {
         this.router.navigateByUrl ('/private/tabs/transports/new-order/vehicle-choice');
       }
@@ -52,10 +54,12 @@ export class TypeChoiceComponent  implements OnInit {
   }
 
   loadDraft (name: string) {
+    /* TODO
     if (this.drafts[name]) {
       this.transportService.loadTransport (this.drafts[name]);
-      this.transportService.draftName = name;
+      this.transport.draftName = name;
       this.router.navigateByUrl ('/private/tabs/transports/new-order/summary');
     }
+      */
   }
 }

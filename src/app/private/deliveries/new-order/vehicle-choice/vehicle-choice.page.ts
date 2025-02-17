@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { ModalController } from "@ionic/angular";
-import { TransportService } from "src/app/services/transport.service";
+import { TransportOrderService } from "src/app/services/transport-order.service";
 
 @Component({
   selector: 'app-vehicle-choice',
@@ -12,7 +12,7 @@ export class VehicleChoicePage implements OnInit {
   @Input()isModal: boolean;
 
   constructor (
-    public transport: TransportService,
+    public transportOrderService: TransportOrderService,
     private router: Router,
     private modalController: ModalController
   ) {
@@ -23,7 +23,7 @@ export class VehicleChoicePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    if (!this.transport.type) {
+    if (!this.transportOrderService.type) {
       this.router.navigateByUrl ('/private/tabs/transports/new-order');
       return;
     }

@@ -11,7 +11,7 @@ import { DASHDOC_COMPANY } from 'src/app/services/constants';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent  implements OnInit, OnDestroy, OnChanges {
+export class HeaderComponent  implements OnInit {
   @Input() defaultHref: string;
   @Input() slot: string = 'start';
   @Input() title: string;
@@ -26,20 +26,6 @@ export class HeaderComponent  implements OnInit, OnDestroy, OnChanges {
   ) { }
 
   ngOnInit() {
-  }
-
-  ngOnDestroy() {
-  }
-
-  ngOnChanges() {
-  }
-
-  getcompanyName() {
-    if(!this.companyService.companyName) {
-      this.router.navigateByUrl('/');
-      return null;
-    }
-    return this.companyService.companyName;
   }
 
   callTo() {

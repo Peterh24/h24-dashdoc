@@ -9,9 +9,10 @@ import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { DASHDOC_COMPANY, HTTP_REQUEST_UNKNOWN_ERROR, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { NotificationsService } from 'src/app/services/notifications.service';
-import { TransportService } from 'src/app/services/transport.service';
 import { VehiclesService } from 'src/app/services/vehicles.service';
 import { NewOrderCommon } from '../new-order-common';
+import { TransportOrderService } from 'src/app/services/transport-order.service';
+import { TransportService } from 'src/app/services/transport.service';
 
 
 @Component({
@@ -34,7 +35,7 @@ export class SummaryComponent  implements OnInit {
   common = new NewOrderCommon ();
 
   constructor(
-    public transport: TransportService,
+    public transportOrderService: TransportOrderService,
     public config: ConfigService,
     private authService: AuthService,
     private notifications: NotificationsService,
@@ -45,11 +46,12 @@ export class SummaryComponent  implements OnInit {
     private alertController: AlertController,
     private loadingController: LoadingController,
     private navController: NavController,
+    private transportService: TransportService,
     private apiTransport: ApiTransportService
   ) { }
 
   ngOnInit() {
-    if (!this.transport.type) {
+    if (!this.transportOrderService.type) {
       this.router.navigateByUrl ('/private/tabs/transports/new-order');
       return;
     }
@@ -58,7 +60,7 @@ export class SummaryComponent  implements OnInit {
       next: (res) => { }
     });
 
-    console.log ('summary', this.transport);
+    console.log ('summary', this.transportOrderService);
   }
 
   getContacts (contacts: any[]) {
@@ -117,7 +119,7 @@ export class SummaryComponent  implements OnInit {
   }
 
   async onSubmit (deleteDraft = false) {
-    const transport = await this.apiTransport.buildTransport (this.transport, this.shipperReference);
+    const transport = await this.transportService.buildTransport (this.transportOrderService, this.shipperReference);
     const files: any[] = [];
 
     transport?.deliveries?.forEach ((delivery: any, index: any) => {
@@ -192,16 +194,16 @@ export class SummaryComponent  implements OnInit {
         await confirm.present();
         await confirm.onDidDismiss ();
 
-        this.transport.resetTransport ();
+        this.transportOrderService.resetTransport ();
         // On renouvelle le token firebase pour éviter qu'il n'expire bientot
         this.notifications.resetToken ();
 
-        if (this.transport.draftName && deleteDraft) {
+        if (this.transportOrderService.draftName && deleteDraft) {
           this.storage.get(DASHDOC_COMPANY).then ((pk) => {
             this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
-              delete drafts[this.transport.draftName];
-              this.transport.draftName = null;
-              this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${pk}`, drafts); 
+              delete drafts[this.transportOrderService.draftName];
+              this.transportOrderService.draftName = null;
+              this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${pk}`, drafts);
             });
           });
         }
@@ -218,7 +220,7 @@ export class SummaryComponent  implements OnInit {
           message: HTTP_REQUEST_UNKNOWN_ERROR,
           buttons: ['Compris'],
         });
-  
+
         await alert.present();
       }
     });
@@ -253,26 +255,26 @@ export class SummaryComponent  implements OnInit {
     if (name) {
       modal.dismiss ();
 
-      const transport = await this.apiTransport.buildTransport (this.transport);
-      this.transport.saveDraft (name, transport);
+      const transport = await this.transportService.buildTransport (this.transportOrderService);
+      this.transportService.saveDraft (name, transport);
     }
   }
 
   getTransportErrors () {
-    return this.common.getTransportErrors (this.transport);
+    return this.common.getTransportErrors (this.transportOrderService);
   }
 
-  getDeliveryErrors (index: number, type: string = null) {
-    return this.common.getDeliveryErrors (this.transport, index, type);
+  getDeliveryErrors (delivery: any, type: string = null) {
+    return this.common.getDeliveryErrors (this.transportOrderService, delivery, type);
   }
 
   hasErrors () {
-    const transportErrors = this.common.getTransportErrors (this.transport);
+    const transportErrors = this.common.getTransportErrors (this.transportOrderService);
 
     let deliveryErrors: number = 0;
 
-    this.transport.deliveries?.forEach ((delivery, index) => {
-      deliveryErrors += this.common.getDeliveryErrors (this.transport, delivery).length;
+    this.transportOrderService.deliveries?.forEach ((delivery, index) => {
+      deliveryErrors += this.common.getDeliveryErrors (this.transportOrderService, delivery).length;
     });
 
     return deliveryErrors > 0 || transportErrors.length;
