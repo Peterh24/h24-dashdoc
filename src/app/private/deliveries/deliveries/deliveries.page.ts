@@ -9,7 +9,7 @@ import { ConfigService } from 'src/app/services/config.service';
 import { DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { TransportOrderService } from 'src/app/services/transport-order.service';
 import { TransportService } from 'src/app/services/transport.service';
-import { Delivery } from '../../models/transport.model';
+import { Contact, Delivery, Transport } from '../../models/transport.model';
 
 @Component({
   selector: 'app-deliveries',
@@ -18,8 +18,8 @@ import { Delivery } from '../../models/transport.model';
 })
 export class DeliveriesPage implements OnInit, AfterViewInit {
   tab: number = 1;
-  deliveries: any[] = [];
-  deliveries1: number;
+  transports: Transport[] = [];
+  transports1: number;
   drafts: any;
   draftsName: string[];
   subscription: Subscription;
@@ -91,10 +91,10 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
 
   setTab (tab: number) {
     this.tab = tab;
-    this.loadDeliveries ();
+    this.loadTransports ();
   }
 
-  async loadDeliveries () {
+  async loadTransports () {
     const loading = await this.loadingController.create({
       keyboardClose: true,
       message: '<div class="h24loader"></div>',
@@ -102,20 +102,20 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     });
 
     await loading.present();
-    this.transportService.resetDeliveries();
+    this.transportService.resetTransports();
 
 //    const status = this.tab === 1 ? 'sent_to_trucker,on_loading_site,loading_complete,on_unloading_site,unloading_complete' : 'invoiced,paid,cancelled,done';
     const status: any = this.tab === 1 ? 'created,updated,confirmed,assigned,verified,send_to_trucker,acknowledged,on_loading_site,loading_complete,on_unloading_site,unloading_complete' : null;
 
-    this.subscription = this.transportService.fetchDeliveries(status).subscribe({
-      next: (deliveries) => {
-        this.deliveries = deliveries;
+    this.subscription = this.transportService.fetchTransports(status).subscribe({
+      next: (transports) => {
+        this.transports = transports;
         if (this.tab === 1) {
-          this.deliveries1 = deliveries.length;
+          this.transports1 = transports.length;
         }
       },
       error: (error) => {
-        this.deliveries = [];
+        this.transports = [];
       }
     });
 
@@ -125,16 +125,16 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     })
   }
 
-  loadMoreDeliveries(event: any) {
-    this.transportService.fetchDeliveries().subscribe((additionalDeliveries) => {
-      this.deliveries = this.deliveries.concat(additionalDeliveries);
+  loadMoreTransports(event: any) {
+    this.transportService.fetchTransports().subscribe((additionalTranports) => {
+      this.transports = this.transports.concat(additionalTranports);
       event.target.complete();
     });
   }
 
   loadDrafts () {
-    this.storage.get(DASHDOC_COMPANY).then ((pk) => {
-      this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
+    this.storage.get(DASHDOC_COMPANY).then ((id) => {
+      this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${id}`).then ((drafts) => {
         if (drafts) {
           this.drafts = drafts;
           this.draftsName = Object.keys (drafts);
@@ -154,14 +154,14 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     return new Date (date).toLocaleDateString (navigator.languages?.[0] || 'fr');
   }
 
-  getDefaultDeliveryName (delivery: any) {
+  getDefaultDeliveryName (transport: Transport) {
     return "Demande";
     /*
-    if (!delivery.created) {
+    if (!transport.created) {
       return "Demande";
     }
 
-    return "Demande du " + this.getDateDay (delivery.created);
+    return "Demande du " + this.getDateDay (transport.created);
     */
   }
 
@@ -169,17 +169,17 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     return date ? this.getDateDay (date) : '';
   }
 
-  getAllDeliveries (delivery: any) {
+  getAllTransports (transport: Transport) {
     const all: any = [];
     const deliveries = this.transport.deliveries;
 
-    deliveries?.forEach ((delivery: any) => {
-      if (delivery.origin?.address) {
-        all.push (delivery.origin);
+    deliveries?.forEach ((transport: Delivery) => {
+      if (transport.origin?.address) {
+        all.push (transport.origin);
       }
 
-      if (delivery.destination?.address) {
-        all.push (delivery.destination);
+      if (transport.destination?.address) {
+        all.push (transport.destination);
       }
     });
 
@@ -191,17 +191,17 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     return all;
   }
 
-  getOrigin (delivery: any) {
-    return delivery.deliveries?.[0]?.origin;
+  getOrigin (transport: Transport) {
+    return transport.deliveries?.[0]?.origin;
   }
 
-  getDestination (delivery: any) {
-    const destinations = delivery?.deliveries?.length;
-    return destinations ? delivery.deliveries[destinations - 1]?.destination : {};
+  getDestination (transport: Transport) {
+    const destinations = transport?.deliveries?.length;
+    return destinations ? transport.deliveries[destinations - 1]?.destination : null;
   }
 
-  getOriginDate (delivery: any) {
-    const origin = this.getOrigin(delivery);
+  getOriginDate (transport: Transport) {
+    const origin = this.getOrigin(transport);
     if (!origin) {
       return '';
     }
@@ -209,8 +209,8 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     return this.getDateDay(origin?.slots?.[0]?.start);
   }
 
-  getDestinationDate (delivery: any) {
-    const destination = this.getDestination(delivery);
+  getDestinationDate (transport: Transport) {
+    const destination = this.getDestination(transport);
     if (!destination) {
       return '';
     }
@@ -218,10 +218,10 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     return this.getDateDay(destination?.slots?.[0]?.start);
   }
 
-  getAllPlannedLoads (delivery: any) {
+  getAllPlannedLoads (transport: Transport) {
     const merchandises: any = {};
 
-    delivery.deliveries.map ((d: any) => d.planned_loads || d.loads).forEach ((loads: any) => {
+    transport.deliveries.map ((d: any) => d.planned_loads || d.loads).forEach ((loads: any) => {
       loads?.forEach ((load: any) => {
         merchandises[load.description] = true;
       })
@@ -230,19 +230,21 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
     return Object.keys (merchandises).sort ((a, b) => a.localeCompare (b)).join (',');
   }
 
-  getContacts (delivery: any) {
-    const contacts: any = {};
+  getContacts (transport: Transport) {
+    const emails: any = {};
 
-    delivery.deliveries?.map((c: any)=> c.tracking_contacts).flat().forEach ((contact: any) => {
-      contacts[contact?.contact?.email] = contact;
+    transport.deliveries?.map((c: Delivery)=> c.tracking_contacts).forEach ((contacts: Contact[]) => {
+      contacts.forEach ((contact) => {
+        emails[contact?.email] = contact;
+      });
     });
 
-    return Object.values(contacts).map ((c: any) => c?.contact?.first_name + " " + c?.contact?.last_name)
+    return Object.values(emails).map ((c: any) => c?.first_name + " " + c?.last_name)
       .join (", ");
   }
 
-  getStatusIndex (delivery: any) {
-    const statuses = delivery.statuses;
+  getStatusIndex (transport: Transport) {
+    const statuses = transport.statuses;
 
     if (Object.keys (statuses).length) {
       if (statuses.done) {
@@ -257,7 +259,7 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
         return 1;
       }
     } else {
-      switch (delivery.status) {
+      switch (transport.status) {
         case 'created':
         case 'updated':
         case 'confirmed': {
@@ -283,19 +285,20 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
   onDraftDelete (draftName: string, modal: any) {
     modal.dismiss ();
 
-    this.storage.get(DASHDOC_COMPANY).then ((pk) => {
-      this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
+    this.storage.get(DASHDOC_COMPANY).then ((id) => {
+      this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${id}`).then ((drafts) => {
         if (drafts) {
           delete drafts[draftName];
         }
-        this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${pk}`, drafts).then (() => this.loadDrafts ());
+        this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${id}`, drafts).then (() => this.loadDrafts ());
       })
     });
   }
 
-  gotoTransportDetail (transport: any) {
-    if (transport?.uid) {
-      this.router.navigateByUrl ('/private/tabs/transports/detail/' + transport.uid);
+  gotoTransportDetail (transport: Transport) {
+    console.log (transport);
+    if (transport?.id) {
+      this.router.navigateByUrl ('/private/tabs/transports/detail/' + transport.id);
     }
   }
 

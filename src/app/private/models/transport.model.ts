@@ -4,7 +4,7 @@ export class Transport {
   trailers: any[];
 
   constructor(
-    public uid: string,
+    public id: string,
     public type: string,
     public created: string,
     public shipper_reference: string,
@@ -27,7 +27,7 @@ export class Transport {
 export class Delivery {
   file: any; // TODO
   constructor(
-    public uid: string,
+    public id: string,
     public origin: Site,
     public destination: Site,
     public planned_loads: Array<Load>,
@@ -89,8 +89,8 @@ export class Contact {
 
 export class Message { // TODO
   constructor(
+    public url: string,
     public created: string,
-    public document: string,
   ) {}
 }
 

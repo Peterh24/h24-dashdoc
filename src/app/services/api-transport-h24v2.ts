@@ -1,12 +1,9 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { Storage } from "@ionic/storage-angular";
-import { API_URL, API_URL_V2, DASHDOC_API_URL, DASHDOC_COMPANY } from "./constants";
-import { EMPTY, expand, map, mergeMap, of, reduce, tap } from "rxjs";
+import { API_URL, API_URL_V2, DASHDOC_COMPANY } from "./constants";
+import { EMPTY, expand, map, reduce, tap } from "rxjs";
 import { Address } from "../private/profile/address/address.model";
-import { Request } from "../private/models/request.model";
-import { Delivery, Transport } from "../private/models/transport.model";
-import { compareAsc } from "date-fns";
 import { Contact } from "../private/profile/contacts/contact.model";
 import { UtilsService } from "../utils/services/utils.service";
 import { ConfigService } from "./config.service";
@@ -125,7 +122,7 @@ export class ApiTransportH24v2 {
     }
 
     createContact (contact: any) {
-        contact.company = contact.company?.pk;
+        contact.company = contact.company?.id;
         return this.http.post(`${this.apiUrl}contacts`, contact).pipe(
             map ((res: any) => new Contact (res.id, res.first_name, res.last_name, res.email, res.phone_number, res.company?.id, res.company?.name))
         );
@@ -135,14 +132,24 @@ export class ApiTransportH24v2 {
         return this.http.post (`${this.apiUrl}user/invite`, { name: contact.last_name, email: contact.email, company: contact.company, phone: contact.phone_number })
     }
 
-    updateContact (uid: string, contact: any) {
-        return this.http.patch(`${this.apiUrl}contacts/${uid}`, contact).pipe(
-            map ((res: any) => new Contact (uid, res.first_name, res.last_name, res.email, res.phone_number, res.company?.id, res.company?.name))
+    updateContact (id: string, contact: any) {
+        contact.company = contact.company?.id;
+        return this.http.patch(`${this.apiUrl}contacts/${id}`, contact).pipe(
+            map ((contact: any) => {
+                return contact ? new Contact (
+                    id,
+                    contact.first_name,
+                    contact.last_name,
+                    contact.email,
+                    contact.phone_number,
+                    contact.company?.id,
+                    contact.company?.name) : null
+                })
         )
     }
 
-    deleteContact (uid: string) {
-        return this.http.delete(`${this.apiUrl}contacts/${uid}`);
+    deleteContact (id: string) {
+        return this.http.delete(`${this.apiUrl}contacts/${id}`);
     }
 
     getContactsCompanies () {
@@ -161,11 +168,6 @@ export class ApiTransportH24v2 {
               }
             }),
             reduce ((acc: any, res: any) => acc.concat (res.items),  []),
-            tap((res: any) => {
-                res?.forEach ((address: any) => {
-                    address.pk = address.id
-                })
-            })
         )
     }
 
@@ -174,17 +176,36 @@ export class ApiTransportH24v2 {
         address.is_default = false;
         address.company = this.companyId;
         return this.http.post(`${this.apiUrl}address`, address).pipe (
-            tap ((address: any) => {
-                address.pk = address.id
+            map ((address: any) => {
+              return new Address (
+                address.id,
+                address.name,
+                address.address,
+                address.city,
+                address.postcode,
+                address.country,
+                address.instructions,
+                address.latitude,
+                address.longitude)
             })
         )
     }
 
     updateAddress (addressId: any, address: any) {
+        address.company = this.companyId;
         return this.http.patch(`${this.apiUrl}address/${addressId}`, address).pipe (
-            tap ((address: any) => {
-                address.pk = address.id
-            })
+            map ((address: any) => {
+              return address ? new Address (
+                address.id,
+                address.name,
+                address.address,
+                address.city,
+                address.postcode,
+                address.country,
+                address.instructions,
+                address.latitude,
+                address.longitude) : null
+          })
         )
     }
 
@@ -220,7 +241,7 @@ export class ApiTransportH24v2 {
         const headers = new HttpHeaders()
             .set ('Content-Type', 'application/merge-patch+json');
 
-        return this.http.patch(`${this.apiUrl}transports/${transport.uid}`, transport, { headers });
+        return this.http.patch(`${this.apiUrl}transports/${transport.id}`, transport, { headers });
     }
 
     // TODO: gestion des statuts
@@ -262,8 +283,8 @@ export class ApiTransportH24v2 {
     }
 
     loadDelivery (delivery: any) {
-      const uid = delivery.id;
-      // TODO: origin & destination dans l'api, Loads & TrackingContacts en minuscule
+      const id = delivery.id;
+      // TODO: origin & destination dans l'api
       const origin = delivery.sites.find ((site: any) => site.siteReference == 'LOADING');
       const destination = delivery.sites.find ((site: any) => site.siteReference == 'UNLOADING');
       const loads = delivery.loads;
@@ -279,7 +300,7 @@ export class ApiTransportH24v2 {
           destination.guarding = destination.hasSecureGuarding;
       }
 
-      return { uid, origin, destination, loads, tracking_contacts };
+      return { id, origin, destination, loads, tracking_contacts };
     }
 
     fromH24Transport (transport: any) {
@@ -322,7 +343,7 @@ export class ApiTransportH24v2 {
             ...site,
             has_secure_guarding: !!site.guarding,
             manutention: site.handlers || 0,
-            address: { remote_id: site.address.pk }
+            address: { remote_id: site.address.id }
         };
     }
 

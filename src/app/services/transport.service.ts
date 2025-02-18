@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, take, tap } from 'rxjs';
-import { Address, Contact, Delivery, Load, Site, Transport } from '../private/models/transport.model';
+import { map, tap } from 'rxjs';
+import { Address, Contact, Delivery, Load, Message, Site, Transport } from '../private/models/transport.model';
 import { Storage } from '@ionic/storage-angular';
 import { HttpClient } from '@angular/common/http';
 import { API_URL, DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from './constants';
-import { CountriesService } from '../utils/services/countries.service';
 import { ApiTransportService } from './api-transport.service';
 import { FileUtils } from '../utils/file-utils';
 import { TransportOrderService } from './transport-order.service';
@@ -14,41 +13,42 @@ import { UtilsService } from '../utils/services/utils.service';
   providedIn: 'root'
 })
 export class TransportService {
-  private _deliveries = new BehaviorSubject<Array<Transport>>([]);
-  private filtreSubject = new BehaviorSubject<string>('all');
-  filtre$ = this.filtreSubject.asObservable();
-  get deliveries() {
-    return this._deliveries.asObservable();
-  }
+  transports: Transport[] = [];
+
   constructor(
     private http: HttpClient,
     private storage: Storage,
-    private countriesService: CountriesService,
     private apiTransport: ApiTransportService,
     private transportOrderService: TransportOrderService,
     private utilsService: UtilsService
   ) { }
 
-  fetchDeliveries(status: string = null) {
+  fetchTransports(status: string = null) {
     return this.apiTransport.getTransports (status).pipe(
       map ((res: any[]) => res.map ((transport) => this.loadTransport (transport))),
-      tap ((deliveries: Transport[]) => {
-        this._deliveries.next([...this._deliveries.value, ...deliveries]);
+      tap ((transports: Transport[]) => {
+        this.transports = transports;
       })
     )
   }
 
-  getDelivery(id: any){
-    return this.deliveries.pipe(
-      take(1),
-      map(delivery => {
-        return delivery.find(d => d.uid === id);
-      })
-    );
+  getTransport(id: any){
+    return this.transports.find ((transport) => transport.id == id);
   }
 
-  resetDeliveries() {
-    this._deliveries.next([]);
+  createTransportMessage (transport: Transport, url: string, file: any) {
+    this.apiTransport.createTransportMessage (transport, file).subscribe ({
+      next: (res: any) => {
+        transport.messages.push (new Message(
+          res.document,
+          res.created,
+        ))
+      }
+    });
+  }
+
+  resetTransports() {
+    this.transports = [];
     this.apiTransport.resetTransports ();
   }
 
@@ -74,7 +74,7 @@ export class TransportService {
     const deliveries = this.sortDeliveries(this.loadDeliveries(transport.deliveries, isMultipoint));
 
     return new Transport(
-        String(transport.uid),
+        String(transport.id),
         'audiovisual',
         transport.created_at,
         transport.shipper_reference,
@@ -158,7 +158,7 @@ export class TransportService {
 
     const tracking_contacts = json.tracking_contacts?.map((contact: any) => this.loadContact(contact));
 
-    return new Delivery ('1', origin, destination, planned_loads, tracking_contacts, shipper_reference, shipper_address )
+    return new Delivery (json.id, origin, destination, planned_loads, tracking_contacts, shipper_reference, shipper_address )
   }
 
   loadAddress(json: any) {
@@ -184,7 +184,7 @@ export class TransportService {
 
       segments.forEach((segment, index) => {
           if (index > 0) {
-              if (segment.origin?.pk === segments[index - 1].destination?.pk) {
+              if (segment.origin?.id === segments[index - 1].destination?.id) {
                   delete segment.origin;
               }
           }
@@ -212,8 +212,8 @@ export class TransportService {
    * Création d'un transport
    *
    * Créee les segments correspondant au transport
-   * Rempli origin si null pour chaque delivery
-   * Rempli destination si null
+   * Rempli delivery.origin si null
+   * Rempli delivery.destination si null
    *
    * @param transport
    * @param shipperReference
@@ -277,7 +277,7 @@ export class TransportService {
       delivery.shipper_reference = shipperReference;
       delivery.shipper_address = {
         company: {
-          pk: company
+          id: company
         },
       };
     });
@@ -381,13 +381,13 @@ export class TransportService {
 
     transport.is_multipoint = transport.isMultipoint;
 
-    this.storage.get(DASHDOC_COMPANY).then ((pk) => {
-      this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
+    this.storage.get(DASHDOC_COMPANY).then ((id) => {
+      this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${id}`).then ((drafts) => {
         if (!drafts) {
           drafts = {};
         }
         drafts[draftName] = transport;
-        this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${pk}`, drafts);
+        this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${id}`, drafts);
       })
     });
   }

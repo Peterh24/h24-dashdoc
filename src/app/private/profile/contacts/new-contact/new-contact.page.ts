@@ -15,8 +15,8 @@ import { ApiTransportService } from 'src/app/services/api-transport.service';
 })
 export class NewContactPage implements OnInit {
 
-  @Input()contactId: string;
-  @Input()isModal: boolean;
+  @Input() contactId: string;
+  @Input() isModal: boolean;
   form: FormGroup;
   contact: Contact;
   companies: any[];
@@ -49,13 +49,10 @@ export class NewContactPage implements OnInit {
       paramMap => {
         const contactId = paramMap.get ('contactId') || this.contactId;
         if (contactId) {
-          this.contactsService.getContact (contactId).subscribe ({
-            next: (contact) => {
-              this.contact = contact,
-              this.form.patchValue (contact);
-              this.form.updateValueAndValidity ();
-            }
-          })
+          const contact = this.contactsService.getContact (contactId);
+          this.contact = contact,
+          this.form.patchValue (contact);
+          this.form.updateValueAndValidity ();
         }
      });
   }
@@ -70,17 +67,19 @@ export class NewContactPage implements OnInit {
       loadingElement.present();
 
       let request, company: any;
-      company = this.companies.find ((c) => c.pk == this.form.value.company);
+      company = this.companies.find ((c) => c.id == this.form.value.company);
 
-      if (this.contact?.uid) {
-        request = this.contactsService.updateContact(this.contact.uid, this.form.value.first_name, this.form.value.last_name, this.form.value.email, this.form.value.phone_number, company.pk, company.name);
+      if (this.contact?.id) {
+        request = this.contactsService.updateContact(this.contact.id, this.form.value.first_name, this.form.value.last_name, this.form.value.email, this.form.value.phone_number, company.id, company.name);
       } else {
-        request = this.contactsService.addContact(this.form.value.first_name, this.form.value.last_name, this.form.value.email, this.form.value.phone_number, company.pk, company.name);
+        request = this.contactsService.addContact(this.form.value.first_name, this.form.value.last_name, this.form.value.email, this.form.value.phone_number, company.id, company.name);
       }
 
       request.subscribe({
         next: (res) => {
-          this.apiTransport.inviteUser (res).subscribe ();
+          if (!this.contact?.id) {
+            this.apiTransport.inviteUser (res).subscribe ();
+          }
 
           loadingElement.dismiss();
           if(!this.isModal) {
@@ -92,14 +91,15 @@ export class NewContactPage implements OnInit {
         },
         error: async (error) => {
           console.log (error);
+          loadingElement.present();
 
           const alert = await this.alertController.create({
             header: "Erreur",
             message: HTTP_REQUEST_UNKNOWN_ERROR,
             buttons: ['Compris'],
           });
-    
-          await alert.present();  
+
+          await alert.present();
         }
       });
     });

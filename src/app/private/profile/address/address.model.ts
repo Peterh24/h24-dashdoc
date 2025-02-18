@@ -1,7 +1,7 @@
 export class Address {
 
   constructor(
-    public pk: number,
+    public id: number,
     public name: string,
     public address: string,
     public city: string,

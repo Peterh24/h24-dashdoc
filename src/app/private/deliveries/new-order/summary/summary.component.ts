@@ -146,7 +146,7 @@ export class SummaryComponent  implements OnInit {
 
     let request;
 
-    if (transport.uid) {
+    if (transport.id) {
       request = this.apiTransport.updateTransport (transport);
     } else {
       request = this.apiTransport.createTransport (transport);
@@ -199,11 +199,11 @@ export class SummaryComponent  implements OnInit {
         this.notifications.resetToken ();
 
         if (this.transportOrderService.draftName && deleteDraft) {
-          this.storage.get(DASHDOC_COMPANY).then ((pk) => {
-            this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
+          this.storage.get(DASHDOC_COMPANY).then ((id) => {
+            this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${id}`).then ((drafts) => {
               delete drafts[this.transportOrderService.draftName];
               this.transportOrderService.draftName = null;
-              this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${pk}`, drafts);
+              this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${id}`, drafts);
             });
           });
         }

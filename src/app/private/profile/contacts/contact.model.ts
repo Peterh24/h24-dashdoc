@@ -1,7 +1,7 @@
 export class Contact {
 
     constructor(
-      public uid: string, // TODO: rename to id
+      public id: string,
       public first_name: string,
       public last_name: string,
       public email: string,
@@ -11,4 +11,3 @@ export class Contact {
       public has_pending_invite: boolean = false
     ){}
   }
-  

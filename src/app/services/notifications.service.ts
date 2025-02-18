@@ -12,7 +12,7 @@ import { take } from 'rxjs';
 export class NotificationsService {
   initialized: boolean;
   notifications: any[] = [ // TODO: delete this
-    { title: 'Notification 1', body: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, fugit dolorum sint non recusandae magnam! Sequi hic cum magni quidem?'}
+    { title: 'Notification 1', body: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, fugit dolorum sint non recusandae magnam! Sequi hic cum magni qidem?'}
   ];
 
   constructor(
@@ -64,12 +64,12 @@ export class NotificationsService {
       }
     });
   }
-  
+
   initialize (username: string) {
     if (!username || !this.isSupported () || this.initialized) {
       return;
     }
-    
+
     this.initialized = true;
 
     // On success, we should be able to receive notifications
@@ -77,7 +77,7 @@ export class NotificationsService {
       const savedToken = await this.storage.get (FIREBASE_TOKEN_KEY);
 
       const remoteTokenChanged = false; //currentUserDetail?.firebase_token && currentUserDetail?.firebase_token != savedToken;
-      const localTokenChanged = savedToken == null || savedToken != token?.value; 
+      const localTokenChanged = savedToken == null || savedToken != token?.value;
 
       if (remoteTokenChanged || localTokenChanged) {
         const data = { username, token: token.value }; // TODO check !

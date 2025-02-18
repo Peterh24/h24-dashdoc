@@ -10,7 +10,7 @@
     <div class="tabs">
       <div class="tab pointer" [class.active]="tab === 1" (click)="setTab(1)">
         <span>
-          <ion-badge *ngIf="deliveries1">{{ deliveries1 }}</ion-badge>
+          <ion-badge *ngIf="transports1">{{ transports1 }}</ion-badge>
           <span>En cours</span>
         </span>
       </div>
@@ -24,13 +24,13 @@
 
     <div *ngIf="tab === 1 || tab === 2">
       <ion-accordion-group value="aO" #accordionGroup>
-        <div *ngFor="let delivery of deliveries; let index = index">
-          <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ delivery, index }"></div>
+        <div *ngFor="let transport of transports; let index = index">
+          <div [ngTemplateOutlet]="transportTpl" [ngTemplateOutletContext]="{ transport, index }"></div>
         </div>
       </ion-accordion-group>
 
-      <ion-infinite-scroll #infiniteScroll threshold="0" (ionInfinite)="loadMoreDeliveries($event)" >
-        <ion-infinite-scroll-content loadingSpinner="none" *ngIf="deliveries?.length && !apiTransport.isTransportLastPageReached">
+      <ion-infinite-scroll #infiniteScroll threshold="0" (ionInfinite)="loadMoreTransports($event)" >
+        <ion-infinite-scroll-content loadingSpinner="none" *ngIf="transports?.length && !apiTransport.isTransportLastPageReached">
             <div class="h24loader" ></div>
         </ion-infinite-scroll-content>
       </ion-infinite-scroll>
@@ -40,31 +40,31 @@
   </div>
 </ion-content>
 
-<ng-template #deliveryTpl let-delivery="delivery" let-index="index">
-  <ion-accordion class="delivery" value="a{{ index }}">
+<ng-template #transportTpl let-transport="transport" let-index="index">
+  <ion-accordion class="transport" value="a{{ index }}">
     <ion-item slot="header" color="light" lines="none">
-      <ion-chip slot="end" *ngIf="delivery.status && delivery.status !== 'invoice'">{{ statuses[delivery.status] || delivery.status }}</ion-chip>
-      <ion-chip slot="end" color="danger" *ngIf="delivery.status && delivery.status === 'invoice'">En attente</ion-chip>
+      <ion-chip slot="end" *ngIf="transport.status && transport.status !== 'invoice'">{{ statuses[transport.status] || transport.status }}</ion-chip>
+      <ion-chip slot="end" color="danger" *ngIf="transport.status && transport.status === 'invoice'">En attente</ion-chip>
       <div>
-        {{ delivery?.shipper_reference || 'Demande' }}<br>
-        <span class="delivery-infos">
-          {{ getHeaderDay (delivery.created) }}
+        {{ transport?.shipper_reference || 'Demande' }}<br>
+        <span class="transport-infos">
+          {{ getHeaderDay (transport.created) }}
         </span>
       </div>
     </ion-item>
-    <div class="ion-padding pointer" slot="content" (click)="gotoTransportDetail (delivery)">
-      <div [ngTemplateOutlet]="statusTpl" [ngTemplateOutletContext]="{ status: getStatusIndex (delivery) }"></div>
+    <div class="ion-padding pointer" slot="content" (click)="gotoTransportDetail (transport)">
+      <div [ngTemplateOutlet]="statusTpl" [ngTemplateOutletContext]="{ status: getStatusIndex (transport) }"></div>
       <br>
-      <div [ngTemplateOutlet]="deliveryMobileTpl" [ngTemplateOutletContext]="{ delivery }" *ngIf="config.isMobile"></div>
-      <div [ngTemplateOutlet]="deliveryDesktopTpl" [ngTemplateOutletContext]="{ delivery }" *ngIf="config.isDesktop"></div>
+      <div [ngTemplateOutlet]="transportMobileTpl" [ngTemplateOutletContext]="{ transport }" *ngIf="config.isMobile"></div>
+      <div [ngTemplateOutlet]="transportDesktopTpl" [ngTemplateOutletContext]="{ transport }" *ngIf="config.isDesktop"></div>
       <br>
-      <!-- <div class="detail-button" routerLink="/private/tabs/transports/detail/{{ delivery.uid }}"><ion-icon name="add-outline"></ion-icon> &nbsp; Détails</div> -->
+      <!-- <div class="detail-button" routerLink="/private/tabs/transports/detail/{{ transport.id }}"><ion-icon name="add-outline"></ion-icon> &nbsp; Détails</div> -->
     </div>
   </ion-accordion>
 </ng-template>
 
 <ng-template #addressTpl let-address="address">
-  <div class="address">
+  <div class="address" *ngIf="address">
     <div class="name">{{ address?.name }}</div>
     <div class="city">{{ address?.address }} <br> {{ address?.postcode }} {{ address?.city }}</div>
   </div>
@@ -91,42 +91,42 @@
   </div>
 </ng-template>
 
-<ng-template #deliveryMobileTpl let-delivery="delivery">
+<ng-template #transportMobileTpl let-transport="transport">
   <div class="two-columns">
     <div>
       <div class="title">Type de transport</div>
-      <div class="value">Audio visuel <!-- TODO {{ typeName[delivery.type] }} --></div>
+      <div class="value">Audio visuel <!-- TODO {{ typeName[transport.type] }} --></div>
     </div>
     <div>
       <div class="title">Vehicule</div>
-      <div class="value">{{ delivery.licensePlate || delivery.vehicle || 'Non déterminé' }}</div>
+      <div class="value">{{ transport.licensePlate || transport.vehicle || 'Non déterminé' }}</div>
     </div>
   </div>
   <div class="two-columns">
     <div>
       <div class="title">Enlèvement</div>
-      <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getOrigin (delivery)?.address }"></div>
+      <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getOrigin (transport)?.address }"></div>
     </div>
     <div>
       <div class="title">Livraison</div>
-      <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getDestination (delivery)?.address }"></div>
+      <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getDestination (transport)?.address }"></div>
     </div>
   </div>
   <div class="two-columns">
-    <div><div class="title">Date</div><div>{{ getOriginDate(delivery) }}</div></div>
-    <div><div class="title">Date</div><div>{{ getDestinationDate(delivery) }}</div></div>
+    <div><div class="title">Date</div><div>{{ getOriginDate(transport) }}</div></div>
+    <div><div class="title">Date</div><div>{{ getDestinationDate(transport) }}</div></div>
   </div>
 </ng-template>
 
-<ng-template #deliveryDesktopTpl let-delivery="delivery">
+<ng-template #transportDesktopTpl let-transport="transport">
   <div class="four-columns">
     <div>
       <div class="title">Enlèvement</div>
-      <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getOrigin (delivery)?.address }"></div>
+      <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getOrigin (transport)?.address }"></div>
     </div>
     <div>
       <div class="title">Livraison</div>
-      <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getDestination (delivery)?.address }"></div>
+      <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getDestination (transport)?.address }"></div>
     </div>
     <div>
       <div class="title">Client</div>
@@ -134,7 +134,7 @@
     </div>
     <div>
       <div class="title">Numéro de commande</div>
-      <div class="value">{{ delivery.uid }}</div>
+      <div class="value">{{ transport.id }}</div>
     </div>
   </div>
 </ng-template>

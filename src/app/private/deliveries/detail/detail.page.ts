@@ -12,7 +12,7 @@ import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { ModalImgComponent } from './modal-img/modal-img.component';
 import { TransportOrderService } from 'src/app/services/transport-order.service';
 import { TransportService } from 'src/app/services/transport.service';
-import { Delivery } from '../../models/transport.model';
+import { Contact, Delivery, Message, Site, Transport } from '../../models/transport.model';
 
 const DEBUG = false;
 
@@ -22,7 +22,7 @@ const DEBUG = false;
   styleUrls: ['../basket/basket.page.scss', './detail.page.scss'],
 })
 export class DetailPage implements OnInit {
-  transport: any;
+  transport: Transport;
   viewDidEnter: boolean;
   map: Map;
   mapId: string;
@@ -55,29 +55,26 @@ export class DetailPage implements OnInit {
           return;
         }
 
-        this.transportService.getDelivery (paramMap.get('id')).subscribe ({
-          next: (res) => {
-            if(!res) {
-              this.router.navigateByUrl('/private/tabs/transports/deliveries')
-              return;
-            }
+        this.transport = this.transportService.getTransport (paramMap.get('id'));
+        if(!this.transport) {
+          this.router.navigateByUrl('/private/tabs/transports/deliveries')
+          return;
+        }
 
-            this.transport = res;
-            this.debug ("transport", res);
-            this.transport.deliveries?.forEach ((delivery: any) => {
-              if (delivery.origin?.address) {
-                this.mapMarkers.push (delivery.origin.address);
-              }
-              if (delivery.destination?.address) {
-                this.mapMarkers.push (delivery.destination.address);
-              }
-            });
+        this.debug ("transport", this.transport);
 
-            if (this.viewDidEnter) {
-              this.initMap ();
-            }
+        this.transport.deliveries?.forEach ((delivery: Delivery) => {
+          if (delivery.origin?.address) {
+            this.mapMarkers.push (delivery.origin.address);
           }
-        })
+          if (delivery.destination?.address) {
+            this.mapMarkers.push (delivery.destination.address);
+          }
+        });
+
+        if (this.viewDidEnter) {
+          this.initMap ();
+        }
       });
   }
 
@@ -106,13 +103,13 @@ export class DetailPage implements OnInit {
       */
   }
 
-  getOrigin (delivery: any) {
-    return delivery.deliveries?.[0]?.origin;
+  getOrigin (transport: Transport) {
+    return transport.deliveries?.[0]?.origin;
   }
 
-  getDestination (delivery: any) {
-    const destinations = delivery?.deliveries?.length;
-    return destinations ? delivery.deliveries[destinations - 1]?.destination : {};
+  getDestination (transport: Transport) {
+    const destinations = transport?.deliveries?.length;
+    return destinations ? transport.deliveries[destinations - 1]?.destination : null;
   }
 
   getDateDay (date: string) {
@@ -123,8 +120,8 @@ export class DetailPage implements OnInit {
     return new Date (date).toLocaleDateString (navigator.languages?.[0] || 'fr');
   }
 
-  getOriginDate (delivery: any) {
-    const origin = this.getOrigin(delivery);
+  getOriginDate (transport: Transport) {
+    const origin = this.getOrigin(transport);
     if (!origin) {
       return '';
     }
@@ -132,8 +129,8 @@ export class DetailPage implements OnInit {
     return this.getDateDay(origin?.slots?.[0]?.start);
   }
 
-  getDestinationDate (delivery: any) {
-    const destination = this.getDestination(delivery);
+  getDestinationDate (transport: Transport) {
+    const destination = this.getDestination(transport);
     if (!destination) {
       return '';
     }
@@ -141,10 +138,10 @@ export class DetailPage implements OnInit {
     return this.getDateDay(destination?.slots?.[0]?.start);
   }
 
-  getAllPlannedLoads (delivery: any) {
+  getAllPlannedLoads (transport: Transport) {
     const merchandises: any = {};
 
-    delivery.deliveries.map ((d: any) => d.planned_loads || d.loads).forEach ((loads: any) => {
+    transport.deliveries.map ((d: any) => d.planned_loads || d.loads).forEach ((loads: any) => {
       loads?.forEach ((load: any) => {
         merchandises[load.description] = true;
       })
@@ -153,20 +150,22 @@ export class DetailPage implements OnInit {
     return Object.keys (merchandises).sort ((a, b) => a.localeCompare (b)).join (',');
   }
 
-  getContacts (delivery: any) {
-    const contacts: any = {};
+  getContacts (transport: Transport) {
+    const emails: any = {};
 
-    delivery.deliveries?.map((c: any)=> c.tracking_contacts).flat().forEach ((contact: any) => {
-      contacts[contact?.contact?.email] = contact;
+    transport.deliveries?.map((c: Delivery)=> c.tracking_contacts).forEach ((contacts: Contact[]) => {
+      contacts.forEach ((contact) => {
+        emails[contact?.email] = contact;
+      });
     });
 
-    return Object.values(contacts).map ((c: any) => c?.contact?.first_name + " " + c?.contact?.last_name)
+    return Object.values(emails).map ((c: any) => c?.first_name + " " + c?.last_name)
       .join (", ");
   }
 
-  getAllDeliveries (delivery: any) {
-    const all: any = [];
-    const deliveries: any = this.transportOrderService.deliveries;
+  getAllDeliveries (transport: Transport) {
+    const all: Site[] = [];
+    const deliveries: Delivery[] = transport.deliveries;
 
     deliveries?.forEach ((delivery: any) => {
       if (delivery.origin?.address?.address) {
@@ -178,21 +177,21 @@ export class DetailPage implements OnInit {
       }
     });
 
-    if (all.length) {
-      all[0].prefix = 'De';
-      all[all.length - 1].prefix = 'À'
-    }
-
     return all;
   }
 
-  getAllMessages (delivery: any) {
-    delivery.messages.forEach ((message: any) => {
-      message.isImage = message?.document?.match (/\.(jpg|jpeg|gif|png|webp)/i);
-      message.isPdf = message?.document?.match (/\.pdf/i);
-    });
+  getSitePrefix (transport: Transport, index: number, first: boolean, last: boolean) {
+    if (first) {
+      return 'De'
+    } else if (last) {
+      return 'À'
+    } else {
+      return 'En passant par'
+    }
+  }
 
-    return delivery.messages;
+  getAllMessages (transport: any) {
+    return transport.messages;
   }
 
   getDate(dateString : string) {
@@ -209,6 +208,10 @@ export class DetailPage implements OnInit {
     const date = parseISO(dateString);
     const formattedTime = format(date, 'HH:mm');
     return formattedTime;
+  }
+
+  isImage (message: Message) {
+    return message.url.match (/\.(jpg|jpeg|gif|png|webp)/i)
   }
 
   openMessage (message: any, dateString: string) {
@@ -265,11 +268,6 @@ export class DetailPage implements OnInit {
         this.apiTransport.createTransportMessage (this.transport, file).subscribe ({
           next: (res: any) => {
             loading.dismiss ();
-            this.transport.messages.push ({
-              document: res.document,
-              created: res.created,
-              isImage: res.document.match (/\.(jpg|jpeg|gif|png|webp)/i)
-            });
           },
           error: async (res) => {
             loading.dismiss ();

@@ -19,11 +19,10 @@ export class EditAddressPage implements OnInit {
   form: FormGroup;
   countries: Array<Country>;
   @Input()isModal: boolean;
-  @Input()addressPk: string;
+  @Input()addressId: string;
 
   constructor(
     private route: ActivatedRoute,
-    private navController: NavController,
     private countriesService: CountriesService,
     private addressService: AddressService,
     private loadingController: LoadingController,
@@ -35,33 +34,30 @@ export class EditAddressPage implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(
       paramMap => {
-        const addressId = paramMap.get('adressId') || this.addressPk;
+        const addressId = paramMap.get('adressId') || this.addressId;
 
-        this.addressService.getAddress(addressId).subscribe(address => {
-          this.address = address;
-          this.countries = this.countriesService.countries;
+        this.address = this.addressService.getAddress (addressId);
+        this.countries = this.countriesService.countries;
 
-          this.form = new FormGroup({
-            name: new FormControl(this.address?.name, {
-              validators: [Validators.required]
-            }),
-            address: new FormControl(this.address?.address, {
-              validators: [Validators.required]
-            }),
-            postal: new FormControl(this.address?.postcode, {
-              validators: [Validators.required]
-            }),
-            city: new FormControl(this.address?.city, {
-              validators: [Validators.required]
-            }),
-            country: new FormControl(this.address?.country, {
-              validators: [Validators.required]
-            }),
-            instructions: new FormControl(this.address?.instructions, {
-              validators: []
-            })
+        this.form = new FormGroup({
+          name: new FormControl(this.address?.name, {
+            validators: [Validators.required]
+          }),
+          address: new FormControl(this.address?.address, {
+            validators: [Validators.required]
+          }),
+          postcode: new FormControl(this.address?.postcode, {
+            validators: [Validators.required]
+          }),
+          city: new FormControl(this.address?.city, {
+            validators: [Validators.required]
+          }),
+          country: new FormControl(this.address?.country, {
+            validators: [Validators.required]
+          }),
+          instructions: new FormControl(this.address?.instructions, {
+            validators: []
           })
-
         })
       }
     );
@@ -79,7 +75,7 @@ export class EditAddressPage implements OnInit {
       message: '<div class="h24loader"></div>',
     }).then(loadingElement  =>  {
       loadingElement.present();
-      this.addressService.updateAddress(this.address.pk,  this.address.name, this.address.address, this.address.postcode, this.address.city, this.address.country, this.address.instructions).subscribe({
+      this.addressService.updateAddress(this.address.id,  this.address.name, this.address.address, this.address.postcode, this.address.city, this.address.country, this.address.instructions).subscribe({
         next: (res) => {
           loadingElement.dismiss();
           this.form.reset();
@@ -93,14 +89,15 @@ export class EditAddressPage implements OnInit {
         },
         error: async (error) => {
           console.log (error);
+          loadingElement.dismiss();
 
           const alert = await this.alertController.create({
             header: "Erreur",
             message: HTTP_REQUEST_UNKNOWN_ERROR,
             buttons: ['Compris'],
           });
-    
-          await alert.present();  
+
+          await alert.present();
         }
       })
     })

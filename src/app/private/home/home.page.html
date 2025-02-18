@@ -22,7 +22,7 @@
       okText="Valider"
       cancelText="Annuler"
       label-placement="floating"
-      (ionChange)="onChooseCompany($event)"
+      (ionChange)="onChooseCompany($event.detail.value)"
       [(ngModel)]="selectedCompanyId">
       <ion-select-option *ngFor="let company of loadedCompanies" [value]="company.id">{{ company.name }}</ion-select-option>
       <ion-icon color="primary" name="chevron-down" slot="end" (click)="openSelect()"></ion-icon>

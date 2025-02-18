@@ -7,7 +7,7 @@ import { Transport } from '../private/models/transport.model';
   providedIn: 'root'
 })
 export class TransportOrderService {
-  uid: string;
+  id: string;
   type: string;
   vehicle: {};
   trailers: Array<any> = [];

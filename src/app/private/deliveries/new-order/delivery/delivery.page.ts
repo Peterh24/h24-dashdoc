@@ -139,8 +139,8 @@ export class DeliveryPage implements OnInit, OnChanges {
       this.updateEnabled ();
     }
 
-    this.storage.get(DASHDOC_COMPANY).then (pk => {
-      this.company = pk;
+    this.storage.get(DASHDOC_COMPANY).then (id => {
+      this.company = id;
 
       if (!this.contacts?.length) {
         this.contacts = this.defaultContacts || [];
@@ -150,7 +150,7 @@ export class DeliveryPage implements OnInit, OnChanges {
         this.contacts = [{
           contact: {
             company: {
-              pk: this.company,
+              id: this.company,
             },
             id: this.authService.currentUser.id,
             first_name: this.authService.currentUser.first_name,
@@ -605,7 +605,7 @@ export class DeliveryPage implements OnInit, OnChanges {
     if (!address) return null;
 
     return {
-      "pk": address.pk,
+      "id": address.id,
       "name": address.name,
       "address": address.address,
       "city": address.city,

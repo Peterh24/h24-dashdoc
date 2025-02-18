@@ -21,8 +21,6 @@ export class NewAddressPage implements OnInit {
   countries: Array<Country>;
   @Input()isModal: boolean;
   constructor(
-    private route: ActivatedRoute,
-    private navController: NavController,
     private countriesService: CountriesService,
     private addressService: AddressService,
     private loadingController: LoadingController,
@@ -40,7 +38,7 @@ export class NewAddressPage implements OnInit {
         address: new FormControl(null, {
           validators: [Validators.required]
         }),
-        postal: new FormControl(null, {
+        postcode: new FormControl(null, {
           validators: [Validators.required]
         }),
         city: new FormControl(null, {
@@ -63,7 +61,7 @@ export class NewAddressPage implements OnInit {
       message: '<div class="h24loader"></div>',
     }).then(loadingElement => {
       loadingElement.present();
-      this.addressService.addAdress(this.form.value.name, this.form.value.address, this.form.value.city, this.form.value.postal, this.form.value.country, this.form.value.instructions || '').subscribe({
+      this.addressService.addAdress(this.form.value.name, this.form.value.address, this.form.value.city, this.form.value.postcode, this.form.value.country, this.form.value.instructions || '').subscribe({
         next: (res) => {
           loadingElement.dismiss();
           this.form.reset;
@@ -76,14 +74,15 @@ export class NewAddressPage implements OnInit {
         },
         error: async (error) => {
           console.log (error);
+          loadingElement.dismiss();
 
           const alert = await this.alertController.create({
             header: "Erreur",
             message: HTTP_REQUEST_UNKNOWN_ERROR,
             buttons: ['Compris'],
           });
-    
-          await alert.present();    
+
+          await alert.present();
         }
       });
     });

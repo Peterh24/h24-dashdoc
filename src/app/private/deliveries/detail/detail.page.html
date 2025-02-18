@@ -10,8 +10,8 @@
         <div id="{{ mapId }}"></div>
       </div>
 
-      <div [ngTemplateOutlet]="deliveryMobileTpl" [ngTemplateOutletContext]="{ transport }" *ngIf="transport && config.isMobile"></div>
-      <div [ngTemplateOutlet]="deliveryDesktopTpl" [ngTemplateOutletContext]="{ transport }" *ngIf="transport && config.isDesktop"></div>
+      <div [ngTemplateOutlet]="transportMobileTpl" [ngTemplateOutletContext]="{ transport }" *ngIf="transport && config.isMobile"></div>
+      <div [ngTemplateOutlet]="transportDesktopTpl" [ngTemplateOutletContext]="{ transport }" *ngIf="transport && config.isDesktop"></div>
 
       <div class="documents pointer" *ngIf="transport && transport.documents?.length > 0">
         <h2>Documents</h2>
@@ -26,8 +26,8 @@
           <div class="message" *ngFor="let message of getAllMessages (transport)">
             <ion-item lines="none" class="ion-no-padding" (click)="openMessage(message, message.created)">
               <ion-thumbnail slot="start">
-                <img alt="" [src]="message.document"  *ngIf="message.isImage" />
-                <ion-icon name="document-text-outline" *ngIf="!message.isImage"></ion-icon>
+                <img alt="" [src]="message.document"  *ngIf="isImage (message)" />
+                <ion-icon name="document-text-outline" *ngIf="!isImage (message)"></ion-icon>
               </ion-thumbnail>
               <ion-label>
                 {{ getDate(message.created) }} - {{ getHour(message.created) }} <span *ngIf="message.reference">- {{ message.reference }}</span>
@@ -50,20 +50,20 @@
   </div>
 </ion-content>
 
-<ng-template #deliveryMobileTpl let-delivery="transport">
+<ng-template #transportMobileTpl let-transport="transport">
   <div class="two-columns">
     <div>
       <div class="title">Type de transport</div>
-      <div class="value">Audio visuel <!-- TODO {{ typeName[delivery.type] }} --></div>
+      <div class="value">Audio visuel <!-- TODO {{ typeName[transport.type] }} --></div>
     </div>
     <div>
       <div class="title">Vehicule</div>
-      <div class="value">{{ delivery.licensePlate || delivery.vehicle || 'Non déterminé' }}</div>
+      <div class="value">{{ transport.licensePlate || transport.vehicle || 'Non déterminé' }}</div>
     </div>
   </div>
   <div class="two-columns">
-    <div class="address" *ngFor="let step of getAllDeliveries(delivery)">
-      <div class="title">{{ step.prefix || 'En passant par' }}</div>
+    <div class="address" *ngFor="let step of getAllDeliveries(transport); let index = index; let first = first; let last = last">
+      <div class="title">{{ getSitePrefix (transport, index, first, last) }}</div>
       <div class="name">{{ step?.address?.name }}</div>
       <div class="city">{{ step?.address?.address }} <br> {{ step?.address?.postcode }} {{ step?.address?.city }}</div>
       <div class="options">
@@ -73,51 +73,51 @@
     </div>
   </div>
   <div class="two-columns">
-    <div><div class="title">Date</div><div>{{ getOriginDate(delivery) }}</div></div>
-    <div><div class="title">Date</div><div>{{ getDestinationDate(delivery) }}</div></div>
+    <div><div class="title">Date</div><div>{{ getOriginDate(transport) }}</div></div>
+    <div><div class="title">Date</div><div>{{ getDestinationDate(transport) }}</div></div>
   </div>
   <div class="two-columns">
     <div>
       <div class="title">Marchandises</div>
-      <div class="value">{{ getAllPlannedLoads (delivery) }}</div>
+      <div class="value">{{ getAllPlannedLoads (transport) }}</div>
     </div>
     <div>
       <div class="title">Contact</div>
-      <div class="value">{{ getContacts (delivery) }}</div>
+      <div class="value">{{ getContacts (transport) }}</div>
     </div>
-    <div *ngIf="delivery.pricing_total_price">
+    <div *ngIf="transport.pricing_total_price">
       <div class="title">Prix</div>
-      <div class="value">{{ delivery.pricing_total_price }} €</div>
+      <div class="value">{{ transport.pricing_total_price }} €</div>
     </div>
-    <div *ngIf="delivery.carbon_footprint">
+    <div *ngIf="transport.carbon_footprint">
       <div class="title">Empreinte carbone</div>
-      <div class="value">CO₂ {{ delivery.carbon_footprint?.toFixed (2) }}Kg</div>
+      <div class="value">CO₂ {{ transport.carbon_footprint?.toFixed (2) }}Kg</div>
     </div>
   </div>
 </ng-template>
 
-<ng-template #deliveryDesktopTpl let-delivery="transport">
+<ng-template #transportDesktopTpl let-transport="transport">
   <div class="four-columns">
     <div>
       <div class="title">Type de transport</div>
-      <div class="value">Audio visuel <!-- TODO {{ typeName[delivery.type] }} --></div>
+      <div class="value">Audio visuel <!-- TODO {{ typeName[transport.type] }} --></div>
     </div>
     <div>
       <div class="title">Vehicule</div>
-      <div class="value">{{ delivery.licensePlate || delivery.vehicle || 'Non déterminé' }}</div>
+      <div class="value">{{ transport.licensePlate || transport.vehicle || 'Non déterminé' }}</div>
     </div>
     <div>
       <div class="title">Marchandises</div>
-      <div class="value">{{ getAllPlannedLoads (delivery) }}</div>
+      <div class="value">{{ getAllPlannedLoads (transport) }}</div>
     </div>
     <div>
       <div class="title">Contact</div>
-      <div class="value">{{ getContacts (delivery) }}</div>
+      <div class="value">{{ getContacts (transport) }}</div>
     </div>
   </div>
   <div class="four-columns">
-    <div class="address" *ngFor="let step of getAllDeliveries(delivery)">
-      <div class="title">{{ step.prefix || 'En passant par' }}</div>
+    <div class="address" *ngFor="let step of getAllDeliveries(transport); let index = index; let first = first; let last = last">
+      <div class="title">{{ getSitePrefix (transport, index, first, last) }}</div>
       <div class="name">{{ step?.address?.name }}</div>
       <div class="city">{{ step?.address?.address }} <br> {{ step?.address?.postcode }} {{ step?.address?.city }}</div>
       <div class="options">
@@ -127,15 +127,15 @@
     </div>
   </div>
   <div class="four-columns">
-    <div><div class="title">Date</div><div>{{ getOriginDate(delivery) }}</div></div>
-    <div><div class="title">Date</div><div>{{ getDestinationDate(delivery) }}</div></div>
-    <div *ngIf="delivery.pricing_total_price">
+    <div><div class="title">Date</div><div>{{ getOriginDate(transport) }}</div></div>
+    <div><div class="title">Date</div><div>{{ getDestinationDate(transport) }}</div></div>
+    <div *ngIf="transport.pricing_total_price">
       <div class="title">Prix</div>
-      <div class="value">{{ delivery.pricing_total_price }} €</div>
+      <div class="value">{{ transport.pricing_total_price }} €</div>
     </div>
-    <div *ngIf="delivery.carbon_footprint">
+    <div *ngIf="transport.carbon_footprint">
       <div class="title">Empreinte carbone</div>
-      <div class="value">CO₂ {{ delivery.carbon_footprint?.toFixed (2) }}Kg</div>
+      <div class="value">CO₂ {{ transport.carbon_footprint?.toFixed (2) }}Kg</div>
     </div>
   </div>
 </ng-template>

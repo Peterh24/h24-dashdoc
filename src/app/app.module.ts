@@ -36,12 +36,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             Authorization: `Token ${tokens.tokenObs}`
           }
         });
-      } else if (tokens.h24token && req.url.includes('api.h24transports.com') || isDevMode() && req.url.includes('localhost')) {
-        req = req.clone({
-          setHeaders: {
-            Authorization: `Bearer ${tokens.h24token}`
-          }
-        });
+      } else if (req.url.includes('api.h24transports.com') || isDevMode() && req.url.includes('localhost')) {
+        if (tokens.h24token) {
+          req = req.clone({
+            setHeaders: {
+              Authorization: `Bearer ${tokens.h24token}`
+            }
+          });
+        }
 
         // Check for 401 errors for all requests
         return next(req).pipe(

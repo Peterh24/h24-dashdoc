@@ -73,9 +73,9 @@ export class ContactsPage implements OnInit {
       next: (contacts) => {
         this.isLoading = false;
 
-        
-        this.storage.get(DASHDOC_COMPANY).then ((pk) => {
-          this.storage.get (`${CONTACT_FOLDER_KEY}_${pk}`).then ((contactFolder) => {
+
+        this.storage.get(DASHDOC_COMPANY).then ((id) => {
+          this.storage.get (`${CONTACT_FOLDER_KEY}_${id}`).then ((contactFolder) => {
             /*
             if (contactFolder == null) {
               this.folders = DEFAULT_FOLDERS;
@@ -117,7 +117,7 @@ export class ContactsPage implements OnInit {
       }
     })
       */
-    
+
     this.folders = [...new Set (contacts.map ((contact) => contact?.company_name))];
     this.folders.sort ((a,b) => a.localeCompare (b));
 
@@ -153,7 +153,7 @@ export class ContactsPage implements OnInit {
 
     if (data) {
       if (contactId) {
-        const contactIndex = this.contacts.findIndex ((a) => a.uid == contactId);
+        const contactIndex = this.contacts.findIndex ((a) => a.id == contactId);
         this.contacts[contactIndex] = data;
       } else {
         this.contacts.push (data);
@@ -168,8 +168,8 @@ export class ContactsPage implements OnInit {
         icon: 'checkbox-outline',
         cssClass: 'success'
       });
-  
-      await toast.present();  
+
+      await toast.present();
     }
   }
 
@@ -181,18 +181,18 @@ export class ContactsPage implements OnInit {
     }
   }
 
-  async onRemoveContact(contactUid: string, slidingItem: IonItemSliding = null) {
+  async onRemoveContact(contactId: string, slidingItem: IonItemSliding = null) {
     this.setDeleteContact (null);
 
     if (slidingItem) {
       slidingItem.close();
     }
 
-    this.contactService.removeContact (contactUid).subscribe ({
+    this.contactService.removeContact (contactId).subscribe ({
       next: async () => {
-        this.contacts = this.contacts.filter ((c) => c.uid != contactUid);
+        this.contacts = this.contacts.filter ((c) => c.id != contactId);
         this.selectFolder (null);
-        
+
         const toast = await this.toastController.create({
           message: 'Le contact a bien été supprimé',
           duration: 3000,
@@ -200,8 +200,8 @@ export class ContactsPage implements OnInit {
           icon: 'checkbox-outline',
           cssClass: 'success'
         });
-    
-        await toast.present();      
+
+        await toast.present();
       },
       error: async (error) => {
         console.log (error);
@@ -211,8 +211,8 @@ export class ContactsPage implements OnInit {
           message: HTTP_REQUEST_UNKNOWN_ERROR,
           buttons: ['Compris'],
         });
-  
-        await alert.present();  
+
+        await alert.present();
       }
     });
   }
@@ -220,10 +220,10 @@ export class ContactsPage implements OnInit {
   toggleSelectedContact (contact: any, event: any) {
     event.preventDefault ();
     event.stopPropagation ();
-    if (this.selectedContacts[contact.uid]) {
-      delete this.selectedContacts[contact.uid];
+    if (this.selectedContacts[contact.id]) {
+      delete this.selectedContacts[contact.id];
     } else {
-      this.selectedContacts[contact.uid] = contact;
+      this.selectedContacts[contact.id] = contact;
     }
   }
 
@@ -265,13 +265,13 @@ export class ContactsPage implements OnInit {
   async moveToFolder (modal: any, folder: string) {
     Object.values(this.selectedContacts).forEach ((contact: any) => {
       if (folder == null) {
-        delete this.contactFolder[contact.uid];
+        delete this.contactFolder[contact.id];
       } else {
-        this.contactFolder[contact.uid] = folder;
+        this.contactFolder[contact.id] = folder;
       }
-      
-      this.storage.get(DASHDOC_COMPANY).then ((pk) => {
-        this.storage.set (`${CONTACT_FOLDER_KEY}_${pk}`, this.contactFolder);
+
+      this.storage.get(DASHDOC_COMPANY).then ((id) => {
+        this.storage.set (`${CONTACT_FOLDER_KEY}_${id}`, this.contactFolder);
       });
     });
 
@@ -301,19 +301,19 @@ export class ContactsPage implements OnInit {
       event.preventDefault ();
       event.stopPropagation ();
       event.stopImmediatePropagation ();
-      this.modalController.dismiss ([ 
-        { 
+      this.modalController.dismiss ([
+        {
           contact: {
             company: {
-              pk: contact.company
+              id: contact.company
             },
-            id: contact.uid,
+            id: contact.id,
             first_name: contact.first_name,
             last_name: contact.last_name,
             email: contact.email,
             phone_nunmber: contact.phone_number
           }
-       } 
+       }
       ]);
     }
   }
@@ -321,12 +321,12 @@ export class ContactsPage implements OnInit {
   selectContacts () {
     if (this.isModal) {
       const contacts = Object.values (this.selectedContacts).map ((c: any) => (
-        { 
+        {
           contact: {
             company: {
-              pk: c.company
+              id: c.company
             },
-            id: c.uid,
+            id: c.id,
             first_name: c.first_name,
             last_name: c.last_name,
             email: c.email,

@@ -30,8 +30,8 @@ export class TypeChoiceComponent  implements OnInit {
   ionViewWillEnter () {
     this.draftsName = [];
 
-    this.storage.get(DASHDOC_COMPANY).then ((pk) => {
-      this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
+    this.storage.get(DASHDOC_COMPANY).then ((id) => {
+      this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${id}`).then ((drafts) => {
         if (drafts) {
           this.drafts = drafts;
           this.draftsName = Object.keys (drafts);

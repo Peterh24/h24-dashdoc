@@ -75,21 +75,21 @@ export class AddressPage implements OnInit {
       next: (address) => {
         this.isLoading = false;
 
-        this.storage.get(DASHDOC_COMPANY).then ((pk) => {
-          this.storage.get (`${ADDRESS_FOLDER_KEY}_${pk}`).then ((addressFolder) => {
+        this.storage.get(DASHDOC_COMPANY).then ((id) => {
+          this.storage.get (`${ADDRESS_FOLDER_KEY}_${id}`).then ((addressFolder) => {
             if (!addressFolder) {
               addressFolder = {};
             }
 
             // on efface le dossier des adresses supprimées
-            Object.keys (addressFolder).forEach ((pk) => {
-              if (!address.find ((a) => a.pk == parseInt(pk))) {
-                delete addressFolder[pk];
+            Object.keys (addressFolder).forEach ((id) => {
+              if (!address.find ((a) => a.id == parseInt(id))) {
+                delete addressFolder[id];
               }
             });
             this.addressFolder = addressFolder;
 
-            this.storage.get (`${ADDRESS_FOLDERS_KEY}_${pk}`).then ((folders) => {
+            this.storage.get (`${ADDRESS_FOLDERS_KEY}_${id}`).then ((folders) => {
               if (!folders) {
                 folders = DEFAULT_FOLDERS;
               }
@@ -97,7 +97,7 @@ export class AddressPage implements OnInit {
               this.folders = folders;
             });
 
-            this.loadAddress (address);
+            this.loadAddress ([...address]);
           })
         });
       },
@@ -136,7 +136,7 @@ export class AddressPage implements OnInit {
       this.selectFolder (this.currentFolderName);
     } else {
       const term = searchTerm.toLocaleLowerCase ();
-      
+
       this.jsonData = this.address.filter((item: any) => {
         return ['name', 'address', 'postcode', 'city']
           .filter ((field) => item[field].toLowerCase ().includes(term)).length;
@@ -144,12 +144,12 @@ export class AddressPage implements OnInit {
     }
   }
 
-  async onAddAddress (addressPk: number = null, folder: string = null, slidingItem: IonItemSliding = null) {
+  async onAddAddress (addressId: number = null, folder: string = null, slidingItem: IonItemSliding = null) {
     const modal = await this.modalController.create({
-      component: addressPk ? EditAddressPage : NewAddressPage,
+      component: addressId ? EditAddressPage : NewAddressPage,
       componentProps: {
         isModal: true,
-        addressPk: addressPk
+        addressId: addressId
       },
       cssClass: 'custom-big',
     });
@@ -158,17 +158,17 @@ export class AddressPage implements OnInit {
     const { data } = await modal.onWillDismiss();
 
     if (data) {
-      if (addressPk) {
-        const addressIndex = this.address.findIndex ((a) => a.pk == addressPk);
+      if (addressId) {
+        const addressIndex = this.address.findIndex ((a) => a.id == addressId);
         this.address[addressIndex] = data;
       } else {
         this.address.push (data);
       }
 
       if (folder) {
-        this.addressFolder[data.pk] = folder;
+        this.addressFolder[data.id] = folder;
         this.selectedAddress = {};
-        this.selectedAddress[data.pk] = data;
+        this.selectedAddress[data.id] = data;
         this.moveToFolder (folder, null, false);
       }
 
@@ -183,8 +183,8 @@ export class AddressPage implements OnInit {
         icon: 'checkbox-outline',
         cssClass: 'success'
       });
-  
-      await toast.present();  
+
+      await toast.present();
     }
   }
 
@@ -196,17 +196,17 @@ export class AddressPage implements OnInit {
     }
   }
 
-  onRemoveAddress(addressPk: number, slidingItem: IonItemSliding = null, isOrigin:boolean = false): void {
+  onRemoveAddress(addressId: number, slidingItem: IonItemSliding = null, isOrigin:boolean = false): void {
     this.setDeleteAddress (null);
 
     if (slidingItem) {
       slidingItem.close();
     }
 
-    this.addressService.removeAddress(addressPk).subscribe({
+    this.addressService.removeAddress(addressId).subscribe({
       next: async (addresses) => {
-        addresses = addresses.filter ((a) => a.pk != addressPk);
-        delete this.addressFolder[addressPk];
+        addresses = addresses.filter ((a) => a.id != addressId);
+        delete this.addressFolder[addressId];
         this.openFolder (this.currentFolderName);
 
         this.jsonData = addresses;
@@ -231,8 +231,8 @@ export class AddressPage implements OnInit {
           message: HTTP_REQUEST_UNKNOWN_ERROR,
           buttons: ['Compris'],
         });
-  
-        await alert.present();  
+
+        await alert.present();
       }
     });
   }
@@ -240,10 +240,10 @@ export class AddressPage implements OnInit {
   toggleSelectedAddress (address: any, event: any) {
     event.preventDefault ();
     event.stopPropagation ();
-    if (this.selectedAddress[address.pk]) {
-      delete this.selectedAddress[address.pk];
+    if (this.selectedAddress[address.id]) {
+      delete this.selectedAddress[address.id];
     } else {
-      this.selectedAddress[address.pk] = address;
+      this.selectedAddress[address.id] = address;
     }
   }
 
@@ -256,8 +256,8 @@ export class AddressPage implements OnInit {
       this.folders.push (name);
       this.folders.sort ((a,b) => a.localeCompare (b));
 
-      this.storage.get(DASHDOC_COMPANY).then ((pk) => {
-        this.storage.set (`${ADDRESS_FOLDERS_KEY}_${pk}`, this.folders);
+      this.storage.get(DASHDOC_COMPANY).then ((id) => {
+        this.storage.set (`${ADDRESS_FOLDERS_KEY}_${id}`, this.folders);
       });
     }
     modal.dismiss ();
@@ -275,18 +275,18 @@ export class AddressPage implements OnInit {
         {
           text: 'OK',
           handler: () => {
-            this.storage.get(DASHDOC_COMPANY).then ((pk) => {
+            this.storage.get(DASHDOC_COMPANY).then ((id) => {
               for (var address in this.addressFolder) {
                 if (this.addressFolder[address] == folder) {
                   delete this.addressFolder[address];
                 }
               }
-        
+
               this.folders = this.folders.filter ((f) => f !== folder);
 
-              this.storage.set (`${ADDRESS_FOLDER_KEY}_${pk}`, this.addressFolder);
-              this.storage.set (`${ADDRESS_FOLDERS_KEY}_${pk}`, this.folders);
-        
+              this.storage.set (`${ADDRESS_FOLDER_KEY}_${id}`, this.addressFolder);
+              this.storage.set (`${ADDRESS_FOLDERS_KEY}_${id}`, this.folders);
+
               this.selectFolder (null);
             });
           }
@@ -298,18 +298,18 @@ export class AddressPage implements OnInit {
   }
 
   renameFolder (newFolderName: any, modal: any) {
-    this.storage.get(DASHDOC_COMPANY).then ((pk) => {
+    this.storage.get(DASHDOC_COMPANY).then ((id) => {
       for (var address in this.addressFolder) {
         if (this.addressFolder[address] == this.renameFolderName) {
           this.addressFolder[address] = newFolderName;
         }
       }
 
-      this.storage.set (`${ADDRESS_FOLDER_KEY}_${pk}`, this.addressFolder);
+      this.storage.set (`${ADDRESS_FOLDER_KEY}_${id}`, this.addressFolder);
 
       this.folders = this.folders.map ((folder) => folder == this.renameFolderName ? newFolderName : folder);
       this.folders.sort ((a,b) => a.localeCompare (b));
-      this.storage.set (`${ADDRESS_FOLDERS_KEY}_${pk}`, this.folders);
+      this.storage.set (`${ADDRESS_FOLDERS_KEY}_${id}`, this.folders);
 
       this.selectFolder (null);
 
@@ -336,7 +336,7 @@ export class AddressPage implements OnInit {
   openFolder (folder: string) {
     if (folder) {
       this.currentFolderName = folder;
-      this.currentFolder = this.address.filter ((address: any) => this.addressFolder[address.pk] == this.currentFolderName);
+      this.currentFolder = this.address.filter ((address: any) => this.addressFolder[address.id] == this.currentFolderName);
       this.currentFolder.sort ((a: any, b: any) => a.name.localeCompare (b.name));
     } else {
       this.currentFolderName = null;
@@ -358,7 +358,7 @@ export class AddressPage implements OnInit {
     this.currentFolderName = folder;
     */
 
-    this.jsonData = this.address.filter ((address: any) => this.addressFolder[address.pk] == folder);
+    this.jsonData = this.address.filter ((address: any) => this.addressFolder[address.id] == folder);
     this.jsonData.sort ((a: any, b: any) => a.name.localeCompare (b.name));
 
     if (this.searchbarElem?.nativeElement) {
@@ -381,13 +381,13 @@ export class AddressPage implements OnInit {
   async moveToFolder (folder: string, modal: any = null, notify: boolean = true) {
     Object.values(this.selectedAddress).forEach ((address: any) => {
       if (folder == null) {
-        delete this.addressFolder[address.pk];
+        delete this.addressFolder[address.id];
       } else {
-        this.addressFolder[address.pk] = folder;
+        this.addressFolder[address.id] = folder;
       }
 
-      this.storage.get(DASHDOC_COMPANY).then ((pk) => {
-        this.storage.set (`${ADDRESS_FOLDER_KEY}_${pk}`, this.addressFolder);
+      this.storage.get(DASHDOC_COMPANY).then ((id) => {
+        this.storage.set (`${ADDRESS_FOLDER_KEY}_${id}`, this.addressFolder);
       });
     });
 

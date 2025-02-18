@@ -46,14 +46,14 @@
               <!--
               <div class="folder" [class.selected]="folder === currentFolderName" (click)="openFolder (folder)" *ngFor="let folder of folders">
               <div>
-                <ion-icon name="folder-outline" class="folder-icon"></ion-icon> &nbsp; &nbsp; 
-                {{ folder }} &nbsp; 
+                <ion-icon name="folder-outline" class="folder-icon"></ion-icon> &nbsp; &nbsp;
+                {{ folder }} &nbsp;
                 <ion-badge slot="end" *ngIf="addressFolderItems (folder)">{{ addressFolderItems (folder) }}</ion-badge>
               </div>
               <div class="icons">
                 <ion-icon class="pointer" name="create-outline" (click)="renameFolder (folder)"></ion-icon> &nbsp; &nbsp;
                 <ion-icon class="pointer" name="trash-outline" (click)="deleteFolder (folder)"></ion-icon>
-              </div>  
+              </div>
             </div>
             -->
           </ion-col>
@@ -75,26 +75,26 @@
 <ng-template #folderTpl let-folder="folder" let-modal="modal">
   <div class="folder" [class.selected]="folder === currentFolderName" (click)="onFolderClick (folder, modal)">
     <div>
-      <ion-icon name="folder-outline" class="folder-icon"></ion-icon> &nbsp; &nbsp; 
-      {{ folder }} &nbsp; 
+      <ion-icon name="folder-outline" class="folder-icon"></ion-icon> &nbsp; &nbsp;
+      {{ folder }} &nbsp;
       <ion-badge slot="end" *ngIf="addressFolderItems (folder)">{{ addressFolderItems (folder) }}</ion-badge>
     </div>
     <div class="icons">
       <ion-icon class="pointer" name="create-outline" (click)="setRenameFolderName (folder, $event)"></ion-icon> &nbsp; &nbsp;
       <ion-icon class="pointer" name="trash-outline" (click)="deleteFolder (folder, $event)"></ion-icon>
-    </div>  
+    </div>
   </div>
 </ng-template>
 
 <ng-template #deliveryTpl let-item="item" let-moveto="moveto" let-modal="modal">
   <ion-item-sliding #slidingAddress>
     <ion-item-options side="start">
-      <ion-item-option color="success" (click)="onAddAddress(item.pk, null, slidingAddress)">
+      <ion-item-option color="success" (click)="onAddAddress(item.id, null, slidingAddress)">
         <ion-icon name="create" slot="icon-only"></ion-icon>
       </ion-item-option>
     </ion-item-options>
 
-  <ion-accordion  [value]="item.pk" class="address">
+  <ion-accordion  [value]="item.id" class="address">
 
       <ion-item slot="header" class="ion-align-items-start" lines="none" (click)="selectAddress (item, $event, modal)">
         <ion-label>
@@ -105,9 +105,9 @@
           <h3>
             <!--
             <span *ngIf="!isModal">
-              <ion-icon name="stop-outline" (click)="toggleSelectedAddress (item, $event)" *ngIf="!selectedAddress[item.pk]"></ion-icon> 
-              <ion-icon name="checkbox-outline" (click)="toggleSelectedAddress (item, $event)" *ngIf="selectedAddress[item.pk]"></ion-icon> &nbsp; 
-            &nbsp; 
+              <ion-icon name="stop-outline" (click)="toggleSelectedAddress (item, $event)" *ngIf="!selectedAddress[item.id]"></ion-icon>
+              <ion-icon name="checkbox-outline" (click)="toggleSelectedAddress (item, $event)" *ngIf="selectedAddress[item.id]"></ion-icon> &nbsp;
+            &nbsp;
             </span>
             -->
             {{item.name}}
@@ -132,18 +132,18 @@
             </div>
           </div>
           <div *ngIf="moveto">
-            <ion-icon name="stop-outline" (click)="toggleSelectedAddress (item, $event)" *ngIf="!selectedAddress[item.pk]"></ion-icon> 
-            <ion-icon name="checkbox-outline" (click)="toggleSelectedAddress (item, $event)" *ngIf="selectedAddress[item.pk]"></ion-icon>
+            <ion-icon name="stop-outline" (click)="toggleSelectedAddress (item, $event)" *ngIf="!selectedAddress[item.id]"></ion-icon>
+            <ion-icon name="checkbox-outline" (click)="toggleSelectedAddress (item, $event)" *ngIf="selectedAddress[item.id]"></ion-icon>
           </div>
         </div>
         <div class="actions">
           <div class="delete-address" (click)="setDeleteAddress(item)">Supprimer l'adresse</div>
-          <div class="edit-address" (click)="onAddAddress(item.pk)">Modifier l'adresse</div>
+          <div class="edit-address" (click)="onAddAddress(item.id)">Modifier l'adresse</div>
         </div>
-        <!-- 
+        <!--
         <div>
-          <ion-icon class="pointer" name="create-outline" (click)="onAddAddress (item.pk)"></ion-icon>
-          <ion-icon class="pointer" name="trash-outline" (click)="onRemoveAddress (item.pk, null, item.is_origin)"></ion-icon>
+          <ion-icon class="pointer" name="create-outline" (click)="onAddAddress (item.id)"></ion-icon>
+          <ion-icon class="pointer" name="trash-outline" (click)="onRemoveAddress (item.id, null, item.is_origin)"></ion-icon>
         </div>
         -->
       </div>
@@ -230,7 +230,7 @@
 
       <!--
       <div class="folder" (click)="moveToFolder (null, moveToFolderModal)">
-        <ion-icon name="folder-outline"></ion-icon> &nbsp; &nbsp; 
+        <ion-icon name="folder-outline"></ion-icon> &nbsp; &nbsp;
         Racine
       </div>
       -->
@@ -247,7 +247,7 @@
       <div class="title">Êtes-vous sûr de vouloir supprimer cette adresse ?</div>
       <div class="buttons">
         <ion-button (click)="deleteAddressModal.dismiss ()">Non</ion-button> &nbsp;
-        <ion-button fill="outline" (click)="onRemoveAddress (deleteAddress.pk)">Oui</ion-button>
+        <ion-button fill="outline" (click)="onRemoveAddress (deleteAddress.id)">Oui</ion-button>
       </div>
     </div>
   </ng-template>

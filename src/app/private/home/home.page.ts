@@ -25,7 +25,7 @@ import { firstValueFrom, take } from 'rxjs';
 export class HomePage {
   loadedCompanies: Array<Company>;
   currentUser: User;
-  selectedCompanyId: any; // Ajoutez cette variable
+  selectedCompanyId: any;
   showResetTransport = false;
 
   @ViewChild('companyChoose', { static: false }) companyChoose: IonSelect;
@@ -57,8 +57,7 @@ export class HomePage {
           if(company && this.selectedCompanyId !== company){
             this.selectedCompanyId = company;
             this.onChooseCompany(company)
-          } else {}
-
+          }
         })
       })
     })
@@ -66,11 +65,9 @@ export class HomePage {
     this.notifications.update ();
   }
 
-  async onChooseCompany(event: any) {
-    const companyId = event && event.detail ? event.detail.value || event : event;
-
+  async onChooseCompany(companyId: number) {
     if (this.companyService.currentCompany?.id !== companyId) {
-      this.transportService.resetDeliveries();
+      this.transportService.resetTransports();
       this.companyService.isCompanySwitch = true;
 
       const loading = await this.loadingController.create({
@@ -84,7 +81,7 @@ export class HomePage {
       const currentCompany = this.companyService.getCompany(companyId);
       loading.dismiss();
       if (currentCompany) {
-        await firstValueFrom (await this.companyService.setCurrentCompany(currentCompany.id));
+        await firstValueFrom (this.companyService.setCurrentCompany(currentCompany.id));
         this.storage.set(USER_STORAGE_KEY, currentCompany.token || currentCompany.id).then (() => this.companyService.getCompanyStatus () );
         this.storage.set(DASHDOC_COMPANY, companyId);
         this.companyService.isCompanySwitch = false;
@@ -93,7 +90,7 @@ export class HomePage {
         this.transportOrderService.resetTransport ();
       }
     } else {
-      this.apiTransport.chooseCompany (companyId).subscribe ();
+      await this.companyService.setCurrentCompany(companyId);
       this.companyService.isCompanySwitch = false;
     }
   }

@@ -2,15 +2,15 @@
 
 <div class="container">
   <ion-icon name="close-outline" class="ion-float-right" (click)="cancel()"></ion-icon>
-  <div class="title" *ngIf="!contact?.uid">Envoyer une invitation</div>
-  <div class="title" *ngIf="contact?.uid">Modifier les informations</div>
+  <div class="title" *ngIf="!contact?.id">Envoyer une invitation</div>
+  <div class="title" *ngIf="contact?.id">Modifier les informations</div>
   <form [formGroup]="form">
     <ion-input type="text" label="Prénom" labelPlacement="floating" fill="outline" shape="round" errorText="Merci d'indiquer un prénom" formControlName="first_name"></ion-input>
     <ion-input type="text" label="Nom" labelPlacement="floating" fill="outline" shape="round" errorText="Merci d'indiquer un nom" formControlName="last_name"></ion-input>
     <ion-input type="text" label="Email" labelPlacement="floating" fill="outline" shape="round" errorText="Merci d'indiquer un email" formControlName="email"></ion-input>
     <ion-input type="text" label="Téléphone" labelPlacement="floating" fill="outline" shape="round" errorText="Merci d'indiquer le téléphone" formControlName="phone_number"></ion-input>
     <ion-select mode="md" label="Société" labelPlacement="floating" okText="Valider" cancelText="Annuler" errorText="Merci d'indiquer une société" class="ion-no-margin ion-no-padding" formControlName="company">
-      <ion-select-option *ngFor="let company of companies" [value]="company.pk">{{company.name}}</ion-select-option>
+      <ion-select-option *ngFor="let company of companies" [value]="company.id">{{company.name}}</ion-select-option>
     </ion-select>
     <br>
     <ion-button type="submit" [disabled]="!form.valid" class="ion-margin-top ion-margin-bottom" (click)="onSubmit()">

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, firstValueFrom, map, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, firstValueFrom, map, take, tap } from 'rxjs';
 import { Company } from '../private/models/company.model';
 import { ApiTransportService } from './api-transport.service';
 import { AuthService } from './auth.service';
 import { Storage } from '@ionic/storage-angular';
-import { DASHDOC_COMPANY } from './constants';
+import { COMPANIES_KEY, DASHDOC_COMPANY } from './constants';
 
 @Injectable({
   providedIn: 'root'
@@ -23,10 +23,22 @@ export class CompanyService {
   ) { }
 
   async init () {
-    await firstValueFrom (this.fetchCompanies ());
-    const company = await this.storage.get(DASHDOC_COMPANY);
-    if (company) {
-      this.setCurrentCompany (company);
+    try {
+      if (this.authService.currentUser?.id) {
+        this.companies = await this.storage.get (`${COMPANIES_KEY}_${this.authService.currentUser.id}`);
+      }
+      if (!this.companies) {
+        await firstValueFrom (this.fetchCompanies ());
+      }
+      const company = await this.storage.get(DASHDOC_COMPANY);
+      if (company && this.getCompany(company)) {
+        await firstValueFrom (this.setCurrentCompany (company));
+      } else {
+        await this.storage.remove(DASHDOC_COMPANY);
+        await firstValueFrom (this.fetchCompanies ());
+      }
+    } catch(e) {
+      console.error (e);
     }
   }
 
@@ -36,7 +48,8 @@ export class CompanyService {
     return this.apiTransport.getCompanies (tokens || []).pipe(
       tap ((allCompanies: Company[]) => {
         this.companies = allCompanies;
-      })
+        this.storage.set (`${COMPANIES_KEY}_${this.authService.currentUser.id}`, allCompanies);
+      }),
     )
   }
 
@@ -52,7 +65,7 @@ export class CompanyService {
     });
   }
 
-  async setCurrentCompany(id: number) {
+  setCurrentCompany(id: number) {
     return this.apiTransport.chooseCompany (id).pipe (
       tap ((res) => {
         this.currentCompany = this.getCompany (id);

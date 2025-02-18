@@ -8,6 +8,7 @@ import { ConfigService } from 'src/app/services/config.service';
 import { DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { TransportOrderService } from 'src/app/services/transport-order.service';
 import { TransportService } from 'src/app/services/transport.service';
+import { Contact, Delivery, Load, Transport } from '../../models/transport.model';
 
 @Component({
   selector: 'app-basket',
@@ -16,7 +17,7 @@ import { TransportService } from 'src/app/services/transport.service';
 })
 export class BasketPage implements OnInit, AfterViewInit {
   tab: number = 1;
-  deliveries: any[] = [];
+  transports: Transport[] = [];
   drafts: any;
   draftsName: string[];
   subscription: Subscription;
@@ -62,7 +63,7 @@ export class BasketPage implements OnInit, AfterViewInit {
 
   ionViewWillEnter () {
     this.tab = 1;
-    this.loadDeliveries ();
+    this.loadTransports ();
     this.loadDrafts ();
   }
 
@@ -82,7 +83,7 @@ export class BasketPage implements OnInit, AfterViewInit {
     this.tab = tab;
   }
 
-  async loadDeliveries () {
+  async loadTransports () {
     const loading = await this.loadingController.create({
       keyboardClose: true,
       message: '<div class="h24loader"></div>',
@@ -90,14 +91,14 @@ export class BasketPage implements OnInit, AfterViewInit {
     });
 
     await loading.present();
-    this.transportService.resetDeliveries();
+    this.transportService.resetTransports();
 
-    this.subscription = this.transportService.fetchDeliveries('created,updated,confirmed,verified').subscribe({
-      next: (deliveries) => {
-        this.deliveries = deliveries;
+    this.subscription = this.transportService.fetchTransports('created,updated,confirmed,verified').subscribe({
+      next: (transports) => {
+        this.transports = transports;
       },
       error: (error) => {
-        this.deliveries = [];
+        this.transports = [];
       },
     });
 
@@ -107,16 +108,16 @@ export class BasketPage implements OnInit, AfterViewInit {
     })
   }
 
-  loadMoreDeliveries(event: any) {
-    this.transportService.fetchDeliveries().subscribe((additionalDeliveries) => {
-      this.deliveries = this.deliveries.concat(additionalDeliveries);
+  loadMoreTransports(event: any) {
+    this.transportService.fetchTransports().subscribe((additionalTransports) => {
+      this.transports = this.transports.concat(additionalTransports);
       event.target.complete();
     });
   }
 
   loadDrafts () {
-    this.storage.get(DASHDOC_COMPANY).then ((pk) => {
-      this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
+    this.storage.get(DASHDOC_COMPANY).then ((id) => {
+      this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${id}`).then ((drafts) => {
         this.drafts = drafts || [];
         this.draftsName = Object.keys (this.drafts);
       });
@@ -143,20 +144,20 @@ export class BasketPage implements OnInit, AfterViewInit {
     return date ? this.getDateDay (date) : '';
   }
 
-  getOrigin (delivery: any) {
-    return delivery.deliveries?.[0]?.origin;
+  getOrigin (transport: Transport) {
+    return transport.deliveries?.[0]?.origin;
   }
 
-  getDestination (delivery: any) {
-    const destinations = delivery?.deliveries?.length;
-    return destinations ? delivery.deliveries[destinations - 1]?.destination : {};
+  getDestination (transport: Transport) {
+    const destinations = transport?.deliveries?.length;
+    return destinations ? transport.deliveries[destinations - 1]?.destination : null;
   }
 
-  getAllPlannedLoads (delivery: any) {
+  getAllPlannedLoads (transport: Transport) {
     const merchandises: any = {};
 
-    delivery.deliveries.map ((d: any) => d.planned_loads || d.loads).forEach ((loads: any) => {
-      loads?.forEach ((load: any) => {
+    transport.deliveries.map ((d: Delivery) => d.planned_loads).forEach ((loads: Load[]) => {
+      loads?.forEach ((load: Load) => {
         merchandises[load.description] = true;
       })
     });
@@ -164,14 +165,16 @@ export class BasketPage implements OnInit, AfterViewInit {
     return Object.keys (merchandises).sort ((a, b) => a.localeCompare (b)).join (',');
   }
 
-  getContacts (delivery: any) {
-    const contacts: any = {};
+  getContacts (transport: Transport) {
+    const emails: any = {};
 
-    delivery.deliveries?.map((c: any)=> c.tracking_contacts).flat().forEach ((contact: any) => {
-      contacts[contact?.email] = contact;
+    transport.deliveries?.map((c: Delivery)=> c.tracking_contacts).forEach ((contacts: Contact[]) => {
+      contacts.forEach ((contact) => {
+        emails[contact?.email] = contact;
+      });
     });
 
-    return Object.values(contacts).map ((c: any) => c?.first_name + " " + c?.last_name)
+    return Object.values(emails).map ((c: any) => c?.first_name + " " + c?.last_name)
       .join (", ");
   }
 
@@ -185,20 +188,20 @@ export class BasketPage implements OnInit, AfterViewInit {
 
     if (index) {
       const draftName = this.draftsName[parseInt(new String(index).substring (1))];
-      this.storage.get(DASHDOC_COMPANY).then ((pk) => {
-        this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${pk}`).then ((drafts) => {
+      this.storage.get(DASHDOC_COMPANY).then ((id) => {
+        this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${id}`).then ((drafts) => {
           if (drafts) {
             delete drafts[draftName];
           }
-          this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${pk}`, drafts).then (() => this.loadDrafts ());
+          this.storage.set (`${TRANSPORTS_DRAFTS_KEY}_${id}`, drafts).then (() => this.loadDrafts ());
         })
       });
     }
   }
 
-  gotoTransportDetail (transport: any) {
-    if (transport?.uid) {
-      this.router.navigateByUrl ('/private/tabs/transports/detail/' + transport.uid);
+  gotoTransportDetail (transport: Transport) {
+    if (transport?.id) {
+      this.router.navigateByUrl ('/private/tabs/transports/detail/' + transport.id);
     }
   }
 

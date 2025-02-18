@@ -32,7 +32,7 @@ export class AuthService {
     if (data) {
       const decoded: any = jwt_decode(data);
       if (decoded.exp > currentTime) {
-        this.currentUser = new User(decoded.id, decoded.username, null, null, null, decoded.companny);
+        this.currentUser = new User(decoded.id, decoded.username, null, null, null, decoded.active_company);
       }
     }
   }
@@ -66,7 +66,7 @@ export class AuthService {
   login(username: string, password: string) {
     this.storage.remove('DASHDOC_COMPANY');
     return this.apiTransport.loginUser(username, password).pipe(
-      map((res: any) => {
+      map(async (res: any) => {
         this.storage.set(JWT_KEY, res.token);
         const decoded: any = jwt_decode(res.token);
         this.currentUser = new User(decoded.id, decoded.username, null, null, null, decoded.companny);

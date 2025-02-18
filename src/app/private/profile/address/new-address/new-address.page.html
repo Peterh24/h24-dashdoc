@@ -6,7 +6,7 @@
   <form [formGroup]="form">
     <ion-input type="text" label="Nom de l'adresse" labelPlacement="floating" fill="outline" shape="round" errorText="Merci d'indiquer un nom" formControlName="name"></ion-input>
     <ion-input type="text" label="Adresse" labelPlacement="floating" fill="outline" shape="round" errorText="Merci d'indiquer l'adresse postale" formControlName="address"></ion-input>
-    <ion-input type="text" label="Code postal" labelPlacement="floating" fill="outline" shape="round" errorText="Merci d'indiquer le code postal" formControlName="postal"></ion-input>
+    <ion-input type="text" label="Code postal" labelPlacement="floating" fill="outline" shape="round" errorText="Merci d'indiquer le code postal" formControlName="postcode"></ion-input>
     <ion-input type="text" label="Ville" labelPlacement="floating" fill="outline" shape="round" errorText="Merci d'indiquer la ville" formControlName="city"></ion-input>
     <ion-select mode="md" label="Pays" labelPlacement="floating" interface="popover" okText="Valider" cancelText="Annuler" errorText="Merci d'indiquer le pays" class="ion-no-margin ion-no-padding" formControlName="country">
       <ion-select-option *ngFor="let country of countries" [value]="country.key">{{country.value}}</ion-select-option>

@@ -1,111 +1,82 @@
 import { Injectable } from '@angular/core';
 import { Address } from '../private/profile/address/address.model';
-import { BehaviorSubject, EMPTY, delay, expand, from, map, of, reduce, switchMap, take, tap } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { Storage } from '@ionic/storage-angular';
+import { map, take, tap } from 'rxjs';
 import { ApiTransportService } from './api-transport.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AddressService {
-
-  private _address = new BehaviorSubject<Array<Address>>([]);
-  get address() {
-    return this._address.asObservable();
-  }
+  addresses: Address[] = [];
 
   constructor(
-    private http: HttpClient,
-    private storage: Storage,
     private apiTransport: ApiTransportService
   ) { }
 
   fetchAddress() {
     return this.apiTransport.getAddresses ().pipe (
-      tap((address: Address[]) => {
-        this._address.next(address);
+      tap((addresses: Address[]) => {
+        this.addresses = addresses
       })
     );
   }
 
   getAddress(id: any) {
-    return this.address.pipe(
-      take(1),
-      map(address => {
-        return address.find(a => a.pk === parseInt(id));
-      })
-    );
+    return this.addresses.find(a => a.id == id);
   }
 
   addAdress(name: string, address:string, city:string, postcode:string, country: string, instructions:string) {
+      const newAddress = {
+        name,
+        address,
+        city,
+        postcode,
+        country,
+        instructions,
+        is_origin: true,
+        is_destination: true
+    };
 
-    return from(this.storage.get('DASHDOC_COMPANY')).pipe(
-      switchMap(companyPk => {
-        const newAddress = {
-          name,
-          address,
-          city,
-          postcode,
-          country,
-          instructions,
-          is_origin: true,
-          is_destination: true
-      };
-
-        return this.apiTransport.createAddress(newAddress).pipe(
-          take(1),
-          switchMap((resData: any) => {
-            const updatedAddresses = [...this._address.value, resData];
-            this._address.next(updatedAddresses);
-            return of(resData);
-          })
-        );
+    return this.apiTransport.createAddress(newAddress).pipe(
+      take(1),
+      tap ((address: Address) => {
+        this.addresses.push (address);
       })
     );
   }
 
-  updateAddress(addressId:any, name:string,  addressString: string, postalCode:string, city:string, country: string, instructions:string) {
-    let updatedAddress: Array<Address>
-    return this.address.pipe(
+  updateAddress(addressId: any, name: string,  address: string, postcode: string, city:string, country: string, instructions: string) {
+    const updatedAddress = {
+      name,
+      address,
+      city,
+      postcode,
+      country,
+      instructions,
+    };
+
+    return this.apiTransport.updateAddress (addressId, updatedAddress).pipe (
       take(1),
-      switchMap((address) =>  {
-        const updatedAddressIndex = address.findIndex(ad => ad.pk === addressId);
-        updatedAddress = [...address];
-        const oldAddress = updatedAddress[updatedAddressIndex];
-        updatedAddress[updatedAddressIndex] = new Address(
-          oldAddress.pk,
-          name,
-          addressString,
-          postalCode,
-          city,
-          country,
-          instructions
-        );
-        return this.apiTransport.updateAddress (addressId, {...updatedAddress[updatedAddressIndex]});
-      }),
-      tap(() => {
-        this._address.next(updatedAddress)
+      tap ((address: Address) => {
+        if (address) {
+          const index = this.addresses.findIndex ((address) => address.id == addressId);
+          this.addresses[index] = address;
+        }
       })
-    );
+    )
   }
 
   removeAddress(addressId: number) {
     return this.apiTransport.deleteAddress(addressId).pipe(
-      switchMap(() => {
-        return this.address.pipe(
-          take(1),
-          map(addresses => addresses.filter(a => a.pk !== addressId))
-        );
-      }),
-      tap(filteredAddresses => {
-        this._address.next(filteredAddresses);
+      map((res) => {
+        this.addresses = this.addresses.filter ((address) => address.id != addressId);
+        return this.addresses;
       })
     );
   }
 
   resetAddresses() {
-    this._address.next([]);
+    this.addresses = [];
   }
 
 }
