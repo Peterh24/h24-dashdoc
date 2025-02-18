@@ -1,14 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Address } from '../address.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Country } from '../../../../private/models/country.model';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AlertController, LoadingController, ModalController, NavController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { AlertController, LoadingController, ModalController } from '@ionic/angular';
 
 import { CountriesService } from '../../../../utils/services/countries.service';
 import { AddressService } from '../../../../services/address.service';
-import { take } from 'rxjs';
 import { HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
+import { Address } from 'src/app/private/models/transport.model';
 
 @Component({
   selector: 'app-new-address',

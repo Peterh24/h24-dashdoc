@@ -22,13 +22,13 @@ export class BasketPage implements OnInit, AfterViewInit {
   draftsName: string[];
   subscription: Subscription;
 
-  typeName: any = {
+  typeName: Record<string, string> = {
     audiovisual: 'Audio visuel',
     charter: 'Affrètement',
     air: 'Aérien'
   };
 
-  statuses: any = {
+  statuses: Record<string, string> = {
     created: 'Crée',
     confirmed: 'Confirmé',
     declined: 'Refusé',
@@ -128,18 +128,6 @@ export class BasketPage implements OnInit, AfterViewInit {
     return new Date (date).toLocaleDateString (navigator.languages?.[0] || 'fr');
   }
 
-  getDefaultDeliveryName (delivery: any) {
-    return "Demande";
-    /*
-    if (!delivery.created) {
-      return "Demande";
-    }
-
-    return "Demande du " + this.getDateDay (delivery.created);
-
-    */
-  }
-
   getHeaderDay (date: string) {
     return date ? this.getDateDay (date) : '';
   }
@@ -166,7 +154,7 @@ export class BasketPage implements OnInit, AfterViewInit {
   }
 
   getContacts (transport: Transport) {
-    const emails: any = {};
+    const emails: Record<string, Contact> = {};
 
     transport.deliveries?.map((c: Delivery)=> c.tracking_contacts).forEach ((contacts: Contact[]) => {
       contacts.forEach ((contact) => {
@@ -174,7 +162,7 @@ export class BasketPage implements OnInit, AfterViewInit {
       });
     });
 
-    return Object.values(emails).map ((c: any) => c?.first_name + " " + c?.last_name)
+    return Object.values(emails).map ((c: Contact) => c?.first_name + " " + c?.last_name)
       .join (", ");
   }
 

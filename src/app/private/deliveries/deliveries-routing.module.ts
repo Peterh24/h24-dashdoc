@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { DeliveriesPage } from './deliveries.page';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'deliveries',
-    pathMatch: 'full'
+    component: DeliveriesPage
   },
   {
     path: 'checkout-delivery',
@@ -18,10 +18,6 @@ const routes: Routes = [
   {
     path: 'basket',
     loadChildren: () => import('./basket/basket.module').then( m => m.BasketPageModule)
-  },
-  {
-    path: 'deliveries',
-    loadChildren: () => import('./deliveries/deliveries.module').then( m => m.DeliveriesPageModule)
   },
   {
     path: 'detail/:id',

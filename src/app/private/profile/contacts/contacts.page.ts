@@ -5,9 +5,9 @@ import { AlertController, IonItemSliding, LoadingController, ModalController, To
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
 import { CONTACT_FOLDER_KEY, DASHDOC_COMPANY, HTTP_REQUEST_UNKNOWN_ERROR, USER_STORAGE_KEY } from 'src/app/services/constants';
-import { Contact } from './contact.model';
 import { ContactsService } from 'src/app/services/contacts.service';
 import { NewContactPage } from './new-contact/new-contact.page';
+import { Contact } from '../../models/transport.model';
 
 const DEFAULT_FOLDERS = [
   "Mes loueurs",
@@ -23,20 +23,19 @@ const DEFAULT_FOLDERS = [
 export class ContactsPage implements OnInit {
   @Input() isModal: boolean;
 
-  private addressSub: Subscription;
   contacts: Array<Contact> = [];
   isLoading: boolean = false;
   searchContact: string;
-  jsonData: any;
+  displayedContacts: any;
   startIndex: number = 0;
   subscription: Subscription;
 
   currentFolder: string;
-  folders: any[] = [];
-  contactFolder: any;
-  selectedContacts: any = {};
+  folders: string[] = [];
+  contactFolder: Record<string, string>;
+  selectedContacts: Record<string, Contact> = {};
 
-  deleteContact: any;
+  deleteContact: Contact;
 
   @ViewChild("searchbarElem", { read: ElementRef }) public searchbarElem: ElementRef;
   constructor(
@@ -58,7 +57,7 @@ export class ContactsPage implements OnInit {
 
   ionViewWillEnter() {
     this.contacts = [];
-    this.jsonData = [];
+    this.displayedContacts = [];
     this.contactFolder = {};
     this.storage.get(USER_STORAGE_KEY).then(token => {
 
@@ -108,7 +107,7 @@ export class ContactsPage implements OnInit {
 
   loadContacts (contacts: any[]) {
     this.contacts = contacts;
-    this.jsonData = contacts;
+    this.displayedContacts = contacts;
 
     /*
     DEFAULT_FOLDERS.forEach ((folder) => {
@@ -132,7 +131,7 @@ export class ContactsPage implements OnInit {
     if (searchTerm.trim() === '') {
       this.selectFolder (this.currentFolder);
     } else {
-      this.jsonData = this.contacts.filter((item) => {
+      this.displayedContacts = this.contacts.filter((item) => {
         return `${item.first_name} ${item.last_name}`.toLowerCase().includes(searchTerm.toLowerCase());
       });
     }
@@ -217,7 +216,7 @@ export class ContactsPage implements OnInit {
     });
   }
 
-  toggleSelectedContact (contact: any, event: any) {
+  toggleSelectedContact (contact: Contact, event: any) {
     event.preventDefault ();
     event.stopPropagation ();
     if (this.selectedContacts[contact.id]) {
@@ -250,8 +249,8 @@ export class ContactsPage implements OnInit {
       this.currentFolder = folder;
     }
 
-    this.jsonData = this.contacts.filter ((contact: any) => this.currentFolder == null || contact.company_name == this.currentFolder);
-    this.jsonData.sort ((a: any, b: any) => a.first_name?.localeCompare (b.first_name));
+    this.displayedContacts = this.contacts.filter ((contact: any) => this.currentFolder == null || contact.company_name == this.currentFolder);
+    this.displayedContacts.sort ((a: any, b: any) => a.first_name?.localeCompare (b.first_name));
 
     if (this.searchbarElem?.nativeElement) {
       this.searchbarElem.nativeElement.value = '';
@@ -263,7 +262,7 @@ export class ContactsPage implements OnInit {
   }
 
   async moveToFolder (modal: any, folder: string) {
-    Object.values(this.selectedContacts).forEach ((contact: any) => {
+    Object.values(this.selectedContacts).forEach ((contact: Contact) => {
       if (folder == null) {
         delete this.contactFolder[contact.id];
       } else {
@@ -296,45 +295,18 @@ export class ContactsPage implements OnInit {
     return phone.replace (/^\+33/, '0').replace (/\s+/, '').replace (/(\d\d)/g, "$1 ");
   }
 
-  selectContact (contact: any, event: any) {
+  selectContact (contact: Contact, event: any) {
     if (this.isModal) {
       event.preventDefault ();
       event.stopPropagation ();
       event.stopImmediatePropagation ();
-      this.modalController.dismiss ([
-        {
-          contact: {
-            company: {
-              id: contact.company
-            },
-            id: contact.id,
-            first_name: contact.first_name,
-            last_name: contact.last_name,
-            email: contact.email,
-            phone_nunmber: contact.phone_number
-          }
-       }
-      ]);
+      this.modalController.dismiss ([ contact ]);
     }
   }
 
   selectContacts () {
     if (this.isModal) {
-      const contacts = Object.values (this.selectedContacts).map ((c: any) => (
-        {
-          contact: {
-            company: {
-              id: c.company
-            },
-            id: c.id,
-            first_name: c.first_name,
-            last_name: c.last_name,
-            email: c.email,
-            phone_nunmber: c.phone_number
-          }
-        }
-      ));
-
+      const contacts = Object.values (this.selectedContacts);
       this.modalController.dismiss (contacts);
     }
   }

@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Address } from '../address.model';
 import { Country } from '../../../../private/models/country.model';
 import { take, Subscription } from 'rxjs';
 import { CountriesService } from 'src/app/utils/services/countries.service';
@@ -8,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, LoadingController, ModalController, NavController } from '@ionic/angular';
 import { AddressService } from 'src/app/services/address.service';
 import { HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
+import { Address } from 'src/app/private/models/transport.model';
 
 @Component({
   selector: 'app-edit-address',

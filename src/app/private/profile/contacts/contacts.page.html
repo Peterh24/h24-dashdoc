@@ -52,43 +52,43 @@
 
         <ion-row *ngIf="!isLoading && contacts.length > 0">
           <ion-col>
-            <ion-item-sliding #slidingContact *ngFor="let item of jsonData; let index = index">
+            <ion-item-sliding #slidingContact *ngFor="let contact of displayedContacts; let index = index">
               <ion-item-options side="start">
-                <ion-item-option color="success" (click)="onAddContact(item.id, slidingContact)">
+                <ion-item-option color="success" (click)="onAddContact(contact.id, slidingContact)">
                   <ion-icon name="create" slot="icon-only"></ion-icon>
                 </ion-item-option>
               </ion-item-options>
 
-              <ion-item slot="header" class="ion-no-margin ion-no-padding" lines="none" (click)="selectContact (item, $event)">
+              <ion-item slot="header" class="ion-no-margin ion-no-padding" lines="none" (click)="selectContact (contact, $event)">
                 <div class="contact pointer">
                   <div>
-                    <ion-chip class="ion-float-right" *ngIf="item.is_destination">Livraison</ion-chip>
-                    <ion-chip class="ion-float-right" *ngIf="item.is_origin">Enlèvement</ion-chip>
+                    <ion-chip class="ion-float-right" *ngIf="contact.is_destination">Livraison</ion-chip>
+                    <ion-chip class="ion-float-right" *ngIf="contact.is_origin">Enlèvement</ion-chip>
                     <span class="contact-name">
                       <span *ngIf="isModal && false">
-                        <ion-icon name="stop-outline" (click)="toggleSelectedContact (item, $event)" *ngIf="!selectedContacts[item.id]"></ion-icon>
-                        <ion-icon name="checkbox-outline" (click)="toggleSelectedContact (item, $event)" *ngIf="selectedContacts[item.id]"></ion-icon> &nbsp;
+                        <ion-icon name="stop-outline" (click)="toggleSelectedContact (contact, $event)" *ngIf="!selectedContacts[contact.id]"></ion-icon>
+                        <ion-icon name="checkbox-outline" (click)="toggleSelectedContact (contact, $event)" *ngIf="selectedContacts[contact.id]"></ion-icon> &nbsp;
                         &nbsp;
                       </span>
-                      {{ item.first_name }} {{ item.last_name }}
+                      {{ contact.first_name }} {{ contact.last_name }}
                     </span>
                     <br>
-                    {{ item.company_name }}<br>
-                    <span *ngIf="item?.email"><a href="mailto:{{ item.email }}">{{ item.email }}</a></span><br>
-                    <span *ngIf="item?.phone_number"><a href="tel:{{ item.phone_number }}">{{ formatPhone (item.phone_number) }}</a></span>
+                    {{ contact.company_name }}<br>
+                    <span *ngIf="contact?.email"><a href="mailto:{{ contact.email }}">{{ contact.email }}</a></span><br>
+                    <span *ngIf="contact?.phone_number"><a href="tel:{{ contact.phone_number }}">{{ formatPhone (contact.phone_number) }}</a></span>
                   </div>
                   <div class="icons">
-                    <div><ion-chip class="pending-invite" *ngIf="item.has_pending_invite">Invitation envoyée</ion-chip></div>
+                    <div><ion-chip class="pending-invite" *ngIf="contact.has_pending_invite">Invitation envoyée</ion-chip></div>
                     <div class="ion-text-nowrap">
-                      <ion-icon class="pointer" name="create-outline" (click)="onAddContact (item.id)"></ion-icon>
-                      <ion-icon class="pointer" name="trash-outline" (click)="setDeleteContact (item)"></ion-icon>
+                      <ion-icon class="pointer" name="create-outline" (click)="onAddContact (contact.id)"></ion-icon>
+                      <ion-icon class="pointer" name="trash-outline" (click)="setDeleteContact (contact)"></ion-icon>
                     </div>
                     <div></div>
                   </div>
                 </div>
               </ion-item>
               <ion-item-options side="end">
-                <ion-item-option color="danger" (click)="setDeleteContact(item, slidingContact)">
+                <ion-item-option color="danger" (click)="setDeleteContact(contact, slidingContact)">
                   <ion-icon name="trash" slot="icon-only"></ion-icon>
                 </ion-item-option>
               </ion-item-options>

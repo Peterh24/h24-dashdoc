@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Address } from '../private/profile/address/address.model';
 import { map, take, tap } from 'rxjs';
 import { ApiTransportService } from './api-transport.service';
+import { Address } from '../private/models/transport.model';
 
 @Injectable({
   providedIn: 'root'
@@ -66,7 +66,7 @@ export class AddressService {
     )
   }
 
-  removeAddress(addressId: number) {
+  removeAddress(addressId: string) {
     return this.apiTransport.deleteAddress(addressId).pipe(
       map((res) => {
         this.addresses = this.addresses.filter ((address) => address.id != addressId);

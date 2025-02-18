@@ -1,0 +1,152 @@
+<app-header [defaultHref]="'/private/tabs/home'" title="Transports"></app-header>
+
+<ion-content>
+  <div class="container">
+    <ion-button class="create-order" (click)="setShowResetTransport()">Créer une demande <ion-icon name="chevron-right"></ion-icon></ion-button>
+    <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
+    <div class="tabs">
+      <div class="tab pointer" [class.active]="tab === 1" (click)="setTab(1)">
+        <span>
+          <ion-badge *ngIf="transports1">{{ transports1 }}</ion-badge>
+          <span>En cours</span>
+        </span>
+      </div>
+      <div class="tab pointer" [class.active]="tab === 2" (click)="setTab(2)">
+        <span>
+          <ion-badge *ngIf="false">1</ion-badge>
+          <span>Historique</span>
+        </span>
+      </div>
+    </div>
+
+    <div *ngIf="tab === 1 || tab === 2">
+      <ion-accordion-group value="aO" #accordionGroup>
+        <div *ngFor="let transport of transports; let index = index">
+          <div [ngTemplateOutlet]="transportTpl" [ngTemplateOutletContext]="{ transport, index }"></div>
+        </div>
+      </ion-accordion-group>
+
+      <ion-infinite-scroll #infiniteScroll threshold="0" (ionInfinite)="loadMoreTransports($event)" >
+        <ion-infinite-scroll-content loadingSpinner="none" *ngIf="transports?.length && !apiTransport.isTransportLastPageReached">
+            <div class="h24loader" ></div>
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </div>
+
+    <div *ngIf="tab === 2"></div>
+  </div>
+</ion-content>
+
+<ng-template #transportTpl let-transport="transport" let-index="index">
+  <ion-accordion class="transport" value="a{{ index }}">
+    <ion-item slot="header" color="light" lines="none">
+      <ion-chip slot="end" *ngIf="transport.status && transport.status !== 'invoice'">{{ statuses[transport.status] || transport.status }}</ion-chip>
+      <ion-chip slot="end" color="danger" *ngIf="transport.status && transport.status === 'invoice'">En attente</ion-chip>
+      <div>
+        {{ transport?.shipper_reference || 'Demande' }}<br>
+        <span class="transport-infos">
+          {{ getHeaderDay (transport.created) }}
+        </span>
+      </div>
+    </ion-item>
+    <div class="ion-padding pointer" slot="content" (click)="gotoTransportDetail (transport)">
+      <div [ngTemplateOutlet]="statusTpl" [ngTemplateOutletContext]="{ status: getStatusIndex (transport) }"></div>
+      <br>
+      <div [ngTemplateOutlet]="transportMobileTpl" [ngTemplateOutletContext]="{ transport }" *ngIf="config.isMobile"></div>
+      <div [ngTemplateOutlet]="transportDesktopTpl" [ngTemplateOutletContext]="{ transport }" *ngIf="config.isDesktop"></div>
+      <br>
+      <!-- <div class="detail-button" routerLink="/private/tabs/transports/detail/{{ transport.id }}"><ion-icon name="add-outline"></ion-icon> &nbsp; Détails</div> -->
+    </div>
+  </ion-accordion>
+</ng-template>
+
+<ng-template #addressTpl let-address="address">
+  <div class="address" *ngIf="address">
+    <div class="name">{{ address?.name }}</div>
+    <div class="city">{{ address?.address }} <br> {{ address?.postcode }} {{ address?.city }}</div>
+  </div>
+</ng-template>
+
+<ng-template #statusTpl let-status="status">
+  <div class="steps-container">
+    <div>
+        <div class="steps">
+            <div class="step">
+                <div class="bullet" [class.active]="status >= 1"><div></div></div>
+                <div class="label">Traitée</div>
+            </div>
+            <div class="step">
+                <div class="bullet" [class.active]="status >= 2"><div></div></div>
+                <div class="label">En cours <br> de livraison</div>
+            </div>
+            <div class="step">
+                <div class="bullet" [class.active]="status >= 3"><div></div></div>
+                <div class="label">Livrée</div>
+            </div>
+        </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #transportMobileTpl let-transport="transport">
+  <div class="two-columns">
+    <div>
+      <div class="title">Type de transport</div>
+      <div class="value">Audio visuel <!-- TODO {{ typeName[transport.type] }} --></div>
+    </div>
+    <div>
+      <div class="title">Vehicule</div>
+      <div class="value">{{ transport.licensePlate || transport.vehicle || 'Non déterminé' }}</div>
+    </div>
+  </div>
+  <div class="two-columns">
+    <div>
+      <div class="title">Enlèvement</div>
+      <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getOrigin (transport)?.address }"></div>
+    </div>
+    <div>
+      <div class="title">Livraison</div>
+      <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getDestination (transport)?.address }"></div>
+    </div>
+  </div>
+  <div class="two-columns">
+    <div><div class="title">Date</div><div>{{ getOriginDate(transport) }}</div></div>
+    <div><div class="title">Date</div><div>{{ getDestinationDate(transport) }}</div></div>
+  </div>
+</ng-template>
+
+<ng-template #transportDesktopTpl let-transport="transport">
+  <div class="four-columns">
+    <div>
+      <div class="title">Enlèvement</div>
+      <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getOrigin (transport)?.address }"></div>
+    </div>
+    <div>
+      <div class="title">Livraison</div>
+      <div class="value" [ngTemplateOutlet]="addressTpl" [ngTemplateOutletContext]="{ address: getDestination (transport)?.address }"></div>
+    </div>
+    <div>
+      <div class="title">Client</div>
+      <div class="value">{{ companyService.currentCompany?.name }}</div>
+    </div>
+    <div>
+      <div class="title">Numéro de commande</div>
+      <div class="value">{{ transport.id }}</div>
+    </div>
+  </div>
+</ng-template>
+
+<ion-modal id="reset-transport-modal" class="custom" [isOpen]="showResetTransport" (willDismiss)="setShowResetTransport(false)" #resetTransportModal>
+  <ng-template>
+    <div class="wrapper">
+      <div class="title">Voulez vous poursuivre votre demande en cours ?</div>
+      <div class="buttons">
+        <ion-button (click)="setResetTransport (true, resetTransportModal)">Non</ion-button> &nbsp;
+        <ion-button fill="outline" (click)="setResetTransport (false, resetTransportModal)">Oui</ion-button>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>

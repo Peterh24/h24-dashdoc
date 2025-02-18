@@ -22,7 +22,6 @@ export class HeaderComponent  implements OnInit {
     public companyService: CompanyService,
     public config: ConfigService,
     private router: Router,
-    private storage: Storage
   ) { }
 
   ngOnInit() {

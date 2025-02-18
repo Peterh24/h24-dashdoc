@@ -16,7 +16,7 @@
   <h2>Enlèvements <ion-icon class="edit-button hide-desktop" name="create-outline" (click)="editSection ('origins')"></ion-icon></h2>
   <ion-accordion-group>
     <div *ngFor="let delivery of transportOrderService.getOrigins (); let index = index">
-      <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'origin', delivery: delivery.origin, address: delivery.origin?.address, loads: delivery.loads, contacts: delivery.contacts, file: delivery.file, index }"></div>
+      <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'origin', delivery: delivery.origin, address: delivery.origin?.address, loads: delivery.planned_loads, contacts: delivery.tracking_contacts, file: delivery.file, index }"></div>
       <div *ngIf="config.isMobile">
         <div class="error" *ngFor="let error of getDeliveryErrors (delivery, 'origin')">{{ error }}</div>
       </div>
@@ -26,7 +26,7 @@
   <h2>Livraisons<ion-icon class="edit-button hide-desktop" name="create-outline" (click)="editSection ('destinations')"></ion-icon></h2>
   <ion-accordion-group>
     <div *ngFor="let delivery of transportOrderService.getDestinations (); let index = index">
-      <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'destination', delivery: delivery.destination, address: delivery.destination?.address, loads: delivery.loads, contacts: delivery.contacts, file: delivery.file, index }"></div>
+      <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'destination', delivery: delivery.destination, address: delivery.destination?.address, loads: delivery.planned_loads, contacts: delivery.tracking_contacts, file: delivery.file, index }"></div>
       <div *ngIf="config.isMobile">
         <div class="error" *ngFor="let error of getDeliveryErrors (delivery, 'destination')">{{ error }}</div>
       </div>

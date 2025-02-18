@@ -34,13 +34,13 @@
   <ion-row class="description">
     <ion-col>
       <div class="card">
-        <div class="ion-float-right price-from">A partir de: &nbsp; <br> <span class="price">{{currentVehicle.price}} €</span></div>
-        <div class="title">Man {{currentVehicle.type}} {{currentVehicle.hayon ? 'avec Hayon' : ''}}</div>
+        <div class="ion-float-right price-from">A partir de: &nbsp; <br> <span class="price">{{ currentVehicle.price }} €</span></div>
+        <div class="title">Man {{ currentVehicle.category }} {{ currentVehicle.hayon ? 'avec Hayon' : '' }}</div>
         <br>
-        <span>Longueur: </span> {{currentVehicle.length}} mètres<br>
-        <span>Coffre: </span> {{currentVehicle.heightChest}} mètres<br>
-        <span>Hauteur: </span> {{currentVehicle.heightCar}} mètres <br>
-        <span>Charge utile: </span> {{currentVehicle.payload}} kg<br>
+        <span>Longueur: </span> {{ currentVehicle.length }} mètres<br>
+        <span>Coffre: </span> {{ currentVehicle.heightChest }} mètres<br>
+        <span>Hauteur: </span> {{ currentVehicle.heightCar }} mètres <br>
+        <span>Charge utile: </span> {{ currentVehicle.payload }} kg<br>
       </div>
     </ion-col>
   </ion-row>

@@ -51,13 +51,13 @@ export class DetailPage implements OnInit {
     this.route.paramMap.subscribe(
       paramMap => {
         if(!paramMap.has('id')) {
-          this.router.navigateByUrl('/private/tabs/transports/deliveries')
+          this.router.navigateByUrl('/private/tabs/transports')
           return;
         }
 
         this.transport = this.transportService.getTransport (paramMap.get('id'));
         if(!this.transport) {
-          this.router.navigateByUrl('/private/tabs/transports/deliveries')
+          this.router.navigateByUrl('/private/tabs/transports')
           return;
         }
 

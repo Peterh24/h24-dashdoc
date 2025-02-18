@@ -13,6 +13,8 @@ import { VehiclesService } from 'src/app/services/vehicles.service';
 import { NewOrderCommon } from '../new-order-common';
 import { TransportOrderService } from 'src/app/services/transport-order.service';
 import { TransportService } from 'src/app/services/transport.service';
+import { Contact, Delivery, Load, Slot, Transport } from 'src/app/private/models/transport.model';
+import { IonModal } from '@ionic/angular/common';
 
 
 @Component({
@@ -22,13 +24,12 @@ import { TransportService } from 'src/app/services/transport.service';
 })
 export class SummaryComponent  implements OnInit {
 
-  typeName: any = {
+  typeName: Record<string, string> = {
     audiovisual: 'Audiovisuel',
     charter: 'Affrètement',
     air: 'Aérien'
   };
 
-  vehicle: any;
   company: string;
   shipperReference: string;
 
@@ -63,20 +64,20 @@ export class SummaryComponent  implements OnInit {
     console.log ('summary', this.transportOrderService);
   }
 
-  getContacts (contacts: any[]) {
-    return contacts?.map ((c) => c.contact.first_name + " " + c.contact.last_name).join (", ");
+  getContacts (contacts: Contact[]) {
+    return contacts?.map ((c) => c.first_name + " " + c.last_name).join (", ");
   }
 
-  getMerchandises (merchandises: any) {
+  getMerchandises (merchandises: Load[]) {
     if (!merchandises) {
       return '';
     }
 
-    return merchandises.map ((m: any) => m.description).sort ((a:string, b:string) => a.localeCompare (b)).join (', ');
+    return merchandises.map ((m: Load) => m.description).sort ((a:string, b:string) => a.localeCompare (b)).join (', ');
   }
 
-  formatSlot (slot: any) {
-    const options: any = { weekday: 'long', day: '2-digit', month: 'long' };
+  formatSlot (slot: Slot) {
+    const options: Record<string, string> = { weekday: 'long', day: '2-digit', month: 'long' };
 
     if (!slot?.start) {
       return "";
@@ -95,7 +96,7 @@ export class SummaryComponent  implements OnInit {
     let url = null;
 
     if (this.config.isMobile) {
-      const urls: any = {
+      const urls: Record<string, string> = {
         type: '/private/tabs/transports/new-order',
         vehicle: '/private/tabs/transports/new-order/vehicle-choice',
         origins: '/private/tabs/transports/new-order/deliveries',
@@ -122,7 +123,7 @@ export class SummaryComponent  implements OnInit {
     const transport = await this.transportService.buildTransport (this.transportOrderService, this.shipperReference);
     const files: any[] = [];
 
-    transport?.deliveries?.forEach ((delivery: any, index: any) => {
+    transport?.deliveries?.forEach ((delivery: Delivery, index: number) => {
       if (delivery?.origin?.file) {
         files.push ({
           file: delivery.origin.file,
@@ -226,7 +227,7 @@ export class SummaryComponent  implements OnInit {
     });
   }
 
-  async uploadFiles (transport: any, files: any[]) {
+  async uploadFiles (transport: Transport, files: any[]) {
     const errors: any[] = [];
 
     files.forEach (async (file: any, index: any) => {
@@ -242,21 +243,21 @@ export class SummaryComponent  implements OnInit {
     return errors;
   }
 
-  onSetOrderName (name: any, deleteDraft: any, modal: any) {
+  onSetOrderName (name: string | number, deleteDraft: boolean, modal: IonModal) {
     if (name) {
       modal.dismiss ();
 
-      this.shipperReference = name;
+      this.shipperReference = String(name);
       this.onSubmit (deleteDraft);
     }
   }
 
-  async onSetDraftName (name: any, modal: any) {
+  async onSetDraftName (name: string | number, modal: IonModal) {
     if (name) {
       modal.dismiss ();
 
       const transport = await this.transportService.buildTransport (this.transportOrderService);
-      this.transportService.saveDraft (name, transport);
+      this.transportService.saveDraft (String(name), transport);
     }
   }
 
@@ -264,7 +265,7 @@ export class SummaryComponent  implements OnInit {
     return this.common.getTransportErrors (this.transportOrderService);
   }
 
-  getDeliveryErrors (delivery: any, type: string = null) {
+  getDeliveryErrors (delivery: Delivery, type: string = null) {
     return this.common.getDeliveryErrors (this.transportOrderService, delivery, type);
   }
 

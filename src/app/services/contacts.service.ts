@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { map, take, tap } from 'rxjs';
-import { Contact } from '../private/profile/contacts/contact.model';
 import { ApiTransportService } from './api-transport.service';
+import { Contact } from '../private/models/transport.model';
 
 @Injectable({
   providedIn: 'root'
@@ -29,8 +29,8 @@ export class ContactsService {
     return this.apiTransport.getContactsCompanies ();
   }
 
-  addContact(first_name: string, last_name: string, email: string, phone_number: string, company: string, company_name: string) {
-    const contact = { first_name, last_name, email, phone_number, company: { id: company }, company_name } // TODO
+  addContact(first_name: string, last_name: string, email: string, phone_number: string, company: number, company_name: string) {
+    const contact = { first_name, last_name, email, phone_number, company, company_name } // TODO
     return this.apiTransport.createContact(contact).pipe(
       take(1),
       tap((newContact: Contact) => {
@@ -39,8 +39,8 @@ export class ContactsService {
     );
   }
 
-  updateContact(id: string, first_name: string, last_name: string, email: string, phone_number: string, company: string, company_name: string) {
-    const contact = { first_name, last_name, email, phone_number, company: { id: company }, company_name } // TODO
+  updateContact(id: string, first_name: string, last_name: string, email: string, phone_number: string, company: number, company_name: string) {
+    const contact = { first_name, last_name, email, phone_number, company, company_name } // TODO
     return this.apiTransport.updateContact(id, contact).pipe(
       take(1),
       tap((updatedContact: Contact) => {

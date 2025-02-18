@@ -1,6 +1,7 @@
 import { inject } from "@angular/core";
 import { FILE_IMAGE_MAX_WIDTH } from "src/app/services/constants";
 import { TransportOrderService } from "src/app/services/transport-order.service";
+import { Delivery } from "../../models/transport.model";
 
 export class NewOrderCommon {
     constructor (
@@ -8,8 +9,8 @@ export class NewOrderCommon {
 
     }
 
-    getTransportErrors (transport: any) {
-        const errors: any[] = [];
+    getTransportErrors (transport: TransportOrderService) {
+        const errors: string[] = [];
         const origins = transport.getOrigins().length;
         const destinations = transport.getDestinations().length;
 
@@ -30,8 +31,8 @@ export class NewOrderCommon {
         return errors;
     }
 
-    getDeliveryErrors (transport: TransportOrderService, delivery: any, type: string = null) {
-        const errors = [];
+    getDeliveryErrors (transport: TransportOrderService, delivery: Delivery, type: string = null) {
+        const errors: string[] = [];
         const isOrigin = type === null || type === 'origin';
         const isDestination = type === null || type === 'destination';
 
@@ -44,7 +45,7 @@ export class NewOrderCommon {
                 errors.push ("Veuiller saisir une addresse d'enlèvement");
             }
 
-            if (!delivery.loads?.length && !delivery.planned_loads?.length) {
+            if (!delivery.planned_loads?.length) {
                 errors.push ("Veuillez préciser les marchandises transportées")
             }
 
@@ -93,7 +94,7 @@ export class NewOrderCommon {
         return new Date(day).valueOf() < new Date(now).valueOf ();
     }
 
-    isMultipointDeliveryInvalid (transport: any, delivery: any) {
+    isMultipointDeliveryInvalid (transport: TransportOrderService, delivery: Delivery) {
         const index = transport.deliveries?.findIndex ((d: any) => d === delivery);
 
         if (transport.isMultipoint) {

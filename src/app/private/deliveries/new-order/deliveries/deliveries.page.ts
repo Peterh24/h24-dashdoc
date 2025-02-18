@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { ConfigService } from 'src/app/services/config.service';
 import { NewOrderCommon } from '../new-order-common';
 import { TransportOrderService } from 'src/app/services/transport-order.service';
+import { Delivery, Site } from 'src/app/private/models/transport.model';
 
 @Component({
   selector: 'app-deliveries',
@@ -12,15 +13,15 @@ import { TransportOrderService } from 'src/app/services/transport-order.service'
   styleUrls: ['./deliveries.page.scss'],
 })
 export class DeliveriesPage implements OnInit {
-  origins: any[];
-  destinations: any[];
+  origins: Delivery[];
+  destinations: Delivery[];
   currentDelivery: any;
   isMultipointAuto: boolean;
 
   isModalOpen: boolean;
   showSummaryComponent = false;
 
-  errors: any[] = [];
+  errors: string[] = [];
   common = new NewOrderCommon ();
 
   constructor(
@@ -71,7 +72,7 @@ export class DeliveriesPage implements OnInit {
   }
   */
 
-  async showAddDelivery (delivery: any = null, deliveryType: string = null)  {
+  async showAddDelivery (delivery: Delivery = null, deliveryType: string = null)  {
     this.showSummaryComponent = false;
 
     const defaultContacts = this.transportOrderService?.deliveries?.[0]?.tracking_contacts;
@@ -108,7 +109,7 @@ export class DeliveriesPage implements OnInit {
     }
   }
 
-  addDelivery (delivery: any) {
+  addDelivery (delivery: Delivery) {
     if (this.transportOrderService.isMultipoint) {
       if (! this.currentDelivery.delivery) {
         this.transportOrderService.deliveries.push (delivery);
@@ -147,7 +148,7 @@ export class DeliveriesPage implements OnInit {
     console.log ('add', this.origins, this.destinations, delivery);
   }
 
-  deleteDelivery (type: string, delivery: any) {
+  deleteDelivery (type: string, delivery: Delivery) {
     if (type === 'origin') {
       this.transportOrderService.deliveries = this.transportOrderService.deliveries.filter ((d) => d !== delivery);
     }
@@ -174,7 +175,7 @@ export class DeliveriesPage implements OnInit {
     return !this.isMultipointAuto && this.transportOrderService.getDestinations ().length && this.transportOrderService.getOrigins ().length > 1;
   }
 
-  getOriginsMaxSlot (origins: any[]) {
+  getOriginsMaxSlot (origins: Delivery[]) {
     if (!origins?.length) {
       return null;
     }
@@ -183,7 +184,7 @@ export class DeliveriesPage implements OnInit {
     return isFinite (max) ? new Date(max).toISOString () : null;
   }
 
-  getDestinationsMinSlot (destinations: any[]) {
+  getDestinationsMinSlot (destinations: Delivery[]) {
     if (!destinations?.length) {
       return null;
     }
@@ -208,7 +209,7 @@ export class DeliveriesPage implements OnInit {
     return this.common.getTransportErrors (this.transportOrderService);
   }
 
-  getDeliveryErrors (delivery: any, type: string = null) {
+  getDeliveryErrors (delivery: Delivery, type: string = null) {
     return this.common.getDeliveryErrors (this.transportOrderService, delivery, type);
   }
 

@@ -159,7 +159,7 @@
           <ion-icon name="trash-outline" class="trash-file" (click)="deleteUploadFile(form, $event)"></ion-icon>
           <ion-icon name="download-outline" class="download-file"></ion-icon>
           <div *ngIf="!!form.value.file">{{ form.value.file.name }}</div>
-          <div class="error" *ngIf="errors['file']">{{ errors['file'] }}</div>
+          <div class="error" *ngIf="errors['file']">Le fichier est trop volumineux</div>
 
           <div *ngIf="!form.value.file">
             Joindre un fichier à la demande

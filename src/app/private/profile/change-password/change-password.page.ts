@@ -11,7 +11,7 @@ import { passwordValidator, regexErrors } from 'src/app/utils/regex';
   styleUrls: ['./change-password.page.scss'],
 })
 export class ChangePasswordPage implements OnInit {
-  regexErrors: any = regexErrors;
+  regexErrors = regexErrors;
 
   form: FormGroup;
   success: boolean;
@@ -71,8 +71,8 @@ export class ChangePasswordPage implements OnInit {
             message: HTTP_REQUEST_UNKNOWN_ERROR,
             buttons: ['Compris'],
           });
-    
-          await alert.present();    
+
+          await alert.present();
         }
       });
     }

@@ -8,6 +8,7 @@ import { DeliveriesPageRoutingModule } from './deliveries-routing.module';
 
 import { SharedModule } from 'src/app/shared/shared.module';
 import { HeaderModule } from 'src/app/components';
+import { DeliveriesPage } from './deliveries.page';
 
 
 @NgModule({
@@ -19,6 +20,6 @@ import { HeaderModule } from 'src/app/components';
     SharedModule,
     HeaderModule
   ],
-  declarations: [],
+  declarations: [DeliveriesPage],
 })
 export class DeliveriesPageModule {}

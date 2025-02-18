@@ -1,5 +1,6 @@
 export class Vehicle {
   constructor(
+    public category: string,
     public licensePlate: string,
     public model: string,
     public type: string,

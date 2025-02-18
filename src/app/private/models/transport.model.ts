@@ -40,12 +40,19 @@ export class Delivery {
 export class Site {
   constructor(
     public address: Address,
-    public slots: Array<any>,
+    public slots: Array<Slot>,
     public instructions: string,
     public reference: string,
     public handlers: number,
     public guarding: boolean,
     public file: any
+  ) {}
+}
+
+export class Slot {
+  constructor(
+    public start: string,
+    public end: string
   ) {}
 }
 
@@ -57,6 +64,7 @@ export class Address {
     public postcode: string,
     public city: string,
     public country: string,
+    public instructions: string,
     public latitude: number,
     public longitude: number,
   ) {}
@@ -79,11 +87,13 @@ export class Load {
 export class Contact {
   constructor (
     public id: string,
-    public company: any, // TODO
+    public company: number, // TODO
+    public company_name: string,
     public first_name: string,
     public last_name: string,
     public email: string,
-    public phone_number: string
+    public phone_number: string,
+    public has_pending_invite: boolean = false
   ) {}
 }
 

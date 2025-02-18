@@ -3,11 +3,11 @@ import { inject } from "@angular/core";
 import { Storage } from "@ionic/storage-angular";
 import { API_URL, API_URL_V2, DASHDOC_COMPANY } from "./constants";
 import { EMPTY, expand, map, reduce, tap } from "rxjs";
-import { Address } from "../private/profile/address/address.model";
-import { Contact } from "../private/profile/contacts/contact.model";
 import { UtilsService } from "../utils/services/utils.service";
 import { ConfigService } from "./config.service";
 import { Company } from "../private/models/company.model";
+import { Address, Contact } from "../private/models/transport.model";
+import { Vehicle } from "../private/models/vehicle.model";
 
 export class ApiTransportH24v2 {
     static model: string = 'h24';
@@ -122,9 +122,15 @@ export class ApiTransportH24v2 {
     }
 
     createContact (contact: any) {
-        contact.company = contact.company?.id;
         return this.http.post(`${this.apiUrl}contacts`, contact).pipe(
-            map ((res: any) => new Contact (res.id, res.first_name, res.last_name, res.email, res.phone_number, res.company?.id, res.company?.name))
+            map ((res: any) => new Contact (
+                res.id,
+                res.company?.id,
+                res.company?.name,
+                res.first_name,
+                res.last_name,
+                res.email,
+                res.phone_number))
         );
     }
 
@@ -133,17 +139,16 @@ export class ApiTransportH24v2 {
     }
 
     updateContact (id: string, contact: any) {
-        contact.company = contact.company?.id;
         return this.http.patch(`${this.apiUrl}contacts/${id}`, contact).pipe(
             map ((contact: any) => {
                 return contact ? new Contact (
                     id,
+                    contact.company?.id,
+                    contact.company?.name,
                     contact.first_name,
                     contact.last_name,
                     contact.email,
-                    contact.phone_number,
-                    contact.company?.id,
-                    contact.company?.name) : null
+                    contact.phone_number,) : null
                 })
         )
     }
@@ -181,8 +186,8 @@ export class ApiTransportH24v2 {
                 address.id,
                 address.name,
                 address.address,
-                address.city,
                 address.postcode,
+                address.city,
                 address.country,
                 address.instructions,
                 address.latitude,
@@ -217,10 +222,20 @@ export class ApiTransportH24v2 {
     getVehicles () {
         return this.http.get(`${this.apiUrl}vehicles`).pipe (
             map ((res: any) => (res.items)),
-            tap((vehicles: any) => {
-                vehicles.forEach ((vehicle: any) => {
-                    vehicle.licensePlate = vehicle.license_plate
-                })
+            map ((res: any) => {
+                return res.map ((vehicle: any) => new Vehicle (
+                    vehicle.category,
+                    vehicle.license_plate,
+                    null,
+                    vehicle.original,
+                    vehicle.length,
+                    vehicle.depth,
+                    vehicle.heightCar,
+                    vehicle.heightChest,
+                    vehicle.payload,
+                    vehicle.price,
+                    vehicle.hayon
+                ))
             }),
         );
     }
@@ -324,7 +339,7 @@ export class ApiTransportH24v2 {
             });
 
             delivery.tracking_contacts = delivery.tracking_contacts?.map ((contact: any) =>
-                ({ contact: { remote_id: contact.contact.id }, reference: 'shipper' }) // TODO: quelle référence
+                ({ contact: { remote_id: contact.id }, reference: 'shipper' }) // TODO: quelle référence
             );
 
             delivery.origin = this.toH24Site (delivery.origin);

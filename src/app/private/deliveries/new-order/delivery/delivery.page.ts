@@ -1,14 +1,16 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { IonInput, ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
-import { AddressPage } from 'src/app/private/profile/address/address.page';
 import { Storage } from '@ionic/storage-angular';
 import { DASHDOC_COMPANY, FILE_UPLOAD_MAX_SIZE } from 'src/app/services/constants';
 import { ContactsPage } from 'src/app/private/profile/contacts/contacts.page';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { FileUtils } from 'src/app/utils/file-utils';
 import { TransportOrderService } from 'src/app/services/transport-order.service';
+import { Address, Contact, Delivery, Load, Site } from 'src/app/private/models/transport.model';
+import { IonModal } from '@ionic/angular/common';
+import { AddressPage } from 'src/app/private/profile/address/address.page';
 
 @Component({
 selector: 'app-delivery',
@@ -17,25 +19,25 @@ styleUrls: ['./delivery.page.scss'],
 })
 export class DeliveryPage implements OnInit, OnChanges {
   @Input() isModal: boolean;
-  @Input() delivery: any;
-  @Input() defaultContacts: any;
+  @Input() delivery: Delivery;
+  @Input() defaultContacts: Contact[];
   @Input() deliveryType: string;
   @Input() originMaxSlot: number;
   @Input() destinationMinSlot: number;
 
   @Output() selectDelivery = new EventEmitter<any>();
 
-  origin: any;
-  destination: any;
+  origin: Address;
+  destination: Address;
   enableOrigin: boolean;
   enableDestination: boolean;
 
-  company: any;
-  contacts: any[];
+  company: number;
+  contacts: Contact[];
   contactsError: string;
   merchandisesUrl = 'assets/merchandises/';
 //  merchandisesUrl = 'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/';
-  merchandiseId: any = {
+  merchandiseId: Record<string, string> = {
     'Caméra': 'camera',
     'Lumières': 'light',
 //    'Photographie': 'photo',
@@ -55,8 +57,8 @@ export class DeliveryPage implements OnInit, OnChanges {
   destinationForm: FormGroup;
   otherForm: FormGroup;
 
-  originErrors: any = {};
-  destinationErrors: any = {};
+  originErrors: Record<string, boolean> = {};
+  destinationErrors: Record<string, boolean> = {};
   hasErrors: boolean;
 
   isDashdocModel = ApiTransportService.isDashdocModel;
@@ -127,12 +129,12 @@ export class DeliveryPage implements OnInit, OnChanges {
       this.enableOrigin = this.transportOrderService.isMultipoint || !!this.origin;
       this.enableDestination = this.transportOrderService.isMultipoint || !!this.destination;
 
-      this.delivery.planned_loads?.forEach ((load: any) => {
+      this.delivery.planned_loads?.forEach ((load: Load) => {
         this.merchandisesSelected[load.id] = load;
       });
 
-      const origin = this.loadDelivery(this.originForm, this.delivery.origin);
-      const destination = this.loadDelivery(this.destinationForm, this.delivery.destination);
+      const origin = this.loadSite (this.originForm, this.delivery.origin);
+      const destination = this.loadSite (this.destinationForm, this.delivery.destination);
 
       console.log ('edit', this.delivery);
     } else {
@@ -144,21 +146,6 @@ export class DeliveryPage implements OnInit, OnChanges {
 
       if (!this.contacts?.length) {
         this.contacts = this.defaultContacts || [];
-      }
-
-      if (ApiTransportService.isDashdocModel && this.authService.currentUser?.id && !this.contacts?.length) {
-        this.contacts = [{
-          contact: {
-            company: {
-              id: this.company,
-            },
-            id: this.authService.currentUser.id,
-            first_name: this.authService.currentUser.first_name,
-            last_name: this.authService.currentUser.last_name,
-            email: this.authService.currentUser.email,
-            phone_number: this.authService.currentUser.phone_number
-          }
-        }];
       }
     });
   }
@@ -177,15 +164,15 @@ export class DeliveryPage implements OnInit, OnChanges {
     this.hasErrors = false;
   }
 
-  loadDelivery (form: FormGroup, delivery: any) {
-    if (!delivery) {
+  loadSite (form: FormGroup, site: Site) {
+    if (!site) {
       return;
     }
 
     const parseSlot = (slot: string) => (slot ? slot.split(/T/) : [null, null]);
 
-    let [ start_day, start_time ] = parseSlot(delivery?.slots?.[0]?.start);
-    let [ end_day, end_time ] = parseSlot(delivery?.slots?.[0]?.end);
+    let [ start_day, start_time ] = parseSlot(site?.slots?.[0]?.start);
+    let [ end_day, end_time ] = parseSlot(site?.slots?.[0]?.end);
 
     if (start_time && start_time == end_time) {
       end_time = null;
@@ -195,11 +182,11 @@ export class DeliveryPage implements OnInit, OnChanges {
       day: start_day,
       time_start: start_time,
       time_end: end_time,
-      instructions: delivery?.instructions,
-      reference: delivery?.reference,
-      handlers: parseInt(delivery?.handlers) || 0,
-      guarding: delivery?.guarding,
-      file: delivery?.file
+      instructions: site?.instructions,
+      reference: site?.reference,
+      handlers: site?.handlers,
+      guarding: site?.guarding,
+      file: site?.file
     };
 
 
@@ -316,7 +303,7 @@ export class DeliveryPage implements OnInit, OnChanges {
 
     if (data) {
       this.contacts = data;
-      this.contacts = this.contacts.sort ((a, b) => a.contact.first_name.localeCompare (b.contact.first_name));
+      this.contacts = this.contacts.sort ((a, b) => a.first_name.localeCompare (b.first_name));
 
       this.updateEnabled ();
     }
@@ -328,9 +315,11 @@ export class DeliveryPage implements OnInit, OnChanges {
     return new Date (day).toLocaleString (navigator.languages?.[0] || 'fr', { weekday: 'long', day: '2-digit', month: 'long' })
   }
 
-  setDay (form: FormGroup, event: any, modal: any) {
-    if (event.target?.value) {
-      const day = event.target.value;
+  setDay (form: FormGroup, event: Event, modal: IonModal) {
+    const target = event.target as HTMLInputElement;
+
+    if (target.value) {
+      const day = target.value;
       form.controls['day'].setValue (day);
     }
 
@@ -367,9 +356,11 @@ export class DeliveryPage implements OnInit, OnChanges {
     return new Date(day).valueOf() < new Date(now).valueOf ();
   }
 
-  setSlot (form: FormGroup, name: string, event: any) {
-    if (event.target?.value) {
-      const datetime = event.target.value.split (/T/);
+  setSlot (form: FormGroup, name: string, event: Event) {
+    const target = event.target as HTMLInputElement;
+
+    if (target?.value) {
+      const datetime = target.value.split (/T/);
       form.controls[name].setValue (datetime[1].substr (0, 5));
     }
 
@@ -396,7 +387,7 @@ export class DeliveryPage implements OnInit, OnChanges {
     form.controls['handlers'].setValue (0);
   }
 
-  getSelectedMerchandises (): any[] {
+  getSelectedMerchandises (): Load[] {
     return this.merchandisesSelected ? Object.values (this.merchandisesSelected) : [];
   }
 
@@ -422,7 +413,7 @@ export class DeliveryPage implements OnInit, OnChanges {
   }
 
   // TODO gestion des pièces jointes
-  setMerchandise (modal: any = null) {
+  setMerchandise (modal: IonModal = null) {
     if (modal) {
       modal.dismiss ();
     }
@@ -434,7 +425,7 @@ export class DeliveryPage implements OnInit, OnChanges {
     this.validateForm ();
   }
 
-  deleteMerchandise (id: any = null, modal: any = null) {
+  deleteMerchandise (id: string = null, modal: IonModal = null) {
     if (modal) {
       modal.dismiss ();
     }
@@ -462,10 +453,10 @@ export class DeliveryPage implements OnInit, OnChanges {
     form.value.file = null;
   }
 
-  validateFormFile (form: FormGroup, errors: any) {
+  validateFormFile (form: FormGroup, errors: Record<string, boolean>) {
     delete errors['file'];
     if (form.value.file && form.value.file.size > FILE_UPLOAD_MAX_SIZE) {
-      errors['file'] = 'Fichier trop volumineux';
+      errors['file'] = true;
     }
   }
 
@@ -524,7 +515,7 @@ export class DeliveryPage implements OnInit, OnChanges {
   }
 
   onSubmit () {
-    let origin, destination, planned_loads: any;
+    let origin: Site, destination: Site, planned_loads: Load[];
 
     /*
     if (!this.validateForm ()) {
@@ -534,7 +525,6 @@ export class DeliveryPage implements OnInit, OnChanges {
 
     if (this.origin) {
       origin = this.buildDelivery (this.originForm.value, this.origin);
-
       planned_loads =  Object.values (this.merchandisesSelected);
     }
 
@@ -542,7 +532,7 @@ export class DeliveryPage implements OnInit, OnChanges {
       destination = this.buildDelivery (this.destinationForm.value, this.destination);
     }
 
-    let delivery: any;
+    let delivery: Delivery;
 
     if (this.delivery) {
       delivery = this.delivery;
@@ -556,11 +546,15 @@ export class DeliveryPage implements OnInit, OnChanges {
       delivery.planned_loads = planned_loads || [];
       delivery.tracking_contacts = this.contacts;
     } else {
-      delivery = {
+      delivery = new Delivery (
+        '1',
         origin,
         destination,
-        tracking_contacts: this.contacts
-      };
+        null,
+        this.contacts,
+        null,
+        null
+      );
 
       if (origin) {
         delivery.planned_loads = planned_loads || [];
@@ -576,7 +570,7 @@ export class DeliveryPage implements OnInit, OnChanges {
     }
   }
 
-  buildDelivery (values: any, address: any) {
+  buildDelivery (values: any, address: Address) {
     const slots = [];
 
     if (values.day && values.time_start) {
@@ -590,29 +584,14 @@ export class DeliveryPage implements OnInit, OnChanges {
       );
     }
 
-    return {
-      address: this.buildAddress(address),
-      instructions: values.instructions,
-      reference: values.reference,
-      slots: slots,
-      handlers: values.handlers || 0,
-      guarding: values.guarding,
-      file: values.file
-    };
-  }
-
-  buildAddress (address: any) {
-    if (!address) return null;
-
-    return {
-      "id": address.id,
-      "name": address.name,
-      "address": address.address,
-      "city": address.city,
-      "postcode": address.postcode,
-      "country": address.country,
-      "latitude": address.latitude,
-      "longitude": address.longitude,
-    }
+    return new Site (
+      address,
+      slots,
+      values.instructions,
+      values.reference,
+      values.handlers || 0,
+      values.guarding,
+      values.file
+    );
   }
 }

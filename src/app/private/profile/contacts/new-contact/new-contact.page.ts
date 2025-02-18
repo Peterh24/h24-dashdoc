@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Contact } from '../contact.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, LoadingController, ModalController, NavController } from '@ionic/angular';
@@ -7,6 +6,8 @@ import { ContactsService } from 'src/app/services/contacts.service';
 import { phoneValidator, regex } from 'src/app/utils/regex';
 import { HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
+import { Company } from 'src/app/private/models/company.model';
+import { Contact } from 'src/app/private/models/transport.model';
 
 @Component({
   selector: 'app-new-contact',
@@ -19,7 +20,7 @@ export class NewContactPage implements OnInit {
   @Input() isModal: boolean;
   form: FormGroup;
   contact: Contact;
-  companies: any[];
+  companies: Company[];
   constructor(
     private apiTransport: ApiTransportService,
     private route: ActivatedRoute,
@@ -33,7 +34,7 @@ export class NewContactPage implements OnInit {
 
   ngOnInit() {
     this.contactsService.fetchContactsCompanies().subscribe({
-      next: (companies: any) => {
+      next: (companies: Company[]) => {
         this.companies = companies;
       }});
 
@@ -66,7 +67,7 @@ export class NewContactPage implements OnInit {
     }).then(loadingElement => {
       loadingElement.present();
 
-      let request, company: any;
+      let request, company: Company;
       company = this.companies.find ((c) => c.id == this.form.value.company);
 
       if (this.contact?.id) {

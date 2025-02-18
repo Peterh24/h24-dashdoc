@@ -166,8 +166,8 @@ export class TransportService {
           return null;
       }
 
-      const { id, name, address, city, postcode, country, latitude, longitude } = json;
-      return new Address(id, name, address, postcode, city, country, latitude, longitude);
+      const { id, name, address, city, postcode, country, instructions, latitude, longitude } = json;
+      return new Address(id, name, address, postcode, city, country, instructions, latitude, longitude);
   }
 
   loadContact(json: any) {
@@ -176,7 +176,7 @@ export class TransportService {
       }
 
       const { id, company, first_name, last_name, email, phone_number } = json.contact;
-      return new Contact(id, company, first_name, last_name, email, phone_number);
+      return new Contact(id, company.id, company.name, first_name, last_name, email, phone_number);
   }
 
   loadSegments(deliveriesJson: any, isMultipoint = false) {
@@ -220,11 +220,13 @@ export class TransportService {
    * @returns
    */
   async buildTransport (transport: any, shipperReference: string = null) {
+    /* TODO
     if (!transport.trailers?.length) {
       transport.trailers.push({
         "licensePlate": transport.vehicle
       });
     }
+    */
 
     const company = await this.storage.get(DASHDOC_COMPANY);
 
