@@ -6,17 +6,17 @@ import { Subscription } from 'rxjs';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { CompanyService } from 'src/app/services/company.service';
 import { ConfigService } from 'src/app/services/config.service';
-import { DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
+import { CURRENT_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { TransportOrderService } from 'src/app/services/transport-order.service';
 import { TransportService } from 'src/app/services/transport.service';
 import { Contact, Delivery, Transport } from '../models/transport.model';
 
 @Component({
-  selector: 'app-deliveries',
-  templateUrl: './deliveries.page.html',
-  styleUrls: ['basket/basket.page.scss', './deliveries.page.scss'],
+  selector: 'app-transports',
+  templateUrl: './transports.page.html',
+  styleUrls: ['basket/basket.page.scss', './transports.page.scss'],
 })
-export class DeliveriesPage implements OnInit, AfterViewInit {
+export class TransportsPage implements OnInit, AfterViewInit {
   tab: number = 1;
   transports: Transport[] = [];
   transports1: number;
@@ -133,7 +133,7 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
   }
 
   loadDrafts () {
-    this.storage.get(DASHDOC_COMPANY).then ((id) => {
+    this.storage.get(CURRENT_COMPANY).then ((id) => {
       this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${id}`).then ((drafts) => {
         if (drafts) {
           this.drafts = drafts;
@@ -285,7 +285,7 @@ export class DeliveriesPage implements OnInit, AfterViewInit {
   onDraftDelete (draftName: string, modal: any) {
     modal.dismiss ();
 
-    this.storage.get(DASHDOC_COMPANY).then ((id) => {
+    this.storage.get(CURRENT_COMPANY).then ((id) => {
       this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${id}`).then ((drafts) => {
         if (drafts) {
           delete drafts[draftName];

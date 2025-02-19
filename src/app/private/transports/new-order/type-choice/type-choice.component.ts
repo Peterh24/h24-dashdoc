@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
 import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
-import { DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
+import { CURRENT_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { TransportOrderService } from 'src/app/services/transport-order.service';
 import { TransportService } from 'src/app/services/transport.service';
 
@@ -30,7 +30,7 @@ export class TypeChoiceComponent  implements OnInit {
   ionViewWillEnter () {
     this.draftsName = [];
 
-    this.storage.get(DASHDOC_COMPANY).then ((id) => {
+    this.storage.get(CURRENT_COMPANY).then ((id) => {
       this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${id}`).then ((drafts) => {
         if (drafts) {
           this.drafts = drafts;

@@ -4,7 +4,7 @@ import { Storage } from '@ionic/storage-angular';
 import { AuthService } from 'src/app/services/auth.service';
 import { CompanyService } from 'src/app/services/company.service';
 import { ConfigService } from 'src/app/services/config.service';
-import { DASHDOC_COMPANY } from 'src/app/services/constants';
+import { CURRENT_COMPANY } from 'src/app/services/constants';
 
 @Component({
   selector: 'app-header',

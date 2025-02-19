@@ -25,7 +25,7 @@
       (ionChange)="onChooseCompany($event.detail.value)"
       [(ngModel)]="selectedCompanyId">
       <ion-select-option *ngFor="let company of loadedCompanies" [value]="company.id">{{ company.name }}</ion-select-option>
-      <ion-icon color="primary" name="chevron-down" slot="end" (click)="openSelect()"></ion-icon>
+      <ion-icon color="primary" name="chevron-down" slot="end" (click)="companyChoose.open ()"></ion-icon>
     </ion-select>
 
     <ion-button (click)="onNewOrder ()" [disabled]="!companyService.currentCompany">

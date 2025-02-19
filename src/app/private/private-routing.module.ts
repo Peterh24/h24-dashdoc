@@ -28,7 +28,7 @@ const routes: Routes = [
       },
       {
         path: 'transports',
-        loadChildren: () => import('./deliveries/deliveries.module').then( m => m.DeliveriesPageModule)
+        loadChildren: () => import('./transports/transports.module').then( m => m.DeliveriesPageModule)
       }
     ]
   }

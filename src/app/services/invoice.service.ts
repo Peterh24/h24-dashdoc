@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Storage } from '@ionic/storage-angular';
 import { BehaviorSubject, Observable, from, map, switchMap, tap } from 'rxjs';
-import { Customer, Invoice, Item } from '../private/profile/invoice/invoice.model';
 import { API_URL } from './constants';
+import { Customer, Invoice, Item } from '../private/models/invoice.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class InvoiceService {
 
 
   fetchInvoices(): Observable<Invoice[]> {
-    return from(this.storage.get('DASHDOC_COMPANY')).pipe(
+    return from(this.storage.get('CURRENT_COMPANY')).pipe(
       switchMap(companyid => {
         return this.http.get(`${API_URL}invoices/${companyid}`).pipe( // TODO
           map((resData: any) => {

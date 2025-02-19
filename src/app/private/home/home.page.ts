@@ -1,15 +1,14 @@
-import { Component, ViewChild } from '@angular/core';
-import { IonSelect, LoadingController } from '@ionic/angular';
+import { Component } from '@angular/core';
+import { LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
 import { Company } from '../models/company.model';
 import { CompanyService } from 'src/app/services/company.service';
-import { DASHDOC_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
+import { CURRENT_COMPANY, USER_STORAGE_KEY } from 'src/app/services/constants';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { AddressService } from 'src/app/services/address.service';
 import { ContactsService } from 'src/app/services/contacts.service';
 import { NotificationsService } from 'src/app/services/notifications.service';
-import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { TransportOrderService } from 'src/app/services/transport-order.service';
 import { TransportService } from 'src/app/services/transport.service';
@@ -23,18 +22,16 @@ import { firstValueFrom, take } from 'rxjs';
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage {
-  loadedCompanies: Array<Company>;
+  loadedCompanies: Company[];
   currentUser: User;
   selectedCompanyId: any;
   showResetTransport = false;
 
-  @ViewChild('companyChoose', { static: false }) companyChoose: IonSelect;
   constructor(
     public config: ConfigService,
     public companyService: CompanyService,
     public transportService: TransportService,
     private storage: Storage,
-    private apiTransport: ApiTransportService,
     private authService: AuthService,
     private addressService: AddressService,
     private contactService: ContactsService,
@@ -53,7 +50,7 @@ export class HomePage {
       this.companyService.fetchCompanies().pipe(take(1)).subscribe((companies) => {
         this.loadedCompanies = companies;
 
-        this.storage.get(DASHDOC_COMPANY).then((company) => {
+        this.storage.get(CURRENT_COMPANY).then((company) => {
           if(company && this.selectedCompanyId !== company){
             this.selectedCompanyId = company;
             this.onChooseCompany(company)
@@ -82,8 +79,8 @@ export class HomePage {
       loading.dismiss();
       if (currentCompany) {
         await firstValueFrom (this.companyService.setCurrentCompany(currentCompany.id));
-        this.storage.set(USER_STORAGE_KEY, currentCompany.token || currentCompany.id).then (() => this.companyService.getCompanyStatus () );
-        this.storage.set(DASHDOC_COMPANY, companyId);
+        this.storage.set(USER_STORAGE_KEY, currentCompany.token).then (() => this.companyService.getCompanyStatus () );
+        this.storage.set(CURRENT_COMPANY, companyId);
         this.companyService.isCompanySwitch = false;
         this.addressService.resetAddresses ();
         this.contactService.resetContacts ();
@@ -93,10 +90,6 @@ export class HomePage {
       await this.companyService.setCurrentCompany(companyId);
       this.companyService.isCompanySwitch = false;
     }
-  }
-
-  openSelect(){
-    this.companyChoose.open();
   }
 
   onNewOrder () {

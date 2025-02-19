@@ -4,7 +4,7 @@ import { AddressService } from 'src/app/services/address.service';
 import { AlertController, IonItemSliding, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
-import { CONTACT_FOLDER_KEY, DASHDOC_COMPANY, HTTP_REQUEST_UNKNOWN_ERROR, USER_STORAGE_KEY } from 'src/app/services/constants';
+import { CONTACT_FOLDER_KEY, CURRENT_COMPANY, HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
 import { ContactsService } from 'src/app/services/contacts.service';
 import { NewContactPage } from './new-contact/new-contact.page';
 import { Contact } from '../../models/transport.model';
@@ -59,9 +59,6 @@ export class ContactsPage implements OnInit {
     this.contacts = [];
     this.displayedContacts = [];
     this.contactFolder = {};
-    this.storage.get(USER_STORAGE_KEY).then(token => {
-
-    })
 
     this.isLoading = true;
     this.selectedContacts = {};
@@ -73,7 +70,7 @@ export class ContactsPage implements OnInit {
         this.isLoading = false;
 
 
-        this.storage.get(DASHDOC_COMPANY).then ((id) => {
+        this.storage.get(CURRENT_COMPANY).then ((id) => {
           this.storage.get (`${CONTACT_FOLDER_KEY}_${id}`).then ((contactFolder) => {
             /*
             if (contactFolder == null) {
@@ -269,7 +266,7 @@ export class ContactsPage implements OnInit {
         this.contactFolder[contact.id] = folder;
       }
 
-      this.storage.get(DASHDOC_COMPANY).then ((id) => {
+      this.storage.get(CURRENT_COMPANY).then ((id) => {
         this.storage.set (`${CONTACT_FOLDER_KEY}_${id}`, this.contactFolder);
       });
     });

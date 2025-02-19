@@ -2,12 +2,12 @@
     <ion-icon name="close-outline" class="close-button" (click)="closeModal ()" *ngIf="isModal"></ion-icon>
     <div class="section" *ngIf="enableOrigin">
       <h3>Ajouter un enlèvement</h3>
-      <div [ngTemplateOutlet]="delivery" [ngTemplateOutletContext]="{ type: 'origin', form: originForm, address: origin, errors: originErrors }"></div>
+      <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'origin', form: originForm, address: origin, errors: originErrors }"></div>
       <br>
     </div>
     <div  class="section" *ngIf="enableDestination">
       <h3>Ajouter une livraison</h3>
-      <div [ngTemplateOutlet]="delivery" [ngTemplateOutletContext]="{ type: 'destination', form: destinationForm, address: destination, errors: destinationErrors }"></div>
+      <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ type: 'destination', form: destinationForm, address: destination, errors: destinationErrors }"></div>
     </div>
 
     <div [formGroup]="otherForm"  class="section" *ngIf="origin">
@@ -40,7 +40,7 @@
     <br>
 
     <!-- Delivery template -->
-    <ng-template #delivery let-type="type" let-address="address" let-form="form" let-errors="errors">
+    <ng-template #deliveryTpl let-type="type" let-address="address" let-form="form" let-errors="errors">
       <div class="address-and-contact">
         <div [formGroup]="form" class="relative">
           <!--

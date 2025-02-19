@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 import { Storage } from '@ionic/storage-angular';
-import { DASHDOC_COMPANY, FILE_UPLOAD_MAX_SIZE } from 'src/app/services/constants';
+import { CURRENT_COMPANY, FILE_UPLOAD_MAX_SIZE } from 'src/app/services/constants';
 import { ContactsPage } from 'src/app/private/profile/contacts/contacts.page';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { FileUtils } from 'src/app/utils/file-utils';
@@ -60,8 +60,6 @@ export class DeliveryPage implements OnInit, OnChanges {
   originErrors: Record<string, boolean> = {};
   destinationErrors: Record<string, boolean> = {};
   hasErrors: boolean;
-
-  isDashdocModel = ApiTransportService.isDashdocModel;
 
   constructor(
     public transportOrderService: TransportOrderService,
@@ -141,7 +139,7 @@ export class DeliveryPage implements OnInit, OnChanges {
       this.updateEnabled ();
     }
 
-    this.storage.get(DASHDOC_COMPANY).then (id => {
+    this.storage.get(CURRENT_COMPANY).then (id => {
       this.company = id;
 
       if (!this.contacts?.length) {
@@ -585,6 +583,7 @@ export class DeliveryPage implements OnInit, OnChanges {
     }
 
     return new Site (
+      '0',
       address,
       slots,
       values.instructions,

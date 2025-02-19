@@ -7,7 +7,7 @@ import { Storage } from '@ionic/storage-angular';
 import { take } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
-import { API_URL, DASHDOC_COMPANY } from 'src/app/services/constants';
+import { API_URL, CURRENT_COMPANY } from 'src/app/services/constants';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import { phoneValidator, regex } from 'src/app/utils/regex';
 
@@ -44,7 +44,7 @@ export class ProfilePage implements OnInit {
   ionViewWillEnter() {
     const currentUser = this.authService.currentUser;
     this.success = undefined;
-    this.storage.get(DASHDOC_COMPANY).then((company: string) => {
+    this.storage.get(CURRENT_COMPANY).then((company: string) => {
       this.company = company;
     });
 

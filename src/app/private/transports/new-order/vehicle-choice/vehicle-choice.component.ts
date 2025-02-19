@@ -33,21 +33,12 @@ export class VehicleChoiceComponent  implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.vehicleService.vehicles.pipe(
-      take(1),
-      tap((vehicles) => {
-        if (vehicles.length > 0) {
-          this.vehicles = vehicles;
-          if (!this.currentVehicle) {
-            this.currentVehicle = this.vehicles[0];
-          }
-        } else {
-          this.vehicleService.fetchVehicles().subscribe((vehicles) => {
-            this.vehicles = vehicles;
-            if (!this.currentVehicle && vehicles.length > 0) {
-              this.currentVehicle = vehicles[0];
-            }
-          });
+    this.vehicleService.fetchVehicles().pipe(
+      take (1),
+      tap ((vehicles) => {
+        this.vehicles = vehicles;
+        if (!this.currentVehicle) {
+          this.currentVehicle = this.vehicles[0];
         }
       })
     ).subscribe();
@@ -93,7 +84,5 @@ export class VehicleChoiceComponent  implements OnInit {
         }
       }
     }
-
   }
-
 }

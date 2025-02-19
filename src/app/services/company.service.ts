@@ -4,7 +4,7 @@ import { Company } from '../private/models/company.model';
 import { ApiTransportService } from './api-transport.service';
 import { AuthService } from './auth.service';
 import { Storage } from '@ionic/storage-angular';
-import { COMPANIES_KEY, DASHDOC_COMPANY } from './constants';
+import { COMPANIES_KEY, CURRENT_COMPANY } from './constants';
 
 @Injectable({
   providedIn: 'root'
@@ -23,22 +23,20 @@ export class CompanyService {
   ) { }
 
   async init () {
-    try {
-      if (this.authService.currentUser?.id) {
-        this.companies = await this.storage.get (`${COMPANIES_KEY}_${this.authService.currentUser.id}`);
-      }
-      if (!this.companies) {
-        await firstValueFrom (this.fetchCompanies ());
-      }
-      const company = await this.storage.get(DASHDOC_COMPANY);
-      if (company && this.getCompany(company)) {
-        await firstValueFrom (this.setCurrentCompany (company));
-      } else {
-        await this.storage.remove(DASHDOC_COMPANY);
-        await firstValueFrom (this.fetchCompanies ());
-      }
-    } catch(e) {
-      console.error (e);
+    if (this.authService.currentUser?.id) {
+      this.companies = await this.storage.get (`${COMPANIES_KEY}_${this.authService.currentUser.id}`);
+    }
+
+    if (!this.companies) {
+      await firstValueFrom (this.fetchCompanies ());
+    }
+
+    const company = await this.storage.get(CURRENT_COMPANY);
+    if (company && this.getCompany(company)) {
+      await firstValueFrom (this.setCurrentCompany (company));
+    } else {
+      await this.storage.remove(CURRENT_COMPANY);
+      await firstValueFrom (this.fetchCompanies ());
     }
   }
 

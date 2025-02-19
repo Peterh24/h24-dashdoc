@@ -7,7 +7,7 @@ import { firstValueFrom } from 'rxjs';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
-import { DASHDOC_COMPANY, HTTP_REQUEST_UNKNOWN_ERROR, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
+import { CURRENT_COMPANY, HTTP_REQUEST_UNKNOWN_ERROR, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import { VehiclesService } from 'src/app/services/vehicles.service';
 import { NewOrderCommon } from '../new-order-common';
@@ -200,7 +200,7 @@ export class SummaryComponent  implements OnInit {
         this.notifications.resetToken ();
 
         if (this.transportOrderService.draftName && deleteDraft) {
-          this.storage.get(DASHDOC_COMPANY).then ((id) => {
+          this.storage.get(CURRENT_COMPANY).then ((id) => {
             this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${id}`).then ((drafts) => {
               delete drafts[this.transportOrderService.draftName];
               this.transportOrderService.draftName = null;

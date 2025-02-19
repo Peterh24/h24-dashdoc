@@ -1,10 +1,10 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { InvoiceService } from 'src/app/services/invoice.service';
-import { Invoice } from './invoice.model';
 import { IonAccordionGroup, IonInfiniteScroll, IonSegment } from '@ionic/angular';
 import { StatusService } from 'src/app/utils/services/status.service';
 import { CountriesService } from 'src/app/utils/services/countries.service';
 import { Browser } from '@capacitor/browser';
+import { Invoice } from '../../models/invoice.model';
 
 @Component({
   selector: 'app-invoice',

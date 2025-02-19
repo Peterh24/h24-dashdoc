@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { AddressService } from 'src/app/services/address.service';
 import { AlertController, IonItemSliding, ModalController, ToastController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
-import { ADDRESS_FOLDER_KEY, ADDRESS_FOLDERS_KEY, DASHDOC_COMPANY, HTTP_REQUEST_UNKNOWN_ERROR, USER_STORAGE_KEY } from 'src/app/services/constants';
+import { ADDRESS_FOLDER_KEY, ADDRESS_FOLDERS_KEY, CURRENT_COMPANY, HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
 import { NewAddressPage } from './new-address/new-address.page';
 import { EditAddressPage } from './edit-address/edit-address.page';
 import { ConfigService } from 'src/app/services/config.service';
@@ -62,9 +62,6 @@ export class AddressPage implements OnInit {
     this.addresses = [];
     this.displayedAddresses = [];
     this.addressFolder = {};
-    this.storage.get(USER_STORAGE_KEY).then(token => {
-
-    })
 
     this.isLoading = true;
     this.selectedAddress = {};
@@ -75,7 +72,7 @@ export class AddressPage implements OnInit {
       next: (addresses: Address[]) => {
         this.isLoading = false;
 
-        this.storage.get(DASHDOC_COMPANY).then ((id) => {
+        this.storage.get(CURRENT_COMPANY).then ((id) => {
           this.storage.get (`${ADDRESS_FOLDER_KEY}_${id}`).then ((addressFolder) => {
             if (!addressFolder) {
               addressFolder = {};
@@ -255,7 +252,7 @@ export class AddressPage implements OnInit {
       this.folders.push (String(name));
       this.folders.sort ((a,b) => a.localeCompare (b));
 
-      this.storage.get(DASHDOC_COMPANY).then ((id) => {
+      this.storage.get(CURRENT_COMPANY).then ((id) => {
         this.storage.set (`${ADDRESS_FOLDERS_KEY}_${id}`, this.folders);
       });
     }
@@ -274,7 +271,7 @@ export class AddressPage implements OnInit {
         {
           text: 'OK',
           handler: () => {
-            this.storage.get(DASHDOC_COMPANY).then ((id) => {
+            this.storage.get(CURRENT_COMPANY).then ((id) => {
               for (var address in this.addressFolder) {
                 if (this.addressFolder[address] == folder) {
                   delete this.addressFolder[address];
@@ -297,7 +294,7 @@ export class AddressPage implements OnInit {
   }
 
   renameFolder (newFolderName: any, modal: IonModal) {
-    this.storage.get(DASHDOC_COMPANY).then ((id) => {
+    this.storage.get(CURRENT_COMPANY).then ((id) => {
       for (var address in this.addressFolder) {
         if (this.addressFolder[address] == this.renameFolderName) {
           this.addressFolder[address] = newFolderName;
@@ -385,7 +382,7 @@ export class AddressPage implements OnInit {
         this.addressFolder[address.id] = folder;
       }
 
-      this.storage.get(DASHDOC_COMPANY).then ((id) => {
+      this.storage.get(CURRENT_COMPANY).then ((id) => {
         this.storage.set (`${ADDRESS_FOLDER_KEY}_${id}`, this.addressFolder);
       });
     });

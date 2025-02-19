@@ -3,7 +3,7 @@ import { map, tap } from 'rxjs';
 import { Address, Contact, Delivery, Load, Message, Site, Transport } from '../private/models/transport.model';
 import { Storage } from '@ionic/storage-angular';
 import { HttpClient } from '@angular/common/http';
-import { API_URL, DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from './constants';
+import { API_URL, CURRENT_COMPANY, TRANSPORTS_DRAFTS_KEY } from './constants';
 import { ApiTransportService } from './api-transport.service';
 import { FileUtils } from '../utils/file-utils';
 import { TransportOrderService } from './transport-order.service';
@@ -32,7 +32,7 @@ export class TransportService {
     )
   }
 
-  getTransport(id: any){
+  getTransport(id: string){
     return this.transports.find ((transport) => transport.id == id);
   }
 
@@ -94,7 +94,7 @@ export class TransportService {
   }
 
   loadDeliveries(json: any, isMultipoint = false) {
-    const deliveries: any[] = json.map((d: any) => this.loadDelivery(d));
+    const deliveries: Delivery[] = json.map((d: any) => this.loadDelivery(d));
 
     const isSingleOrigin = this.utilsService.areAllValuesIdentical(json, 'origin', 'address');
     const isSingleDestination = this.utilsService.areAllValuesIdentical(json, 'destination', 'address');
@@ -127,6 +127,7 @@ export class TransportService {
 
     if (json.origin) {
         origin = new Site(
+            json.origin.id,
             this.loadAddress(json.origin?.address),
             json.origin.slots,
             json.origin.instructions,
@@ -139,6 +140,7 @@ export class TransportService {
 
     if (json.destination) {
         destination = new Site(
+            json.destination.id,
             this.loadAddress(json.destination?.address),
             json.destination.slots,
             json.destination.instructions,
@@ -167,20 +169,24 @@ export class TransportService {
       }
 
       const { id, name, address, city, postcode, country, instructions, latitude, longitude } = json;
-      return new Address(id, name, address, postcode, city, country, instructions, latitude, longitude);
+      return new Address (id, name, address, postcode, city, country, instructions, latitude, longitude);
   }
 
   loadContact(json: any) {
-      if (!json?.contact) {
-          return null;
+      if (json?.contact) {
+          json = json.contact;
       }
 
-      const { id, company, first_name, last_name, email, phone_number } = json.contact;
-      return new Contact(id, company.id, company.name, first_name, last_name, email, phone_number);
+      if (!json) {
+        return null;
+      }
+
+      const { id, company, first_name, last_name, email, phone_number } = json;
+      return new Contact (id, company.id, company.name, first_name, last_name, email, phone_number);
   }
 
   loadSegments(deliveriesJson: any, isMultipoint = false) {
-      const segments: any[] = deliveriesJson?.map((d: any) => this.loadDelivery(d));
+      const segments: Delivery[] = deliveriesJson?.map((d: any) => this.loadDelivery(d));
 
       segments.forEach((segment, index) => {
           if (index > 0) {
@@ -228,7 +234,7 @@ export class TransportService {
     }
     */
 
-    const company = await this.storage.get(DASHDOC_COMPANY);
+    const company = await this.storage.get(CURRENT_COMPANY);
 
     const deliveries = this.buildDeliveries (transport, company, shipperReference);
     const segments = this.buildSegments (transport, deliveries);
@@ -355,6 +361,7 @@ export class TransportService {
     const fileUtils = new FileUtils ();
 
     const transport = this.loadTransport (draft);
+    console.log ('draft', transport);
     transport.draftName = draftName;
 
     for (const delivery of transport.deliveries) {
@@ -383,7 +390,7 @@ export class TransportService {
 
     transport.is_multipoint = transport.isMultipoint;
 
-    this.storage.get(DASHDOC_COMPANY).then ((id) => {
+    this.storage.get(CURRENT_COMPANY).then ((id) => {
       this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${id}`).then ((drafts) => {
         if (!drafts) {
           drafts = {};

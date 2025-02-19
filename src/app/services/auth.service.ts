@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
-import { DASHDOC_COMPANY, JWT_KEY, USER_STORAGE_KEY } from './constants';
+import { CURRENT_COMPANY, JWT_KEY, USER_STORAGE_KEY } from './constants';
 import { take, map, catchError, tap } from 'rxjs';
 import jwt_decode from 'jwt-decode';
 import { Router } from '@angular/router';
@@ -64,7 +64,7 @@ export class AuthService {
   }
 
   login(username: string, password: string) {
-    this.storage.remove('DASHDOC_COMPANY');
+    this.storage.remove('CURRENT_COMPANY');
     return this.apiTransport.loginUser(username, password).pipe(
       map(async (res: any) => {
         this.storage.set(JWT_KEY, res.token);
@@ -95,7 +95,7 @@ export class AuthService {
   async signOut(){
     await this.storage.remove(JWT_KEY);
     await this.storage.remove(USER_STORAGE_KEY);
-    await this.storage.remove(DASHDOC_COMPANY);
+    await this.storage.remove(CURRENT_COMPANY);
     this.currentUser = null;
     this.router.navigate(['/'], { replaceUrl: true });
   }

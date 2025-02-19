@@ -5,7 +5,7 @@ import { Storage } from '@ionic/storage-angular';
 import { Subscription } from 'rxjs';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { ConfigService } from 'src/app/services/config.service';
-import { DASHDOC_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
+import { CURRENT_COMPANY, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { TransportOrderService } from 'src/app/services/transport-order.service';
 import { TransportService } from 'src/app/services/transport.service';
 import { Contact, Delivery, Load, Transport } from '../../models/transport.model';
@@ -116,7 +116,7 @@ export class BasketPage implements OnInit, AfterViewInit {
   }
 
   loadDrafts () {
-    this.storage.get(DASHDOC_COMPANY).then ((id) => {
+    this.storage.get(CURRENT_COMPANY).then ((id) => {
       this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${id}`).then ((drafts) => {
         this.drafts = drafts || [];
         this.draftsName = Object.keys (this.drafts);
@@ -176,7 +176,7 @@ export class BasketPage implements OnInit, AfterViewInit {
 
     if (index) {
       const draftName = this.draftsName[parseInt(new String(index).substring (1))];
-      this.storage.get(DASHDOC_COMPANY).then ((id) => {
+      this.storage.get(CURRENT_COMPANY).then ((id) => {
         this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${id}`).then ((drafts) => {
           if (drafts) {
             delete drafts[draftName];

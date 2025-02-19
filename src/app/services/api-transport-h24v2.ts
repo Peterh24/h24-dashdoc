@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { Storage } from "@ionic/storage-angular";
-import { API_URL, API_URL_V2, DASHDOC_COMPANY } from "./constants";
+import { API_URL, API_URL_V2, CURRENT_COMPANY } from "./constants";
 import { EMPTY, expand, map, reduce, tap } from "rxjs";
 import { UtilsService } from "../utils/services/utils.service";
 import { ConfigService } from "./config.service";
@@ -26,7 +26,7 @@ export class ApiTransportH24v2 {
     }
 
     async init () {
-        const company = await this.storage.get(DASHDOC_COMPANY);
+        const company = await this.storage.get(CURRENT_COMPANY);
         this.companyId = company ? parseInt(company) : null;
     }
 
@@ -111,12 +111,12 @@ export class ApiTransportH24v2 {
             reduce ((acc: any, res: any) => acc.concat (res.items),  []),
             map ((acc: any) => acc.map ((contact: any, index: number) => new Contact (
               contact.id,
+              contact.company?.id,
+              contact.company?.name,
               contact.first_name,
               contact.last_name,
               contact.email,
               contact.phone_number,
-              contact.company?.id,
-              contact.company?.name,
               contact.has_pending_invite,
             ))));
     }
@@ -135,7 +135,12 @@ export class ApiTransportH24v2 {
     }
 
     inviteUser (contact: Contact) {
-        return this.http.post (`${this.apiUrl}user/invite`, { name: contact.last_name, email: contact.email, company: contact.company, phone: contact.phone_number })
+        return this.http.post (`${this.apiUrl}user/invite`, {
+            name: contact.last_name,
+            email: contact.email,
+            company: contact.company,
+            phone: contact.phone_number
+        })
     }
 
     updateContact (id: string, contact: any) {

@@ -39,6 +39,7 @@ export class Delivery {
 
 export class Site {
   constructor(
+    public id: string,
     public address: Address,
     public slots: Array<Slot>,
     public instructions: string,

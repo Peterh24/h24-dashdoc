@@ -4,11 +4,11 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { DeliveriesPageRoutingModule } from './deliveries-routing.module';
+import { DeliveriesPageRoutingModule } from './transports-routing.module';
 
 import { SharedModule } from 'src/app/shared/shared.module';
 import { HeaderModule } from 'src/app/components';
-import { DeliveriesPage } from './deliveries.page';
+import { TransportsPage } from './transports.page';
 
 
 @NgModule({
@@ -20,6 +20,6 @@ import { DeliveriesPage } from './deliveries.page';
     SharedModule,
     HeaderModule
   ],
-  declarations: [DeliveriesPage],
+  declarations: [TransportsPage],
 })
 export class DeliveriesPageModule {}
