@@ -69,6 +69,7 @@ export class DeliveryPage implements OnInit, OnChanges {
   }
 
   ngOnInit () {
+    this.ngOnChanges ();
   }
 
   ngOnChanges () {

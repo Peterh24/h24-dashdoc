@@ -206,8 +206,8 @@ export class AddressPage implements OnInit {
         delete this.addressFolder[addressId];
         this.openFolder (this.currentFolderName);
 
-        this.displayedAddresses = addresses;
-        this.addresses = addresses;
+        this.addresses = this.addresses.filter ((address) => address.id != addressId);
+        this.displayedAddresses = this.addresses;
         this.selectFolder (null);
 
         const toast = await this.toastController.create({

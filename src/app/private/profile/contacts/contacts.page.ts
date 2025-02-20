@@ -80,7 +80,7 @@ export class ContactsPage implements OnInit {
               this.folders = [...new Set (Object.values(contactFolder))];
             }
             */
-            this.loadContacts (contacts);
+            this.loadContacts ([...contacts]);
           })
         });
       },

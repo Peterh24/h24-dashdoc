@@ -163,10 +163,9 @@ export class SummaryComponent  implements OnInit {
 
     request.subscribe({
       next: async (res: any) => {
-        const transport = res;
-
         loading.dismiss ();
 
+        const transport = res;
         const errors = await this.uploadFiles (transport, files);
 
         if (errors?.length) {
@@ -257,6 +256,7 @@ export class SummaryComponent  implements OnInit {
       modal.dismiss ();
 
       const transport = await this.transportService.buildTransport (this.transportOrderService);
+      transport.isMultipoint = this.transportOrderService.isMultipoint;
       this.transportService.saveDraft (String(name), transport);
     }
   }

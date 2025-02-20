@@ -33,11 +33,6 @@ export class NewContactPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.contactsService.fetchContactsCompanies().subscribe({
-      next: (companies: Company[]) => {
-        this.companies = companies;
-      }});
-
     this.form = new FormGroup({
       first_name: new FormControl(null, { validators: [Validators.required] }),
       last_name: new FormControl(null, { validators: [Validators.required] }),
@@ -48,13 +43,22 @@ export class NewContactPage implements OnInit {
 
     this.route.paramMap.subscribe(
       paramMap => {
-        const contactId = paramMap.get ('contactId') || this.contactId;
-        if (contactId) {
-          const contact = this.contactsService.getContact (contactId);
-          this.contact = contact,
-          this.form.patchValue (contact);
-          this.form.updateValueAndValidity ();
-        }
+        this.contactsService.fetchContactsCompanies().subscribe({
+          next: (companies: Company[]) => {
+            this.companies = companies;
+
+            const contactId = paramMap.get ('contactId') || this.contactId;
+            if (contactId) {
+              const contact = this.contactsService.getContact (contactId);
+              this.contact = contact,
+              this.form.patchValue (contact);
+              this.form.updateValueAndValidity ();
+            } else {
+              if (companies?.length) {
+                this.form.controls['company'].setValue (companies[0].id);
+              }
+            }
+          }});
      });
   }
 
@@ -78,11 +82,12 @@ export class NewContactPage implements OnInit {
 
       request.subscribe({
         next: (res) => {
+          loadingElement.dismiss();
+
           if (!this.contact?.id) {
             this.apiTransport.inviteUser (res).subscribe ();
           }
 
-          loadingElement.dismiss();
           if(!this.isModal) {
             this.router.navigate(['/private/tabs/profile/contacts']);
             return;
@@ -92,7 +97,7 @@ export class NewContactPage implements OnInit {
         },
         error: async (error) => {
           console.log (error);
-          loadingElement.present();
+          loadingElement.dismiss();
 
           const alert = await this.alertController.create({
             header: "Erreur",

@@ -69,11 +69,11 @@ export class TransportService {
     const isSingleOrigin = this.utilsService.areAllValuesIdentical(transport, 'origin', 'address');
     const isSingleDestination = this.utilsService.areAllValuesIdentical(transport, 'destination', 'address');
 
-    const isMultipoint = transport.is_multipoint || !isSingleOrigin && !isSingleDestination;
+    const isMultipoint = transport.isMultipoint || !isSingleOrigin && !isSingleDestination;
 
     const deliveries = this.sortDeliveries(this.loadDeliveries(transport.deliveries, isMultipoint));
 
-    return new Transport(
+    const newTransport = new Transport(
         String(transport.id),
         'audiovisual',
         transport.created_at,
@@ -91,6 +91,10 @@ export class TransportService {
         transport.requested_vehicle || transport.vehicle,
         transport.carbon_footprint
     );
+
+    newTransport.isMultipoint = isMultipoint;
+
+    return newTransport;
   }
 
   loadDeliveries(json: any, isMultipoint = false) {
@@ -181,8 +185,19 @@ export class TransportService {
         return null;
       }
 
-      const { id, company, first_name, last_name, email, phone_number } = json;
-      return new Contact (id, company.id, company.name, first_name, last_name, email, phone_number);
+      const { id, first_name, last_name, email, phone_number } = json;
+
+      let companyId, companyName;
+
+      if (typeof json.company === 'object') {
+        companyId = json.company?.id;
+        companyName = json.company?.name;
+      } else {
+        companyId = json.company;
+        companyName = json.company_name;
+      }
+
+      return new Contact (id, companyId, companyName, first_name, last_name, email, phone_number);
   }
 
   loadSegments(deliveriesJson: any, isMultipoint = false) {
@@ -254,7 +269,9 @@ export class TransportService {
     let deliveries: any[] = [];
 
     if (transport.isMultipoint) {
-      deliveries = transport.deliveries;
+      transport.deliveries.forEach ((delivery: any) => {
+        deliveries.push ({ ...delivery });
+      });
     } else {
       const origins = transport.getOrigins ();
       const destinations = transport.getDestinations ();
@@ -387,8 +404,6 @@ export class TransportService {
         delivery.destination.file = await fileUtils.serializeFile (delivery.destination.file);
       }
     }
-
-    transport.is_multipoint = transport.isMultipoint;
 
     this.storage.get(CURRENT_COMPANY).then ((id) => {
       this.storage.get (`${TRANSPORTS_DRAFTS_KEY}_${id}`).then ((drafts) => {

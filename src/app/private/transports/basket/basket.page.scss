@@ -92,9 +92,15 @@ ion-button {
     font-weight: bold;
 }
 
-ion-modal .buttons ion-button {
-    display: flex;
-    justify-content: space-between;
+ion-modal {
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    ion-button {
+      flex-grow: 1;
+    }
 }
 
 .h24loader {
