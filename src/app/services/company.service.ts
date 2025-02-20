@@ -25,18 +25,17 @@ export class CompanyService {
   async init () {
     if (this.authService.currentUser?.id) {
       this.companies = await this.storage.get (`${COMPANIES_KEY}_${this.authService.currentUser.id}`);
-    }
+      if (!this.companies) {
+        await firstValueFrom (this.fetchCompanies ());
+      }
 
-    if (!this.companies) {
-      await firstValueFrom (this.fetchCompanies ());
-    }
-
-    const company = await this.storage.get(CURRENT_COMPANY);
-    if (company && this.getCompany(company)) {
-      await firstValueFrom (this.setCurrentCompany (company));
-    } else {
-      await this.storage.remove(CURRENT_COMPANY);
-      await firstValueFrom (this.fetchCompanies ());
+      const company = await this.storage.get(CURRENT_COMPANY);
+      if (company && this.getCompany(company)) {
+        await firstValueFrom (this.setCurrentCompany (company));
+      } else {
+        await this.storage.remove(CURRENT_COMPANY);
+        await firstValueFrom (this.fetchCompanies ());
+      }
     }
   }
 
@@ -67,6 +66,7 @@ export class CompanyService {
     return this.apiTransport.chooseCompany (id).pipe (
       tap ((res) => {
         this.currentCompany = this.getCompany (id);
+        this.getCompanyStatus ();
       })
     )
   }

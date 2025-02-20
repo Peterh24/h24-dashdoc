@@ -1,3 +1,7 @@
+.container {
+    position: relative;
+}
+
 ion-button {
     --border-radius: 20px;
 }
@@ -5,11 +9,25 @@ ion-button {
 .swiper-wrap {
     position: relative;
 
-    ion-buttons {
+    .buttons {
         position: absolute;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         top: 50%;
         transform: translateY(-50%);
-        width: 98%;
+        width: 100%;
+        z-index: 1000;
+    }
+
+    .buttons ion-icon {
+        color: white;
+        font-size: 18pt;
+        cursor: pointer;
+    }
+
+    .buttons ion-icon.disabled {
+        color: grey;
     }
 }
 
@@ -23,7 +41,6 @@ h3 {
         font-size: 16px;
         font-weight: 400;
         line-height: 30px;
-        margin-bottom: 20px;
         color: #6A6A6A;
         font-weight: 700;
     }
@@ -38,7 +55,7 @@ h3 {
 
     .price-from {
         color: black;
-    }    
+    }
 }
 
 .vehicles-list {
@@ -60,11 +77,24 @@ h3 {
 
 .next-page {
     min-width: 150px;
+    height: 40px;
+    padding-right: 15px;
+    padding-bottom: 30px;
+}
+
+@media (max-width: 768px) {
+    .buttons ion-icon {
+        margin: 10px;
+    }
 }
 
 @media (min-width: 768px) {
     swiper-container {
         max-width: 25vw;
+    }
+
+    .buttons ion-icon {
+        margin: 20px;
     }
 
     .vehicles-list ion-img {

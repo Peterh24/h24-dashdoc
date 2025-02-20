@@ -49,6 +49,7 @@ hr {
 .address, .contact {
     padding: 5px 5px 10px 25px;
     margin-top: 20px;
+    cursor: pointer;
 }
 
 .address div, .contact div {
@@ -109,16 +110,16 @@ ion-datetime-button {
         display: block;
         width: 100% !important;
         padding: 10px;
-    }        
+    }
 }
 
 .day {
     display: flex;
     justify-content: center;
     align-items: center;
-//    margin-top: 10px;
     padding: 10px;
     height: 40px;
+    cursor: pointer;
 }
 
 .time {
@@ -126,7 +127,6 @@ ion-datetime-button {
         display: flex;
         justify-content: space-between;
         align-items: center;
-//        margin-top: 10px;
     }
 
     div {
@@ -148,6 +148,7 @@ ion-datetime-button {
         border: 1px solid lightgray;
         text-align: center;
         height: 40px;
+        cursor: pointer;
     }
 }
 
@@ -197,7 +198,7 @@ legend {
         max-height: 100%;
         max-height: 150px;
         -webkit-mask-image: -webkit-gradient(linear, right 0%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));
-        mask-image: gradient(linear, right 0%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));    
+        mask-image: gradient(linear, right 0%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));
     }
 }
 
@@ -319,5 +320,5 @@ ion-toggle {
 @media (min-width: 1200px) {
     .container {
         padding-right: 30%;
-    }   
+    }
 }

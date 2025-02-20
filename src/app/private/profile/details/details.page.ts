@@ -17,9 +17,9 @@ export class DetailsPage {
   private regex: any = regex;
   regexErrors: any = regexErrors;
   form = this.formBuilder.nonNullable.group({
-    firstname: ['', [Validators.required]],
-    lastname: ['', [Validators.required]],
-    phone: ['', [Validators.required, phoneValidator ()]],
+    first_name: ['', [Validators.required]],
+    last_name: ['', [Validators.required]],
+    phone_number: ['', [Validators.required, phoneValidator ()]],
     email: ['', [Validators.required, Validators.pattern(this.regex.email)]],
 
   });
@@ -46,11 +46,11 @@ export class DetailsPage {
     } else {
       this.authService.loadCurrentUserDetail(currentUser.id).pipe(take(1)).subscribe((res:any) => {
         this.form.patchValue({
-          firstname: res.firstname,
-          lastname: res.lastname,
-          phone: res.phone,
+          first_name: res.first_name,
+          last_name: res.last_name,
+          phone_number: res.phone_number,
           email: res.email,
-        }) 
+        })
       })
     }
   }
@@ -71,7 +71,7 @@ export class DetailsPage {
   }
 
   async onSubmit(){
-    const { firstname, lastname, phone, email } = this.form.getRawValue();
+    const { first_name, last_name, phone_number, email } = this.form.getRawValue();
 
     const loading = await this.loadingController.create({
       keyboardClose: true,
@@ -80,7 +80,7 @@ export class DetailsPage {
     })
     await loading.present();
 
-    this.authService.update(firstname, lastname, phone, email).subscribe({
+    this.authService.update(first_name, last_name, phone_number, email).subscribe({
       next: (res) => {
         loading.dismiss();
         this.success = true;

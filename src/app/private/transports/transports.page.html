@@ -2,7 +2,7 @@
 
 <ion-content>
   <div class="container">
-    <ion-button class="create-order" (click)="setShowResetTransport()">Créer une demande <ion-icon name="chevron-right"></ion-icon></ion-button>
+    <ion-button class="create-order" (click)="onNewOrder()">Créer une demande <ion-icon name="chevron-right"></ion-icon></ion-button>
     <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
       <ion-refresher-content></ion-refresher-content>
     </ion-refresher>

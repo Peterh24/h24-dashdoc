@@ -1,53 +1,44 @@
 <!-- TODO: <app-progress-bar [current]="0" [next]="0.20" ></app-progress-bar> -->
 
-<h3>Sélection du vehicule</h3>
-<ion-grid class="page-grid" *ngIf="currentVehicle">
-  <ion-row>
-    <ion-col class="swiper-wrap">
-      <ion-buttons class="ion-justify-content-between">
-        <ion-button (click)="goPrev()" color="tertiary" [disabled]="currentIndex === 0">
-          <ion-icon slot="icon-only" name="arrow-back-circle"></ion-icon>
-        </ion-button>
-        <ion-button (click)="goNext()" color="tertiary " [disabled]="currentIndex === vehicles.length -1">
-          <ion-icon slot="icon-only" name="arrow-forward-circle"></ion-icon>
-        </ion-button>
-      </ion-buttons>
-      <swiper-container *ngIf="vehicles" #swiper [slidesPerView]="1" (slidechange)="onSlideChange($event)" (click)="onVehicleSelected(currentVehicle.licensePlate)">
-        <swiper-slide *ngFor="let vehicle of vehicles">
-          <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/cars/' + vehicle.licensePlate + '.gif'"></ion-img>
-        </swiper-slide>
-      </swiper-container>
-    </ion-col>
-  </ion-row>
-  <ion-row>
-    <ion-col>
-      <div class="vehicles-list">
-        <ion-img class="vehicle pointer"
-          [class.selected]="currentIndex === index"
-          src="assets/trucks/{{ vehicle.licensePlate }}.png"
-          (click)="onSwitchVehicle (vehicle)"
-          *ngFor="let vehicle of vehicles; let index = index">
-        </ion-img>
-      </div>
-    </ion-col>
-  </ion-row>
-  <ion-row class="description">
-    <ion-col>
-      <div class="card">
-        <div class="ion-float-right price-from">A partir de: &nbsp; <br> <span class="price">{{ currentVehicle.price }} €</span></div>
-        <div class="title">Man {{ currentVehicle.category }} {{ currentVehicle.hayon ? 'avec Hayon' : '' }}</div>
-        <br>
-        <span>Longueur: </span> {{ currentVehicle.length }} mètres<br>
-        <span>Coffre: </span> {{ currentVehicle.heightChest }} mètres<br>
-        <span>Hauteur: </span> {{ currentVehicle.heightCar }} mètres <br>
-        <span>Charge utile: </span> {{ currentVehicle.payload }} kg<br>
-      </div>
-    </ion-col>
-  </ion-row>
-</ion-grid>
-<ion-fab slot="fixed" horizontal="end" vertical="bottom" (click)="onVehicleSelected(currentVehicle.licensePlate)">
-  <ion-button class="next-page">
-    Suivant
-    <ion-icon name="arrow-forward" class="ion-margin-start"></ion-icon>
-  </ion-button>
-</ion-fab>
+<div class="container" *ngIf="currentVehicle">
+  <h3>Sélection du vehicule</h3>
+
+  <div class="swiper-wrap">
+    <div class="buttons">
+      <ion-icon name="arrow-back-circle" (click)="goPrev()" [class.disabled]="currentIndex === 0"></ion-icon>
+      <ion-icon name="arrow-forward-circle" (click)="goNext()" [class.disabled]="currentIndex === vehicles.length -1"></ion-icon>
+    </div>
+
+    <swiper-container *ngIf="vehicles" #swiper [slidesPerView]="1" (slidechange)="onSlideChange($event)" (click)="onVehicleSelected(currentVehicle.licensePlate)">
+      <swiper-slide *ngFor="let vehicle of vehicles">
+        <ion-img [src]="'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/cars/' + vehicle.licensePlate + '.gif'"></ion-img>
+      </swiper-slide>
+    </swiper-container>
+  </div>
+
+  <div class="vehicles-list">
+    <ion-img class="vehicle pointer"
+      [class.selected]="currentIndex === index"
+      src="assets/trucks/{{ vehicle.licensePlate }}.png"
+      (click)="onSwitchVehicle (vehicle)"
+      *ngFor="let vehicle of vehicles; let index = index">
+    </ion-img>
+  </div>
+
+  <div class="description card">
+    <div class="ion-float-right price-from">A partir de: &nbsp; <br> <span class="price">{{ currentVehicle.price }} €</span></div>
+    <div class="title">{{ currentVehicle.category }} {{ currentVehicle.hayon ? 'avec Hayon' : '' }}</div>
+    <br>
+    <span>Longueur: </span> {{ currentVehicle.length }} mètres<br>
+    <span>Coffre: </span> {{ currentVehicle.heightChest }} mètres<br>
+    <span>Hauteur: </span> {{ currentVehicle.heightCar }} mètres <br>
+    <span>Charge utile: </span> {{ currentVehicle.payload }} kg<br>
+  </div>
+
+  <div class="ion-text-right">
+    <ion-button class="next-page" (click)="onVehicleSelected(currentVehicle.licensePlate)">
+      Suivant
+      <ion-icon name="arrow-forward" class="ion-margin-start"></ion-icon>
+    </ion-button>
+  </div>
+</div>

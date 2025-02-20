@@ -28,3 +28,9 @@ ion-item {
     --padding-top: 15px;
   }
 }
+
+@media (min-width: 768px) {
+  .page {
+    padding-right: 30% !important;
+  }
+}

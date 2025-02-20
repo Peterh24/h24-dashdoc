@@ -22,7 +22,7 @@ export class MultipointChoiceComponent  implements OnInit {
 
   ionViewWillEnter () {
     if (!this.transportOrderService?.type) {
-      this.router.navigateByUrl ('/private/tabs/transports/new-order');
+      this.router.navigateByUrl ('/private/tabs/home', { replaceUrl: true });
     }
   }
 

@@ -16,7 +16,7 @@ ion-accordion {
     }
 
     ion-icon {
-      font-size: 18pt; 
+      font-size: 18pt;
     }
   }
   p {
@@ -63,7 +63,7 @@ ion-accordion {
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }    
+    }
     .actions {
       & {
         margin-top: 10px;
@@ -112,8 +112,9 @@ ion-searchbar {
   min-height: 0 !important;
 }
 
-ion-row.searchbar {
-  margin: 10px 10px 3px 10px;
+.searchbar {
+  margin: 10px;
+  padding-right: 20px;
 }
 
 ion-chip {
@@ -149,7 +150,7 @@ ion-toolbar ion-button {
     align-items: center;
     cursor: pointer;
   }
-  
+
   & > div {
     display: flex;
     align-items: center;

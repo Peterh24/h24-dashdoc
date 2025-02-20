@@ -2,20 +2,21 @@
     & {
         display: flex;
         justify-content: center;
-        max-height: 100%;
         padding-top: 30px;
+        height: 100%;
+        overflow: auto;
+        padding-bottom: 20px;
     }
 
     & > * {
-        flex-basis: 30vw;
+        flex-basis: 33vw;
     }
 
     .choice {
-        position: relative;
         margin: 0 20px 0 20px;
         padding: 0 20px 0 20px;
         border: 1px solid lightgray;
-        border-radius: 15px;    
+        border-radius: 15px;
     }
 
     app-type-choice-component, app-vehicle-choice-component, app-multipoint-choice-component {
@@ -46,5 +47,6 @@
 @media (min-width: 768px) {
     .hidden {
         opacity: 0;
+        pointer-events: none;
     }
 }

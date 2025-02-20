@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AddressService } from 'src/app/services/address.service';
-import { AlertController, IonItemSliding, ModalController, ToastController } from '@ionic/angular';
+import { AlertController, IonItemSliding, IonSearchbar, ModalController, ToastController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
 import { ADDRESS_FOLDER_KEY, ADDRESS_FOLDERS_KEY, CURRENT_COMPANY, HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
 import { NewAddressPage } from './new-address/new-address.page';
@@ -41,7 +41,8 @@ export class AddressPage implements OnInit {
 
   deleteAddress: Address;
 
-  @ViewChild("searchbarElem", { read: ElementRef }) public searchbarElem: ElementRef;
+  @ViewChild(IonSearchbar) public searchbarElem: IonSearchbar;
+
   constructor(
     private addressService: AddressService,
     private alertController: AlertController,
@@ -341,8 +342,8 @@ export class AddressPage implements OnInit {
       }, 400);
     }
 
-    if (this.searchbarElem?.nativeElement) {
-      this.searchbarElem.nativeElement.value = '';
+    if (this.searchbarElem) {
+      this.searchbarElem.value = '';
     }
   }
 
@@ -357,8 +358,8 @@ export class AddressPage implements OnInit {
     this.displayedAddresses = this.addresses.filter ((address: Address) => this.addressFolder[address.id] == folder);
     this.displayedAddresses.sort ((a: Address, b: Address) => a.name.localeCompare (b.name));
 
-    if (this.searchbarElem?.nativeElement) {
-      this.searchbarElem.nativeElement.value = '';
+    if (this.searchbarElem) {
+      this.searchbarElem.value = '';
     }
   }
 

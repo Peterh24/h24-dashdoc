@@ -53,7 +53,7 @@ export class SummaryComponent  implements OnInit {
 
   ngOnInit() {
     if (!this.transportOrderService.type) {
-      this.router.navigateByUrl ('/private/tabs/transports/new-order');
+      this.router.navigateByUrl ('/private/tabs/home', { replaceUrl: true });
       return;
     }
 

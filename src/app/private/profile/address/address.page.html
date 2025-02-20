@@ -9,65 +9,44 @@
 
       <ion-icon name="close-outline" class="close-button ion-float-right" (click)="closeModal ()" *ngIf="isModal"></ion-icon>
       <div class="title" *ngIf="isModal">Mes adresses</div>
-      <ion-grid class="page-grid ion-no-padding">
-        <ion-row *ngIf="!isLoading && addresses.length > 0 && !isModal" class="searchbar">
-          <ion-col>
-            <ion-searchbar #searchbarElem placeholder="Rechercher" class="ion-no-padding" [(ngModel)]="searchAddress" (ionInput)="setFilteredItems(searchAddress)"></ion-searchbar>
-          </ion-col>
-        </ion-row>
+      <ion-searchbar placeholder="Rechercher" class="searchbar ion-no-padding" [(ngModel)]="searchAddress" (ionInput)="setFilteredItems(searchAddress)" *ngIf="!isLoading && addresses.length > 0 && !isModal"></ion-searchbar>
 
-        <ion-row *ngIf="!searchbarElem?.nativeElement?.value">
-          <ion-col>
-            <ion-button shape="round" (click)="onAddAddress ()"><ion-icon name="location-outline"></ion-icon> &nbsp; Ajouter une adresse</ion-button>
-            <ion-button shape="round" fill="outline" id="create-folder" *ngIf="!isModal"><ion-icon name="folder-outline"></ion-icon> &nbsp; Créer un dossier</ion-button>
-            <ion-button class="ion-hide" id="move-to-folder"></ion-button>
-          </ion-col>
-        </ion-row>
+      <div *ngIf="!searchbarElem?.value">
+        <ion-button shape="round" (click)="onAddAddress ()"><ion-icon name="location-outline"></ion-icon> &nbsp; Ajouter une adresse</ion-button>
+        <ion-button shape="round" fill="outline" id="create-folder" *ngIf="!isModal"><ion-icon name="folder-outline"></ion-icon> &nbsp; Créer un dossier</ion-button>
+        <ion-button class="ion-hide" id="move-to-folder"></ion-button>
+      </div>
 
-        <ion-row *ngIf="isLoading">
-          <ion-col class="ion-text-center">
-            <ion-spinner  color="primary"></ion-spinner>
-          </ion-col>
-        </ion-row>
+      <div class="ion-text-center" *ngIf="isLoading">
+          <ion-spinner color="primary"></ion-spinner>
+      </div>
 
-        <ion-row *ngIf="!isLoading && addresses.length <= 0">
-          <ion-col>
-            <p class="ion-text-center">
-              Pas encore d'adresses dans votre carnet!<br />
-              Merci d'en ajouter une!
-            </p>
-          </ion-col>
-        </ion-row>
+      <div class="ion-text-center" *ngIf="!isLoading && addresses.length <= 0">
+        Pas encore d'adresses dans votre carnet!<br />
+        Merci d'en ajouter une!
+      </div>
 
-        <ion-row *ngIf="!searchbarElem?.nativeElement?.value">
-          <ion-col>
-            <!-- <div class="folder" [class.selected]="folder === currentFolder" (click)="selectFolder (folder)"> -->
-              <div [ngTemplateOutlet]="folderTpl" [ngTemplateOutletContext]="{ folder }" *ngFor="let folder of folders"></div>
-              <!--
-              <div class="folder" [class.selected]="folder === currentFolderName" (click)="openFolder (folder)" *ngFor="let folder of folders">
-              <div>
-                <ion-icon name="folder-outline" class="folder-icon"></ion-icon> &nbsp; &nbsp;
-                {{ folder }} &nbsp;
-                <ion-badge slot="end" *ngIf="addressFolderItems (folder)">{{ addressFolderItems (folder) }}</ion-badge>
-              </div>
-              <div class="icons">
-                <ion-icon class="pointer" name="create-outline" (click)="renameFolder (folder)"></ion-icon> &nbsp; &nbsp;
-                <ion-icon class="pointer" name="trash-outline" (click)="deleteFolder (folder)"></ion-icon>
-              </div>
-            </div>
-            -->
-          </ion-col>
-        </ion-row>
+      <div *ngIf="!searchbarElem?.value">
+        <!-- <div class="folder" [class.selected]="folder === currentFolder" (click)="selectFolder (folder)"> -->
+          <div [ngTemplateOutlet]="folderTpl" [ngTemplateOutletContext]="{ folder }" *ngFor="let folder of folders"></div>
+          <!--
+          <div class="folder" [class.selected]="folder === currentFolderName" (click)="openFolder (folder)" *ngFor="let folder of folders">
+          <div>
+            <ion-icon name="folder-outline" class="folder-icon"></ion-icon> &nbsp; &nbsp;
+            {{ folder }} &nbsp;
+            <ion-badge slot="end" *ngIf="addressFolderItems (folder)">{{ addressFolderItems (folder) }}</ion-badge>
+          </div>
+          <div class="icons">
+            <ion-icon class="pointer" name="create-outline" (click)="renameFolder (folder)"></ion-icon> &nbsp; &nbsp;
+            <ion-icon class="pointer" name="trash-outline" (click)="deleteFolder (folder)"></ion-icon>
+          </div>
+        </div>
+        -->
+      </div>
 
-        <ion-row *ngIf="!isLoading && addresses.length > 0">
-          <ion-col>
-            <br>
-            <ion-accordion-group [multiple]="true">
-              <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ address, moveto: true }" *ngFor="let address of displayedAddresses"></div>
-            </ion-accordion-group>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+      <ion-accordion-group [multiple]="true" *ngIf="!isLoading && addresses.length > 0">
+        <div [ngTemplateOutlet]="deliveryTpl" [ngTemplateOutletContext]="{ address, moveto: true }" *ngFor="let address of displayedAddresses"></div>
+      </ion-accordion-group>
     </div>
   </div>
 </ion-content>

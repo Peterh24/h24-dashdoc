@@ -5,7 +5,6 @@ import { AuthService } from 'src/app/services/auth.service';
 import { Storage } from '@ionic/storage-angular';
 import { CURRENT_COMPANY, FILE_UPLOAD_MAX_SIZE } from 'src/app/services/constants';
 import { ContactsPage } from 'src/app/private/profile/contacts/contacts.page';
-import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { FileUtils } from 'src/app/utils/file-utils';
 import { TransportOrderService } from 'src/app/services/transport-order.service';
 import { Address, Contact, Delivery, Load, Site } from 'src/app/private/models/transport.model';
@@ -37,7 +36,7 @@ export class DeliveryPage implements OnInit, OnChanges {
   contactsError: string;
   merchandisesUrl = 'assets/merchandises/';
 //  merchandisesUrl = 'https://h24-public-app.s3.eu-west-3.amazonaws.com/assets/global/img/';
-  merchandiseId: Record<string, string> = {
+  merchandiseIcon: Record<string, string> = {
     'Caméra': 'camera',
     'Lumières': 'light',
 //    'Photographie': 'photo',
@@ -45,11 +44,10 @@ export class DeliveryPage implements OnInit, OnChanges {
     'Vêtements': 'clothe',
     'Machinerie': 'machinery',
     'Mobilier / Décor': 'furniture',
-    'Autres' : 'other'
   };
-  merchandises = Object.keys (this.merchandiseId).sort ((a,b) => a.localeCompare(b));
+  merchandises: string[];
   merchandiseForm: FormGroup;
-  merchandisesSelected: any = {};
+  merchandisesSelected: Record<string, Load> = {};
   merchandiseEdit: string;
 
   mainForm: FormGroup;
@@ -67,11 +65,10 @@ export class DeliveryPage implements OnInit, OnChanges {
     private modalController: ModalController,
     private storage: Storage,
   ) {
-    this.merchandises.push (this.merchandises.shift());
+
   }
 
   ngOnInit () {
-    this.ngOnChanges ();
   }
 
   ngOnChanges () {
@@ -119,6 +116,9 @@ export class DeliveryPage implements OnInit, OnChanges {
       merchandise: this.merchandiseForm
     });
 
+    this.merchandises = Object.keys (this.merchandiseIcon);
+    this.merchandises.push (this.merchandises.shift());
+
     if (this.delivery) {
       this.origin = this.delivery.origin?.address;
       this.destination = this.delivery.destination?.address;
@@ -128,7 +128,11 @@ export class DeliveryPage implements OnInit, OnChanges {
       this.enableDestination = this.transportOrderService.isMultipoint || !!this.destination;
 
       this.delivery.planned_loads?.forEach ((load: Load) => {
-        this.merchandisesSelected[load.id] = load;
+        this.merchandisesSelected[load.description] = load;
+
+        if (!this.merchandises.includes (load.description)) {
+          this.merchandises.push (load.description);
+        }
       });
 
       const origin = this.loadSite (this.originForm, this.delivery.origin);
@@ -138,6 +142,9 @@ export class DeliveryPage implements OnInit, OnChanges {
     } else {
       this.updateEnabled ();
     }
+
+    this.merchandises = this.merchandises.sort ((a,b) => a.localeCompare(b));
+    this.merchandises.push ('Autre');
 
     this.storage.get(CURRENT_COMPANY).then (id => {
       this.company = id;
@@ -160,6 +167,10 @@ export class DeliveryPage implements OnInit, OnChanges {
     this.destinationErrors = {};
     this.contactsError = null;
     this.hasErrors = false;
+
+    this.merchandises = [];
+    this.merchandisesSelected = {};
+    this.merchandiseEdit = null;
   }
 
   loadSite (form: FormGroup, site: Site) {
@@ -246,7 +257,11 @@ export class DeliveryPage implements OnInit, OnChanges {
   }
 
   getMerchandiseUrl (name: string) {
-    return this.merchandisesUrl + this.merchandiseId[name] + '.png';
+    return this.merchandisesUrl + this.merchandiseIcon[name] + '.png';
+  }
+
+  getMerchandiseIcon (description: string) {
+    return this.merchandiseIcon[description] || 'other';
   }
 
   async setAddress (type: string) {
@@ -395,11 +410,9 @@ export class DeliveryPage implements OnInit, OnChanges {
       return;
     }
 
-    const id = this.merchandiseId[description];
-
     const form = this.merchandiseForm;
-    const merchandise = this.merchandisesSelected[id] || { id, description, category: 'vrac' };
-    this.merchandiseEdit = id;
+    const merchandise: any = this.merchandisesSelected[description] || { description, category: 'vrac' };
+    this.merchandiseEdit = description;
 
     Object.keys (form.controls).forEach ((control) => {
       if (merchandise[control]) {
@@ -417,18 +430,18 @@ export class DeliveryPage implements OnInit, OnChanges {
     }
 
     const merchandise = this.merchandiseForm.value;
-    merchandise.id = this.merchandiseId[merchandise.description];
+    merchandise.id = this.merchandiseIcon[merchandise.description];
     merchandise.category = 'vrac';
-    this.merchandisesSelected[merchandise.id] = merchandise;
+    this.merchandisesSelected[merchandise.description] = merchandise;
     this.validateForm ();
   }
 
-  deleteMerchandise (id: string = null, modal: IonModal = null) {
+  deleteMerchandise (merchandise: Load = null, modal: IonModal = null) {
     if (modal) {
       modal.dismiss ();
     }
 
-    delete this.merchandisesSelected[id];
+    delete this.merchandisesSelected[merchandise.description];
     this.validateForm ();
   }
 
@@ -440,7 +453,7 @@ export class DeliveryPage implements OnInit, OnChanges {
     const fileUtils = new FileUtils ();
     if ((event.target as HTMLInputElement).files) {
       let input = event.target as HTMLInputElement;
-      form.value.file = await fileUtils.resizeImage (input.files[0]);
+      form.value.file = await fileUtils.loadFile (input.files[0]);
     }
   }
 

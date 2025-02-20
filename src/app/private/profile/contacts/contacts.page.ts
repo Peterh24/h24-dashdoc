@@ -1,7 +1,6 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { AddressService } from 'src/app/services/address.service';
-import { AlertController, IonItemSliding, LoadingController, ModalController, ToastController } from '@ionic/angular';
+import { AlertController, IonItemSliding, IonSearchbar, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
 import { CONTACT_FOLDER_KEY, CURRENT_COMPANY, HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
@@ -37,7 +36,8 @@ export class ContactsPage implements OnInit {
 
   deleteContact: Contact;
 
-  @ViewChild("searchbarElem", { read: ElementRef }) public searchbarElem: ElementRef;
+  @ViewChild(IonSearchbar) public searchbarElem: IonSearchbar;
+
   constructor(
     private contactService: ContactsService,
     private router: Router,
@@ -249,8 +249,8 @@ export class ContactsPage implements OnInit {
     this.displayedContacts = this.contacts.filter ((contact: any) => this.currentFolder == null || contact.company_name == this.currentFolder);
     this.displayedContacts.sort ((a: any, b: any) => a.first_name?.localeCompare (b.first_name));
 
-    if (this.searchbarElem?.nativeElement) {
-      this.searchbarElem.nativeElement.value = '';
+    if (this.searchbarElem) {
+      this.searchbarElem.value = '';
     }
   }
 

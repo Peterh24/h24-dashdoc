@@ -31,21 +31,18 @@ export class AppInitService {
       await this.authService.init ();
       await this.apiTransport.init ();
       await this.companyService.init ();
-
-      this.companyService.getCompanyStatus ();
-
+    } catch (e) {
+      console.error ('init', e);
+    } finally {
       await SplashScreen.hide();
+    }
 
-      if (this.authService.currentUser) {
-          if (!location.pathname.match(/\/private\//)) {
-              this.router.navigateByUrl('/private/tabs/home');
-          }
-      } else {
-          this.router.navigateByUrl('/auth');
+    if (this.authService.currentUser?.id) {
+      if (!location.pathname.match(/\/private\//)) {
+          this.router.navigateByUrl('/private/tabs/home');
       }
-    } catch(e) {
-      console.error (e);
-      this.authService.signOut ();
+    } else {
+        this.router.navigateByUrl('/auth');
     }
 
     return EMPTY;

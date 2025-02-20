@@ -54,8 +54,8 @@ export class TransportsPage implements OnInit, AfterViewInit {
 
   constructor(
     public transportService: TransportService,
+    public transportOrderService: TransportOrderService,
     public companyService: CompanyService,
-    public transport: TransportOrderService,
     public apiTransport: ApiTransportService,
     public config: ConfigService,
     private router: Router,
@@ -171,7 +171,7 @@ export class TransportsPage implements OnInit, AfterViewInit {
 
   getAllTransports (transport: Transport) {
     const all: any = [];
-    const deliveries = this.transport.deliveries;
+    const deliveries = this.transportOrderService.deliveries;
 
     deliveries?.forEach ((transport: Delivery) => {
       if (transport.origin?.address) {
@@ -302,6 +302,14 @@ export class TransportsPage implements OnInit, AfterViewInit {
     }
   }
 
+  onNewOrder () {
+    if (this.transportOrderService.type) {
+      this.showResetTransport = true;
+    } else {
+      this.router.navigateByUrl ('/private/tabs/transports/new-order');
+    }
+  }
+
   setShowResetTransport (value = true) {
     this.showResetTransport = value;
   }
@@ -311,21 +319,21 @@ export class TransportsPage implements OnInit, AfterViewInit {
     modal.dismiss ();
 
     if (value) {
-      this.transport.resetTransport ();
+      this.transportOrderService.resetTransport ();
       this.router.navigateByUrl('/private/tabs/transports/new-order');
     } else {
       if (this.config.isDesktop) {
-        if (this.transport.deliveries?.length) {
+        if (this.transportOrderService.deliveries?.length) {
           this.router.navigateByUrl('/private/tabs/transports/new-order/deliveries');
         } else {
           this.router.navigateByUrl('/private/tabs/transports/new-order');
         }
       } else {
-        if (this.transport.isMultipoint === true || this.transport.isMultipoint === false) {
+        if (this.transportOrderService.isMultipoint === true || this.transportOrderService.isMultipoint === false) {
           this.router.navigateByUrl ('/private/tabs/transports/new-order/deliveries')
-        } else if (this.transport.vehicle) {
+        } else if (this.transportOrderService.vehicle) {
           this.router.navigateByUrl ('/private/tabs/transports/new-order/multipoint-choice');
-        } else if (this.transport.type) {
+        } else if (this.transportOrderService.type) {
           this.router.navigateByUrl('/private/tabs/transports/new-order/vehicle-choice');
         } else {
           this.router.navigateByUrl('/private/tabs/transports/new-order');

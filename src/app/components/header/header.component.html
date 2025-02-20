@@ -34,7 +34,7 @@
           <ion-icon name="cart-outline"></ion-icon> Panier
           <ion-badge color="danger" *ngIf="companyService.companyStatusBadge">{{ companyService.companyStatusBadge }}</ion-badge>
         </div>
-        <div [class.active]="isActive ('/tabs/transports/(deliveries|new-order|detail)')" (click)="goto('/private/tabs/transports/deliveries')" [class.disabled]="!companyService.currentCompany">
+        <div [class.active]="isActive ('/tabs/transports($|/new-order|/detail)')" (click)="goto('/private/tabs/transports')" [class.disabled]="!companyService.currentCompany">
           <ion-icon name="truck"></ion-icon> Transport
         </div>
       </div>
