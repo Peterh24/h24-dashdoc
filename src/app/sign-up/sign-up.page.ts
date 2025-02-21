@@ -7,9 +7,10 @@ import { Router } from '@angular/router';
 import { HTTP_REQUEST_UNKNOWN_ERROR } from '../services/constants';
 
 @Component({
-  selector: 'app-sign-up',
-  templateUrl: './sign-up.page.html',
-  styleUrls: ['./sign-up.page.scss', '../auth/auth.desktop.page.scss'],
+    selector: 'app-sign-up',
+    templateUrl: './sign-up.page.html',
+    styleUrls: ['./sign-up.page.scss', '../auth/auth.desktop.page.scss'],
+    standalone: false
 })
 export class SignUpPage implements OnInit {
   private regex: any = regex;

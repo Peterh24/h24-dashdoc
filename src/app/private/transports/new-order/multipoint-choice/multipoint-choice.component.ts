@@ -4,9 +4,10 @@ import { ConfigService } from 'src/app/services/config.service';
 import { TransportOrderService } from 'src/app/services/transport-order.service';
 
 @Component({
-  selector: 'app-multipoint-choice-component',
-  templateUrl: './multipoint-choice.component.html',
-  styleUrls: ['./multipoint-choice.component.scss'],
+    selector: 'app-multipoint-choice-component',
+    templateUrl: './multipoint-choice.component.html',
+    styleUrls: ['./multipoint-choice.component.scss'],
+    standalone: false
 })
 export class MultipointChoiceComponent  implements OnInit {
 

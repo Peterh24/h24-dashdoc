@@ -10,9 +10,10 @@ import { HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
 import { Address } from 'src/app/private/models/transport.model';
 
 @Component({
-  selector: 'app-edit-address',
-  templateUrl: './edit-address.page.html',
-  styleUrls: ['./edit-address.page.scss'],
+    selector: 'app-edit-address',
+    templateUrl: './edit-address.page.html',
+    styleUrls: ['./edit-address.page.scss'],
+    standalone: false
 })
 export class EditAddressPage implements OnInit {
   address: Address;

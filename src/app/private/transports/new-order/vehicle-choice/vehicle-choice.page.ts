@@ -4,9 +4,10 @@ import { ModalController } from "@ionic/angular";
 import { TransportOrderService } from "src/app/services/transport-order.service";
 
 @Component({
-  selector: 'app-vehicle-choice',
-  templateUrl: './vehicle-choice.page.html',
-  styleUrls: ['./vehicle-choice.page.scss'],
+    selector: 'app-vehicle-choice',
+    templateUrl: './vehicle-choice.page.html',
+    styleUrls: ['./vehicle-choice.page.scss'],
+    standalone: false
 })
 export class VehicleChoicePage implements OnInit {
   @Input()isModal: boolean;

@@ -11,9 +11,10 @@ import { Contact } from 'src/app/private/models/transport.model';
 import { CompanyService } from 'src/app/services/company.service';
 
 @Component({
-  selector: 'app-new-contact',
-  templateUrl: './new-contact.page.html',
-  styleUrls: ['./new-contact.page.scss'],
+    selector: 'app-new-contact',
+    templateUrl: './new-contact.page.html',
+    styleUrls: ['./new-contact.page.scss'],
+    standalone: false
 })
 export class NewContactPage implements OnInit {
 

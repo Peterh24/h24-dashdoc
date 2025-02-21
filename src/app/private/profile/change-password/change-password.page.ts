@@ -6,9 +6,10 @@ import { HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
 import { passwordValidator, regexErrors } from 'src/app/utils/regex';
 
 @Component({
-  selector: 'app-change-password',
-  templateUrl: './change-password.page.html',
-  styleUrls: ['./change-password.page.scss'],
+    selector: 'app-change-password',
+    templateUrl: './change-password.page.html',
+    styleUrls: ['./change-password.page.scss'],
+    standalone: false
 })
 export class ChangePasswordPage implements OnInit {
   regexErrors = regexErrors;

@@ -8,9 +8,10 @@ import { AuthService } from 'src/app/services/auth.service';
 import { phoneValidator, regex, regexErrors } from 'src/app/utils/regex';
 import { Router } from '@angular/router';
 @Component({
-  selector: 'app-details',
-  templateUrl: './details.page.html',
-  styleUrls: ['./details.page.scss'],
+    selector: 'app-details',
+    templateUrl: './details.page.html',
+    styleUrls: ['./details.page.scss'],
+    standalone: false
 })
 export class DetailsPage {
 

@@ -9,9 +9,10 @@ import { ConfigService } from 'src/app/services/config.service';
 import { TransportOrderService } from 'src/app/services/transport-order.service';
 
 @Component({
-  selector: 'app-vehicle-choice-component',
-  templateUrl: './vehicle-choice.component.html',
-  styleUrls: ['./vehicle-choice.component.scss'],
+    selector: 'app-vehicle-choice-component',
+    templateUrl: './vehicle-choice.component.html',
+    styleUrls: ['./vehicle-choice.component.scss'],
+    standalone: false
 })
 export class VehicleChoiceComponent  implements OnInit {
 

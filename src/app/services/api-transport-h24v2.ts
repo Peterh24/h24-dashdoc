@@ -61,7 +61,6 @@ export class ApiTransportH24v2 {
                 last_name: user.last_name,
                 email: user.email,
                 phone_number: user.phone_number,
-                tokens: []
              }),
              tap ((user: any) => {
                 if (user.firstname) {

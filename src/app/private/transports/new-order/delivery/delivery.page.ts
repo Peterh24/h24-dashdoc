@@ -12,9 +12,10 @@ import { IonModal } from '@ionic/angular/common';
 import { AddressPage } from 'src/app/private/profile/address/address.page';
 
 @Component({
-selector: 'app-delivery',
-templateUrl: './delivery.page.html',
-styleUrls: ['./delivery.page.scss'],
+    selector: 'app-delivery',
+    templateUrl: './delivery.page.html',
+    styleUrls: ['./delivery.page.scss'],
+    standalone: false
 })
 export class DeliveryPage implements OnInit, OnChanges {
   @Input() isModal: boolean;

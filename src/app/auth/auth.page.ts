@@ -9,9 +9,10 @@ import { Storage } from '@ionic/storage-angular';
 import { HTTP_REQUEST_UNKNOWN_ERROR } from '../services/constants';
 
 @Component({
-  selector: 'app-auth',
-  templateUrl: './auth.page.html',
-  styleUrls: ['./auth.page.scss', './auth.desktop.page.scss'],
+    selector: 'app-auth',
+    templateUrl: './auth.page.html',
+    styleUrls: ['./auth.page.scss', './auth.desktop.page.scss'],
+    standalone: false
 })
 export class AuthPage {
   private regex: any = regex;

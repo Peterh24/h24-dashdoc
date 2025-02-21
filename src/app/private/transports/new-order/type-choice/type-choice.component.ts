@@ -8,9 +8,10 @@ import { TransportOrderService } from 'src/app/services/transport-order.service'
 import { TransportService } from 'src/app/services/transport.service';
 
 @Component({
-  selector: 'app-type-choice-component',
-  templateUrl: './type-choice.component.html',
-  styleUrls: ['./type-choice.component.scss'],
+    selector: 'app-type-choice-component',
+    templateUrl: './type-choice.component.html',
+    styleUrls: ['./type-choice.component.scss'],
+    standalone: false
 })
 export class TypeChoiceComponent  implements OnInit {
   drafts: any;

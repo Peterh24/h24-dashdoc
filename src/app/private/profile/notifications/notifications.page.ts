@@ -4,9 +4,10 @@ import { NotificationsService } from 'src/app/services/notifications.service';
 
 // TODO!
 @Component({
-  selector: 'app-notifications',
-  templateUrl: './notifications.page.html',
-  styleUrls: ['./notifications.page.scss'],
+    selector: 'app-notifications',
+    templateUrl: './notifications.page.html',
+    styleUrls: ['./notifications.page.scss'],
+    standalone: false
 })
 export class NotificationsPage implements OnInit {
 

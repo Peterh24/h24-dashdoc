@@ -8,9 +8,10 @@ import { TransportOrderService } from 'src/app/services/transport-order.service'
 import { Delivery, Site } from 'src/app/private/models/transport.model';
 
 @Component({
-  selector: 'app-deliveries',
-  templateUrl: './deliveries.page.html',
-  styleUrls: ['./deliveries.page.scss'],
+    selector: 'app-deliveries',
+    templateUrl: './deliveries.page.html',
+    styleUrls: ['./deliveries.page.scss'],
+    standalone: false
 })
 export class DeliveriesPage implements OnInit {
   origins: Delivery[];

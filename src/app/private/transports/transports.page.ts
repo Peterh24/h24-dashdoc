@@ -12,9 +12,10 @@ import { TransportService } from 'src/app/services/transport.service';
 import { Contact, Delivery, Transport } from '../models/transport.model';
 
 @Component({
-  selector: 'app-transports',
-  templateUrl: './transports.page.html',
-  styleUrls: ['basket/basket.page.scss', './transports.page.scss'],
+    selector: 'app-transports',
+    templateUrl: './transports.page.html',
+    styleUrls: ['basket/basket.page.scss', './transports.page.scss'],
+    standalone: false
 })
 export class TransportsPage implements OnInit, AfterViewInit {
   tab: number = 1;

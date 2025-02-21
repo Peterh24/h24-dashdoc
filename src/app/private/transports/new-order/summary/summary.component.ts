@@ -16,9 +16,10 @@ import { IonModal } from '@ionic/angular/common';
 
 
 @Component({
-  selector: 'app-summary-component',
-  templateUrl: './summary.component.html',
-  styleUrls: ['./summary.component.scss'],
+    selector: 'app-summary-component',
+    templateUrl: './summary.component.html',
+    styleUrls: ['./summary.component.scss'],
+    standalone: false
 })
 export class SummaryComponent  implements OnInit {
 

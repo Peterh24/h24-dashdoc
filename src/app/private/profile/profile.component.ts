@@ -11,9 +11,10 @@ import { NotificationsService } from 'src/app/services/notifications.service';
 import { phoneValidator, regex } from 'src/app/utils/regex';
 
 @Component({
-  selector: 'app-profile-component',
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss'],
+    selector: 'app-profile-component',
+    templateUrl: './profile.component.html',
+    styleUrls: ['./profile.component.scss'],
+    standalone: false
 })
 export class ProfileComponent  implements OnInit {
   @Input() desktopOnly = false;

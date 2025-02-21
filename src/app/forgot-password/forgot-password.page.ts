@@ -7,9 +7,10 @@ import { AlertController } from '@ionic/angular';
 import { ConfigService } from '../services/config.service';
 
 @Component({
-  selector: 'app-forgot-password',
-  templateUrl: './forgot-password.page.html',
-  styleUrls: ['./forgot-password.page.scss', '../auth/auth.desktop.page.scss'],
+    selector: 'app-forgot-password',
+    templateUrl: './forgot-password.page.html',
+    styleUrls: ['./forgot-password.page.scss', '../auth/auth.desktop.page.scss'],
+    standalone: false
 })
 export class ForgotPasswordPage implements OnInit {
   regexErrors: any = regexErrors;

@@ -7,9 +7,10 @@ import { Browser } from '@capacitor/browser';
 import { Invoice } from '../../models/invoice.model';
 
 @Component({
-  selector: 'app-invoice',
-  templateUrl: './invoice.page.html',
-  styleUrls: ['./invoice.page.scss'],
+    selector: 'app-invoice',
+    templateUrl: './invoice.page.html',
+    styleUrls: ['./invoice.page.scss'],
+    standalone: false
 })
 export class InvoicePage implements OnInit {
   invoices: Array<Invoice> = [];

@@ -10,9 +10,10 @@ import { HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
 import { Address } from 'src/app/private/models/transport.model';
 
 @Component({
-  selector: 'app-new-address',
-  templateUrl: './new-address.page.html',
-  styleUrls: ['./new-address.page.scss'],
+    selector: 'app-new-address',
+    templateUrl: './new-address.page.html',
+    styleUrls: ['./new-address.page.scss'],
+    standalone: false
 })
 export class NewAddressPage implements OnInit {
   address: Address;

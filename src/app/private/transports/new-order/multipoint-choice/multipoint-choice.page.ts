@@ -3,9 +3,10 @@ import { Router } from '@angular/router';
 import { TransportOrderService } from 'src/app/services/transport-order.service';
 
 @Component({
-  selector: 'app-multipoint-choice',
-  templateUrl: './multipoint-choice.page.html',
-  styleUrls: ['./multipoint-choice.page.scss'],
+    selector: 'app-multipoint-choice',
+    templateUrl: './multipoint-choice.page.html',
+    styleUrls: ['./multipoint-choice.page.scss'],
+    standalone: false
 })
 export class MultipointChoicePage implements OnInit {
 

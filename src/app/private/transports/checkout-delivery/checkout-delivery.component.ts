@@ -6,9 +6,10 @@ import { HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
 import { TransportService } from 'src/app/services/transport.service';
 
 @Component({
-  selector: 'app-checkout-delivery',
-  templateUrl: './checkout-delivery.component.html',
-  styleUrls: ['./checkout-delivery.component.scss'],
+    selector: 'app-checkout-delivery',
+    templateUrl: './checkout-delivery.component.html',
+    styleUrls: ['./checkout-delivery.component.scss'],
+    standalone: false
 })
 export class CheckoutDeliveryComponent {
   transportId: string;

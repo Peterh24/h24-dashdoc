@@ -17,9 +17,10 @@ import { Contact, Delivery, Message, Site, Transport } from '../../models/transp
 const DEBUG = false;
 
 @Component({
-  selector: 'app-detail',
-  templateUrl: './detail.page.html',
-  styleUrls: ['../basket/basket.page.scss', './detail.page.scss'],
+    selector: 'app-detail',
+    templateUrl: './detail.page.html',
+    styleUrls: ['../basket/basket.page.scss', './detail.page.scss'],
+    standalone: false
 })
 export class DetailPage implements OnInit {
   transport: Transport;

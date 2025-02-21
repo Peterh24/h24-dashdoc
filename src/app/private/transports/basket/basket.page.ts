@@ -11,9 +11,10 @@ import { TransportService } from 'src/app/services/transport.service';
 import { Contact, Delivery, Load, Transport } from '../../models/transport.model';
 
 @Component({
-  selector: 'app-basket',
-  templateUrl: './basket.page.html',
-  styleUrls: ['./basket.page.scss'],
+    selector: 'app-basket',
+    templateUrl: './basket.page.html',
+    styleUrls: ['./basket.page.scss'],
+    standalone: false
 })
 export class BasketPage implements OnInit, AfterViewInit {
   tab: number = 1;
