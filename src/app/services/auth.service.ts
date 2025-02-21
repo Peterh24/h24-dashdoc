@@ -39,7 +39,7 @@ export class AuthService {
 
   register(firstname: string, lastname: string, phone: string, email: string, password: string, isClient:boolean, company: string = null) {
     const companies = company ? [ company ] : null;
-
+    this.storage.remove (CURRENT_COMPANY);
     return this.apiTransport.createUser({ firstname, lastname, phone, email, password, isClient, company: companies }).pipe(
       map((res) => {
 

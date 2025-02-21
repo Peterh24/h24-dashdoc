@@ -15,23 +15,23 @@
             <div>Déja client ?</div>
             <ion-radio-group value="start" (ionChange)="onAlreadyClientChange ($event)" formControlName="isClient" [value]="isClient">
               <ion-radio [value]="true" labelPlacement="start">Oui</ion-radio>
-              &nbsp; 
+              &nbsp;
               <ion-radio [value]="false" labelPlacement="start">Non</ion-radio>
             </ion-radio-group>
           </div>
           <div class="user-name">
             <div>
               <ion-input type="text" label="Nom" labelPlacement="floating" fill="outline" shape="round" errorText="Saisissez votre nom"
-                formControlName="lastname"></ion-input>
+                formControlName="last_name"></ion-input>
             </div>
             <span>&nbsp; &nbsp;</span>
             <div>
-              <ion-input type="text" label="Prénom" labelPlacement="floating" fill="outline" shape="round" 
-                formControlName="firstname"></ion-input>
+              <ion-input type="text" label="Prénom" labelPlacement="floating" fill="outline" shape="round"
+                formControlName="first_name"></ion-input>
             </div>
           </div>
           <div>
-            <ion-input type="text" label="Numéro de téléphone" fill="outline" shape="round" labelPlacement="floating" [errorText]="regexErrors['phone']" formControlName="phone"></ion-input>
+            <ion-input type="text" label="Numéro de téléphone" fill="outline" shape="round" labelPlacement="floating" [errorText]="regexErrors['phone']" formControlName="phone_number"></ion-input>
           </div>
           <div>
             <ion-input type="email" label="Adresse e-mail" labelPlacement="floating" fill="outline" shape="round" [errorText]="regexErrors['email']" formControlName="email"></ion-input>
@@ -51,7 +51,7 @@
           <br>
           <div class="connect-button-desktop ion-text-center pointer" routerLink="/auth">
             Déjà un compte ? <span class="login">Connexion</span>
-          </div>        
+          </div>
         </div>
       </form>
       <div class="truck-big"><img src="assets/auth-desktop-picture.jpeg"></div>

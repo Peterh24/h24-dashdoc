@@ -1,5 +1,5 @@
 
-<div class="container section">
+<div class="container section" *ngIf="transportOrderService.type">
   <h2>Récapitulatif</h2>
   <h3>Type de transport <ion-icon class="edit-button" name="create-outline" (click)="editSection ('type')" *ngIf="false"></ion-icon></h3>
 

@@ -1,13 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertController, LoadingController, ModalController, NavController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController } from '@ionic/angular';
 import { ContactsService } from 'src/app/services/contacts.service';
 import { phoneValidator, regex } from 'src/app/utils/regex';
 import { HTTP_REQUEST_UNKNOWN_ERROR } from 'src/app/services/constants';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
 import { Company } from 'src/app/private/models/company.model';
 import { Contact } from 'src/app/private/models/transport.model';
+import { CompanyService } from 'src/app/services/company.service';
 
 @Component({
   selector: 'app-new-contact',
@@ -24,7 +25,7 @@ export class NewContactPage implements OnInit {
   constructor(
     private apiTransport: ApiTransportService,
     private route: ActivatedRoute,
-    private navController: NavController,
+    private companyService: CompanyService,
     private contactsService: ContactsService,
     private loadingController: LoadingController,
     private modalController: ModalController,
@@ -55,7 +56,8 @@ export class NewContactPage implements OnInit {
               this.form.updateValueAndValidity ();
             } else {
               if (companies?.length) {
-                this.form.controls['company'].setValue (companies[0].id);
+                const company = companies.find ((c) => c.id == this.companyService.currentCompany?.id);
+                this.form.controls['company'].setValue (company?.id || companies[0].id);
               }
             }
           }});

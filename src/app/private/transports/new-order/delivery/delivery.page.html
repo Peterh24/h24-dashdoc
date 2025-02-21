@@ -178,8 +178,9 @@
       <ion-icon name="close-outline" class="ion-float-right" (click)="setMerchandiseEdit (null)"></ion-icon>
       <div class="title">Ajouter une marchandise</div>
 
-      <ion-select label="Nature de la marchandise *" labelPlacement="floating" formControlName="description">
+      <ion-select #merchandiseChoose placeholder="Nature de la marchandise *" interface="popover" label-placement="floating" formControlName="description">
         <ion-select-option *ngFor="let merchandise of merchandises" [value]="merchandise">{{ merchandise }}</ion-select-option>
+        <ion-icon color="primary" name="chevron-down" slot="end" (click)="merchandiseChoose.open ()"></ion-icon>
       </ion-select>
 
       <ion-input

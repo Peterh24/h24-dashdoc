@@ -16,9 +16,9 @@ export class SignUpPage implements OnInit {
   regexErrors: any = regexErrors;
   isClient:boolean = false;
   form = this.formBuilder.nonNullable.group({
-    firstname: ['', [Validators.required]],
-    lastname: ['', [Validators.required]],
-    phone: ['', [Validators.required, phoneValidator ()]],
+    first_name: ['', [Validators.required]],
+    last_name: ['', [Validators.required]],
+    phone_number: ['', [Validators.required, phoneValidator ()]],
     email: ['', [Validators.required, Validators.pattern(this.regex.email)]],
     password: ['', [Validators.required, passwordValidator ()]],
     company: [''],
@@ -43,7 +43,7 @@ export class SignUpPage implements OnInit {
   }
 
   async onSubmit() {
-    const { firstname, lastname, phone, email, password, isClient, company } = this.form.getRawValue();
+    const { first_name, last_name, phone_number, email, password, isClient, company } = this.form.getRawValue();
 
     const loading = await this.loadingController.create({
       keyboardClose: true,
@@ -51,7 +51,7 @@ export class SignUpPage implements OnInit {
       spinner: 'bubbles'
     });
     await loading.present();
-    this.authService.register(firstname, lastname, phone, email, password, isClient, company).subscribe({
+    this.authService.register(first_name, last_name, phone_number, email, password, isClient, company).subscribe({
       next: async (res) => {
         loading.dismiss();
 
@@ -64,7 +64,7 @@ export class SignUpPage implements OnInit {
           icon: 'checkbox-outline',
           cssClass: 'success'
         });
-    
+
         await toast.present();
       },
       error: async (error) => {

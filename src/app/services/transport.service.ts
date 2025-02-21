@@ -240,7 +240,7 @@ export class TransportService {
    * @param shipperReference
    * @returns
    */
-  async buildTransport (transport: any, shipperReference: string = null) {
+  async buildTransport (transport: TransportOrderService, shipperReference: string = null) {
     /* TODO
     if (!transport.trailers?.length) {
       transport.trailers.push({
@@ -265,7 +265,7 @@ export class TransportService {
     return dataToApi;
   }
 
-  buildDeliveries (transport: any, company: string, shipperReference: string) {
+  buildDeliveries (transport: TransportOrderService, company: string, shipperReference: string) {
     let deliveries: any[] = [];
 
     if (transport.isMultipoint) {
@@ -310,7 +310,7 @@ export class TransportService {
     return deliveries;
   }
 
-  buildSegments (transport: any, deliveries: any[]) {
+  buildSegments (transport: TransportOrderService, deliveries: Delivery[]) {
     const segments: any[] = [];
 
     if (transport.isMultipoint) {
@@ -326,7 +326,6 @@ export class TransportService {
         }
 
         const segment = {...d};
-        delete segment.segments;
         delete segment.planned_loads;
         delete segment.tracking_contacts;
         segments.push (segment);
@@ -335,7 +334,6 @@ export class TransportService {
       if (transport.getDestinations ().length > 1) {
         // Single origin
         const segment = { ...deliveries[0] };
-        delete segment.segments;
         delete segment.planned_loads;
         delete segment.tracking_contacts;
         segments.push (segment);
@@ -362,7 +360,6 @@ export class TransportService {
           }
         });
         const segment = { ...deliveries[deliveries.length - 1] };
-        delete segment.segments;
         delete segment.planned_loads;
         delete segment.tracking_contacts;
         segments.push (segment);
@@ -374,7 +371,7 @@ export class TransportService {
     return segments;
   }
 
-  async loadDraft (draftName: string, draft: any) {
+  async loadDraft (draftName: string, draft: Transport) {
     const fileUtils = new FileUtils ();
 
     const transport = this.loadTransport (draft);
@@ -393,7 +390,7 @@ export class TransportService {
     this.transportOrderService.loadTransport (transport, draftName);
   }
 
-  async saveDraft (draftName: string, transport: any) {
+  async saveDraft (draftName: string, transport: TransportOrderService) {
     const fileUtils = new FileUtils ();
 
     for (const delivery of transport.deliveries) {

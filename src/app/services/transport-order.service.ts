@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { UtilsService } from '../utils/services/utils.service';
-import { Storage } from '@ionic/storage-angular';
 import { Transport } from '../private/models/transport.model';
 
 @Injectable({
@@ -9,16 +7,14 @@ import { Transport } from '../private/models/transport.model';
 export class TransportOrderService {
   id: string;
   type: string;
-  vehicle: {};
+  vehicle: string;
   trailers: Array<any> = [];
   deliveries: Array<any> = [];
   segments: Array<any> = [];
-  isMultipoint: any = null;
+  isMultipoint: boolean = null;
   draftName: string;
 
   constructor(
-    private storage: Storage,
-    private utilsService: UtilsService
   ) { }
 
   getOrigins () {

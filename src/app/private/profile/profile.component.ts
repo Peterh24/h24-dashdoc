@@ -51,7 +51,7 @@ export class ProfileComponent  implements OnInit {
     this.success = undefined;
 
     if(!currentUser){
-      this.router.navigateByUrl('/private/tabs/home');
+      this.router.navigateByUrl('/private/tabs/home', { replaceUrl: true });
     } else {
       this.authService.loadCurrentUserDetail(currentUser.id).pipe(take(1)).subscribe({
         next: (res:any) => {

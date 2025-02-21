@@ -1,7 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, LoadingController, NavController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
 import { firstValueFrom } from 'rxjs';
 import { ApiTransportService } from 'src/app/services/api-transport.service';
@@ -9,7 +8,6 @@ import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { CURRENT_COMPANY, HTTP_REQUEST_UNKNOWN_ERROR, TRANSPORTS_DRAFTS_KEY } from 'src/app/services/constants';
 import { NotificationsService } from 'src/app/services/notifications.service';
-import { VehiclesService } from 'src/app/services/vehicles.service';
 import { NewOrderCommon } from '../new-order-common';
 import { TransportOrderService } from 'src/app/services/transport-order.service';
 import { TransportService } from 'src/app/services/transport.service';
@@ -40,13 +38,10 @@ export class SummaryComponent  implements OnInit {
     public config: ConfigService,
     private authService: AuthService,
     private notifications: NotificationsService,
-    private vehicles: VehiclesService,
     private router: Router,
     private storage: Storage,
-    private http: HttpClient,
     private alertController: AlertController,
     private loadingController: LoadingController,
-    private navController: NavController,
     private transportService: TransportService,
     private apiTransport: ApiTransportService
   ) { }
