@@ -8,7 +8,8 @@ import { Router } from '@angular/router';
 import { CompanyService } from './company.service';
 import { ApiTransportService } from './api-transport.service';
 import { App } from '@capacitor/app';
-import { ModalController, NavController } from '@ionic/angular';
+import { ModalController, NavController, Platform } from '@ionic/angular';
+import { StatusBar } from '@capacitor/status-bar';
 
 @Injectable({
   providedIn: 'root',
@@ -22,11 +23,19 @@ export class AppInitService {
     private router: Router,
     private modalCtrl: ModalController,
     private navCtrl: NavController,
+    private platform: Platform
     ) {}
 
   async loadConfig() {
     await this.storage.defineDriver(cordovaSQLiteDriver);
     await this.storage.create();
+    await SplashScreen.hide(); // back button ignored when splash screen is visible
+
+    await this.platform.ready().then(() => {
+      if (this.platform.is('capacitor')) {
+        StatusBar.setOverlaysWebView({ overlay: false });
+      }
+    });
 
     App.addListener ('backButton', data => {
       this.modalCtrl.getTop().then ((modal) => {
@@ -43,19 +52,13 @@ export class AppInitService {
     App.addListener ('pause', () => {
     });
 
-    await lastValueFrom (concat(
-      defer (() => this.authService.init ()),
-      defer (() => this.apiTransport.init ()),
-      defer (() => this.companyService.init ())
-    ).pipe (
-        timeout (8000),
-        tap ((res) => {
-        }),
-        catchError ((error) => {
-          console.error ('init', error);
-          return EMPTY;
-        })
-    ));
+    try {
+      await this.authService.init ();
+      await this.apiTransport.init ();
+      await this.companyService.init ();
+    } catch (err) {
+      console.error ('init', err);
+    }
 
     await SplashScreen.hide();
 

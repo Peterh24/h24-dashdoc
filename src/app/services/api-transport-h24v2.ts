@@ -332,7 +332,7 @@ export class ApiTransportH24v2 {
         transport.creation_method = "api";
         transport.shipper_reference = deliveries?.[0]?.shipper_reference;
         transport.company = this.companyId;
-        transport.shipper_address = this.companyId; // TODO
+//        transport.shipper_address = this.companyId; // TODO
 
         deliveries?.forEach ((delivery: any) => {
             delivery.shipper_address = { remote_id: this.companyId };

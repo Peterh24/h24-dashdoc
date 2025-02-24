@@ -75,7 +75,9 @@ export class NewContactPage implements OnInit {
       loadingElement.present();
 
       let request, company: Company;
-      company = this.companies.find ((c) => c.id == this.form.value.company);
+      // restriction: un contact ne peut etre créee que pour la société en cours
+      //      company = this.companies.find ((c) => c.id == this.form.value.company);
+      company = this.companyService.currentCompany;
 
       if (this.contact?.id) {
         request = this.contactsService.updateContact(this.contact.id, this.form.value.first_name, this.form.value.last_name, this.form.value.email, this.form.value.phone_number, company.id, company.name);
