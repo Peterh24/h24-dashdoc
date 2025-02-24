@@ -103,6 +103,11 @@ export class ContactsPage implements OnInit {
     }
   }
 
+  handleRefresh(event: CustomEvent) {
+    this.ionViewWillEnter ();
+    (event.target as HTMLIonRefresherElement).complete();
+  }
+
   loadContacts (contacts: any[]) {
     this.contacts = contacts;
     this.displayedContacts = contacts;

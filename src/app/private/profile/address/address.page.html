@@ -21,6 +21,10 @@
           <ion-spinner color="primary"></ion-spinner>
       </div>
 
+      <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+      </ion-refresher>
+
       <div class="ion-text-center" *ngIf="!isLoading && addresses.length <= 0">
         Pas encore d'adresses dans votre carnet!<br />
         Merci d'en ajouter une!

@@ -68,16 +68,7 @@ export class HomePage {
       this.transportService.resetTransports();
       this.companyService.isCompanySwitch = true;
 
-      const loading = await this.loadingController.create({
-        keyboardClose: true,
-        message: '<div class="h24loader"></div>',
-        spinner: null,
-      });
-
-      await loading.present();
-
       const currentCompany = this.companyService.getCompany(companyId);
-      loading.dismiss();
       if (currentCompany) {
         await firstValueFrom (this.companyService.setCurrentCompany(currentCompany.id));
         this.storage.set(USER_STORAGE_KEY, currentCompany.token).then (() => this.companyService.getCompanyStatus () );

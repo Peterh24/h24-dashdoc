@@ -27,7 +27,7 @@ export class TransportService {
     return this.apiTransport.getTransports (status).pipe(
       map ((res: any[]) => res.map ((transport) => this.loadTransport (transport))),
       tap ((transports: Transport[]) => {
-        this.transports = transports;
+        this.transports = this.transports.concat(transports);
       })
     )
   }

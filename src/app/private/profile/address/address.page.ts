@@ -119,6 +119,11 @@ export class AddressPage implements OnInit {
     }
   }
 
+  handleRefresh(event: CustomEvent) {
+    this.ionViewWillEnter ();
+    (event.target as HTMLIonRefresherElement).complete();
+  }
+
   loadAddress (address: Address[]) {
     this.addresses = address;
     this.displayedAddresses = address;

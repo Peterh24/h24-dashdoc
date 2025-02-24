@@ -1,13 +1,6 @@
-import { Component, HostListener } from '@angular/core';
-import { Storage } from '@ionic/storage-angular';
-import * as CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
-import { SplashScreen } from '@capacitor/splash-screen';
+import { Component } from '@angular/core';
 import { register } from 'swiper/element/bundle';
-import { ModalController, NavController, Platform } from '@ionic/angular';
-import { App } from '@capacitor/app';
 import { addIcons } from 'ionicons';
-import { NavigationEnd, Router } from '@angular/router';
-import { filter } from 'rxjs';
 
 register();
 @Component({
@@ -18,32 +11,7 @@ register();
 })
 export class AppComponent {
   constructor(
-    private navCtrl: NavController,
-    private storage: Storage, 
-    private platform: Platform,
-    private modalCtrl: ModalController,
-    private router: Router,
   ) {
-    this.init();
-  }
-
-  async init() {
-    App.addListener ('backButton', data => {
-      this.modalCtrl.getTop().then ((modal) => {
-        if (modal) {
-          modal.dismiss ();
-        } else if (data.canGoBack) {
-          this.navCtrl.back ();
-        } else {
-          App.exitApp ();
-        } 
-      });
-    });
-   
-    App.addListener ('pause', () => {
-
-    });
-
     this.addLucideIcons ();
   }
 

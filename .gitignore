@@ -65,6 +65,11 @@ yarn-error.log
 testem.log
 /typings
 /old
+/android/app/release/
+/builds/
+/test/
+/resources/
+/icons/
 
 # System files
 .DS_Store

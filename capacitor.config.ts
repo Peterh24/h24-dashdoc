@@ -3,7 +3,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.h24transports',
   appName: 'H24 Transports',
-  webDir: 'www',
+  webDir: 'www/browser',
   server: {
     androidScheme: 'https',
   },
